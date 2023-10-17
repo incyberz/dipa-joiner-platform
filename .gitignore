@@ -1,0 +1,9 @@
+assets/img
+assets/vendor
+tmp
+
+*.zip
+*.txt
+*.rar
+*.sql
+*_old.*
