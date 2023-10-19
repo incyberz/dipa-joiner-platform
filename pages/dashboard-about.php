@@ -1,4 +1,8 @@
 <div class="tab-pane fade profile-overview pt-3" id="profile-overview" role="tabpanel">
+  <div class="alert alert-danger">
+    Maaf, page ini masih dalam tahap pengembangan.
+  </div>
+
   <h5 class="card-title">About</h5>
   <p class="small fst-italic">Sunt est soluta temporibus accusantium neque nam maiores cumque temporibus. Tempora libero non est unde veniam est qui dolor. Ut sunt iure rerum quae quisquam autem eveniet perspiciatis odit. Fuga sequi sed ea saepe at unde.</p>
 

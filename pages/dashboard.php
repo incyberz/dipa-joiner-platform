@@ -119,10 +119,6 @@ if(!file_exists($src)){
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings" aria-selected="false" tabindex="-1" role="tab">Settings</button>
               </li>
 
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password" aria-selected="false" tabindex="-1" role="tab">Change Password</button>
-              </li>
-
             </ul>
             <div class="tab-content pt-2">
 

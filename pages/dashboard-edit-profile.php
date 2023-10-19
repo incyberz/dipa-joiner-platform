@@ -1,4 +1,7 @@
 <div class="tab-pane fade profile-edit pt-3" id="profile-edit" role="tabpanel">
+  <div class="alert alert-danger">
+    Maaf, page ini masih dalam tahap pengembangan.
+  </div>
 
   <!-- Profile Edit Form -->
   <form>
