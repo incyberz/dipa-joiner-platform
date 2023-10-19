@@ -16,8 +16,7 @@ if(isset($_POST['btn_ubah_password'])){
     if($d_peserta['password']!=md5($_POST['password_lama']) and $d_peserta['password']!=''){
       echo div_alert('danger', 'Password lama Anda tidak sesuai.');
     }else{
-      $sql_password_lama = $_POST['password_lama']=='' ? 'password IS NULL' : 'password = \''.md5($_POST['password_lama']).'\'';
-      $s = "UPDATE tb_peserta SET password=md5('$_POST[password]') WHERE $sql_password_lama AND username='$username'";
+      $s = "UPDATE tb_peserta SET password=md5('$_POST[password]') WHERE username='$username'";
       // echo $s;
       $q=mysqli_query($cn,$s) or die(mysqli_error($cn));
       // echo '<script>location.replace("?")</script>';
@@ -51,18 +50,18 @@ $hideit = $d_peserta['password']==''?'hideit':'';
 
         <div class="form-group <?=$hideit?>">
           <label for="password_lama">Password Lama</label>
-          <input type="password_lama" minlength=3 maxlength=20 class="form-control" id="password_lama" name="password_lama" value="<?=$password_lama?>">
+          <input type="password" minlength=3 maxlength=20 class="form-control" id="password_lama" name="password_lama" value="<?=$password_lama?>">
         </div>
 
 
         <div class="form-group">
           <label for="password">Password Baru</label>
-          <input type="password" minlength=3 maxlength=20 class="form-control" id="password" name="password" value="<?=$password?>">
+          <input type="password" minlength=3 maxlength=20 class="form-control" id="password" name="password" >
         </div>
 
         <div class="form-group">
           <label for="cpassword">Konfirmasi Password</label>
-          <input type="password" minlength=3 maxlength=20 class="form-control" id="cpassword" name="cpassword" value="<?=$cpassword?>">
+          <input type="password" minlength=3 maxlength=20 class="form-control" id="cpassword" name="cpassword" >
         </div>
 
         <div class="form-group">

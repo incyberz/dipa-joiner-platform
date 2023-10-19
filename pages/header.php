@@ -27,7 +27,7 @@ $jumlah_ask = mysqli_num_rows($q);
       <ul>
         <li><a class="nav-link scrollto active" href="?">Home</a></li>
         <li><a class="nav-link scrollto" href="?pengajar">Pengajar</a></li>
-        <li><a class="nav-link scrollto" href="?teams">The Teams</a></li>
+        <li><a class="nav-link scrollto" href="?teams">Teams</a></li>
         <!-- <li><a class="nav-link scrollto" href="?peserta">Peserta</a></li> -->
         <li><a class="nav-link scrollto" href="?grades">Grades</a></li>
         <!-- <li><a class="nav-link scrollto" href="#services">Services</a></li>
@@ -76,7 +76,7 @@ $jumlah_ask = mysqli_num_rows($q);
                 <li><a href='?get_point'>Dapatkan Poin</a></li>
                 <li><a href='?my_points'>My Points</a></li>
                 <li><a href='?upload_profil'>My Profile</a></li>
-                <li><a href='?my_testimony'>My Testimony</a></li>
+                <li class='hideit'><a href='?my_testimony'>My Testimony</a></li>
                 <li class=hideit><a href='?my_biodata'>My Biodata</a></li>
                 <li><a href='?ubah_password'>Ubah Password</a></li>
                 <li><a href='?logout' onclick='return confirm(\"Yakin untuk Logout?\")' class=red>Logout</a></li>

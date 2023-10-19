@@ -24,9 +24,24 @@
         <div class="col-lg-6">
           <div class="row">
             <div class="col-lg-4">
+              <div class="blok-tim tim-a">
+                <div class="text-center">
+                  <img src="assets/img/mhs/1.jpeg" alt="" class='foto_profil'>
+                </div>
+                <div style='display:grid; grid-template-columns: 30px auto'>
+                  <div>A</div>
+                  <div>
+                    <div class='nama-tim'>Ranisa Bella Saphira</div>
+                    <div class='sebagai'>Mahasiswa Prodi TI semester 7</div>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>            <div class="col-lg-4">
               <div class="blok-tim tim-di">
                 <div class="text-center">
-                  <img src="#" alt="" class='foto_profil'>
+                  <img src="assets/img/industri/1.jpeg" alt="" class='foto_profil'>
                 </div>
                 <div style='display:grid; grid-template-columns: 30px auto'>
                   <div>DI</div>
@@ -42,7 +57,7 @@
             <div class="col-lg-4">
               <div class="blok-tim tim-p">
                 <div class="text-center">
-                  <img src="#" alt="" class='foto_profil'>
+                  <img src="assets/img/praktisi/1.jpeg" alt="" class='foto_profil'>
                 </div>
                 <div style='display:grid; grid-template-columns: 30px auto'>
                   <div>P</div>
@@ -55,22 +70,7 @@
 
               </div>
             </div>
-            <div class="col-lg-4">
-              <div class="blok-tim tim-a">
-                <div class="text-center">
-                  <img src="#" alt="" class='foto_profil'>
-                </div>
-                <div style='display:grid; grid-template-columns: 30px auto'>
-                  <div>A</div>
-                  <div>
-                    <div class='nama-tim'>Ranisa Bella Saphira</div>
-                    <div class='sebagai'>Mahasiswa Prodi TI semester 7</div>
-                  </div>
 
-                </div>
-
-              </div>
-            </div>
 
           </div>
 

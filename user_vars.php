@@ -64,7 +64,7 @@ $punya_biodata = $d_peserta['punya_biodata'];
 $is_depas = $password=='' ? 1 : 0;
 
 $my_points = number_format($akumulasi_poin,0);
-$rank = $ranks[$id_peserta];
+$rank = $ranks[$id_peserta] ?? '?';
 if($rank%10==1){
   $th = 'st';
 }elseif($rank%10==2){
@@ -84,7 +84,9 @@ $d = mysqli_fetch_assoc($q);
 $average = $d['average'];
 $nilai_akhir = round(($akumulasi_poin / ($average*1.2)) *100,0);
 if($nilai_akhir>100) $nilai_akhir=100;
-if($nilai_akhir>=85){
+if($nilai_akhir==0){
+  $hm = 'B';
+}elseif($nilai_akhir>=85){
   $hm = 'A';
 }elseif($nilai_akhir>=70){
   $hm = 'B';
