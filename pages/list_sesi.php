@@ -84,10 +84,10 @@ while ($d=mysqli_fetch_assoc($q)) {
     $r = explode(', ',$d['tags']);
     sort($r);
     $tags_show = '<span class="darkblue kecil miring">'.implode(', ',$r).'</span>';
-    $chats = "<a href='?bertanya&id_sesi=$id' style='display:inline-block;margin-left:10px' onclick='return confirm(\"Ingin mengajukan pertanyaan pada sesi ini?\")'><img src='assets/img/icons/chats.png' class=zoom height=30px></a>";
+    $asks = "<a href='?bertanya&id_sesi=$id' style='display:inline-block;margin-left:10px' onclick='return confirm(\"Ingin mengajukan pertanyaan pada sesi ini?\")'><img src='assets/img/icons/ask.png' class=zoom height=30px></a>";
   }else{
     $tags_show = '<span class="red kecil miring">belum ada tags</span>';
-    $chats = '';
+    $asks = '';
   }
 
   $selisih = strtotime('now') - strtotime($d['tanggal']);
@@ -108,17 +108,10 @@ while ($d=mysqli_fetch_assoc($q)) {
     $ket_show = $d['ket'];
     $tanggal_show = date('D, d M Y H:i',strtotime($d['tanggal'])).' :: '.$d['durasi'].' menit';
     $tags_show = $tags_show;
-    $fitur_sesi = "$latihans $tugas $challenges $chats";
+    $fitur_sesi = "$latihans $tugas $challenges $asks";
   }
   
-  $debug = "<span class=debug>
-    nama:<span id=nama2__$id>$d[nama]</span><br>
-    ket:<span id=ket2__$id>$d[ket]</span><br>
-    tags:<span id=tags2__$id>$d[tags]</span><br>
-    tanggal:<span id=tanggal2__$id>$d[tanggal]</span><br>
-    durasi:<span id=durasi2__$id>$d[durasi]</span><br>
-    selisih:$selisih
-  </span>";
+  $debug = '';
 
   $tr.= "
     <div class='wadah gradasi-$hijau' data-aos='fade-up' style='display:grid;grid-template-columns: 100px auto;grid-gap:10px'>

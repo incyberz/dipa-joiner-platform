@@ -9,6 +9,7 @@ $dm = 1;
 $is_login = 0;
 $id_role = 0;
 $status = 0;
+$my_points = 0;
 
 include 'config.php';
 

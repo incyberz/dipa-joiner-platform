@@ -127,7 +127,9 @@ if($no==''){
   WHERE no is not null order by no";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   if(mysqli_num_rows($q)==0){
-    echo div_alert('danger',"Maaf, belum ada data $jenis.");
+    echo '<section><div class=container>';
+    echo div_alert('danger',"Maaf, belum ada data $jenis untuk kamu.");
+    echo '</div></section>';
   }else{
     $rno = '';
     while ($d=mysqli_fetch_assoc($q)) {
@@ -214,7 +216,7 @@ if($id_bukti!=''){
       <div class=mt2>$verif_opsi</div>
     ";
 
-    $scr = $img_or_zip 
+    $scr = $img_or_zip ;
   }else if($jenis=='challenge'){
     $scr = "<a href='$d_lat[link]' target=_blank>$d_lat[link]</a>";
   }else{

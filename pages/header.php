@@ -27,7 +27,8 @@ $jumlah_ask = mysqli_num_rows($q);
       <ul>
         <li><a class="nav-link scrollto active" href="?">Home</a></li>
         <li><a class="nav-link scrollto" href="?pengajar">Pengajar</a></li>
-        <li><a class="nav-link scrollto" href="?peserta">Peserta</a></li>
+        <li><a class="nav-link scrollto" href="?teams">The Teams</a></li>
+        <!-- <li><a class="nav-link scrollto" href="?peserta">Peserta</a></li> -->
         <li><a class="nav-link scrollto" href="?grades">Grades</a></li>
         <!-- <li><a class="nav-link scrollto" href="#services">Services</a></li>
         <li><a class="nav-link scrollto " href="#portfolio">Portfolio</a></li>

@@ -35,4 +35,4 @@ if(isset($_SESSION['dipa_username'])){
 </section>
 
 <?php
-include 'home_list_peserta.php';
+include 'teams.php';

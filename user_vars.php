@@ -16,7 +16,8 @@ while ($d=mysqli_fetch_assoc($q)) {
   $ranks[$d['id']] = $d['rank'];
 }
 
-$s = "SELECT a.*, b.sebagai  
+$s = "SELECT a.*, b.sebagai,
+(SELECT 1 FROM tb_biodata WHERE id_peserta=a.id) punya_biodata 
 FROM tb_peserta a 
 JOIN tb_role b ON a.id_role=b.id 
 WHERE a.username='$username'";
@@ -56,14 +57,13 @@ $nama_peserta = $d_peserta['nama'];
 $nama_peserta = ucwords(strtolower($nama_peserta));
 $no_wa = $d_peserta['no_wa']!=''?$d_peserta['no_wa']:'';
 $no_wa_show = $no_wa==''?$undef:substr($no_wa,0,4).'***'.substr($no_wa,strlen($no_wa)-3,3);
-$pekerjaan = $d_peserta['pekerjaan'];
-$testimony = $d_peserta['testimony'];
 $akumulasi_poin = $d_peserta['akumulasi_poin'];
 $password = $d_peserta['password'];
 $status = $d_peserta['status'];
+$punya_biodata = $d_peserta['punya_biodata'];
 $is_depas = $password=='' ? 1 : 0;
 
-$my_points = $akumulasi_poin;
+$my_points = number_format($akumulasi_poin,0);
 $rank = $ranks[$id_peserta];
 if($rank%10==1){
   $th = 'st';
@@ -74,3 +74,56 @@ if($rank%10==1){
 }else{
   $th = 'th';
 }
+
+# ============================================================
+# AVERAGE DAN NILAI AKHIR
+# ============================================================
+$s = "SELECT AVG(akumulasi_poin) as average FROM tb_peserta WHERE status=1";
+$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$d = mysqli_fetch_assoc($q);
+$average = $d['average'];
+$nilai_akhir = round(($akumulasi_poin / ($average*1.2)) *100,0);
+if($nilai_akhir>100) $nilai_akhir=100;
+if($nilai_akhir>=85){
+  $hm = 'A';
+}elseif($nilai_akhir>=70){
+  $hm = 'B';
+}elseif($nilai_akhir>=60){
+  $hm = 'C';
+}elseif($nilai_akhir>=40){
+  $hm = 'D';
+}else{
+  $hm = 'E';
+}
+echo "<section><pre>$average | $nilai_akhir</pre></section>";
+
+
+
+
+
+
+
+
+
+$pekerjaan = '';
+$testimony = '';
+$alamat = '';
+$desa = '';
+$kec = '';
+$kab = '';
+if($punya_biodata){
+  $s = "SELECT * FROM tb_biodata WHERE id_peserta=$id_peserta";
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  if(mysqli_num_rows($q)){
+    $d=mysqli_fetch_assoc($q);
+    $pekerjaan = $d['pekerjaan'];
+    $testimony = $d['testimony'];
+    $alamat = $d['alamat'];
+    $desa = $d['desa'];
+    $kec = $d['kec'];
+    $kab = $d['kab'];
+  }
+}
+
+
+
