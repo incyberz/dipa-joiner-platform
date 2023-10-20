@@ -25,7 +25,7 @@ foreach ($rjenis as $key => $jenis) {
     $s = "SELECT a.*, b.nama,
     (SELECT nama FROM tb_peserta WHERE id=a.verified_by) as verifikator  
     FROM tb_bukti_$jenis a 
-    JOIN tb_$jenis b ON a.id_$jenis=b.id 
+    JOIN tb_assign_$jenis b ON a.id_$jenis=b.id 
     WHERE a.id_peserta=$id_peserta 
     ORDER BY b.no 
     ";

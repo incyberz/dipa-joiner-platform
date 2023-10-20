@@ -13,7 +13,7 @@ foreach ($rjenis as $key => $jenis){
   (SELECT count(1) FROM tb_bukti_$jenis WHERE id_$jenis=a.id)  as jumlah_submiter,
   (SELECT count(1) FROM tb_bukti_$jenis WHERE id_$jenis=a.id AND tanggal_verifikasi is not null AND status=1)  as jumlah_verif,
   (SELECT count(1) FROM tb_bukti_$jenis WHERE id_$jenis=a.id AND tanggal_verifikasi is not null AND status=-1)  as jumlah_reject
-  FROM tb_$jenis a ";
+  FROM tb_assign_$jenis a ";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 
   

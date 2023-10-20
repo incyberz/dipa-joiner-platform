@@ -86,7 +86,7 @@ $jumlah_ask = mysqli_num_rows($q);
           ";
 
         }else{
-          echo "<li><a class='getstarted scrollto' href='?join'>Join</a></li>";
+          echo "<li><a class='getstarted scrollto' href='?login'>Login</a></li>";
         }
         ?>
       </ul>

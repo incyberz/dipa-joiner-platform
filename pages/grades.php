@@ -89,6 +89,9 @@ if($selisih>=600 and $id_role!=3){
     poin_challenge=$total_poin_challenge,
     last_update_point=CURRENT_TIMESTAMP 
     WHERE id=$d[id] ";
+    // echo '<pre>';
+    // var_dump($s2);
+    // echo '</pre>';
     $q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));
   }
   

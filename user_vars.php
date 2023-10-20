@@ -5,17 +5,6 @@ $undef = '<span class="red kecil miring">undefined</span>';
 # ========================================================
 # GET DATA PESERTA
 # ========================================================
-$s = "SELECT a.id,  
-RANK() over (ORDER BY a.akumulasi_poin DESC) rank
-FROM tb_peserta a 
-WHERE status=1";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-$jumlah_peserta = mysqli_num_rows($q);
-$ranks = [];
-while ($d=mysqli_fetch_assoc($q)) {
-  $ranks[$d['id']] = $d['rank'];
-}
-
 $s = "SELECT a.*, b.sebagai,
 (SELECT 1 FROM tb_biodata WHERE id_peserta=a.id) punya_biodata 
 FROM tb_peserta a 
@@ -52,6 +41,7 @@ if(!file_exists("uploads/$folder_uploads")) mkdir("uploads/$folder_uploads");
 
 $id_peserta = $d_peserta['id'];
 $nama = $d_peserta['nama'];
+$kelas = $d_peserta['kelas'];
 $sebagai = $d_peserta['sebagai'];
 $nama_peserta = $d_peserta['nama'];
 $nama_peserta = ucwords(strtolower($nama_peserta));
@@ -64,6 +54,24 @@ $punya_biodata = $d_peserta['punya_biodata'];
 $is_depas = $password=='' ? 1 : 0;
 
 $my_points = number_format($akumulasi_poin,0);
+
+
+
+
+# ========================================================
+# RANK DAN JUMLAH PESERTA
+# ========================================================
+$s = "SELECT a.id,  
+RANK() over (ORDER BY a.akumulasi_poin DESC) rank
+FROM tb_peserta a 
+WHERE a.status=1 
+AND a.kelas='$kelas'";
+$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$jumlah_peserta = mysqli_num_rows($q);
+$ranks = [];
+while ($d=mysqli_fetch_assoc($q)) {
+  $ranks[$d['id']] = $d['rank'];
+}
 $rank = $ranks[$id_peserta] ?? '?';
 if($rank%10==1){
   $th = 'st';

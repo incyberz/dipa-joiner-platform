@@ -23,7 +23,7 @@ while ($d=mysqli_fetch_assoc($q)) {
 
     $s3 = "SELECT a.no,
     (SELECT get_point FROM tb_bukti_latihan WHERE status=1 AND id_latihan=a.id AND id_peserta=$id_peserta) poin_latihan 
-    FROM tb_latihan a 
+    FROM tb_assign_latihan a 
     WHERE a.id_sesi='$id_sesi' 
     
     ";
@@ -35,7 +35,7 @@ while ($d=mysqli_fetch_assoc($q)) {
 
     $s3 = "SELECT a.no,
     (SELECT get_point FROM tb_bukti_challenge WHERE status=1 AND id_challenge=a.id AND id_peserta=$id_peserta) poin_challenge 
-    FROM tb_challenge a 
+    FROM tb_assign_challenge a 
     WHERE a.id_sesi='$id_sesi' 
     AND a.no <=2
     ";

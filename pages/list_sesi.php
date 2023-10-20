@@ -17,7 +17,7 @@ if($id_role==2 and $edit_mode){
   
 
 
-$s = "SELECT * FROM tb_latihan ORDER BY no";
+$s = "SELECT * FROM tb_assign_latihan ORDER BY no";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 while ($d=mysqli_fetch_assoc($q)) {
   if(isset($rlats[$d['id_sesi']])){
@@ -27,7 +27,7 @@ while ($d=mysqli_fetch_assoc($q)) {
   }
 }
 
-$s = "SELECT * FROM tb_tugas ORDER BY no";
+$s = "SELECT * FROM tb_assign_tugas ORDER BY no";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 while ($d=mysqli_fetch_assoc($q)) {
   if(isset($rtugas[$d['id_sesi']])){
@@ -37,7 +37,7 @@ while ($d=mysqli_fetch_assoc($q)) {
   }
 }
 
-$s = "SELECT * FROM tb_challenge ORDER BY no";
+$s = "SELECT * FROM tb_assign_challenge ORDER BY no";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 while ($d=mysqli_fetch_assoc($q)) {
   if(isset($rchallenge[$d['id_sesi']])){

@@ -11,7 +11,7 @@ if($jenis==''){
 }
 
 $ryaitu = [
-  'latihan' => 'Yaitu praktikum yang persis dicontohkan oleh instruktur. Kamu wajib mengerjakannya.',
+  'latihan' => 'Yaitu praktikum yang persis dicontohkan oleh instruktur atau materi yang sudah disampaikan. Kamu wajib mengerjakannya.',
   'tugas' => 'Yaitu praktikum membangun Aplikasi Web berdasarkan studi kasus dari Dunia Usaha dan Industri (DUDI). Kamu wajib membangunnya menggunakan HTML, CSS, JS, dan PHP.',
   'challenge' => 'Yaitu pembuktian bahwa kamu sudah siap terjun ke Dunia Usaha dan Industri (DUDI). Kamu wajib membangun salah satu portfolio system yang berhasil kamu buat.'
 ];
@@ -31,7 +31,7 @@ if(isset($_POST['btn_hapus'])){
 if(isset($_POST['btn_upload'])){
 
   $id_jenis = $_POST['id_jenis'];
-  $s = "SELECT * FROM tb_$jenis WHERE id=$id_jenis";
+  $s = "SELECT * FROM tb_assign_$jenis WHERE id=$id_jenis";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   $d = mysqli_fetch_assoc($q);
 
@@ -121,14 +121,17 @@ if(isset($_POST['btn_upload'])){
 # NORMAL FLOW
 # ============================================
 if($no==''){
-  $s = "SELECT a.no, a.nama,
+  $s = "SELECT a.no, b.nama,
   (SELECT 1 FROM tb_bukti_$jenis WHERE status=1 AND id_$jenis=a.id AND id_peserta=$id_peserta) sudah_mengerjakan   
-  FROM tb_$jenis a 
-  WHERE no is not null order by no";
+  FROM tb_assign_$jenis a 
+  JOIN tb_act_$jenis b ON a.id_$jenis=b.id 
+  WHERE no is not null 
+  AND kelas='$kelas'
+  order by no";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   if(mysqli_num_rows($q)==0){
     echo '<section><div class=container>';
-    echo div_alert('danger',"Maaf, belum ada data $jenis untuk kamu.");
+    echo div_alert('danger',"Maaf, belum ada data $jenis untuk kelas $kelas.");
     echo '</div></section>';
   }else{
     $rno = '';
@@ -149,9 +152,13 @@ a.*,
 b.wag, 
 b.no as no_sesi, 
 (SELECT id FROM tb_bukti_$jenis WHERE id_peserta=$id_peserta AND id_$jenis=a.id) as id_bukti
-FROM tb_$jenis a 
+FROM tb_assign_$jenis a 
 JOIN tb_sesi b ON a.id_sesi=b.id 
-WHERE a.no=$no";
+JOIN tb_act_$jenis c ON a.id_$jenis=c.id 
+WHERE a.no=$no 
+AND kelas='$kelas'
+";
+echo "<pre>$s</pre>";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 if(mysqli_num_rows($q)==0) die(section(div_alert('danger',"Maaf, $jenis dengan nomor $no tidak ada.<hr><a class=proper href='?activity&jenis=$jenis'>Pilih $jenis</a>")));
 if(mysqli_num_rows($q)>1) die(erid('no::duplicate'));
@@ -170,7 +177,7 @@ if($id_bukti!=''){
   $s = "SELECT a.*,b.no as no_lat, 
   (SELECT nama FROM tb_peserta WHERE id=a.verified_by) as verified_by_name 
   FROM tb_bukti_$jenis a 
-  JOIN tb_$jenis b ON a.id_$jenis=b.id 
+  JOIN tb_assign_$jenis b ON a.id_$jenis=b.id 
   WHERE a.id=$id_bukti";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   $d_lat = mysqli_fetch_assoc($q);
@@ -244,7 +251,7 @@ if($id_bukti!=''){
 $hasil = "<div class='wadah'><div>Hasil $jenis:</div>$hasil</div>";
 
 $info_ekstensi = [
-  'latihan' => 'ekstensi harus JPG, posisikan bukti screenshoot: kiri code, kanan hasil, kanan-atas foto kamu + nama',
+  'latihan' => 'ekstensi harus JPG, jika tugas coding posisikan bukti screenshoot: kiri code, kanan hasil',
   'tugas' => 'ekstensi harus ZIP, masukan semua file web dan file database (SQL) kamu ke file ZIP, lalu upload!',
   'challenge' => 'harus berupa link-online diawali dg http atau https, misal: http://iin-sholihin.github.io, https://insho.rf.gd',
 ];

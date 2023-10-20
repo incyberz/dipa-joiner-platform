@@ -2,6 +2,18 @@
 # ========================================================
 # AKADEMIK INDEX
 # ========================================================
+if(0){
+  die("
+  <style>*{margin:0;padding:0;background:black;color:white;text-align:center}
+  hr{margin:15px}</style>
+  <div style='padding:15px'>
+    <h1 style='color:yellow'>DIPA Joiner sedang maintenance.</h1>
+    <hr>
+    <p>Mohon maaf, saat ini sedang restrukturisasi database dan penambahan fitur Kelas Peserta untuk tiap ranks, grades, dan points</p>
+    <hr>
+    <p>Jika maintenance melebihi pukul 10.00 harap hubungi Pihak Developer. Terimakasih.</p>
+  </div>");
+}
 session_start();
 // session_destroy(); exit;
 // echo '<pre style="margin-top: 170px">'; var_dump($_SESSION); echo '</pre>';
@@ -95,7 +107,7 @@ $parameter = $c[0];
 
   <?php include 'pages/header.php'; ?>
   <?php if(!$is_login and $parameter=='') include 'pages/hero.php'; ?>
-  <main id="main" style='padding-top:50px;' >
+  <main id="main" style='padding-top:50pxs;' >
     <?php include 'routing.php'; ?>
   </main>
   <?php include 'pages/footer.php'; ?>
