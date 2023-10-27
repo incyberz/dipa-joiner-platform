@@ -13,7 +13,7 @@ if ($online_version) {
   $db_server = "localhost";
   $db_user = "root";
   $db_pass = '';
-  $db_name = "db_dipa";
+  $db_name = "db_dipa_online_v2";
 }
 
 $cn = new mysqli($db_server, $db_user, $db_pass, $db_name);

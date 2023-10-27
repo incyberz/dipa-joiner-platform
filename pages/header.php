@@ -29,7 +29,7 @@ $jumlah_ask = mysqli_num_rows($q);
         <li><a class="nav-link scrollto" href="?pengajar">Pengajar</a></li>
         <li><a class="nav-link scrollto" href="?teams">Teams</a></li>
         <!-- <li><a class="nav-link scrollto" href="?peserta">Peserta</a></li> -->
-        <li><a class="nav-link scrollto" href="?grades">Grades</a></li>
+        <li><a class="nav-link scrollto" href="?grades&kelas=<?=$kelas?>">Grades</a></li>
         <!-- <li><a class="nav-link scrollto" href="#services">Services</a></li>
         <li><a class="nav-link scrollto " href="#portfolio">Portfolio</a></li>
         <li><a class="nav-link scrollto" href="#team">Team</a></li>
@@ -70,6 +70,7 @@ $jumlah_ask = mysqli_num_rows($q);
                 <li><a href='?my_questions'>Pertanyaan Saya</a></li>
                 <li><a href='?chats'>Chats</a></li>
                 <li class=hideit><a href='?quiz'>Kuis PG</a></li>
+                <li class=><a href='?ujian'>Ujian</a></li>
               </ul>
             <li class='dropdown'><a class=getstarted href='#'><span>$nickname_show</span> <i class='bi bi-chevron-down'></i></a>
               <ul>
@@ -82,6 +83,7 @@ $jumlah_ask = mysqli_num_rows($q);
                 <li><a href='?logout' onclick='return confirm(\"Yakin untuk Logout?\")' class=red>Logout</a></li>
               </ul>
             </li>
+            <li class='darkred kecil tengah' style='margin-left:10px'>$kelas</li>
             $unlog_link
           ";
 

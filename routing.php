@@ -3,6 +3,7 @@ if(!$status and $parameter!='verifikasi_wa' and $is_login){
   echo "<section><div class='container red small miring gradasi-merah'>Kamu belum verifikasi whatsapp sehingga banyak fitur yang dibatasi. | <a href='?verifikasi_wa'>Verifikasi</a></div></section>";
 }
 
+
 switch ($parameter){
   case '':
   case 'home': $konten = 'pages/home.php'; break;
@@ -14,6 +15,7 @@ if(!file_exists($konten)) $konten="pages/$konten.php";
 if(!file_exists($konten)){
   include 'na.php';
 }else{
+  if(!$punya_profil) include 'pages/belum_punya_profil.php';
   include $konten;
 }
 

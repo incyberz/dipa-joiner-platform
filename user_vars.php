@@ -34,9 +34,19 @@ if($folder_uploads==''){
 if(!file_exists("uploads/$folder_uploads")) mkdir("uploads/$folder_uploads");
 
 // $img_profile = "uploads/$folder_uploads/img_profile_$username.jpg";
+
 // $img_bg = "uploads/$folder_uploads/img_bg_$username.jpg";
-// if(!file_exists($img_profile)) $img_profile = "uploads/profile_na.jpg";
 // if(!file_exists($img_bg)) $img_bg = "uploads/bg_na.jpg";
+
+$path_profile = "assets/img/peserta/peserta-$id_peserta.jpg";
+$rand = rand(1,5);
+$path_profile_na = "assets/img/no_profile$rand.jpg";
+if(file_exists($path_profile)){
+  $punya_profil = true;
+}else{
+  $punya_profil = false;
+  $path_profile = $path_profile_na;
+}
 
 
 $id_peserta = $d_peserta['id'];
@@ -72,15 +82,21 @@ $ranks = [];
 while ($d=mysqli_fetch_assoc($q)) {
   $ranks[$d['id']] = $d['rank'];
 }
-$rank = $ranks[$id_peserta] ?? '?';
-if($rank%10==1){
-  $th = 'st';
-}elseif($rank%10==2){
-  $th = 'nd';
-}elseif($rank%10==3){
-  $th = 'rd';
+
+if($ranks[$id_peserta]){
+  $rank = $ranks[$id_peserta];
+  if($rank%10==1){
+    $th = 'st';
+  }elseif($rank%10==2){
+    $th = 'nd';
+  }elseif($rank%10==3){
+    $th = 'rd';
+  }else{
+    $th = 'th';
+  }
 }else{
-  $th = 'th';
+  $rank = '?';
+  $th = '';
 }
 
 # ============================================================

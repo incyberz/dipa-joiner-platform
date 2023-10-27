@@ -1,4 +1,5 @@
 <?php
+$get_kelas = $_GET['kelas'] ?? '';
 $judul = 'The Best Top 10';
 $img_login_as = '<img src="assets/img/icons/login_as.png" height=20px class=zoom>';
 $show_img = isset($_GET['show_img']) ? $_GET['show_img'] : 0;
@@ -51,7 +52,8 @@ if($selisih>=600 and $id_role!=3){
   ) as total_poin_challenge 
 
   
-  FROM tb_peserta a";
+  FROM tb_peserta a 
+  ";
   // echo $s;
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   while ($d=mysqli_fetch_assoc($q)) {
@@ -98,8 +100,14 @@ if($selisih>=600 and $id_role!=3){
 }
 
 $limit = $id_role<=1 ? 'LIMIT 10' : '';
-$only_peserta = $id_role<=1 ? 'id_role = 1' : '1';
-$s = "SELECT * FROM tb_peserta WHERE $only_peserta AND status=1 ORDER BY akumulasi_poin DESC $limit";
+$only_peserta = $id_role<=1 ? ' a.id_role = 1' : '1';
+$sql_kelas = $get_kelas=='' ? '1' : "a.kelas = '$get_kelas'";
+
+$s = "SELECT a.* 
+FROM tb_peserta a WHERE $only_peserta 
+AND a.status=1 
+AND $sql_kelas
+ORDER BY akumulasi_poin DESC $limit";
 // $s = "SELECT * FROM tb_peserta ORDER BY rand() LIMIT 10"; //zzz debug
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $tb = div_alert('danger', 'Belum ada data peserta.');
@@ -136,7 +144,7 @@ if(mysqli_num_rows($q)){
       <tr style='$tr_sty'>
         <td>$i</td>
         $td_profil
-        <td>$link_nama_show $login_as</td>
+        <td>$link_nama_show $login_as <div class='kecil darkred'>$d[kelas]</div></td>
         <td>$link_point_show</td>
       </tr>
     ";
@@ -147,7 +155,7 @@ if(mysqli_num_rows($q)){
   $tb = "$selamat<div class='mb2  '>$toggle_profil</div><table class='table table-striped table-hover'>$tr</table>";
 }
 
-
+$kelas_show = $get_kelas=='' ? 'Semua Kelas' : "Kelas $get_kelas";
 ?>
 <section id="about" class="about">
   <div class="container">
@@ -158,7 +166,7 @@ if(mysqli_num_rows($q)){
 
     <h4 class='darkblue bold text-center consolas mb-4' data-aos="fade-up" data-aos-delay="150"><?=$judul?></h4>
     <div class="grades" data-aos="fade-up" data-aos-delay="150">
-      <p>Berikut adalah 10 Peserta Terbaik dari seluruh peserta JWD-VSGA.</p>
+      <p>Berikut adalah 10 Peserta Terbaik <span class="darkred"><?=$kelas_show?></span>.</p>
 
       <?=$tb?>
       <div class="kecil miring abu">
