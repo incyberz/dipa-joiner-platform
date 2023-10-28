@@ -7,7 +7,7 @@ $sub_judul = $id_role==2 ? 'Berikut adalah pertanyaan dari para Peserta yang har
 $o='';
 
 $s = "SELECT a.*, b.nama as penanya, c.nama as topik,
-(SELECT count(1) FROM tb_jawaban WHERE id_pertanyaan=a.id) jumlah_penjawab   
+(SELECT count(1) FROM tb_jawaban_chat WHERE id_pertanyaan=a.id) jumlah_penjawab   
 FROM tb_pertanyaan a 
 JOIN tb_peserta b ON a.id_penanya=b.id 
 JOIN tb_sesi c ON a.id_sesi=c.id 
@@ -79,7 +79,7 @@ if($count_all>0){
       // ada reply
       $red_bold = 'green';
       $s2 = "SELECT a.*,b.nama as penjawab  
-      FROM tb_jawaban a 
+      FROM tb_jawaban_chat a 
       JOIN tb_peserta b ON a.id_penjawab=b.id 
       WHERE id_pertanyaan=$id";
       $q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));

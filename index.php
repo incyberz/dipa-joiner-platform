@@ -17,11 +17,12 @@ if(0){
 session_start();
 // session_destroy(); exit;
 // echo '<pre style="margin-top: 170px">'; var_dump($_SESSION); echo '</pre>';
-$dm = 0;
+$dm = 1;
 $is_login = 0;
 $id_role = 0;
 $status = 0;
 $my_points = 0;
+$punya_profil = '';
 
 include 'config.php';
 
@@ -100,6 +101,13 @@ $parameter = $c[0];
       border-radius: 50%
     }
     .section-title h2 {font-size: 22px !important; color: #ac5807}
+
+    section {
+      margin-top: 60px;
+      padding: 60px 0 !important;
+    }
+
+    <?php if($dm) echo '.debug{display:inline; background:yellow; color: blue}'; ?>
   </style>
 </head>
 

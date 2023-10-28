@@ -18,7 +18,7 @@ $judul = 'Profile';
       // echo $target;
 
       if(move_uploaded_file($_FILES[$tipe.'_profil']['tmp_name'],$target)){
-        echo div_alert('success',"Upload $tipe profil berhasil.");
+        echo '<section><div>'.div_alert('success',"Upload profil berhasil.").'</div></section><script>location.replace("?")</script>';
       }else{
         echo div_alert('danger',"Upload gagal.");
       }

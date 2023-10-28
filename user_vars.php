@@ -33,20 +33,6 @@ if($folder_uploads==''){
 
 if(!file_exists("uploads/$folder_uploads")) mkdir("uploads/$folder_uploads");
 
-// $img_profile = "uploads/$folder_uploads/img_profile_$username.jpg";
-
-// $img_bg = "uploads/$folder_uploads/img_bg_$username.jpg";
-// if(!file_exists($img_bg)) $img_bg = "uploads/bg_na.jpg";
-
-$path_profile = "assets/img/peserta/peserta-$id_peserta.jpg";
-$rand = rand(1,5);
-$path_profile_na = "assets/img/no_profile$rand.jpg";
-if(file_exists($path_profile)){
-  $punya_profil = true;
-}else{
-  $punya_profil = false;
-  $path_profile = $path_profile_na;
-}
 
 
 $id_peserta = $d_peserta['id'];
@@ -66,6 +52,22 @@ $is_depas = $password=='' ? 1 : 0;
 $my_points = number_format($akumulasi_poin,0);
 
 
+
+
+
+# ========================================================
+# PROFILE HANDLER
+# ========================================================
+$path_profile = "assets/img/peserta/peserta-$id_peserta.jpg";
+// echo "<h1 style='padding-top:200px'>$path_profile</h1>";
+$rand = rand(1,5);
+$path_profile_na = "assets/img/no_profile$rand.jpg";
+if(file_exists($path_profile)){
+  $punya_profil = true;
+}else{
+  $punya_profil = false;
+  $path_profile = $path_profile_na;
+}
 
 
 # ========================================================
@@ -121,7 +123,6 @@ if($nilai_akhir==0){
 }else{
   $hm = 'E';
 }
-echo "<section><pre>$average | $nilai_akhir</pre></section>";
 
 
 

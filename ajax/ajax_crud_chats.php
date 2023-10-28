@@ -16,7 +16,7 @@ if($aksi=='tambah'){
   $s =  "INSERT INTO tb_sesizzz (no,id_sesi,nama) VALUES (0,$id_sesi,'NEW LATIHAN')";
 }else if($aksi=='hapus'){
   if($tabel=='pertanyaan'){
-    $s = "DELETE FROM tb_jawaban WHERE id_pertanyaan=$id";
+    $s = "DELETE FROM tb_jawaban_chat WHERE id_pertanyaan=$id";
     // $q = mysqli_query($cn,$s) or die('Error @ajax. '.mysqli_error($cn));
   }
   $s = "DELETE FROM tb_$tabel WHERE id=$id";

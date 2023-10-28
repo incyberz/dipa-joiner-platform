@@ -19,7 +19,7 @@ if($selisih>=600 and $id_role!=3){
     WHERE id_penanya=a.id 
   ) as count_bertanya,
   (
-    SELECT COUNT(1) FROM tb_jawaban  
+    SELECT COUNT(1) FROM tb_jawaban_chat  
     WHERE id_penjawab=a.id 
   ) as count_menjawab,
   (
@@ -28,7 +28,7 @@ if($selisih>=600 and $id_role!=3){
     AND verif_date is not null 
   ) as poin_bertanya,
   (
-    SELECT SUM(poin) FROM tb_jawaban  
+    SELECT SUM(poin) FROM tb_jawaban_chat  
     WHERE id_penjawab=a.id 
     AND verif_date is not null 
   ) as poin_menjawab,

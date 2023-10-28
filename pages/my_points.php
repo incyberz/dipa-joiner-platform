@@ -14,7 +14,7 @@ foreach ($rjenis as $key => $jenis) {
   }elseif($jenis=='jawaban'){
     $s = "SELECT a.*, c.nama as nama_sesi, b.pertanyaan, d.nama as penanya,
     (SELECT nama FROM tb_peserta WHERE id=a.verif_by) verifikator   
-    FROM tb_jawaban a 
+    FROM tb_jawaban_chat a 
     JOIN tb_pertanyaan b ON a.id_pertanyaan=b.id 
     JOIN tb_sesi c ON b.id_sesi=c.id 
     JOIN tb_peserta d ON b.id_penanya=d.id 

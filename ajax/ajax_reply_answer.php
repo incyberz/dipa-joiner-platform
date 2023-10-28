@@ -37,7 +37,7 @@ if($id_role==2){
 }
 
 // normal reply
-$s =  "INSERT INTO tb_jawaban 
+$s =  "INSERT INTO tb_jawaban_chat 
 (id_pertanyaan,id_penjawab,jawaban) VALUES 
 ('$id_pertanyaan','$id_peserta','$reply') ";
 
@@ -46,7 +46,7 @@ $q = mysqli_query($cn,$s) or die('Error @ajax. '.mysqli_error($cn));
 
 // reply for jawabans
 // $s = "SELECT a.* 
-// FROM tb_jawaban a 
+// FROM tb_jawaban_chat a 
 // JOIN tb_peserta b ON a.id_penjawab=b.id 
 // WHERE id_pertanyaan=$id_pertanyaan";
 // $j='';

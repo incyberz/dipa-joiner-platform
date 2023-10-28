@@ -164,6 +164,11 @@ $tanggal_jenis_show = $id_role==2
 ? "<input $disabled class='input_editable ' id=tanggal_$jenis"."__$id_jenis value='$d[tanggal]'> <button class='btn btn-success btn-sm btn-block mt1 mb2' id=set_now>Set Now</button>"
 : date('d/m/y H:i',strtotime($d['tanggal']));
 
+$textarea = $id_role==2 ? "<textarea class='form-control input_editable' id=ket__$id_jenis $disabled>$d[ket]</textarea>" : $d['ket'];
+
+
+
+
 
 $main_block = "
 <div class='wadah gradasi-hijau' data-aos=fade-up>
@@ -181,7 +186,7 @@ $main_block = "
   <h3 class='mb4 proper'>$jenis <input $disabled class='input_editable tiga_digit' id=no__$id_jenis value='$d[no]'><span class=debug>id_jenis:<span id=id_jenis>$d[id_jenis]</span> | id_sesi:<span id=id_sesi>$d[id_sesi]</span></span></h3>
   <div class=proper>Nama $jenis: <input $disabled class='form-control input_editable ' id=nama__$id_jenis value='$d[nama]'></div>
   <div class='mt1 mb2'>
-    <textarea class='form-control input_editable' id=ket__$id_jenis $disabled>$d[ket]</textarea>
+    $textarea
   </div>
   <ul class='kecil miring consolas'>
     <li><b class=label_editable>Tanggal mulai</b>: $tanggal_jenis_show</li>

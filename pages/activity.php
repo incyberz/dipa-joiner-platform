@@ -5,8 +5,8 @@ $no = $_GET['no'] ?? '';
 if($jenis==''){
   $rjenis = ['latihan','tugas','challenge'];
   $j='';
-  foreach ($rjenis as $key => $value) $j .= "<a href='?activity&jenis=$value' class='proper btn btn-info mb2'>$value</a> ";
-  echo "<section><div class=container><p>Silahkan pilih jenis aktivitas:</p>$j</div></section>";
+  foreach ($rjenis as $key => $value) $j .= "<a href='?activity&jenis=$value data-aos='fade-up'' class='proper btn btn-info mb2'>$value</a> ";
+  echo "<section><div class=container><div data-aos='fade-up'><p>Silahkan pilih jenis aktivitas:</p>$j</div></div></section>";
   exit;
 }
 
@@ -150,7 +150,7 @@ if($no==''){
     }
     echo "
     <section>
-      <div class=container>
+      <div class=container data-aos='fade-up'>
         Silahkan pilih $jenis:
         <div class=wadah>
           $rno
