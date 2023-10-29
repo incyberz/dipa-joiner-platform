@@ -5,7 +5,8 @@
 $s = "SELECT 
 a.tanggal,
 a.no,
-a.id as id_jenis,
+a.id as id_assign_jenis,
+c.id as id_jenis,
 c.nama,
 c.ket,
 c.basic_point,
@@ -16,7 +17,7 @@ c.ket,
 b.id as id_sesi,
 b.wag, 
 b.no as no_sesi, 
-(SELECT id FROM tb_bukti_$jenis WHERE id_peserta=$id_peserta AND id_$jenis=a.id) as id_bukti
+(SELECT id FROM tb_bukti_$jenis WHERE id_peserta=$id_peserta AND id_assign_$jenis=a.id) as id_bukti
 FROM tb_assign_$jenis a 
 JOIN tb_sesi b ON a.id_sesi=b.id 
 JOIN tb_act_$jenis c ON a.id_$jenis=c.id 
@@ -25,11 +26,12 @@ AND kelas='$kelas'
 ";
 // echo "<pre>$s</pre>";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-if(mysqli_num_rows($q)==0) die(section(div_alert('danger',"Maaf, $jenis dengan nomor $no tidak ada.<hr><a class=proper href='?activity&jenis=$jenis'>Pilih $jenis</a>")));
+if(mysqli_num_rows($q)==0) die(section(div_alert('danger',"Maaf, $jenis dengan nomor $no untuk kelas $kelas tidak ada.<hr><a class=proper href='?activity&jenis=$jenis'>Pilih $jenis</a>")));
 if(mysqli_num_rows($q)>1) die(erid('no::duplicate'));
 $d=mysqli_fetch_assoc($q);
 
 
+$id_assign_jenis = $d['id_assign_jenis'];
 $id_jenis = $d['id_jenis'];
 $id_sesi = $d['id_sesi'];
 $id_bukti = $d['id_bukti'];
@@ -42,7 +44,7 @@ if($id_bukti!=''){
   $s = "SELECT a.*,b.no as no_lat, 
   (SELECT nama FROM tb_peserta WHERE id=a.verified_by) as verified_by_name 
   FROM tb_bukti_$jenis a 
-  JOIN tb_assign_$jenis b ON a.id_$jenis=b.id 
+  JOIN tb_assign_$jenis b ON a.id_assign_$jenis=b.id 
   WHERE a.id=$id_bukti";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   $d_lat = mysqli_fetch_assoc($q);
@@ -90,7 +92,7 @@ if($id_bukti!=''){
 
     $scr = $img_or_zip ;
   }else if($jenis=='challenge'){
-    $scr = "<a href='$d_lat[link]' target=_blank>$d_lat[link]</a>";
+    $scr = "<a href='$d_lat[link]' target=_blank>$d_lat[link]</a><div class=mt2>$verif_opsi</div>";
   }else{
     die("Jenis activity: $jenis unhandled action.");
   }
@@ -120,7 +122,7 @@ if($status==-1 and $jenis=='challenge'){
   <form method=post>
     <input class=debug name=id_bukti value=$id_bukti>
     <input class=debug name=no_jenis value=$d[no]>
-    <button class='btn btn-danger btn-sm' name=btn_hapus  id=challenge__$id_jenis onclick='return confirm(\"Yakin untuk hapus Challenge dan Reupload kembali?\")'>Hapus dan Reupload</button>
+    <button class='btn btn-danger btn-sm' name=btn_hapus  id=challenge__$id_assign_jenis onclick='return confirm(\"Yakin untuk hapus Challenge dan Reupload kembali?\")'>Hapus dan Reupload</button>
   </form>
   ";
 }
@@ -151,7 +153,7 @@ $form = ($id_bukti!='') ? div_alert('success','Kamu sudah mengerjakan.') : "
 <form method=post enctype=multipart/form-data>
   Bukti kamu mengerjakan:
   <div class=mb2>
-    <input class=debug name=id_jenis value='$id_jenis'>
+    <input class=debug name=id_assign_jenis value='$id_assign_jenis'>
     <input class=form-control type=$input_type[$jenis] name=bukti accept='$accept_ekstensi[$jenis]' required>
     <div class='kecil miring abu'>)* $info_ekstensi[$jenis].</div>
   </div>
@@ -161,10 +163,10 @@ $form = ($id_bukti!='') ? div_alert('success','Kamu sudah mengerjakan.') : "
 
 $disabled = $id_role==2 ? '' : 'disabled';
 $tanggal_jenis_show = $id_role==2 
-? "<input $disabled class='input_editable ' id=tanggal_$jenis"."__$id_jenis value='$d[tanggal]'> <button class='btn btn-success btn-sm btn-block mt1 mb2' id=set_now>Set Now</button>"
+? "<input $disabled class='input_editable ' id=tanggal_$jenis"."__$id_assign_jenis value='$d[tanggal]'> <button class='btn btn-success btn-sm btn-block mt1 mb2' id=set_now>Set Now</button>"
 : date('d/m/y H:i',strtotime($d['tanggal']));
 
-$textarea = $id_role==2 ? "<textarea class='form-control input_editable' id=ket__$id_jenis $disabled>$d[ket]</textarea>" : $d['ket'];
+$textarea = $id_role==2 ? "<textarea class='form-control input_editable' id=ket__$id_assign_jenis $disabled>$d[ket]</textarea>" : $d['ket'];
 
 
 
@@ -174,26 +176,26 @@ $main_block = "
 <div class='wadah gradasi-hijau' data-aos=fade-up>
   $pesan_upload
   <div class=debug>
-    no2:<span id=no2__$id_jenis>$d[no]</span> | 
-    nama2:<span id=nama2__$id_jenis>$d[nama]</span> | 
-    ket2:<span id=ket2__$id_jenis>$d[ket]</span> | 
-    tanggal_".$jenis."2:<span id=tanggal_$jenis"."2__$id_jenis>$d[tanggal]</span> | 
-    basic_point2:<span id=basic_point2__$id_jenis>$d[basic_point]</span> | 
-    ontime_point2:<span id=ontime_point2__$id_jenis>$d[ontime_point]</span> | 
-    ontime_dalam2:<span id=ontime_dalam2__$id_jenis>$d[ontime_dalam]</span> | 
-    ontime_deadline2:<span id=ontime_deadline2__$id_jenis>$d[ontime_deadline]</span> | 
+    no2:<span id=no2__$id_assign_jenis>$d[no]</span> | 
+    nama2:<span id=nama2__$id_assign_jenis>$d[nama]</span> | 
+    ket2:<span id=ket2__$id_assign_jenis>$d[ket]</span> | 
+    tanggal_".$jenis."2:<span id=tanggal_$jenis"."2__$id_assign_jenis>$d[tanggal]</span> | 
+    basic_point2:<span id=basic_point2__$id_assign_jenis>$d[basic_point]</span> | 
+    ontime_point2:<span id=ontime_point2__$id_assign_jenis>$d[ontime_point]</span> | 
+    ontime_dalam2:<span id=ontime_dalam2__$id_assign_jenis>$d[ontime_dalam]</span> | 
+    ontime_deadline2:<span id=ontime_deadline2__$id_assign_jenis>$d[ontime_deadline]</span> | 
   </div>
-  <h3 class='mb4 proper'>$jenis <input $disabled class='input_editable tiga_digit' id=no__$id_jenis value='$d[no]'><span class=debug>id_jenis:<span id=id_jenis>$d[id_jenis]</span> | id_sesi:<span id=id_sesi>$d[id_sesi]</span></span></h3>
-  <div class=proper>Nama $jenis: <input $disabled class='form-control input_editable ' id=nama__$id_jenis value='$d[nama]'></div>
+  <h3 class='mb4 proper'>$jenis <input $disabled class='input_editable tiga_digit' id=no__$id_assign_jenis value='$d[no]'><span class=debug>id_assign_jenis:<span id=id_assign_jenis>$d[id_assign_jenis]</span> | id_sesi:<span id=id_sesi>$d[id_sesi]</span></span></h3>
+  <div class=proper>Nama $jenis: <input $disabled class='form-control input_editable ' id=nama__$id_assign_jenis value='$d[nama]'></div>
   <div class='mt1 mb2'>
     $textarea
   </div>
   <ul class='kecil miring consolas'>
     <li><b class=label_editable>Tanggal mulai</b>: $tanggal_jenis_show</li>
-    <li><b class=label_editable>Basic Point</b>: <input $disabled id=basic_point__$id_jenis class='input_editable tiga_digit' value='$d[basic_point]'> LP</li>
-    <li><b class=label_editable>Ontime Point</b>: <input $disabled id=ontime_point__$id_jenis class='input_editable tiga_digit' value='$d[ontime_point]'> LP</li>
-    <li><b class=label_editable>Ontime dalam</b>: <input $disabled id=ontime_dalam__$id_jenis class='input_editable tiga_digit' value='$d[ontime_dalam]'> menit</li>
-    <li><b class=label_editable>Ontime deadline</b>: <input $disabled id=ontime_deadline__$id_jenis class='input_editable tiga_digit' value='$d[ontime_deadline]'> menit</li>
+    <li><b class=label_editable>Basic Point</b>: <input $disabled id=basic_point__$id_assign_jenis class='input_editable tiga_digit' value='$d[basic_point]'> LP</li>
+    <li><b class=label_editable>Ontime Point</b>: <input $disabled id=ontime_point__$id_assign_jenis class='input_editable tiga_digit' value='$d[ontime_point]'> LP</li>
+    <li><b class=label_editable>Ontime dalam</b>: <input $disabled id=ontime_dalam__$id_assign_jenis class='input_editable tiga_digit' value='$d[ontime_dalam]'> menit</li>
+    <li><b class=label_editable>Ontime deadline</b>: <input $disabled id=ontime_deadline__$id_assign_jenis class='input_editable tiga_digit' value='$d[ontime_deadline]'> menit</li>
   </ul>
   $form 
   $hasil
@@ -236,18 +238,43 @@ $main_block = "
       $verif_icon = $_GET['verif'] ?? '';
 
       $kolom_link = $jenis=='challenge' ? 'link' : '0';
-      $s = "SELECT a.id,a.folder_uploads,a.nama,
-      (SELECT id FROM tb_bukti_$jenis WHERE id_peserta=a.id AND id_$jenis=$id_jenis) id_jenis, 
-      (SELECT 1 FROM tb_bukti_$jenis WHERE id_peserta=a.id AND id_$jenis=$id_jenis) sudah_mengerjakan, 
-      (SELECT 1 FROM tb_bukti_$jenis WHERE id_peserta=a.id AND id_$jenis=$id_jenis AND tanggal_verifikasi is null) belum_verif, 
-      (SELECT 1 FROM tb_bukti_$jenis WHERE id_peserta=a.id AND id_$jenis=$id_jenis AND tanggal_verifikasi is not null AND status=-1) kena_reject, 
-      (SELECT $kolom_link FROM tb_bukti_$jenis WHERE id_peserta=a.id AND id_$jenis=$id_jenis) link  
+      $s = "SELECT a.id,
+      a.folder_uploads,
+      a.nama,
+      (
+        SELECT p.id FROM tb_bukti_$jenis p
+        JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
+        WHERE p.id_peserta=a.id 
+        AND q.id_$jenis=$id_jenis) id_jenis, 
+      (
+        SELECT 1 FROM tb_bukti_$jenis p 
+        JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
+        WHERE p.id_peserta=a.id 
+        AND q.id_$jenis=$id_jenis) sudah_mengerjakan, 
+      (
+        SELECT 1 FROM tb_bukti_$jenis p 
+        JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
+        WHERE p.id_peserta=a.id 
+        AND q.id_$jenis=$id_jenis 
+        AND tanggal_verifikasi is null) belum_verif, 
+      (
+        SELECT 1 FROM tb_bukti_$jenis p 
+        JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
+        WHERE p.id_peserta=a.id 
+        AND q.id_$jenis=$id_jenis 
+        AND tanggal_verifikasi is not null 
+        AND status=-1) kena_reject, 
+      (
+        SELECT $kolom_link FROM tb_bukti_$jenis p 
+        JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
+        WHERE p.id_peserta=a.id 
+        AND q.id_$jenis=$id_jenis) link  
       FROM tb_peserta  a 
       WHERE a.id_role=1  
       AND status = 1 
       ORDER BY a.nama
       ";
-      // echo $s;
+      // echo "<pre>$s</pre>";
       $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
       $rsudah = [];
       $rbelum = [];
@@ -351,8 +378,8 @@ $main_block = "
   $(function(){
     let jenis = $('#jenis').text();
     let id_sesi = $('#id_sesi').text();
-    let id_jenis = $('#id_jenis').text();
-    // alert(id_jenis);
+    let id_assign_jenis = $('#id_assign_jenis').text();
+    // alert(id_assign_jenis);
 
     $('#set_now').click(function(){
       // alert(1)
@@ -367,7 +394,7 @@ $main_block = "
       let z = confirm('Isi tanggal mulai ke saat ini?'); 
       if(!z) return;
 
-      $('#tanggal_'+jenis+'__'+id_jenis).val(`${y}-${m}-${d} ${h}:${i}`);
+      $('#tanggal_'+jenis+'__'+id_assign_jenis).val(`${y}-${m}-${d} ${h}:${i}`);
     })
 
     $('.input_editable').focusout(function(){
@@ -375,9 +402,9 @@ $main_block = "
       let tid = $(this).prop('id');
       let rid = tid.split('__');
       let kolom = rid[0];
-      let id_jenis = rid[1];
+      let id_assign_jenis = rid[1];
 
-      let isi_lama = $('#'+kolom+'2__'+id_jenis).text();
+      let isi_lama = $('#'+kolom+'2__'+id_assign_jenis).text();
       let isi_baru = $(this).val().trim();
       if(isi_lama==isi_baru) return;
       if(isi_baru==''){
@@ -390,14 +417,14 @@ $main_block = "
         // $('#'+tid).val(isi_lama);
       }
       let aksi = 'ubah';
-      let link_ajax = `ajax/ajax_crud_jenis.php?aksi=${aksi}&id=${id_jenis}&kolom=${kolom}&isi_baru=${isi_baru}&id_sesi=${id_sesi}&jenis=${jenis}`
+      let link_ajax = `ajax/ajax_crud_jenis.php?aksi=${aksi}&id=${id_assign_jenis}&kolom=${kolom}&isi_baru=${isi_baru}&id_sesi=${id_sesi}&jenis=${jenis}`
       // alert(link_ajax);
       $.ajax({
         url:link_ajax,
         success:function(a){
           if(a.trim()=='sukses'){
             $('#'+tid).addClass('gradasi-hijau biru');
-            $('#'+kolom+'2__'+id_jenis).text(isi_baru);
+            $('#'+kolom+'2__'+id_assign_jenis).text(isi_baru);
           }else{
             alert(a)
           }

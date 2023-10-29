@@ -30,11 +30,13 @@ if(isset($_POST['btn_hapus'])){
 
 if(isset($_POST['btn_upload'])){
 
-  $id_jenis = $_POST['id_jenis'];
+  $id_assign_jenis = $_POST['id_assign_jenis'];
   $s = "SELECT a.*,b.*  
   FROM tb_assign_$jenis a 
   JOIN tb_act_$jenis b ON a.id_$jenis=b.id 
-  WHERE a.id=$id_jenis";
+  WHERE a.id=$id_assign_jenis";
+    echo "<pre>$s</pre>";
+
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   $d = mysqli_fetch_assoc($q);
 
@@ -77,13 +79,14 @@ if(isset($_POST['btn_upload'])){
   // get_point:$get_point<br>
   // ";
 
-  $s = "SELECT id as id_bukti FROM tb_bukti_$jenis WHERE id_$jenis=$id_jenis and id_peserta=$id_peserta";
-  
+  $s = "SELECT id as id_bukti FROM tb_bukti_$jenis WHERE id_assign_$jenis=$id_assign_jenis and id_peserta=$id_peserta";
+      echo "<pre>$s</pre>";
+
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   if(mysqli_num_rows($q)==0){
     $kolom_link = $jenis=='challenge' ? ',link' : '';
     $link_value = $jenis=='challenge' ? ",'$_POST[bukti]'" : '';
-    $s = "INSERT INTO tb_bukti_$jenis (id_$jenis,id_peserta,get_point$kolom_link) VALUES ($id_jenis,$id_peserta,$get_point$link_value)";
+    $s = "INSERT INTO tb_bukti_$jenis (id_assign_$jenis,id_peserta,get_point$kolom_link) VALUES ($id_assign_jenis,$id_peserta,$get_point$link_value)";
     $pesan_upload = div_alert('success',"Upload success. Tunggulah hingga instruktur melakukan verifikasi bukti $jenis kamu!");
     // die("<pre>$s</pre>");
     
@@ -102,7 +105,6 @@ if(isset($_POST['btn_upload'])){
 
   if(isset($_FILES['bukti'])){
     if(move_uploaded_file($_FILES['bukti']['tmp_name'],$target) && $jenis!='challenge'){
-      // die("<pre>$s</pre>");
       $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
       echo $pesan_upload;
       echo "<script>location.replace('?activity&jenis=$jenis&no=$no_jenis')</script>";
@@ -129,7 +131,7 @@ if($no==''){
   (
     SELECT 1 FROM tb_bukti_$jenis 
     WHERE status=1 
-    AND id_$jenis=a.id 
+    AND id_assign_$jenis=a.id 
     AND id_peserta=$id_peserta) sudah_mengerjakan   
   FROM tb_assign_$jenis a 
   JOIN tb_act_$jenis b ON a.id_$jenis=b.id 

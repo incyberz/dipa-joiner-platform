@@ -36,9 +36,19 @@ $img_check_path = 'assets/img/icons/check.png';
 $rjenis = ['latihan','tugas','challenge'];
 foreach ($rjenis as $key => $jenis){
   $s = "SELECT a.no,b.*, 
-  (SELECT count(1) FROM tb_bukti_$jenis WHERE id_$jenis=a.id)  as jumlah_submiter,
-  (SELECT count(1) FROM tb_bukti_$jenis WHERE id_$jenis=a.id AND tanggal_verifikasi is not null AND status=1)  as jumlah_verif,
-  (SELECT count(1) FROM tb_bukti_$jenis WHERE id_$jenis=a.id AND tanggal_verifikasi is not null AND status=-1)  as jumlah_reject
+  (
+    SELECT count(1) FROM tb_bukti_$jenis p 
+    WHERE id_assign_$jenis=a.id)  as jumlah_submiter,
+  (
+    SELECT count(1) FROM tb_bukti_$jenis p 
+    WHERE id_assign_$jenis=a.id 
+    AND p.tanggal_verifikasi is not null 
+    AND p.status=1)  as jumlah_verif,
+  (
+    SELECT count(1) FROM tb_bukti_$jenis p 
+    WHERE id_assign_$jenis=a.id 
+    AND p.tanggal_verifikasi is not null 
+    AND p.status=-1)  as jumlah_reject
   FROM tb_assign_$jenis a 
   JOIN tb_act_$jenis b ON a.id_$jenis=b.id 
   WHERE a.kelas='$kelas' 

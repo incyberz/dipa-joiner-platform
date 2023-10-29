@@ -106,7 +106,7 @@ $parameter = $c[0];
       margin-top: 60px;
       padding: 60px 0 !important;
     }
-
+    .btop{border-top: solid 1px #ccc}
     <?php if($dm) echo '.debug{display:inline; background:yellow; color: blue}'; ?>
   </style>
 </head>
