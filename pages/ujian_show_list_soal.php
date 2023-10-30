@@ -1,4 +1,4 @@
-
+<?php 
 $list_soal = '';
 $s= "SELECT 
 a.id as id_assign_soal,
@@ -75,7 +75,7 @@ $tanggal_start = date('Y-m-d H:i:s');
 
 $form_submit = "
   <form method=post>
-    <input id=tanggal_start name=tanggal_start class='debuga' value='$tanggal_start'>
+    <input id=tanggal_start name=tanggal_start class='debug' value='$tanggal_start'>
     <input id=jawabans name=jawabans class='debug'>
     <div class='mt2' data-aos='fade-up' data-aos-delay='450'>
       <span id=span_submit class='btn btn-secondary btn-block' disabled>Belum bisa Submit Jawaban 

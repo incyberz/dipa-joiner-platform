@@ -103,12 +103,16 @@ if($id_paket_soal==''){
       }
 
     }
+
+    $rand = rand(1,9);
   
     echo "
     <section>
       <div class=container>
-        <div class='mb2'>Silahkan pilih Paket Soal yang tersedia:</div> 
+        <div class='mb2 darkblue bold'>Silahkan pilih Paket Soal yang tersedia:</div> 
         $list_paket
+        <hr>
+        <div class='tengah' style='max-width: 300px; margin: auto'><img  class='img-fluid img-thumbnail' src='assets/img/meme/funny-$rand.jpg'></div>
       </div>
     </section>";
     

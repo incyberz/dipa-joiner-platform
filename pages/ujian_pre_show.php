@@ -125,7 +125,7 @@ foreach ($rkolom as $kolom => $isi) $koloms.= "
   </div>
 ";
 
-$info_paket_soal = "
+$info_paket_soal = $start ? '' : "
 <div id=info_paket_soal class=wadah>
   <h4 class=darkblue>Info Paket Soal</h4>
   $koloms
@@ -147,6 +147,7 @@ $selisih_hari = (strtotime(date('Y-m-d',strtotime($awal_ujian))) - strtotime('to
 $debug .= "<br>selisih:<span id=selisih>$selisih</span>";
 $debug .= "<br>selisih_akhir:<span id=selisih_akhir>$selisih_akhir</span>";
 $debug .= "<br>selisih_hari:<span id=selisih_hari>$selisih_hari</span>";
+$debug .= "<br>start:<span id=start>$start</span>";
 
 if($selisih_hari >= 2){
   $img = "<div class=tengah style='max-width:300px; margin:auto'><img class='img-fluid' src='assets/img/are-you-ready.png' /></div>";
@@ -180,14 +181,20 @@ if($selisih>0){ //belum mulai
   
   if($jumlah_attemp>=$max_attemp){
     $blok_timer.= "<div class='darkred mb2'>Kamu sudah mencapai max_attemp ($max_attemp kali mencoba)</div>";
-    // $countdown = '';    
   }else{
-    $countdown = "
-      <div id='countdown' class='gradasi-merah' style='position:fixed; bottom: 10px; padding: 5px 10px; left: 10px; font: 30px consolas; color: darkred; border-radius: 10px; border: solid 2px darkblue; box-shadow: 0 0 8px gray; z-index:999'>00:00</div>
-    ";
+    if($start){
+      $countdown = "
+        <div id='countdown' class='gradasi-merah' style='position:fixed; bottom: 10px; padding: 5px 10px; left: 10px; font: 30px consolas; color: darkred; border-radius: 10px; border: solid 2px darkblue; box-shadow: 0 0 8px gray; z-index:999'>00:00</div>
+      ";
+    }
   }
 
-  if($selisih_akhir<0 || $jumlah_attemp>=$max_attemp){
+
+  # ==================================================
+  # SHOW JAWABAN
+  # ==================================================
+  $nilai_max = 0;
+  if($jumlah_attemp AND !$start){ // jika SUDAH ATTEMP
     $s = "SELECT a.*, b.tmp_jumlah_soal,b.tanggal_pembahasan,
     (
       SELECT MAX(nilai) FROM tb_jawabans WHERE id_paket_soal=$id_paket_soal AND id_peserta=$id_peserta ) nilai_max  
@@ -206,11 +213,12 @@ if($selisih>0){ //belum mulai
       $max_sign = '';
       while ($d=mysqli_fetch_assoc($q)) {
         $i++;
-        $max_sign = ($d['nilai']==$d['nilai_max'] AND $max_sign=='') ? 'MAX' : '';
-        $class = $max_sign=='MAX' ? 'biru tebal' : '';
+        $max_sign = ($d['nilai']==$d['nilai_max'] AND $max_sign=='') ? '| MAX' : '';
+        $class = $max_sign=='| MAX' ? 'biru tebal' : '';
+        if($nilai_max<$d['nilai']) $nilai_max=$d['nilai'];
         // $tanggal_submit = date('d M Y H:i',strtotime($d['tanggal_submit']));
         $durasi = ceil((strtotime($d['tanggal_submit'])-strtotime($d['tanggal_start']))/60);
-        $list_jawabans .= "<hr><span class='$class'>$i. Nilai: $d[nilai] | Benar: $d[jumlah_benar] of $d[tmp_jumlah_soal] | <span class='miring'>in $durasi minutes</span> | $max_sign</span>";
+        $list_jawabans .= "<hr><span class='$class'>$i. Nilai: $d[nilai] | Benar: $d[jumlah_benar] of $d[tmp_jumlah_soal]  <span class='miring'>in $durasi minutes</span>  $max_sign</span>";
       }
     }
 
@@ -234,11 +242,47 @@ if($selisih>0){ //belum mulai
 
 
 # =======================================================
+# SHOW START
+# =======================================================
+if($selisih<=0 && $selisih_akhir>0 && $jumlah_attemp<$max_attemp && !$start){
+  $rand = rand(1,9);
+  if($jumlah_attemp){
+    $blok_timer.= "
+    <div class='tengah' style='max-width: 300px; margin: auto'><img  class='img-fluid img-thumbnail' src='assets/img/meme/like-$rand.jpg'></div>
+    ";
+    if($nilai_max==100){
+      $blok_timer.= "
+      <div class='mb2 mt4 blue bold'>Selamat!! Kamu sudah mendapat Nilai Sempurna (100)</div>
+      <a href='?ujian&id_paket_soal=$id_paket_soal&start=1' class='btn btn-success btn-block'>Start Ujian</a>
+      ";
+    }else{
+      $blok_timer.= "
+      <div class='mb2 mt4'>Kamu sudah mencoba $jumlah_attemp of $max_attemp attemp. Coba lagi!</div>
+      <a href='?ujian&id_paket_soal=$id_paket_soal&start=1' class='btn btn-success btn-block'>Start Ujian</a>
+      ";
+    }
+  }else{
+    $blok_timer.= "
+    <div class='tengah' style='max-width: 300px; margin: auto'><img  class='img-fluid img-thumbnail' src='assets/img/meme/funny-$rand.jpg'></div>
+    <div class='mb2 mt4'>Kamu belum pernah mencoba. Coba donk!</div>
+    <a href='?ujian&id_paket_soal=$id_paket_soal&start=1' class='btn btn-success btn-block'>Start Ujian</a>
+    ";
+  }
+}else{
+  $blok_timer.= '<div class="mt2"><a href="?ujian">Back to Ujian Home</a></div>';
+}
+  
+
+
+
+
+
+# =======================================================
 # SHOW LIST SOAL
 # =======================================================
 if($selisih<=0 and $selisih_akhir >= 0 and $jumlah_attemp<$max_attemp and $start){
   include 'ujian_show_list_soal.php';
-} // end if PRASYARAT SHOW SOAL
+}
 
 
 

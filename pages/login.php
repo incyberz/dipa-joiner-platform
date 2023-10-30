@@ -56,6 +56,7 @@ if(isset($_POST['btn_login_mhs'])){
     </form>
 
     <div class="tengah mt3" data-aos="fade-up" data-aos-delay="300">Belum punya akun? Silahkan <a href="?join"><b>Join</b></a></div>
+    <div class="tengah mt3" data-aos="fade-up" data-aos-delay="300">Lupa password? <a href="?reset_password"><b>Reset Password</b></a></div>
 
   </div>
 </div>
