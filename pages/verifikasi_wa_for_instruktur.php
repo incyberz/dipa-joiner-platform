@@ -1,0 +1,43 @@
+<section id="team" class="team section-bg">
+  <div class="container">
+
+    <div class="section-title" data-aos="fade-up">
+      <h2>Reset</h2>
+      <p>Fitur Reset khusus Instruktur</p>
+    </div>
+
+    <?php
+    $fkhusus = div_alert('danger', 'Maaf, fitur ini hanya bisa diakses oleh Instruktur | <a href="?login">Login</a>');
+    
+    $get_username = $_GET['username'] ?? die($fkhusus);
+    $get_kelas = $_GET['kelas'] ?? die($fkhusus);
+    $get_no_wa = $_GET['no_wa'] ?? die($fkhusus);
+
+    if(!isset($id_role) || $id_role!=2){
+      echo $fkhusus;
+    }else{
+      $kunci = date('ymdHis');
+      $kunci_encrypted = md5($kunci);
+  
+      $s = "INSERT INTO tb_reset 
+      (username,kelas,no_wa,id_instruktur,kunci) VALUES 
+      ('$get_username','$get_kelas','$get_no_wa','$id_peserta','$kunci') 
+      ON DUPLICATE KEY UPDATE tanggal=CURRENT_TIMESTAMP
+      ";
+      $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+
+  
+      $link_encoded = urlencode("https://pesantrenalmasoem.id/dipa/?reset_password_final&key=$kunci_encrypted");
+      $text_wa = "Halo $get_username%0a%0aUntuk reset password silahkan klik link berikut:%0a%0a $link_encoded";
+      $link_wa = "https://api.whatsapp.com/send?phone=$get_no_wa&text=$text_wa";
+  
+      echo "<div data-aos=fade-up><a class='btn btn-primary btn-block' href='$link_wa'>Resend Keys</a></div>";
+    }
+
+
+
+
+
+    ?>
+  </div>
+</section>
