@@ -34,7 +34,7 @@
       let nama_peserta = $("#nama_peserta").text();
       let d = new Date();
 
-      let text_wa = pesan_wa + ". [From: JWD Gamified Training System - "+d+"]";
+      let text_wa = pesan_wa + ". [From: DIPA Joiner Gamified Training System - "+d+"]";
 
       // let no_wa_pengajar = $("#no_wa_pengajar").text();
       let no_wa_pengajar = '87729007318';

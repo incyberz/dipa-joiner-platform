@@ -2,7 +2,23 @@
 $list_soal = '';
 $form_submit = '';
 $countdown = '';
+$fitur_dosen = '';
 $start = $_GET['start'] ?? '';
+
+
+
+# =======================================================
+# FITUR DOSEN
+# =======================================================
+if ($id_role==2) {
+  $fitur_dosen="
+  <div class='wadah gradasi-merah mt2'>
+    Fitur Dosen: <a href='?monitoring_ujian&id_paket_soal=$id_paket_soal'>Monitoring Ujian</a>
+  </div>
+  ";
+}
+
+
 # =======================================================
 # GET PROPERTIES PAKET UJIAN
 # =======================================================
@@ -337,6 +353,7 @@ if($selisih<=0 and $selisih_akhir >= 0 and $jumlah_attemp<$max_attemp and $start
     <div class="section-title" data-aos="fade-up">
       <h2>Ujian</h2>
       <?=$sub_judul?>
+      <?=$fitur_dosen?>
     </div>
     <div class="" data-aos="fade" data-aos-delay=800>
       <?=$info_paket_soal?>

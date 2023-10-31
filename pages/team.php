@@ -3,7 +3,7 @@
 
     <div class="section-title" data-aos="fade-up">
       <h2>Team</h2>
-      <p>Kami yang ikut mensukseskan JWD VSGA STMIK IKMI Cirebon</p>
+      <p>Kami yang ikut mensukseskan DIPA Joiner</p>
     </div>
 
     <div class="row">

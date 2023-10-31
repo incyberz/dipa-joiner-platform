@@ -14,7 +14,7 @@ if(isset($_POST['btn_login_mhs'])){
   if(mysqli_num_rows($q)==1){
     $d=mysqli_fetch_assoc($q);
     $_SESSION['dipa_username'] = $username;
-    $_SESSION['dipa_role'] = $d['id_role'];
+    $_SESSION['dipa_id_role'] = $d['id_role'];
     $_SESSION['dipa_id_peserta'] = $d['id'];
     echo '<script>location.replace("?")</script>';
     exit;

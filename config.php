@@ -161,4 +161,16 @@ function nr(){
 function section($a){
   return "<section><div class=container>$a</div></section>";
 }
+
+function login_only(){
+  if(!isset($_SESSION['dipa_username'])) die('<script>location.replace("?")</script>');
+}
+
+function instruktur_only(){
+  if(!isset($_SESSION['dipa_username']) || $_SESSION['dipa_id_role']!=2) die('<script>location.replace("?")</script>');
+}
+
+function peserta_only(){
+  if(!isset($_SESSION['dipa_username']) || $_SESSION['dipa_id_role']!=1) die('<script>location.replace("?")</script>');
+}
 ?>

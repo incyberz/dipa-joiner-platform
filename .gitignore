@@ -1,9 +1,15 @@
 assets/img
 assets/vendor
-tmp
+tmp/
+docs/
+uploads/
 
+
+*.xls*
+*.doc*
 *.zip
 *.txt
 *.rar
 *.sql
 *_old.*
+*zzz.*

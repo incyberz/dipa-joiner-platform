@@ -153,7 +153,7 @@ $list = "<div>$toggle_edit$tr</div>";
 
     <div class="section-title" data-aos="fade-up">
       <h2><?=$judul?></h2>
-      <p>Berikut adalah Sesi-sesi Pelatihan JWD (Junior Web Developer):</p>
+      <p>Berikut adalah Sesi-sesi Perkuliahan Matematika Informatika</p>
     </div>
 
     <?=$list?>

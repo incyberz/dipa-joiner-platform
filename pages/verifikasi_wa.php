@@ -4,6 +4,7 @@ $hide_form = 0;
 $hide_section = 0;
 $form = '';
 $dari = '';
+$no_wa = '';
 $untuk = $_GET['untuk'] ?? '';
 if(!$is_login AND $untuk=='') die('<script>location.replace("?")</script>');
 $pesan = 'Untuk mengakses semua fitur kamu harus update dengan nomor whatsapp yang aktif.';
@@ -75,7 +76,7 @@ if(!$hide_form){
     <input class=debug name=kelas value='$kelas'>
     <div class='wadah gradasi-hijau' data-aos='fade-up' data-aos-delay='200'>
       <label for='no_wa' class='tengah mb1'>Nomor WhatsApp <span class='kecil abu miring'>* yang aktif</span></label>
-      <input type='text' class='form-control tengah' minlength=11 maxlength=14 id=no_wa autocomplete=off style='color:gray' name=no_wa required>
+      <input type='text' class='form-control tengah' minlength=11 maxlength=14 id=no_wa autocomplete=off style='color:gray' name=no_wa required value='$no_wa'>
       <div class='tengah consolas' style='font-size:30px' id=no_wa2>628X-XXX-XXX-XXX</div>
       <div class='tengah consolas red' style='font-size:10px' id=no_wa_invalid>awali dg '08...' atau '62...'</div>
       <div>

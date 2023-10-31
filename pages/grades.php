@@ -1,8 +1,20 @@
 <?php
+// login_only(); // boleh tidak login
 $get_kelas = $_GET['kelas'] ?? '';
+if(($get_kelas=='all' and $id_role==1) || $get_kelas=='') die("<script>location.replace('?grades&kelas=$kelas')</script>");
 $judul = 'The Best Top 10';
 $img_login_as = '<img src="assets/img/icons/login_as.png" height=20px class=zoom>';
 $show_img = isset($_GET['show_img']) ? $_GET['show_img'] : 0;
+
+if($kelas!='all'){
+  include 'include/arr_kelas.php';
+  foreach ($arr_kelas as $kls => $jml) {
+    $rank_kelas[$kls] = 0;
+    $jumlah_peserta_kelas[$kls] = $jml;
+  }
+}else{
+  $rank_kelas[$kelas] = 0;
+}
 
 $s = "SELECT last_update_point FROM tb_peserta ORDER BY last_update_point DESC LIMIT 1 ";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
@@ -101,13 +113,15 @@ if($selisih>=600 and $id_role!=3){
 
 $limit = $id_role<=1 ? 'LIMIT 10' : '';
 $only_peserta = $id_role<=1 ? ' a.id_role = 1' : '1';
-$sql_kelas = $get_kelas=='' ? '1' : "a.kelas = '$get_kelas'";
+$sql_kelas = ($get_kelas=='' || $get_kelas=='all') ? '1' : "a.kelas = '$get_kelas'";
 
-$s = "SELECT a.* 
+$s = "SELECT a.* , a.id as id_peserta,
+(SELECT count(1) FROM tb_peserta p WHERE p.status=1 AND p.kelas=a.kelas) jumlah_peserta_kelas  
 FROM tb_peserta a WHERE $only_peserta 
 AND a.status=1 
 AND $sql_kelas
 ORDER BY akumulasi_poin DESC $limit";
+echo "<pre>$s</pre>";
 // $s = "SELECT * FROM tb_peserta ORDER BY rand() LIMIT 10"; //zzz debug
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $tb = div_alert('danger', 'Belum ada data peserta.');
@@ -115,8 +129,10 @@ if(mysqli_num_rows($q)){
   $tr = '';
   $i=0;
   $my_rank = 0;
+  $jumlah_rows = mysqli_num_rows($q);
   while ($d=mysqli_fetch_assoc($q)) {
     $i++;
+    $rank_kelas[$d['kelas']]++;
     $nama_show = ucwords(strtolower($d['nama']));
     $poin_show = number_format($d['akumulasi_poin'],0);
 
@@ -131,7 +147,18 @@ if(mysqli_num_rows($q)){
     }else{
       $link_nama_show = "$nama_show";
       $link_point_show = "$poin_show LP";
+      // $link_point_show.= " $d[jumlah_peserta_kelas]"; //zzz
       $tr_sty = '';
+    }
+
+    //autosave rank
+    if($id_role==2){
+      $rank_kls = $rank_kelas[$d['kelas']];
+      $jp_kelas = $jumlah_peserta_kelas[$d['kelas']];
+
+      $s2 = "UPDATE tb_peserta SET rank_global='$i',rank_kelas='$rank_kls' WHERE id=$d[id_peserta]";
+      // die($s2);
+      $q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));
     }
 
     $login_as = $id_role==2 ? "<a href='?login_as&username=$d[username]' target=_blank>$img_login_as</a>" : '';
@@ -151,11 +178,20 @@ if(mysqli_num_rows($q)){
   }
   $selamat = $my_rank ? div_alert('success',"Selamat! Kamu berada di Ranking $my_rank dari 10 terbaik.") 
   : div_alert('warning','Wah sepertinya kamu harus belajar lebih giat agar berada di 10 terbaik.');
-  $selamat = $is_login ? $selamat : '';
+  $selamat = ($is_login && $id_role==1) ? $selamat : '';
   $tb = "$selamat<div class='mb2  '>$toggle_profil</div><table class='table table-striped table-hover'>$tr</table>";
 }
 
 $kelas_show = $get_kelas=='' ? 'Semua Kelas' : "Kelas $get_kelas";
+if($id_role==2 && $get_kelas!='all'){
+  $kelas_show.= ' | <a href="?grades&kelas=all">All Kelas</a>';
+}else{
+  $s = "SELECT kelas from tb_kelas";
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  while ($d=mysqli_fetch_assoc($q)) {
+    $kelas_show.= " | <a href='?grades&kelas=$d[kelas]'>$d[kelas]</a>";
+  }
+}
 ?>
 <section id="about" class="about">
   <div class="container">

@@ -1,6 +1,6 @@
 <?php
 unset($_SESSION['dipa_username']);
-unset($_SESSION['dipa_role']);
+unset($_SESSION['dipa_id_role']);
 unset($_SESSION['dipa_id_peserta']);
 ?>
 <section id="team" class="team section-bg">
@@ -33,11 +33,26 @@ unset($_SESSION['dipa_id_peserta']);
       </div>
       ";
     }else{
-      echo "
-      <div class='alert alert-danger tengah' data-aos=fade data-aos-delay=1000>
-        Maaf, sepertinya key invalid atau telah expire. | Back to: <a href='?reset_password'>Reset Password</a> | <a href='?login'>Login</a>
-      </div>
-      ";
+
+      //terpakai oleh whatsapp preview link
+      //cek apakah password sudah null
+      $s = "SELECT 1 FROM tb_reset a 
+      JOIN tb_peserta b ON a.username=b.username 
+      WHERE md5(a.kunci)='$key' AND b.password is null";
+      $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+      if(mysqli_num_rows($q)){
+        echo "
+        <div class='alert alert-success tengah' data-aos=fade data-aos-delay=1000>
+          Password Anda telah direset. Silahkan login menggunakan password sama dengan username Anda. | <a href='?login'>Login</a>
+        </div>
+        ";
+      }else{
+        echo "
+        <div class='alert alert-danger tengah' data-aos=fade data-aos-delay=1000>
+          Maaf, sepertinya key invalid atau telah expire. | Back to: <a href='?reset_password'>Reset Password</a> | <a href='?login'>Login</a>
+        </div>
+        ";
+      }
     }
 
 
