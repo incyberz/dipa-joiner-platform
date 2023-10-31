@@ -7,7 +7,7 @@
     <div><?=$kelas?></div>
   </div>
   <div class='blok_rank'>
-    <span class='darkblue'>Rank</span> <span class="rank_number"><?=$rank?></span><span class="rank_th"><?=$th?></span> <span class="rank_of">of <span class="rank_of_count"><?=$jumlah_peserta?></span> peserta</span>
+    <span class='darkblue'>Rank</span> <span class="rank_number"><?=$rank_kelas?></span><span class="rank_th"><?=$th?></span> <span class="rank_of">of <span class="rank_of_count"><?=$total_kelas_ini?></span> peserta</span>
   </div>
   
   <div class='blok_nilai_akhir'>

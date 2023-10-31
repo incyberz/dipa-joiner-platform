@@ -6,7 +6,9 @@ $undef = '<span class="red kecil miring">undefined</span>';
 # GET DATA PESERTA
 # ========================================================
 $s = "SELECT a.*, b.sebagai,
-(SELECT 1 FROM tb_biodata WHERE id_peserta=a.id) punya_biodata 
+(SELECT 1 FROM tb_biodata WHERE id_peserta=a.id) punya_biodata ,
+(
+  SELECT count(1) FROM tb_peserta WHERE status=1 AND kelas=a.kelas) total_kelas_ini 
 FROM tb_peserta a 
 JOIN tb_role b ON a.id_role=b.id 
 WHERE a.username='$username'";
@@ -50,8 +52,32 @@ $punya_biodata = $d_peserta['punya_biodata'];
 $is_depas = $password=='' ? 1 : 0;
 
 $my_points = number_format($akumulasi_poin,0);
+$uts = $d_peserta['uts'] ?? 0;
+$uas = $d_peserta['uas'] ?? 0;
+$nilai_akhir = $d_peserta['nilai_akhir'];
+$rank_kelas = $d_peserta['rank_kelas'];
+$rank_global = $d_peserta['rank_global'];
+$total_kelas_ini = $d_peserta['total_kelas_ini'];
 
 
+
+
+
+# =======================================================
+# COUNT TOTAL LATIHAN / TUGAS / CHALLENGE
+# =======================================================
+$s = "SELECT 
+(SELECT COUNT(1) FROM tb_peserta WHERE status=1) total_peserta,
+(SELECT COUNT(1) FROM tb_act_latihan WHERE status=1) total_latihan,
+(SELECT COUNT(1) FROM tb_act_tugas WHERE status=1) total_tugas,
+(SELECT COUNT(1) FROM tb_act_challenge WHERE status=1) total_challenge
+";
+$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$d = mysqli_fetch_assoc($q);
+$total_peserta = $d['total_peserta'];
+$total_latihan = $d['total_latihan'];
+$total_tugas = $d['total_tugas'];
+$total_challenge = $d['total_challenge'];
 
 
 
@@ -71,33 +97,35 @@ if(file_exists($path_profile)){
 
 
 # ========================================================
-# RANK DAN JUMLAH PESERTA
+# RANK KELAS DAN JUMLAH PESERTA
 # ========================================================
-$s = "SELECT a.id,  
-RANK() over (ORDER BY a.akumulasi_poin DESC) rank
-FROM tb_peserta a 
-WHERE a.status=1 
-AND a.kelas='$kelas'";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-$jumlah_peserta = mysqli_num_rows($q);
-$ranks = [];
-while ($d=mysqli_fetch_assoc($q)) {
-  $ranks[$d['id']] = $d['rank'];
+if($rank_kelas==''){
+  $s = "SELECT a.id,  
+  RANK() over (ORDER BY a.akumulasi_poin DESC) rank
+  FROM tb_peserta a 
+  WHERE a.status=1 
+  AND a.kelas='$kelas'";
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  $jumlah_peserta = mysqli_num_rows($q);
+  $ranks = [];
+  while ($d=mysqli_fetch_assoc($q)) {
+    $ranks[$d['id']] = $d['rank'];
+  }
+  $rank_kelas = $ranks[$id_peserta];
 }
 
-if($ranks[$id_peserta]){
-  $rank = $ranks[$id_peserta];
-  if($rank%10==1){
+if($rank_kelas){
+  if($rank_kelas%10==1){
     $th = 'st';
-  }elseif($rank%10==2){
+  }elseif($rank_kelas%10==2){
     $th = 'nd';
-  }elseif($rank%10==3){
+  }elseif($rank_kelas%10==3){
     $th = 'rd';
   }else{
     $th = 'th';
   }
 }else{
-  $rank = '?';
+  $rank_kelas = '?';
   $th = '';
 }
 
@@ -108,7 +136,7 @@ $s = "SELECT AVG(akumulasi_poin) as average FROM tb_peserta WHERE status=1";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $d = mysqli_fetch_assoc($q);
 $average = $d['average'];
-$nilai_akhir = round(($akumulasi_poin / ($average*1.2)) *100,0);
+$nilai_akhir = $nilai_akhir=='' ? round(($akumulasi_poin / ($average*1.2)) *100,0) : $nilai_akhir;
 if($nilai_akhir>100) $nilai_akhir=100;
 if($nilai_akhir==0){
   $hm = 'B';

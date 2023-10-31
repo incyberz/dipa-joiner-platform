@@ -76,6 +76,7 @@ $jumlah_ask = mysqli_num_rows($q);
               <ul>
                 <li><a href='?get_point'>Dapatkan Poin</a></li>
                 <li><a href='?my_points'>My Points</a></li>
+                <li><a href='?nilai_akhir'>Nilai Akhir</a></li>
                 <li><a href='?upload_profil'>My Profile</a></li>
                 <li class='hideit'><a href='?my_testimony'>My Testimony</a></li>
                 <li class=hideit><a href='?my_biodata'>My Biodata</a></li>

@@ -9,11 +9,11 @@ $show_img = isset($_GET['show_img']) ? $_GET['show_img'] : 0;
 if($kelas!='all'){
   include 'include/arr_kelas.php';
   foreach ($arr_kelas as $kls => $jml) {
-    $rank_kelas[$kls] = 0;
+    $arr_rank_kelas[$kls] = 0;
     $jumlah_peserta_kelas[$kls] = $jml;
   }
 }else{
-  $rank_kelas[$kelas] = 0;
+  $arr_rank_kelas[$kelas] = 0;
 }
 
 $s = "SELECT last_update_point FROM tb_peserta ORDER BY last_update_point DESC LIMIT 1 ";
@@ -121,7 +121,7 @@ FROM tb_peserta a WHERE $only_peserta
 AND a.status=1 
 AND $sql_kelas
 ORDER BY akumulasi_poin DESC $limit";
-echo "<pre>$s</pre>";
+// echo "<pre>$s</pre>";
 // $s = "SELECT * FROM tb_peserta ORDER BY rand() LIMIT 10"; //zzz debug
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $tb = div_alert('danger', 'Belum ada data peserta.');
@@ -132,7 +132,7 @@ if(mysqli_num_rows($q)){
   $jumlah_rows = mysqli_num_rows($q);
   while ($d=mysqli_fetch_assoc($q)) {
     $i++;
-    $rank_kelas[$d['kelas']]++;
+    $arr_rank_kelas[$d['kelas']]++;
     $nama_show = ucwords(strtolower($d['nama']));
     $poin_show = number_format($d['akumulasi_poin'],0);
 
@@ -153,7 +153,7 @@ if(mysqli_num_rows($q)){
 
     //autosave rank
     if($id_role==2){
-      $rank_kls = $rank_kelas[$d['kelas']];
+      $rank_kls = $arr_rank_kelas[$d['kelas']];
       $jp_kelas = $jumlah_peserta_kelas[$d['kelas']];
 
       $s2 = "UPDATE tb_peserta SET rank_global='$i',rank_kelas='$rank_kls' WHERE id=$d[id_peserta]";
