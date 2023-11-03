@@ -42,7 +42,7 @@
 
   <div class="row">
     <div class="col-lg-3 col-md-4 label ">UTS</div>
-    <div class="col-lg-9 col-md-8"><?=$uts?> <span class="kecil miring abu">(estimasi dari <a href="?ujian">Latihan Soal UTS</a>)</span></div>
+    <div class="col-lg-9 col-md-8"><?=$uts?></div>
   </div>
 
   <div class="row">

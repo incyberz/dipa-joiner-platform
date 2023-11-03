@@ -7,17 +7,15 @@ $judul = 'Profile';
 
     <?php
     if(isset($_POST['btn_upload'])){
-      // echo '<pre>';
-      // var_dump($_POST);
-      // var_dump($_FILES);
-      // echo '</pre>';
-
       $tipe = 'publik';
 
       $target = "assets/img/peserta/peserta-$id_peserta.jpg";
       // echo $target;
 
       if(move_uploaded_file($_FILES[$tipe.'_profil']['tmp_name'],$target)){
+        $s = "UPDATE tb_peserta SET profil_ok=null WHERE id=$id_peserta";
+        $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+
         echo '<section><div>'.div_alert('success',"Upload profil berhasil.").'</div></section><script>location.replace("?")</script>';
       }else{
         echo div_alert('danger',"Upload gagal.");

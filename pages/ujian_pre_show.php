@@ -239,8 +239,12 @@ if($selisih>0){ //belum mulai
     }
 
     $info_pembahasan = '';
-    if(strtotime($tanggal_pembahasan)-strtotime('now')){
+    if((strtotime($tanggal_pembahasan)-strtotime('now')) >= 0){
       $info_pembahasan = "<hr><div class='miring darkred'>Pembahasan soal akan muncul pada tanggal $tanggal_pembahasan_show</div>";
+    }else{
+      $dari = urlencode("?ujian&id_paket_soal=$id_paket_soal");
+      $info_pembahasan = "<hr><a class='btn btn-primary btn-block' href='?pembahasan_soal&id_paket_soal=$id_paket_soal&dari=$dari'>Lihat Pembahasan</a>";
+
     }
 
     $blok_timer .= "

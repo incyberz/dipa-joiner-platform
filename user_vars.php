@@ -58,6 +58,7 @@ $nilai_akhir = $d_peserta['nilai_akhir'];
 $rank_kelas = $d_peserta['rank_kelas'];
 $rank_global = $d_peserta['rank_global'];
 $total_kelas_ini = $d_peserta['total_kelas_ini'];
+$profil_ok = $d_peserta['profil_ok'];
 
 
 

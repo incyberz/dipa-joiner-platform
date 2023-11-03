@@ -4,7 +4,7 @@ login_only();
 include 'include/arr_kelas.php';
 
 echo "<section><div class=container>
-<div class='section-title' data-aos='fade-up'>
+<div class='section-title' data-aos='fade'>
   <h2>Nilai Akhir</h2>
   <p>Berikut adalah Rekap Nilai dan Nilai Akhir Anda</p>
 </div>";
@@ -31,8 +31,8 @@ foreach ($arr_kelas as $k => $jp) $data_csv[$k] = '';
 # LIST PESERTA | HIMSELFT
 # =======================================================
 $sql_id_peserta = $id_role==1 ? "a.id=$id_peserta" : '1';
-$nama_paket_soal_uts = 'Latihan Soal UTS';
-$nama_paket_soal_uas = 'Latihan Soal UTS';
+$nama_paket_soal_uts = 'Soal UTS Semester 1 TA. 2023/2024';
+$nama_paket_soal_uas = 'Soal UTS Semester 1 TA. 2023/2024';
 $s = "SELECT  
 a.id as id_peserta,
 a.nama as nama_peserta,
@@ -144,7 +144,8 @@ while ($d=mysqli_fetch_assoc($q)) {
     $data_csv[$kelas_ini].= "Prodi,$d[jenjang] - $d[nama_prodi] - $reguler\n";
     $data_csv[$kelas_ini].= "Mata Kuliah,Matematika Informatika\n";
     $data_csv[$kelas_ini].= "Semester / Kelas,$d[semester] / $d[kode_kelas]\n";
-    $data_csv[$kelas_ini].= "Dosen,Iin, S.T. M.Kom\n\n";
+    $data_csv[$kelas_ini].= "Dosen,Iin S.T. M.Kom\n\n";
+    $data_csv[$kelas_ini].= "NO,NAMA,NIM,TIMESTAMP KEHADIRAN,NILAI TUGAS,NILAI UTS,KETERANGAN\n";
   }
   $nama_peserta = strtoupper($d['nama_peserta']);
 
@@ -244,10 +245,19 @@ while ($d=mysqli_fetch_assoc($q)) {
 
   $tanggal_submit_uts = $d['tanggal_submit_uts'] ?? '-';
   $nim = $d['nim'] ?? '-';
-  $data_csv[$kelas_ini] .= "$no,$nama_peserta,$nim,$tanggal_submit_uts,$nilai_tugas,$nilai_uts,'-'\n";
+  $data_csv[$kelas_ini] .= "$no,$nama_peserta,$nim,$tanggal_submit_uts,$nilai_tugas,$nilai_uts,-\n";
 }
 
-foreach ($arr_kelas as $k => $jp) echo "<pre class=debug>$data_csv[$k]</pre>";
+$link_download_csv = '';
+if($id_role!=1){
+  foreach ($arr_kelas as $k => $jp){
+    echo "<pre class=debug>$data_csv[$k]</pre>";
+    $fcsv = fopen("csv/$k.csv", "w+") or die("$path_csv cannot accesible.");
+    fwrite($fcsv, $data_csv[$k]);
+    fclose($fcsv);
+    $link_download_csv.= "<a href='csv/$k.csv' target=_blank class='btn btn-success btn-sm'>$k</a> ";
+  }
+}
 
 $div_row[1] = ['Count Latihan',"$jumlah_latihan <span class='kecil miring abu'>of $total_latihan</span>",$konversi_latihan.' <span class="kecil miring abu">x '.$rbobot['Count Latihan'].'%</span>'];
 $div_row[2] = ['Count Tugas',"$jumlah_tugas <span class='kecil miring abu'>of $total_tugas</span>",$konversi_tugas.' <span class="kecil miring abu">x '.$rbobot['Count Tugas'].'%</span>'];
@@ -277,7 +287,7 @@ foreach ($div_row as $v) {
   ";
 }
 
-echo $id_role==2 ? "<table class='table'>$tr</table>" : "
+echo $id_role==2 ? "<table class='table'>$tr</table><div class=wadah><div class=mb1>Download CSV:</div>$link_download_csv</div>" : "
 <div class=wadah data-aos=fade-up >
   <h3 class='darkblue mt3 mb3'>$nama_peserta <span class='miring abu kecil'>$kelas</span></h3>
   $rows
