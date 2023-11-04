@@ -13,6 +13,7 @@
     </div>        
 <!-- ============================================================== -->
 <?php
+login_only();
 $get_profil_ok = $_GET['profil_ok'] ?? null;
 
 
@@ -22,6 +23,7 @@ if($id_role==2){
 }else{ $sql_profil_ok = '1';} 
 $s = "SELECT a.id as id_peserta,
 a.nama as nama_peserta,
+a.kelas,
 a.profil_ok 
 
 FROM tb_peserta a 
@@ -49,6 +51,7 @@ if(mysqli_num_rows($q)==0){
                 <img src='$path' class='foto_profil' />
               </div> 
               <div style='overflow:hidden;white-space: nowrap'>$d[nama_peserta]</div>
+              <div class='abu mb2' style='font-size:10px; margin-top: -5px'>$d[kelas]</div>
         
               <div>
                 <table width=100%>

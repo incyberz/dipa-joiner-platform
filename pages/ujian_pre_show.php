@@ -110,9 +110,9 @@ $sub_judul = "<div>$nama_sesi untuk $kelas</div>";
 
 $durasi = number_format((strtotime($akhir_ujian)-strtotime($awal_ujian))/60,0);
 $durasi_show = "<span class='kecil miring abu'>($durasi menit)</span>";
-$awal_ujian_show = $nama_hari[date('w',strtotime($awal_ujian))].', '.date('d M Y H:i', strtotime($awal_ujian));
+$awal_ujian_show = $nama_hari[date('w',strtotime($awal_ujian))].', '.date('d-M H:i', strtotime($awal_ujian));
 $akhir_ujian_show = date('H:i', strtotime($akhir_ujian));
-$tanggal_pembahasan_show = date('d M Y H:i', strtotime($tanggal_pembahasan));
+$tanggal_pembahasan_show = date('d-M H:i', strtotime($tanggal_pembahasan));
 $kode_sesi_show = "$kode_sesi | $nama_sesi";
 $max_attemp_show = $max_attemp ?? '<span class="kecil miring consolas">unlimitted</span>';
 
@@ -232,7 +232,7 @@ if($selisih>0){ //belum mulai
         $max_sign = ($d['nilai']==$d['nilai_max'] AND $max_sign=='') ? '| MAX' : '';
         $class = $max_sign=='| MAX' ? 'biru tebal' : '';
         if($nilai_max<$d['nilai']) $nilai_max=$d['nilai'];
-        // $tanggal_submit = date('d M Y H:i',strtotime($d['tanggal_submit']));
+        // $tanggal_submit = date('d-M H:i',strtotime($d['tanggal_submit']));
         $durasi = ceil((strtotime($d['tanggal_submit'])-strtotime($d['tanggal_start']))/60);
         $list_jawabans .= "<hr><span class='$class'>$i. Nilai: $d[nilai] | Benar: $d[jumlah_benar] of $d[tmp_jumlah_soal]  <span class='miring'>in $durasi minutes</span>  $max_sign</span>";
       }
@@ -241,11 +241,16 @@ if($selisih>0){ //belum mulai
     $info_pembahasan = '';
     if((strtotime($tanggal_pembahasan)-strtotime('now')) >= 0){
       $info_pembahasan = "<hr><div class='miring darkred'>Pembahasan soal akan muncul pada tanggal $tanggal_pembahasan_show</div>";
-    }else{
-      $dari = urlencode("?ujian&id_paket_soal=$id_paket_soal");
-      $info_pembahasan = "<hr><a class='btn btn-primary btn-block' href='?pembahasan_soal&id_paket_soal=$id_paket_soal&dari=$dari'>Lihat Pembahasan</a>";
+    }    
+    $dari = urlencode("?ujian&id_paket_soal=$id_paket_soal");
+    $info_pembahasan .= "<hr><a class='btn btn-primary btn-block' href='?pembahasan_soal&id_paket_soal=$id_paket_soal&dari=$dari'>Lihat Pembahasan</a>";
+    // if((strtotime($tanggal_pembahasan)-strtotime('now')) >= 0){
+    //   $info_pembahasan = "<hr><div class='miring darkred'>Pembahasan soal akan muncul pada tanggal $tanggal_pembahasan_show</div>";
+    // }else{
+    //   $dari = urlencode("?ujian&id_paket_soal=$id_paket_soal");
+    //   $info_pembahasan = "<hr><a class='btn btn-primary btn-block' href='?pembahasan_soal&id_paket_soal=$id_paket_soal&dari=$dari'>Lihat Pembahasan</a>";
 
-    }
+    // }
 
     $blok_timer .= "
       <div class='wadah kiri bg-white'>

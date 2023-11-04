@@ -25,7 +25,6 @@ if(isset($_POST['btn_reset'])){
     exit;
   }else{
     $pesan = div_alert('danger','Maaf, username dan no_wa tidak tepat. Silahkan coba kembali!');
-    // $pesan .= " username:$username no_wa:$no_wa"; //zzz debug
   }
 }
 ?>

@@ -1,7 +1,7 @@
 <style>
-  .blok-bar{border: solid 1px #ccc;padding: 5px; display:grid; grid-template-columns: 150px 20px auto}
-  .bar-batang{border: solid 1px #eee; border-radius: 5px; font-size: 8px}
-  .zzz{border: solid 1px #eee}
+  .blok-bar{border: solid 1px #ccc; border-radius: 6px; padding: 5px; display:grid; grid-template-columns: 120px 80px auto;margin: 5px 0}
+  .bar-batang{border: solid 1px #eee; border-radius: 6px; font-size: 8px}
+  .bar-stars{border: solid 1px #eee}
 </style>
 <section id="pengajar" class="pengajar section-bg">
   <div class="container">
@@ -91,10 +91,10 @@ foreach ($rpolling as $no => $rtanya) {
       $no_counter = $no."__$i";
       $opsi .= "<img src=assets/img/icons/stars.png height=20px>";
       $opsies .= "
-      <div class=kecil style='display:grid;grid-template-columns: 100px 30px auto'>
+      <div class=kecil style='display:grid;grid-template-columns: 120px 80px auto'>
         <div class=right>$opsi</div>
-        <div class=tengah>$count[$i]</div>
-        <div class=zzz style='padding: 5px'><span style='display: inline-block; background:$bg; height: 100%; width: $persen%'></span></div>
+        <div class=tengah>$count[$i] <span class='kecil miring abu'>($persen%)</span></div>
+        <div class=bar-stars style='padding: 5px'><span style='display: inline-block; background:$bg; height: 100%; width: $persen%'></span></div>
       </div>
       ";
     }
@@ -107,30 +107,30 @@ foreach ($rpolling as $no => $rtanya) {
     $width[3] = round(($count[3]/$jumlah_responden)*100,0);
     $width[4] = round(($count[4]/$jumlah_responden)*100,0);
 
-    $red1 = 200;
-    $red2 = 150;
-    $red3 = 100;
-    $red4 = 50;
+    $red1 = 250;
+    $red2 = 200;
+    $red3 = 150;
+    $red4 = 100;
     $green1 = 100;
     $green2 = 150;
     $green3 = 200;
     $green4 = 255;
     $start1 = 'fcc';
     $start2 = 'ffc';
-    $start3 = 'ddf';
+    $start3 = 'afa';
     $start4 = 'afa';
     if($no==3 || $no==4){
-      $red4 = 200;
-      $red3 = 150;
-      $red2 = 100;
-      $red1 = 50;
+      $red4 = 250;
+      $red3 = 200;
+      $red2 = 150;
+      $red1 = 100;
       $green4 = 100;
       $green3 = 150;
       $green2 = 200;
       $green1 = 255;
       $start4 = 'fcc';
       $start3 = 'ffc';
-      $start2 = 'ddf';
+      $start2 = 'afa';
       $start1 = 'afa';      
     }
 
@@ -139,22 +139,22 @@ foreach ($rpolling as $no => $rtanya) {
       <div class='mt2 mb4 kecil'>
         <div class='mb2 blok-bar'>
           <div>Tidak $rtanya[1]</div>
-          <div>$count[1]</div>
+          <div>$count[1] <span class='kecil miring abu'>($width[1]%)</span></div>
           <div class='bar-batang' style='width: $width[1]%; background: linear-gradient(to right, #$start1, rgb($red1,$green1,100))'></div>
         </div>
         <div class='mb2 blok-bar'>
           <div>Sedikit $rtanya[1]</div>
-          <div>$count[2]</div>
+          <div>$count[2] <span class='kecil miring abu'>($width[2]%)</span></div>
           <div class='bar-batang' style='width: $width[2]%; background: linear-gradient(to right, #$start2, rgb($red2,$green2,100))'></div>
         </div>
         <div class='mb2 blok-bar'>
           <div>Saya $rtanya[1]</div>
-          <div>$count[3]</div>
+          <div>$count[3] <span class='kecil miring abu'>($width[3]%)</span></div>
           <div class='bar-batang' style='width: $width[3]%; background: linear-gradient(to right, #$start3, rgb($red3,$green3,100))'></div>
         </div>
         <div class='mb2 blok-bar'>
           <div>Sangat $rtanya[1]</div>
-          <div>$count[4]</div>
+          <div>$count[4] <span class='kecil miring abu'>($width[4]%)</span></div>
           <div class='bar-batang' style='width: $width[4]%; background: linear-gradient(to right, #$start4, rgb($red4,$green4,100))'></div>
         </div>
       </div>
@@ -165,8 +165,8 @@ foreach ($rpolling as $no => $rtanya) {
 
   // show pertanyaan
   $polls.= "
-    <div class='btop pt2 mb2' id=polls__$no>
-      $no
+    <div class='btop pt2 mb4' id=polls__$no>
+      <div class='miring abu'>$no</div>
       <div class=mb2>$rtanya[0]</div>
       $opsi
     </div>
@@ -176,6 +176,7 @@ foreach ($rpolling as $no => $rtanya) {
 echo "
   <h4 class='darkblue mb2 mt2'>Polling:</h4>
   $polls
+  <hr>
   <div class='form-group mb2 mt2' id=blok_saran>
     <h4 class='darkblue'><label for='saran'>Saran dan masukan:</label></h4>
     $sarans

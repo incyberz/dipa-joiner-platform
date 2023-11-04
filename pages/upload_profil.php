@@ -43,7 +43,7 @@ $judul = 'Profile';
       <div class="col-lg-4 offset-lg-4">
         <div class="wadah" data-aos="fade-up" data-aos-delay="150">
           <h4>Upload Profile</h4>
-          <p>Pilihlah foto profil yang sopan dan terlihat wajah (tanpa masker, kacamata, dll).</p>
+          <p>Pilihlah foto profil yang sopan dan terlihat wajah (tanpa masker, kacamata hitam, dll).</p>
           <div class="text-center">
             <img onclick='alert("<?=$onclick_publik?>")' class='foto_profil' src='<?=$src_publik_profil?>'>
           </div>

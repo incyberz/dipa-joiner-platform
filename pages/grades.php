@@ -122,7 +122,6 @@ AND a.status=1
 AND $sql_kelas
 ORDER BY akumulasi_poin DESC $limit";
 // echo "<pre>$s</pre>";
-// $s = "SELECT * FROM tb_peserta ORDER BY rand() LIMIT 10"; //zzz debug
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $tb = div_alert('danger', 'Belum ada data peserta.');
 if(mysqli_num_rows($q)){
@@ -147,7 +146,6 @@ if(mysqli_num_rows($q)){
     }else{
       $link_nama_show = "$nama_show";
       $link_point_show = "$poin_show LP";
-      // $link_point_show.= " $d[jumlah_peserta_kelas]"; //zzz
       $tr_sty = '';
     }
 

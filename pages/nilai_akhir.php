@@ -33,6 +33,14 @@ foreach ($arr_kelas as $k => $jp) $data_csv[$k] = '';
 $sql_id_peserta = $id_role==1 ? "a.id=$id_peserta" : '1';
 $nama_paket_soal_uts = 'Soal UTS Semester 1 TA. 2023/2024';
 $nama_paket_soal_uas = 'Soal UTS Semester 1 TA. 2023/2024';
+$nama_paket_soal_remed_uts = 'Soal Pasca UTS';
+$nama_paket_soal_remed_uas = 'Soal Pasca UAS';
+
+$from_tb_jawabans = "FROM tb_jawabans p 
+  JOIN tb_paket_soal q ON p.id_paket_soal=q.id 
+  WHERE p.id_peserta=a.id 
+  AND q.nama ";
+
 $s = "SELECT  
 a.id as id_peserta,
 a.nama as nama_peserta,
@@ -44,24 +52,40 @@ b.*,
 (SELECT COUNT(1) FROM tb_bukti_latihan WHERE id_peserta=a.id) jumlah_latihan,
 (SELECT COUNT(1) FROM tb_bukti_tugas WHERE id_peserta=a.id) jumlah_tugas,
 (SELECT COUNT(1) FROM tb_bukti_challenge WHERE id_peserta=a.id) jumlah_challenge,
+
+
 (
-  SELECT p.nilai FROM tb_jawabans p 
-  JOIN tb_paket_soal q ON p.id_paket_soal=q.id 
-  WHERE p.id_peserta=a.id 
-  AND q.nama = '$nama_paket_soal_uts'
+  SELECT p.nilai $from_tb_jawabans = '$nama_paket_soal_uts'
   ORDER BY p.nilai DESC LIMIT 1) nilai_uts, 
 (
-  SELECT p.tanggal_submit FROM tb_jawabans p 
-  JOIN tb_paket_soal q ON p.id_paket_soal=q.id 
-  WHERE p.id_peserta=a.id 
-  AND q.nama = '$nama_paket_soal_uts'
+  SELECT p.tanggal_submit $from_tb_jawabans = '$nama_paket_soal_uts'
   ORDER BY p.nilai DESC LIMIT 1) tanggal_submit_uts, 
+
+
 (
-  SELECT p.nilai FROM tb_jawabans p 
-  JOIN tb_paket_soal q ON p.id_paket_soal=q.id 
-  WHERE p.id_peserta=a.id 
-  AND q.nama = '$nama_paket_soal_uas'
+  SELECT p.nilai $from_tb_jawabans = '$nama_paket_soal_uas'
   ORDER BY p.nilai DESC LIMIT 1) nilai_uas ,
+(
+  SELECT p.tanggal_submit $from_tb_jawabans = '$nama_paket_soal_uas'
+  ORDER BY p.nilai DESC LIMIT 1) tanggal_submit_uas, 
+
+
+(
+  SELECT p.nilai $from_tb_jawabans = '$nama_paket_soal_remed_uts'
+  ORDER BY p.nilai DESC LIMIT 1) nilai_remed_uts ,
+(
+  SELECT p.tanggal_submit $from_tb_jawabans = '$nama_paket_soal_remed_uts'
+  ORDER BY p.nilai DESC LIMIT 1) tanggal_submit_remed_uts, 
+
+
+(
+  SELECT p.nilai $from_tb_jawabans = '$nama_paket_soal_remed_uas'
+  ORDER BY p.nilai DESC LIMIT 1) nilai_remed_uas ,
+(
+  SELECT p.tanggal_submit $from_tb_jawabans = '$nama_paket_soal_remed_uas'
+  ORDER BY p.nilai DESC LIMIT 1) tanggal_submit_remed_uas, 
+
+
 (
   SELECT count(1) FROM tb_peserta WHERE status=1 AND kelas=a.kelas) total_kelas_ini 
 
@@ -83,6 +107,8 @@ $rbobot['Rank Global'] = 10;
 $rbobot['Rank Kelas'] = 20;
 $rbobot['UTS'] = 15;
 $rbobot['UAS'] = 20;
+$rbobot['Remed UTS'] = 5;
+$rbobot['Remed UAS'] = 0;
 
 $tr='';
 $td_bobot = '';
@@ -128,6 +154,8 @@ $total_kelas_ini=0;
 $nilai_uts=0;
 $nilai_uas=0;
 
+$nilai_remed_uts=0;
+$nilai_remed_uas=0;
 
 while ($d=mysqli_fetch_assoc($q)) {
   $i++;
@@ -157,6 +185,8 @@ while ($d=mysqli_fetch_assoc($q)) {
   $total_kelas_ini=$d['total_kelas_ini'];
   $nilai_uts=$d['nilai_uts'];
   $nilai_uas=$d['nilai_uas'];
+  $nilai_remed_uts=$d['nilai_remed_uts'];
+  $nilai_remed_uas=$d['nilai_remed_uas'];
 
   $red = $jumlah_latihan==0 ? 'gradasi-merah' : '';
   $red = ($jumlah_latihan>0 && $jumlah_latihan<=3) ? 'gradasi-kuning' : $red;
@@ -218,7 +248,11 @@ while ($d=mysqli_fetch_assoc($q)) {
     $rbobot['Rank Global'] * $konversi_rank_global + 
     $rbobot['Rank Kelas'] * $konversi_rank_kelas + 
     $rbobot['UTS'] * $d['nilai_uts'] + 
-    $rbobot['UAS'] * $d['nilai_uas'])/100,0);
+    $rbobot['Remed UTS'] * $d['nilai_remed_uts'] + 
+    $rbobot['Remed UAS'] * $d['nilai_remed_uas'] + 
+    $rbobot['UAS'] * $d['nilai_uas']
+    )/100,0);
+  if($nilai_akhir>100) $nilai_akhir=100;
 
   $tr.= "
   <tr class='$red'>
@@ -231,6 +265,8 @@ while ($d=mysqli_fetch_assoc($q)) {
     <td>$d[rank_kelas] <span class='kecil miring abu'>of $d[total_kelas_ini]</span><div class='kecil miring abu'>$konversi_rank_kelas</div></td>
     <td>$d[nilai_uts]</td>
     <td>$d[nilai_uas]</td>
+    <td>$d[nilai_remed_uts]</td>
+    <td>$d[nilai_remed_uas]</td>
     <td>$nilai_akhir $delete</td>
   </tr>";
 
@@ -240,10 +276,18 @@ while ($d=mysqli_fetch_assoc($q)) {
   //autosave nilai_akhir
   if($nilai_uts=='') $nilai_uts='NULL';
   if($nilai_uas=='') $nilai_uas='NULL';
-  $s2 = "UPDATE tb_peserta SET uts=$nilai_uts,uas=$nilai_uas,nilai_akhir='$nilai_akhir' WHERE id=$d[id_peserta]";
+  if($nilai_remed_uts=='') $nilai_remed_uts='NULL';
+  if($nilai_remed_uas=='') $nilai_remed_uas='NULL';
+  $s2 = "UPDATE tb_peserta SET 
+  uts=$nilai_uts,
+  uas=$nilai_uas,
+  remed_uts=$nilai_remed_uts,
+  remed_uas=$nilai_remed_uas,
+  nilai_akhir='$nilai_akhir' 
+  WHERE id=$d[id_peserta]";
   $q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));
 
-  $tanggal_submit_uts = $d['tanggal_submit_uts'] ?? '-';
+  $tanggal_submit_uts = $d['tanggal_submit_uts'] ?? '-'; // ZZZ tanggal submit only for UTS
   $nim = $d['nim'] ?? '-';
   $data_csv[$kelas_ini] .= "$no,$nama_peserta,$nim,$tanggal_submit_uts,$nilai_tugas,$nilai_uts,-\n";
 }
@@ -266,7 +310,9 @@ $div_row[4] = ['Rank Global',"$rank_global <span class='kecil miring abu'>of $to
 $div_row[5] = ['Rank Kelas',"$rank_kelas <span class='kecil miring abu'>of $total_kelas_ini</span>",$konversi_rank_kelas.' <span class="kecil miring abu">x '.$rbobot['Rank Kelas'].'%</span>'];
 $div_row[6] = ['UTS','-',$nilai_uts.' <span class="kecil miring abu">x '.$rbobot['UTS'].'%</span>'];
 $div_row[7] = ['UAS','-',$nilai_uas.' <span class="kecil miring abu">x '.$rbobot['UAS'].'%</span>'];
-$div_row[8] = ['<span class=darkblue>Nilai Akhir</span>','-',"<span class=blue style=font-size:30px>$nilai_akhir</span>"];
+$div_row[8] = ['Remed UTS','-',$nilai_remed_uts.' <span class="kecil miring abu">x '.$rbobot['Remed UTS'].'%</span>'];
+$div_row[9] = ['Remed UAS','-',$nilai_remed_uas.' <span class="kecil miring abu">x '.$rbobot['Remed UAS'].'%</span>'];
+$div_row[10] = ['<span class=darkblue>Nilai Akhir</span>','-',"<span class=blue style=font-size:30px>$nilai_akhir</span>"];
 
 $rows='';
 foreach ($div_row as $v) {
@@ -337,7 +383,6 @@ echo "</div></section>";
         url:link_ajax,
         success:function(a){
           if(a.trim()=='sukses'){
-            // zzz
             console.log(a);
           }else{
             alert(a);

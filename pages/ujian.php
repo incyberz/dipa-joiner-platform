@@ -40,8 +40,10 @@ if($id_paket_soal==''){
       $selisih_hari = (strtotime(date('Y-m-d',strtotime($d['awal_ujian']))) - strtotime('today')) / (3600*24);
 
 
-      $awal_ujian_show = $nama_hari[date('w',strtotime($d['awal_ujian']))].', '.date('d M Y H:i', strtotime($d['awal_ujian']));
-      $akhir_ujian_show = date('H:i', strtotime($d['akhir_ujian']));
+      $awal_ujian_show = $nama_hari[date('w',strtotime($d['awal_ujian']))].', '.date('d-M  H:i', strtotime($d['awal_ujian']));
+      // $format = $selisih_hari==0 ? 'H:i' : 'd-M  H:i';
+      $format =  'd-M  H:i';
+      $akhir_ujian_show = date($format, strtotime($d['akhir_ujian']));
 
       $nama_paket_show = "
       $d[nama]
@@ -53,7 +55,7 @@ if($id_paket_soal==''){
         if($jumlah_attemp==0){
           $list_paket .= "<div><span class='btn btn-secondary btn-block' onclick='alert(\"Maaf, Paket Soal ini sudah berakhir.\")'>$nama_paket_show<br>Sudah berakhir dan kamu tidak bisa mengikutinya kembali</span></div>";
         }else{
-          $list_paket .= "<div><a href='?ujian&id_paket_soal=$d[id]' class='btn btn-secondary btn-block' >$nama_paket_show<br>Sudah berakhir dan kamu boleh melihat hasilnya</a></div>";
+          $list_paket .= "<a href='?ujian&id_paket_soal=$d[id]' class='mb2 btn btn-secondary btn-block' >$nama_paket_show<br>Sudah berakhir dan kamu boleh melihat hasilnya</a>";
         }
 
 
@@ -66,7 +68,12 @@ if($id_paket_soal==''){
         }else{
           $info = "Kamu sudah $jumlah_attemp kali mencoba. Coba lagi!";
         }
-        $list_paket .= "<div><a class='btn btn-primary btn-block' href='?ujian&id_paket_soal=$d[id]'>$nama_paket_show<br>Sedang berlangsung<br>$info</a></div>";
+        $list_paket .= "
+          <a class='mb2 btn btn-primary btn-block' href='?ujian&id_paket_soal=$d[id]'>$nama_paket_show
+            <br>Sedang berlangsung
+            <br>$info
+          </a>
+        ";
 
       }else{
         // belum berlangsung
@@ -93,12 +100,11 @@ if($id_paket_soal==''){
         # FINAL OUTPUT LIST PAKET
         # ===================================================
         $list_paket .= "
-        <div class=mb2>
-          <a class='btn btn-info btn-block ' href='?ujian&id_paket_soal=$d[id]'>
+          <a class='mb2 btn btn-info btn-block ' href='?ujian&id_paket_soal=$d[id]'>
             $nama_paket_show <span class='kecil miring'> ~ $eta_info</span>
             <br>$attemp_info
           </a>
-        </div>";
+        ";
 
       }
 

@@ -9,7 +9,6 @@
 <!-- ========================================================== -->
 <?php
 login_only();
-$id_role=2; /// zzz debug
 $fitur_dosen = $id_role==1 ? '' : "<div class='wadah mt2 gradasi-merah'>Fitur Dosen: <a href='?polling_hasil'>Hasil Polling</a></div>";
 
 echo "

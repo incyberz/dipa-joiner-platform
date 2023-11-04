@@ -28,8 +28,29 @@ $tanggal_pembahasan = $d['tanggal_pembahasan'];
 $akhir_ujian_show = date('d M Y H:i', strtotime($akhir_ujian));
 $tanggal_pembahasan_show = date('d M Y H:i', strtotime($tanggal_pembahasan));
 
+$selisih = strtotime($tanggal_pembahasan) - strtotime('now');
+$selisih_debug = "|| $selisih || $tanggal_pembahasan";
+$selisih_debug = '';
+
+if($selisih<60){
+  $eta = "$selisih detik lagi $selisih_debug";
+}elseif($selisih<60*60){
+  $eta = ceil($selisih/60). " menit lagi $selisih_debug";
+}elseif($selisih<60*60*24){
+  $eta = round($selisih/(60*60),0). " jam lagi $selisih_debug";
+}else{
+  $eta = round($selisih/(60*60*24),0). " hari lagi $selisih_debug";
+}
+$eta = "<span class='miring kecil biru tebal'>($eta)</span>";
+
 if((strtotime($tanggal_pembahasan)-strtotime('now')) >= 0){
-  echo div_alert('danger',"Akses ditolak. <div class='kecil miring abu'>Pembahasan soal akan muncul pada tanggal $tanggal_pembahasan_show</div>");
+  echo div_alert('danger',"Sabar masbro/sisbro!! <div class='kecil miring abu'>Pembahasan soal akan muncul pada tanggal $tanggal_pembahasan_show $eta<hr>Syarat melihat pembahasan adalah:
+    <ol>
+      <li>Upload foto profil yang baik | <a href='?upload_profil'>Upload</a></li>
+      <li>Foto profil sudah terverifikasi oleh intruktur | <a href='?verifikasi_profil_peserta'>Lihat Status Profil</a></li>
+      <li>Kamu sudah mengisi polling pasca ujian | <a href='?polling_uts'>Isi Polling</a></li>
+    </ol>
+  </div>");
 }else{
   if((strtotime($tanggal_pembahasan)-strtotime($akhir_ujian)) < 0){
     echo div_alert('danger',"Tanggal Pembahasan invalid. <div class='kecil miring abu'>Tanggal Pembahasan lebih awal dari tanggal akhir ujian $akhir_ujian_show. Pembahasan akan tetap ditampilkan setelah tanggal ujian tersebut berakhir.</div>");
@@ -38,7 +59,7 @@ if((strtotime($tanggal_pembahasan)-strtotime('now')) >= 0){
     # PRASYARAT PEMBAHASAN
     # =================================================
     $sudah_polling = 0;
-    $s = "SELECT 1 FROM tb_jawaban_polling WHERE id=$id_peserta";
+    $s = "SELECT 1 FROM tb_polling_answer WHERE id=$id_peserta";
     $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
     if(mysqli_num_rows($q)) $sudah_polling=1;
 
@@ -69,7 +90,6 @@ if((strtotime($tanggal_pembahasan)-strtotime('now')) >= 0){
         $jawabans = $d['jawabans'];
         $tmp_jawabans = $d['tmp_jawabans'];
 
-        // echo "AN:$jawabans <br> KJ:$tmp_jawabans"; ///zzz debug
         $ranswer = [];
         $rjawabans = explode('|',$jawabans);
         foreach ($rjawabans as $id_n_answer) {

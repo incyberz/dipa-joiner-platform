@@ -22,10 +22,11 @@ foreach ($rjenis as $key => $jenis) {
     ORDER BY b.id_sesi, a.tanggal DESC 
     ";
   }else{
-    $s = "SELECT a.*, b.nama,
+    $s = "SELECT a.*, c.nama,
     (SELECT nama FROM tb_peserta WHERE id=a.verified_by) as verifikator  
     FROM tb_bukti_$jenis a 
-    JOIN tb_assign_$jenis b ON a.id_$jenis=b.id 
+    JOIN tb_assign_$jenis b ON a.id_assign_$jenis=b.id 
+    JOIN tb_act_$jenis c ON b.id_$jenis=c.id
     WHERE a.id_peserta=$id_peserta 
     ORDER BY b.no 
     ";

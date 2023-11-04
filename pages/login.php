@@ -1,10 +1,18 @@
 <?php
-$pesan = '<p>Silahkan masukan Username dan password untuk login. Untuk password awal adalah sama dengan username Anda.</p>';
+$pesan_login = '<p>Silahkan masukan Username dan password untuk login. Untuk password awal adalah sama dengan username Anda.</p>';
 $username = '';
 $password = '';
+$cookie_name = 'dipa_username';
+
+if(!isset($_COOKIE[$cookie_name])) {
+  echo "Cookie named '" . $cookie_name . "' is not set!";
+} else {
+  echo "Cookie '" . $cookie_name . "' is set!<br>";
+  echo "Value is: " . $_COOKIE[$cookie_name];
+}
 
 
-if(isset($_POST['btn_login_mhs'])){
+if(isset($_POST['btn_login_peserta'])){
   $username = clean_sql($_POST['username']);
   $password = clean_sql($_POST['password']);
 
@@ -13,14 +21,19 @@ if(isset($_POST['btn_login_mhs'])){
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   if(mysqli_num_rows($q)==1){
     $d=mysqli_fetch_assoc($q);
-    $_SESSION['dipa_username'] = $username;
+    $_SESSION[$cookie_name] = $username;
     $_SESSION['dipa_id_role'] = $d['id_role'];
     $_SESSION['dipa_id_peserta'] = $d['id'];
+
+    # ========================================================
+    # SET COOKIE
+    # ========================================================
+    setcookie($cookie_name, $username, time() + (86400 * 30), "/"); // 86400 = 1 day
+
     echo '<script>location.replace("?")</script>';
     exit;
   }else{
-    $pesan = div_alert('danger','Maaf, username dan password tidak tepat. Silahkan coba kembali!');
-    // $pesan .= " username:$username password:$password"; //zzz debug
+    $pesan_login = div_alert('danger','Maaf, username dan password tidak tepat. Silahkan coba kembali!');
   }
 }
 ?>
@@ -37,7 +50,7 @@ if(isset($_POST['btn_login_mhs'])){
 <div class="full" data-aos='fade-up'>
   <div class="wadah gradasi-biru form-login p-4">
     <h3>Login Peserta</h3>
-    <?=$pesan?>
+    <?=$pesan_login?>
     <hr>
     <form method="post">
       <div class="form-group">
@@ -51,7 +64,7 @@ if(isset($_POST['btn_login_mhs'])){
       </div>
 
       <div class="form-group">
-        <button class='btn btn-primary btn-block' name='btn_login_mhs'>Login</button>
+        <button class='btn btn-primary btn-block' name='btn_login_peserta'>Login</button>
       </div>      
     </form>
 
