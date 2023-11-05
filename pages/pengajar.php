@@ -6,6 +6,8 @@
       <p>Assalamu'alaikum! Halo semuanya! Perkenalkan nama Bapak, Iin Sholihin, seorang Freelance Programmer, Lecturer, dan juga Farmer. Untuk lebih detail silahkan klik Link Github bapak.</p>
     </div>
 
+ 
+
     <div data-aos=fade-up>
       <div class="blok_profile_pengajar">
         <img src="assets/img/pengajar/abi.jpg" class="foto_profil" onclick="alert('Hai!! Ingin belajar animasi CSS seperti ini?!')">

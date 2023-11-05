@@ -29,10 +29,10 @@ $jp_info = $jumlah_pertanyaan_hari_ini
 $id_sesi = $_GET['id_sesi'] ?? '';
 $info_sesi = '';
 if($id_sesi==''){
-  include 'include/include_rsesi.php';
+  include 'include/arr_sesi.php';
   $pilih_sesi = '';
-  foreach ($rsesi as $key => $sesi){
-    $tags = $rtags[$key];
+  foreach ($arr_sesi as $key => $sesi){
+    $tags = $arr_tags[$key];
     $r = explode(';',$tags);
     sort($r);
     $imp = $tags=='' ? '<span class=red>belum bisa mengajukan pertanyaan karena belum ada tags sesi.</span>' : implode(', ',$r);

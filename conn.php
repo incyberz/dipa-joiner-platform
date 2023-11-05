@@ -31,6 +31,6 @@ function erid($a){
 function clean_sql($a){
   $a = str_replace('\'','`',$a);
   $a = str_replace('"','`',$a);
-  $a = str_replace(';','',$a);
+  $a = str_replace(';',',',$a);
   return $a;
 }

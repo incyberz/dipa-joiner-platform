@@ -17,7 +17,7 @@ if(0){
 session_start();
 // session_destroy(); exit;
 // echo '<pre style="margin-top: 170px">'; var_dump($_SESSION); echo '</pre>';
-$dm = 0;
+$dm = 1;
 $is_login = 0;
 $id_role = 0;
 $status = 0;
@@ -27,11 +27,12 @@ $punya_profil = '';
 include 'config.php';
 
 # ========================================================
-# INCLUDE INSHO STYLES
+# COOKIE AND LOGIN PROCESS
 # ========================================================
-$insho_styles = $online_version ? 'insho_styles.php' : '../insho_styles.php';
-include $insho_styles;
-include 'jwd_styles.php';
+$dipa_cookie = 'dipa_username';
+include 'pages/login_process.php';
+
+
 
 # ========================================================
 # INCLUDE LOGIN PETUGAS
@@ -57,8 +58,17 @@ if (!strpos($a, "&")) $a.="&";
 $b = explode("?", $a);
 $c = explode("&", $b[1]);
 $parameter = $c[0];
+if($parameter=='logout'){
+  include 'pages/logout.php';
+  exit;
+}
 
-
+# ========================================================
+# INCLUDE INSHO STYLES
+# ========================================================
+$insho_styles = $online_version ? 'insho_styles.php' : '../insho_styles.php';
+include $insho_styles;
+include 'jwd_styles.php';
 ?>
 
 <!DOCTYPE html>
