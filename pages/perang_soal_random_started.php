@@ -33,8 +33,10 @@ while($d=mysqli_fetch_assoc($q)){
   ";
 }
 
-// zzz belum cek exists
-$profil_penjawab = "<img src='assets/img/peserta/peserta-$id_peserta-64.jpg' class=profil_penjawab>";
+$path_na = "assets/img/no_profil.jpg";
+$path = "assets/img/peserta/peserta-$id_peserta-64.jpg";
+$path = file_exists($path) ? $path : $path_na;
+$profil_penjawab = "<img src='$path' class=profil_penjawab>";
 
 $s = "SELECT 
 a.id as id_soal,
@@ -118,6 +120,7 @@ if($jumlah_soal){
           username_pembuat__$id_soal: <span id=username_pembuat__$id_soal>$username_pembuat</span><br>
           durasi__$id_soal: <span id=durasi__$id_soal>$durasi</span><br>
           id_status__$id_soal: <span id=id_status__$id_soal>$id_status</span><br>
+          id_pembuat__$id_soal: <span id=id_pembuat__$id_soal>$id_pembuat</span><br>
         </div>
       </div>
     ";
@@ -169,7 +172,7 @@ if($jumlah_soal){
               </td>
               <td width=100px class='tengah'><img class='senjata' src='assets/img/guns/wp10.png' id=weapon width=100px></td>
               <td class='tengah'>
-                <img src='assets/img/no_profile.jpg' class=profil_pembuat id=profil_pembuat>
+                <img src='assets/img/no_profil.jpg' class=profil_pembuat id=profil_pembuat>
                 <br><span id=username_pembuat>???</span>
                 <br><span class='miring kecil abu'><span id=poin_pembuat>8</span> LP</span>
               </td>
@@ -374,6 +377,7 @@ if($jumlah_soal){
     let total_poin_penjawab = 0;
     let is_rejected = false;
     let id_alasan = 0;
+    let cid_pembuat = '';
 
 
     // get from database + salts
@@ -411,6 +415,7 @@ if($jumlah_soal){
       $('.blok_soal').hide();
       $('#blok_soal__'+cid_soal).show();
       cid_status = $('#id_status__'+cid_soal).text();
+      cid_pembuat = $('#id_pembuat__'+cid_soal).text();
       $('#cid_soal').text(cid_soal);
 
       // reset blok reject
@@ -422,6 +427,7 @@ if($jumlah_soal){
       //reset blok pembahasan
       $('#blok_pembahasan').removeClass('gradasi-hijau');
       $('#blok_pembahasan').removeClass('gradasi-merah');
+      $('#blok_pembahasan').removeClass('gradasi-kuning');
 
       if(parseInt(cid_status)>0){
         // tidak dapat reject verified soal
@@ -582,6 +588,7 @@ if($jumlah_soal){
       // if rejected zzz here
 
       let id_soal = $('#cid_soal').text();
+      cid_pembuat = $('#id_pembuat__'+id_soal).text();
       let jawaban = $('#cjawaban').text();
       $('#blok_pembahasan').slideDown();
       $('#profil_pembuat').prop('src',$('#profil_pembuat__'+id_soal).prop('src'));
@@ -663,7 +670,19 @@ if($jumlah_soal){
       $('#total_poin_penjawab').text(total_poin_penjawab);
 
       // update form data
-      arr_idnjpp[id_soal] = cidnj + '~~' + is_benar + '~~' + poin_jawab + '~~' + poin_pembuat;
+      let d = new Date();
+      let saat_ini = d.getFullYear()
+        +'-'+(d.getMonth()+1)
+        +'-'+d.getDay()
+        +' '+d.getHours()
+        +':'+d.getMinutes()
+        +':'+d.getSeconds();
+      arr_idnjpp[id_soal] = cidnj 
+        + '~~' + is_benar 
+        + '~~' + poin_jawab 
+        + '~~' + poin_pembuat 
+        + '~~' + cid_pembuat
+        + '~~' + saat_ini;
       // store ids and jawabans
       cidnjpp = '';
       arr_idnjpp.forEach(e => {

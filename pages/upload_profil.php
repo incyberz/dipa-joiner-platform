@@ -26,7 +26,7 @@ $judul = 'Profile';
       exit;
     }
 
-    $no_profil = 'assets/img/no_profile.jpg';
+    $no_profil = 'assets/img/no_profil.jpg';
     $src_publik_profil = "assets/img/peserta/peserta-$id_peserta.jpg";
 
     $src_publik_profil = file_exists($src_publik_profil) ? $src_publik_profil : $no_profil;

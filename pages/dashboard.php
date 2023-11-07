@@ -75,7 +75,7 @@ $pekerjaan = $pekerjaan=='' ? "$sebagai" : $pekerjaan;
 
 $src = "assets/img/peserta/peserta-$id_peserta.jpg";
 if(!file_exists($src)){
-  $src_profil = 'assets/img/no_profile.jpg';
+  $src_profil = 'assets/img/no_profil.jpg';
 }else{
   $src_profil = $src;
 }

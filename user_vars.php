@@ -85,15 +85,28 @@ $total_challenge = $d['total_challenge'];
 # ========================================================
 # PROFILE HANDLER
 # ========================================================
-$path_profile = "assets/img/peserta/peserta-$id_peserta.jpg";
-// echo "<h1 style='padding-top:200px'>$path_profile</h1>";
+$path_profil = "assets/img/peserta/peserta-$id_peserta.jpg";
+// echo "<h1 style='padding-top:200px'>$path_profil</h1>";
 $rand = rand(1,5);
-$path_profile_na = "assets/img/no_profile$rand.jpg";
-if(file_exists($path_profile)){
+$path_profil_na = "assets/img/no_profile$rand.jpg";
+if(file_exists($path_profil)){
   $punya_profil = true;
 }else{
   $punya_profil = false;
-  $path_profile = $path_profile_na;
+  $path_profil = $path_profil_na;
+}
+
+
+# ========================================================
+# PROFIL PERANG
+# ========================================================
+$path_profil_perang = "assets/img/peserta/peserta-$id_peserta-64.jpg";
+$path_profil_perang_na = $path_profil_na;
+if(file_exists($path_profil_perang)){
+  $punya_profil_perang = true;
+}else{
+  $punya_profil_perang = false;
+  $path_profil_perang = $path_profil_perang_na;
 }
 
 

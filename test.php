@@ -1,31 +1,37 @@
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js" integrity="sha256-/H4YS+7aYb9kJ5OKhFYPUjSJdrtV6AeyJOtTkw6X72o=" crossorigin="anonymous"></script>
+<?php
+$image = imagecreatefromjpeg($_GET['src']);
+$filename = 'images/cropped_whatever.jpg';
 
+$thumb_width = 200;
+$thumb_height = 150;
 
-Full working sample actually is:
+$width = imagesx($image);
+$height = imagesy($image);
 
+$original_aspect = $width / $height;
+$thumb_aspect = $thumb_width / $thumb_height;
 
-<br><br>
-<label>encrypted</label>
-<div id="demo1"></div>
-<br>
+if ( $original_aspect >= $thumb_aspect )
+{
+   // If image is wider than thumbnail (in aspect ratio sense)
+   $new_height = $thumb_height;
+   $new_width = $width / ($height / $thumb_height);
+}
+else
+{
+   // If the thumbnail is wider than the image
+   $new_width = $thumb_width;
+   $new_height = $height / ($width / $thumb_width);
+}
 
-<label>decrypted</label>
-<div id="demo2"></div>
+$thumb = imagecreatetruecolor( $thumb_width, $thumb_height );
 
-<br>
-<label>Actual Message</label>
-<div id="demo3"></div>
-
-
-<script>
-  let encrypted = CryptoJS.AES.encrypt("Message", "Secret Passphrase");
-//U2FsdGVkX18ZUVvShFSES21qHsQEqZXMxQ9zgHy+bu0=
-
-let decrypted = CryptoJS.AES.decrypt(encrypted, "Secret Passphrase");
-//4d657373616765
-
-
-document.getElementById("demo1").innerHTML = encrypted;
-document.getElementById("demo2").innerHTML = decrypted;
-document.getElementById("demo3").innerHTML = decrypted.toString(CryptoJS.enc.Utf8);
-</script>
+// Resize and crop
+imagecopyresampled($thumb,
+                   $image,
+                   0 - ($new_width - $thumb_width) / 2, // Center the image horizontally
+                   0 - ($new_height - $thumb_height) / 2, // Center the image vertically
+                   0, 0,
+                   $new_width, $new_height,
+                   $width, $height);
+imagejpeg($thumb, $filename, 80);

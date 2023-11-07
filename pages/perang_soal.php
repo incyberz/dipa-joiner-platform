@@ -10,13 +10,11 @@ if(isset($_POST['btn_accept_points'])){
   // handle next soal | ga dijawab
   echo div_alert('success',"Memproses poin request...");
   echo "<span class=debug id=encdata>$_POST[cidnjpp]</span>";
-  echo "<span id=output></span>";
   ?><script>
     $(function(){
       let buyar = $('#encdata').text();
       let debuyar = CryptoJS.AES.decrypt(buyar, "DIPA Joiner");
       let asli = debuyar.toString(CryptoJS.enc.Utf8);
-
       let link_ajax = "ajax/kirim_hasil_kuis.php?data="+asli;
 
       $.ajax({
@@ -24,21 +22,15 @@ if(isset($_POST['btn_accept_points'])){
         success:function(a){
           if(a.trim()=='sukses'){
             // redirect to meme
+            // console.log(a);
+            location.replace("?perang_soal_sukses");
 
           }else{
             alert(a);
           }
         }
       })
-
     })
-
-  
-
-
-
-  
-
   </script><?php
 }else{
   // normal view
@@ -71,6 +63,7 @@ if(isset($_POST['btn_accept_points'])){
   
   
   if($mode==''){
+    $meme = meme('dont-have');
     $div = "
       <div class=wadah>
         <div>Silahkan pilih mode:</div>
@@ -82,7 +75,12 @@ if(isset($_POST['btn_accept_points'])){
             </div>
           </div>
           <div class=col-md-6>
-            <a class='btn btn-info btn-block' href='?perang_soal&mode=pvp'>PvP Mode</a>
+            <span class='btn btn-info btn-block' id=pvp_mode>PvP Mode</span>
+
+            <div class=' wadah kecil miring darkred mb2 hideit tengah' id=pvp_mode_info>
+              Maaf, fitur ini masih dalam tahap pengembangan
+              <div class=tengah>$meme</div>
+            </div>
             <div class='kecil miring abu mb2'>
               Jawablah semua soal milik seorang kawanmu
             </div>
@@ -128,3 +126,10 @@ if(isset($_POST['btn_accept_points'])){
 
 
 ?></div></section>
+<script>
+  $(function(){
+    $('#pvp_mode').click(function(){
+      $('#pvp_mode_info').slideToggle();
+    })
+  })
+</script>

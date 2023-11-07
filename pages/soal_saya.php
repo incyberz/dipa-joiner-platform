@@ -19,12 +19,14 @@ echo "
   </div>
 ";
 
-$s="SELECT a.*, b.status as status_soal FROM tb_soal_pg a 
-JOIN tb_status_soal b ON a.id_status=b.id 
+$s="SELECT a.*,
+(SELECT SUM(poin_pembuat) FROM tb_perang WHERE id_soal=a.id AND id_pembuat=$id_peserta) earned_points, 
+(SELECT status FROM tb_status_soal WHERE id=a.id_status) status_soal 
+FROM tb_soal_pg a 
 WHERE id_pembuat=$id_peserta";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-
-$div = div_alert('danger',"Kamu belum punya Soal PG | $link");
+$r = rand(1,9);
+$div = div_alert('danger tengah',"<img class=meme src='assets/img/meme/dont-have-$r.jpg'><div class=mt2>Kamu belum punya Soal PG</div> <hr> $link");
 if(mysqli_num_rows($q)){
   $div = '';
   $i=0;

@@ -60,6 +60,13 @@ $jumlah_ask = mysqli_num_rows($q);
           $li_ask = ($id_role<=1 || $jumlah_ask==0) ? '' : "<li><a href='?chats' class='proper'><span class='biru tebal'>Chats</span> <span class='count_badge badge_red' id='jumlah_ask'>$jumlah_ask</span></a></li>";
           echo "
           $li_verif $li_ask
+            <li class='dropdown'><a  href='#'><span class='tebal darkred'>Perang</span> <i class='bi bi-chevron-down'></i></a>
+              <ul>
+                <li><a href='?tanam_soal'>Tanam Soal</a></li>
+                <li><a href='?soal_saya'>Soal Saya</a></li>
+                <li><a href='?perang_soal'>Perang Soal</a></li>
+              </ul>
+            </li>
             <li class='dropdown'><a  href='#'><span class='tebal darkblue'>Belajar</span> <i class='bi bi-chevron-down'></i></a>
               <ul>
                 <li><a href='?list_sesi'>List Sesi</a></li>
@@ -72,6 +79,7 @@ $jumlah_ask = mysqli_num_rows($q);
                 <li class=hideit><a href='?quiz'>Kuis PG</a></li>
                 <li class=><a href='?ujian'>Ujian</a></li>
               </ul>
+            </li>
             <li class='dropdown'><a class=getstarted href='#'><span>$nickname_show</span> <i class='bi bi-chevron-down'></i></a>
               <ul>
                 <li><a href='?get_point'>Dapatkan Poin</a></li>
