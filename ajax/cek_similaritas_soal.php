@@ -2,7 +2,7 @@
 # ================================================
 # SESSION SECURITY
 # ================================================
-include "ajax_session_security.php";
+include 'session_user.php';
 
 # ================================================
 # FUNCTIONS
@@ -39,54 +39,56 @@ function sortnclean($str){
 # ================================================
 # GET VARIABEL
 # ================================================
-$tags_soal = isset($_GET['tags_soal']) ? $_GET['tags_soal'] : die(erjx('tags_soal'));
-$input_kal = isset($_GET['input_kal']) ? $_GET['input_kal'] : die(erjx('input_kal'));
-$id_soal = isset($_GET['id_soal']) ? $_GET['id_soal'] : die(erjx('id_soal'));
+$my_tags = $_GET['my_tags'] ?? die(erid('my_tags')); if($my_tags=='') die(erid("my_tags::null"));
+$kalimat_soal = $_GET['kalimat_soal'] ?? die(erid('kalimat_soal')); if($kalimat_soal=='') die(erid("kalimat_soal::null"));
+
+
 
 # ================================================
 # SIMILARITY CHECK
 # ================================================
-$rtags_soal = explode(', ',$tags_soal);
-$kalimat_soal_like = '( 0 ';
-
+$rtags_soal = explode(',',$my_tags);
+$tags_like = '( 0 ';
 for ($i=0; $i < count($rtags_soal); $i++) { 
-	$kalimat_soal_like .= " OR a.kalimat_soal like '%$rtags_soal[$i]%'";
-	$kalimat_soal_like .= " OR a.opsi_pg1 like '%$rtags_soal[$i]%'";
-	$kalimat_soal_like .= " OR a.opsi_pg2 like '%$rtags_soal[$i]%'";
-	$kalimat_soal_like .= " OR a.opsi_pg3 like '%$rtags_soal[$i]%'";
-	$kalimat_soal_like .= " OR a.opsi_pg4 like '%$rtags_soal[$i]%'";
+	$tags_like .= " OR a.tags like '%$rtags_soal[$i]%'";
 }
+$tags_like .= ' ) ';
 
-$kalimat_soal_like .= ' ) ';
 
+$s = "SELECT 
+a.id as id_soal,
+a.kalimat_soal,
+a.opsies,
+a.id_pembuat as soal_creator, 
+a.tanggal as tanggal_buat,  
+b.nama as pembuat_soal 
 
-$s = "SELECT a.id_soal,a.kalimat_soal,b.nama_player as pembuat_soal, a.soal_creator, a.tanggal_buat  
-from tb_soal a 
-join tb_player b on a.soal_creator=b.nickname 
-join tb_room_subject c on a.id_room_subject=c.id_room_subject 
-where a.id_soal!='$id_soal' 
-and $kalimat_soal_like 
-and c.id_room='$cid_room'
+from tb_soal_pg a 
+join tb_peserta b on a.id_pembuat=b.id 
+join tb_sesi c on a.id_sesi=c.id 
+where 1  
+and $tags_like 
+and c.id_room='$id_room'
 ";
 
 // die($s);
 $q = mysqli_query($cn,$s) or die('Error jx_soal_similarity_check. '.mysqli_error($cn));
+$total_soal = mysqli_num_rows($q);
+if($total_soal==0) die('sukses__1');
 
 $rsoal = [];
 $i=0;
 while ($d=mysqli_fetch_assoc($q)) {
-	$id_soal = $d['id_soal'];
-	$kalimat_soal = $d['kalimat_soal'];
-	$soal_creator = $d['soal_creator'];
-	$pembuat_soal = $d['pembuat_soal'];
-	$tanggal_buat = $d['tanggal_buat'];
 
-	similar_text(sortnclean($input_kal), sortnclean($kalimat_soal), $persen_similar);
+	$opsies = str_replace('~~~',' ',$d['opsies']);
+	$kalimat_soal_db = "$d[kalimat_soal] $opsies";
+
+	similar_text(sortnclean($kalimat_soal), sortnclean($kalimat_soal_db), $persen_similar);
 	$persen_similar = round($persen_similar,2);
 
-	$rsoal[$i] = [$persen_similar,$id_soal,$kalimat_soal,$soal_creator,$pembuat_soal,$tanggal_buat]; 
+	$rsoal[$i] = [$persen_similar,$d['id_soal'],$d['kalimat_soal'],$d['soal_creator'],$d['pembuat_soal'],$d['tanggal_buat']]; 
 	$i++;
-	// echo "<hr><span style='color: $red'>$persen_similar</span> || $kalimat_soal. <br>". sortnclean($kalimat_soal);
+	// die("sukses__1__<hr><span style='color: red'>$persen_similar</span> || Kalimat soal: $kalimat_soal. <hr>kalimat soal db: $kalimat_soal_db");
 }
 
 usort($rsoal, function($a,$b){
@@ -96,7 +98,9 @@ usort($rsoal, function($a,$b){
 
 
 $z='';
-for ($i=0; $i < 3 ; $i++) { 
+$count_row_similar = 3;
+if($total_soal<$count_row_similar) $count_row_similar=$total_soal;
+for ($i=0; $i < $count_row_similar ; $i++) { 
 	$persen_similar = $rsoal[$i][0];
 	if($persen_similar>75){
 
@@ -106,14 +110,12 @@ for ($i=0; $i < 3 ; $i++) {
 		$pembuat_soal = $rsoal[$i][4];
 		$tanggal_buat = $rsoal[$i][5];
 
-		$z.="<hr><b>Similarity: $persen_similar%</b> | <small>$kalimat_soal | by: $pembuat_soal at $tanggal_buat</small>";
+		$z.="<hr><b>Similarity: $persen_similar%</b> | <small>Terlalu sama dengan soal yang dibuat oleh: $pembuat_soal at $tanggal_buat <div class='mt1 ml2'><span class=abu>Kalimat soal:</span> $kalimat_soal</div></small>";
 
 	}
 }
 
-if($z == '') die('<img src="assets/img/icons/check_green.png" width="25px">');
-
-echo "$z";
+echo "sukses__$persen_similar"."__$z";
 
 
 

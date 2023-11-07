@@ -1,10 +1,4 @@
-<section id="about" class="about">
-  <div class="container">
-
-    <div class="section-title" data-aos-zzz="fade-up">
-      <h2>Menanam Soal</h2>
-      <p>Tanamlah soal dengan benih yang berkualitas</p>
-    </div>
+<section id="about" class="about"><div class="container">
 <style>
   .unclicked{background: #aaa;}
   .opsi{margin-top:4px; font-size:small; border: none;color:#555}
@@ -21,22 +15,43 @@ $opsi['c'] = '';
 $opsi['d'] = '';
 $pembahasan = '';
 
-$kalimat_soal = 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quaerat, tenetur ab consectetur obcaecati laborum debitis sequi modi ipsum illum provident consequatur assumenda facilis inventore voluptatem accusantium placeat alias tempore enim? zzz  informatika, lore';
-$opsi['a'] = 'opsi a';
-$opsi['b'] = 'opsi b';
-$opsi['c'] = 'opsi c';
-$opsi['d'] = 'implikas';
+
+$link = "<a href='?soal_saya'>Soal Saya</a>";
+$link2 = "<a href='?perang_soal'>Perang Soal</a>";
+echo "
+  <div class='section-title' data-aos-zzz='fade-up'>
+    <h2>Menanam Soal</h2>
+    <p>
+      <div>$link | $link2</div>
+      <div class='kecil abu'>
+        Tanamlah soal dengan benih yang berkualitas
+      </div> 
+    </p>
+  </div>
+";
+
+// $kalimat_soal = 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quaerat, tenetur ab consectetur obcaecati laborum debitis sequi modi ipsum illum provident consequatur assumenda facilis inventore voluptatem accusantium placeat alias tempore enim? zzz  informatika, lore';
+// $opsi['a'] = 'opsi a';
+// $opsi['b'] = 'opsi b';
+// $opsi['c'] = 'opsi c';
+// $opsi['d'] = 'implikas';
 
 # =================================================================
 # HANDLE SUBMIT
 # =================================================================
 if(isset($_POST['btn_simpan'])){
-  $kalimat_soal = $_POST['kalimat_soal'] ?? die(erid('kalimat_soal::null'));
-  $opsi['a'] = $_POST['opsi__a'] ?? die(erid('opsi__a::null'));
-  $opsi['b'] = $_POST['opsi__b'] ?? die(erid('opsi__b::null'));
-  $opsi['c'] = $_POST['opsi__c'] ?? die(erid('opsi__c::null'));
-  $opsi['d'] = $_POST['opsi__d'] ?? die(erid('opsi__d::null'));
+  $kalimat_soal = $_POST['kalimat_soal2'] ?? die(erid('kalimat_soal2::null'));
+  $opsi['a'] = $_POST['opsi__a2'] ?? die(erid('opsi__a2::null'));
+  $opsi['b'] = $_POST['opsi__b2'] ?? die(erid('opsi__b2::null'));
+  $opsi['c'] = $_POST['opsi__c2'] ?? die(erid('opsi__c2::null'));
+  $opsi['d'] = $_POST['opsi__d2'] ?? die(erid('opsi__d2::null'));
   $pembahasan = $_POST['pembahasan'];
+
+  if($kalimat_soal=='') die(erid('kalimat_soal::null'));
+  if($opsi['a']=='') die(erid('opsi__a::null'));
+  if($opsi['b']=='') die(erid('opsi__b::null'));
+  if($opsi['c']=='') die(erid('opsi__c::null'));
+  if($opsi['d']=='') die(erid('opsi__d::null'));
 
   $kalimat_soal = clean_sql($kalimat_soal);
   $opsi['a'] = clean_sql($opsi['a']);
@@ -45,16 +60,26 @@ if(isset($_POST['btn_simpan'])){
   $opsi['d'] = clean_sql($opsi['d']);
   $pembahasan = clean_sql($pembahasan);
 
-  echo '<pre>';
-  var_dump($_POST);
-  echo '</pre>';
+  // echo '<pre>';
+  // var_dump($_POST);
+  // echo '</pre>';
 
-  // $s = "INSERT INTO tb_soal_mhs 
-  // (id_sesi,id_peserta,kalimat_soal,tags,opsies,kj) values 
-  // ('$_POST[id_sesi]','$_POST[id_peserta]','$_POST[kalimat_soal]','$_POST[input_tags]')";
-  // $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-  // echo div_alert('success','Submit kalimat_soal sukses.');
-  // echo '<script>location.replace("?my_questions")</script>';
+  $opsies = "$opsi[a]~~~$opsi[b]~~~$opsi[c]~~~$opsi[d]";
+  $jawaban = $opsi['a'];
+  if($_POST['kj']=='b') $jawaban = $opsi['b'];
+  if($_POST['kj']=='c') $jawaban = $opsi['c'];
+  if($_POST['kj']=='d') $jawaban = $opsi['d'];
+
+  $status = $id_role==1 ? 'NULL' : 2;
+
+  $s = "INSERT INTO tb_soal_pg 
+  (id_sesi,id_pembuat,kalimat_soal,tags,opsies,jawaban,id_status) values 
+  ($_POST[id_sesi],$id_peserta,'$kalimat_soal','$_POST[my_tags]','$opsies','$jawaban',$status)
+  ";
+  // echo "<pre>$s</pre>";
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  echo div_alert('success','Simpan Soal sukses.');
+  echo '<script>location.replace("?soal_saya")</script>';
   exit;
 }
 
@@ -118,7 +143,7 @@ if($id_sesi==''){
       <div class='blok_opsi'>
         <div class=tengah>$abjad.</div>
         <div>
-          <input class='form-control opsies' id=opsi__$abjad name=opsi__$abjad minlength=3 maxlength=30 required value='$opsi[$abjad]'>
+          <input class='form-control opsies user_input' id=opsi__$abjad name=opsi__$abjad minlength=3 maxlength=30 required value='$opsi[$abjad]'>
         </div>
         <div>
           <span class='btn btn-sm btn-info btn-block opsi unclicked set_kj' id=set_kj__$abjad name=set_kj__$abjad>Set KJ</span>
@@ -141,10 +166,15 @@ if($id_sesi==''){
       <input class=debug name=id_sesi value=$id_sesi>
       <input class=debug name=my_tags id=my_tags placeholder=my_tags>
       <input class=debug name=kj id=kj placeholder=kj>
+      <input class=debug name=kalimat_soal2 id=kalimat_soal2 placeholder=kalimat_soal2>
+      <input class=debug name=opsi__a2 id=opsi__a2 placeholder=opsi__a2>
+      <input class=debug name=opsi__b2 id=opsi__b2 placeholder=opsi__b2>
+      <input class=debug name=opsi__c2 id=opsi__c2 placeholder=opsi__c2>
+      <input class=debug name=opsi__d2 id=opsi__d2 placeholder=opsi__d2>
 
       <div class='form-group mb2'>
         <label for=kalimat_soal>Kalimat soal:</label>
-        <textarea name=kalimat_soal id=kalimat_soal class='form-control' rows=6 minlength=30 required>$kalimat_soal</textarea required>
+        <textarea name=kalimat_soal id=kalimat_soal class='form-control user_input' rows=6 minlength=30 required>$kalimat_soal</textarea required>
         <div class='kecil miring abu mt1' id=minimal_30_huruf>minimal 30 huruf s.d 300 huruf</div>
       </div>
 
@@ -160,11 +190,23 @@ if($id_sesi==''){
           <span id=tags class=green>$tags</span>.
         </div>
         <div class='kecil miring darkred mt2 hideit' id=blok_similaritas>
-          <span class='btn btn-secondary btn-sm' id=btn_cek_similaritas>Cek Similaritas</span> <span id=similaritas>0</span>%
+          <span class='btn btn-secondary btn-sm' id=btn_cek_similaritas>Cek Similaritas</span>
+          <span id=similaritas>0% </span>
+          <span id=similaritas_info>???</span>
+        </div>
+        <div id=blok_reset_similaritas class='hideit mt2'>
+          <span class='btn btn-primary btn-sm btn-block mb2' id=btn_reset_similaritas>Perbaiki Kalimat Soal</span>
+          <div class='kecil darkblue miring tengah'>Ubahlah kalimat soal atau opsi agar agar angka similaritas tidak terlalu tinggi</div>
         </div>
       </div>
 
       <div id=info_poin class=mb2></div>
+
+      <div id=blok_ubah_kalimat class='hideit mt2'>
+        <span class='btn btn-secondary btn-sm btn-block mb2' id=btn_ubah_kalimat>Ubah Kalimat Soal</span>
+        <div class='kecil darkblue miring tengah'>Saat ini kamu boleh mengubah kalimat soal, membuat pembahasan, atau langsung simpan soal</div>
+      </div>
+
       <div id=blok_toggle_pembahasan class='hideit mt2'>
         <span class='btn btn-secondary btn-sm kecil' id=toggle_pembahasan>Tambah Pembahasan (+50 LP):</span>
       </div>
@@ -214,22 +256,57 @@ if($id_sesi==''){
     let my_tags = [];
     let minimal_30_huruf = $('#minimal_30_huruf').text();
     let img_check = '<img src="assets/img/icons/check.png" alt="ok" height="20px" />';
+    let img_reject = '<img src="assets/img/icons/reject.png" alt="ok" height="20px" />';
     let kalimat_soal = '';
+    let opsi__a = '';
+    let opsi__b = '';
+    let opsi__c = '';
+    let opsi__d = '';
+
     let kalimat_soal_full = '';
     let kj = '';
     let similaritas = 0;
+    let similaritas_show = '';
+
+    function reset_form(){
+      $('#info_poin').text('');
+      $('#btn_simpan').prop('disabled',true);
+      $('#blok_similaritas').hide();
+      $('#blok_toggle_pembahasan').hide();
+      $('#blok_reset_similaritas').hide();
+      $('#blok_ubah_kalimat').hide();
+      $('#btn_cek_similaritas').show();
+      similaritas = 0;
+      similaritas_show = '';      
+      $('#similaritas').text(similaritas+'%');
+      $('#similaritas_info').text(similaritas_show);
+      $('.user_input').prop('disabled',false);
+      $('.set_kj').show();
+    }
+
+    function ready_simpan(){
+      $('#blok_toggle_pembahasan').fadeIn();
+      $('#info_poin').html('<span class="btn btn-secondary btn-sm">Poin membuat soal +100 LP</span> ' + img_check);
+      $('#btn_simpan').prop('disabled',false);      
+      $('#kalimat_soal2').val(kalimat_soal);      
+      $('#opsi__a2').val(opsi__a);      
+      $('#opsi__b2').val(opsi__b);      
+      $('#opsi__c2').val(opsi__c);      
+      $('#opsi__d2').val(opsi__d);      
+      console.log(kalimat_soal, opsi__a, opsi__b, opsi__c, opsi__d);
+    }
 
     $('#kalimat_soal').keyup(function(){
       let val = $(this).val();
       if(val.length>=30){
         $('#minimal_30_huruf').html(val.length + ' of max 300 huruf '+img_check);
         kalimat_soal = val.trim();
-
-        // recall
-        $('.opsies').keyup();
+        
       }else{
         $('#minimal_30_huruf').text(val.length + ' | '+minimal_30_huruf);
       }
+      // recall
+      $('.opsies').keyup();
     })
 
     $('.opsies').keyup(function(){
@@ -238,18 +315,17 @@ if($id_sesi==''){
       let aksi = rid[0];
       let abjad = rid[1];
       
-      let opsi__a = $('#opsi__a').val().trim();
-      let opsi__b = $('#opsi__b').val().trim();
-      let opsi__c = $('#opsi__c').val().trim();
-      let opsi__d = $('#opsi__d').val().trim();
+      opsi__a = $('#opsi__a').val().trim();
+      opsi__b = $('#opsi__b').val().trim();
+      opsi__c = $('#opsi__c').val().trim();
+      opsi__d = $('#opsi__d').val().trim();
 
-      let kalimat_soal = $('#kalimat_soal').val().trim();
-      $('#info_poin').text('');
-      $('#btn_simpan').prop('disabled',true);
-      $('#blok_similaritas').hide();
-      $('#blok_toggle_pembahasan').hide();
+      kalimat_soal = $('#kalimat_soal').val().trim();
+      reset_form();
 
-      if(0
+      if(kalimat_soal.length<30){
+        $('#opsi_error').text('Kalimat soal minimal 30 s.d 300 huruf');
+      }else if(0
         || opsi__a.length<3
         || opsi__b.length<3
         || opsi__c.length<3
@@ -271,7 +347,8 @@ if($id_sesi==''){
           // =================================================
           // OPSIES LENGTH ARE OK :: MY TAGS
           // =================================================
-          kalimat_soal_full = `${kalimat_soal} ${opsi__a} ${opsi__b} ${opsi__c} ${opsi__d}`;
+          opsies = `${opsi__a} ${opsi__b} ${opsi__c} ${opsi__d}`;
+          kalimat_soal_full = `${kalimat_soal} ${opsies}`;
 
           my_tags = []; // re-empty tags
           tags.forEach(tag => {
@@ -299,12 +376,10 @@ if($id_sesi==''){
               // =================================================
               // MY TAGS OK + KJ OK
               // =================================================
-              $('#blok_similaritas').fadeIn();
+              $('#blok_similaritas').show();
               
-              if(similaritas>0 && similaritas<80){
-                $('#blok_toggle_pembahasan').fadeIn();
-                $('#info_poin').html('<span class="btn btn-secondary btn-sm">Poin membuat soal +100 LP</span> ' + img_check);
-                $('#btn_simpan').prop('disabled',false);
+              if(similaritas>0 && similaritas<=75){
+                ready_simpan();
               }
             }
           }
@@ -335,14 +410,30 @@ if($id_sesi==''){
     })
 
     $('#btn_cek_similaritas').click(function(){
-      let link_ajax = `ajax/cek_similaritas_soal.php?my_tags=${my_tags}&kalimat_soal=${kalimat_soal}`;
+      let link_ajax = `ajax/cek_similaritas_soal.php?my_tags=${my_tags}&kalimat_soal=${kalimat_soal_full}`;
 
       $.ajax({
         url:link_ajax,
         success:function(a){
+          // console.log(a);
           let ra = a.split('__');
+          $('#btn_cek_similaritas').hide();
+          $('.set_kj').fadeOut();
           if(ra[0]=='sukses'){
-            $('#similaritas').text(ra[1]);
+            similaritas = parseInt(ra[1]);
+            $('.user_input').prop('disabled',true); 
+            similaritas_show = 'Similaritas '+similaritas+'% ';
+            if(similaritas>75){
+              similaritas_show += img_reject;
+              $('#blok_reset_similaritas').fadeIn();
+            }else{
+              similaritas_show += img_check;
+              ready_simpan();
+              $('#blok_ubah_kalimat').fadeIn();
+            }
+            $('#similaritas').html(similaritas_show);
+            $('#similaritas_info').html(ra[2]);
+            // $('.opsies').keyup();
           }else{
             alert(a);
           }
@@ -350,6 +441,15 @@ if($id_sesi==''){
       })
 
     })
+
+    $('#btn_reset_similaritas').click(function(){
+      reset_form();
+    })
+
+    $('#btn_ubah_kalimat').click(function(){
+      reset_form();
+    })
+
 
     $('#toggle_pembahasan').click(function(){
       $('#blok_pembahasan').fadeToggle();
