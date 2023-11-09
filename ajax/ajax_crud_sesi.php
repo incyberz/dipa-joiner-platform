@@ -1,6 +1,5 @@
 <?php 
 include 'instruktur_only.php';
-include '../conn.php';
 
 # ================================================
 # GET CRUD VARIABLES

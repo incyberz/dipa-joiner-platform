@@ -3,7 +3,12 @@
     <?php
     $as = $_GET['as'] ?? '';
     if($as!=''){
-      include "join_as_$as.php";
+      if(file_exists("join_as_$as.php")){
+        include "join_as_$as.php";
+
+      }else{
+        div_alert('danger','Maaf, fitur ini masih dalam tahap pengembangan.');
+      }
     }else{ 
       $arr_as = ['mhs','dosen','praktisi','industri'];
       $arr_gradasi = ['hijau','hijau','biru','kuning'];

@@ -1,6 +1,5 @@
 <?php 
 include 'session_user.php';
-include '../conn.php';
 
 // die('sukses');
 

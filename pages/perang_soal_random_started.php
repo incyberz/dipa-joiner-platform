@@ -1,16 +1,3 @@
-<style>
-  .opsi,.opsi_reject{border: solid 1px #ccc;  padding: 5px; border-radius: 5px; margin-bottom: 5px; cursor:pointer}
-  .unclicked{background: #cff;}
-  .unclicked_reject{background: #fcc;}
-  .clicked{background: #ccf; font-weight:bold; color: darkblue; border: solid 2px blue}
-  .clicked_reject{background: #fcc; font-weight:bold; color: darkred; border: solid 2px red}
-  .opsi:hover{background: #fcf; }
-  #blok_kuis,#blok_hasil{max-width:500px; margin:auto}
-  .blok_soal{background:linear-gradient(#fff,#efe)}
-  .blok_timer{font-size:60px}
-  .profil_pembuat, .profil_penjawab{width: 64px; height:64px; object-fit:cover; border-radius: 50%; background: gray}
-  .cermin{-webkit-transform: scaleX(-1);transform: scaleX(-1);}
-</style>
 <script src="assets/js/md5.js"></script>
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js" integrity="sha256-/H4YS+7aYb9kJ5OKhFYPUjSJdrtV6AeyJOtTkw6X72o=" crossorigin="anonymous"></script> -->
 <script src="assets/js/aes.js" integrity="sha256-/H4YS+7aYb9kJ5OKhFYPUjSJdrtV6AeyJOtTkw6X72o=" crossorigin="anonymous"></script>
@@ -34,10 +21,13 @@ while($d=mysqli_fetch_assoc($q)){
 }
 
 $path_na = "assets/img/no_profil.jpg";
-$path = "assets/img/peserta/peserta-$id_peserta-64.jpg";
+$path = "assets/img/peserta/wars/peserta-$id_peserta.jpg";
 $path = file_exists($path) ? $path : $path_na;
 $profil_penjawab = "<img src='$path' class=profil_penjawab>";
 
+# =============================================================
+# MAIN SELECT
+# =============================================================
 $s = "SELECT 
 a.id as id_soal,
 a.id_pembuat,
@@ -52,17 +42,24 @@ b.username as username_pembuat,
 
 FROM tb_soal_pg a 
 JOIN tb_peserta b ON a.id_pembuat=b.id 
-WHERE id_pembuat!=$id_peserta 
+LEFT JOIN tb_perang c ON a.id=c.id_soal AND c.id_penjawab=$id_peserta 
+WHERE a.id_pembuat!=$id_peserta 
+AND (a.id_status is null OR a.id_status >= 0) 
+AND c.id is null 
 ORDER BY rand() 
 LIMIT 10
 ";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $jumlah_soal = mysqli_num_rows($q);
+
+// autosave tb_perang if loaded
+// zzz here
 if($jumlah_soal){
   // echo div_alert('info', "Terdapat $jumlah_soal soal yang dapat kamu jawab.");
   $blok_soal = '';
   $i=0;
   $rand_opsies = [];
+  $values = '';
   while($d=mysqli_fetch_assoc($q)){
     $i++;
     $id_soal=$d['id_soal'];
@@ -72,6 +69,7 @@ if($jumlah_soal){
     $username_pembuat=$d['username_pembuat'];
 
     $durasi=$d['durasi'] ?? $durasi_default;
+    $values .= "($id_soal,$id_peserta,$id_pembuat),";
 
     $id_soals.="$id_soal,";
 
@@ -94,7 +92,7 @@ if($jumlah_soal){
 
     $status_soal = $d['status_soal']=='' ? '<span class=darkred>unverified</span>' : "<span class='hijau tebal'>$d[status_soal]</span>";
 
-    $profil_pembuat = "<img src='assets/img/peserta/peserta-$id_pembuat-64.jpg' class=profil_pembuat id=profil_pembuat__$id_soal>";
+    $profil_pembuat = "<img src='assets/img/peserta/wars/peserta-$id_pembuat.jpg' class=profil_pembuat id=profil_pembuat__$id_soal>";
 
 
 
@@ -110,7 +108,7 @@ if($jumlah_soal){
             <div class='kecil miring abu mb2'>by: $d[pembuat_soal] ~ $status_soal question</div>
           </div>
           <div>
-            <img src='assets/img/peserta/peserta-$id_pembuat-64.jpg' class=profil_pembuat id=profil_pembuat__$id_soal>
+            <img src='assets/img/peserta/wars/peserta-$id_pembuat.jpg' class=profil_pembuat id=profil_pembuat__$id_soal>
           </div>
         </div>
         <div class='darkblue mt2 mb2'>$d[kalimat_soal]</div>
@@ -152,6 +150,18 @@ if($jumlah_soal){
   }
   # END WHILE 
   # =====================================================================
+
+
+
+  # =====================================================================
+  # AUTO INSERT TB_PERANG
+  # =====================================================================
+  $s = "INSERT INTO tb_perang (id_soal,id_penjawab,id_pembuat) VALUES $values";
+  $s .= '__';
+  $s = str_replace(',__','',$s);
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+
+
 
 
   # =====================================================================
@@ -361,8 +371,8 @@ if($jumlah_soal){
     let durasi_show = '';
     let milidetik_show = '';
     let jawaban = '';
-    let cidnj = ''; // current id + jawaban
-    let cidnjpp = 'initial value'; // current id + jawaban + pp
+    let cidnj = ''; // current id_soal + id_peserta + jawaban
+    let cidnjpp = 'initial value'; // current id_soal + id_peserta + jawaban + pp
     let arr_idnj = []; //id_soal + jawaban
     let arr_idnjpp = []; //id + jawaban + poin penjawab + poin pembuat
     let menjawab_benar = false;
@@ -378,12 +388,13 @@ if($jumlah_soal){
     let is_rejected = false;
     let id_alasan = 0;
     let cid_pembuat = '';
+    let is_benar = 0;
 
 
     // get from database + salts
     let jawabans_md5 = $('#jawabans_md5').text();
     for (let i = 0; i < 100; i++) {
-      jawabans_md5 += md5(i) + ',';
+      jawabans_md5 += md5('x'+i) + ',';
     }
     let rjawabans_md5 = jawabans_md5.split(',');
     $('#jawabans_md5').text('cleared'); // clear it!
@@ -450,8 +461,7 @@ if($jumlah_soal){
 
 
 
-
-
+    // durasi = 3; //zzz debug
     // ===========================================================
     // TIMER
     // ===========================================================
@@ -476,8 +486,11 @@ if($jumlah_soal){
           // set paused UI
           $('#btn_submit').prop('disabled',true);
           $('#btn_next').prop('disabled',false);
-          timer_on = 0;
-          $('#timer_on').text(timer_on);
+          timer_on = 0; $('#timer_on').text(timer_on);
+          cidnj = cid_soal + '~~' + id_peserta + '~~NULL'; 
+          $('#cidnj__'+cid_soal).text(cidnj);
+          cjawaban = 'NULL'; $('#cjawaban').text(cjawaban);
+          $('#btn_submit').click();
         }
       }
     }, 50);
@@ -585,8 +598,6 @@ if($jumlah_soal){
       timer_on = 0;
       $('#timer_on').text(timer_on);
 
-      // if rejected zzz here
-
       let id_soal = $('#cid_soal').text();
       cid_pembuat = $('#id_pembuat__'+id_soal).text();
       let jawaban = $('#cjawaban').text();
@@ -596,8 +607,8 @@ if($jumlah_soal){
       $('#btn_submit').prop('disabled',true);
       $('#btn_next').prop('disabled',false);
 
-      let is_benar = 0;
       if(is_rejected){
+        is_benar = -1;
         $('#blok_pembahasan').addClass('gradasi-kuning');
         $('#weapon').removeClass('cermin');
         $('#kamu_benar').removeClass('blue');
@@ -619,30 +630,52 @@ if($jumlah_soal){
         let r = parseInt(Math.random()*12)+1;
         $('#weapon').prop('src','assets/img/guns/wp'+r+'.png');
 
-        // tidak mereject :: Benar || Salah
-        if(rjawabans_md5.includes(md5(id_soal+jawaban))){
-          //
-          $('#blok_pembahasan').addClass('gradasi-hijau');
-          $('#weapon').removeClass('cermin');
-          $('#kamu_benar').removeClass('red');
-          $('#kamu_benar').addClass('blue');
-          $('#kamu_benar').text('Kamu Benar!!');
-          poin_penjawab = 100; // zzz hard code
-          poin_pembuat = 8; // 
-          is_benar = 1;
-        }else{
-          poin_penjawab = 20; // zzz hard code
-          poin_pembuat = 12; // 
-          $('#kamu_benar').text('Kamu Salah!!');
+        // reset classes
+        $('#kamu_benar').removeClass('blue');
+        $('#kamu_benar').removeClass('red');
+        $('#weapon').removeClass('cermin');
+
+        if(cjawaban=='NULL'){
+          // tidak menjawab
+          is_benar = -2;
+          $('#kamu_benar').text('Timed Out!!');
           $('#weapon').addClass('cermin');
-          $('#kamu_benar').removeClass('blue');
           $('#kamu_benar').addClass('red');
           $('#blok_pembahasan').addClass('gradasi-merah');
           
           // update UI Hasil
           $('#weapon__'+id_soal).addClass('cermin');
           $('#row_hasil__'+id_soal).addClass('gradasi-merah');
-        } // end if jawaban salah
+
+          poin_penjawab = 0; 
+          poin_pembuat = 8; // zzz hard code
+
+        }else{
+
+          // tidak mereject :: Jawab Benar || Salah
+          if(rjawabans_md5.includes(md5(id_soal+jawaban))){
+            //
+            $('#blok_pembahasan').addClass('gradasi-hijau');
+            $('#kamu_benar').addClass('blue');
+            $('#kamu_benar').text('Kamu Benar!!');
+            poin_penjawab = 100; // zzz hard code
+            poin_pembuat = 8; // 
+            is_benar = 1;
+          }else{
+            is_benar = 0;
+            poin_penjawab = 20; // zzz hard code
+            poin_pembuat = 12; // 
+            $('#kamu_benar').text('Kamu Salah!!');
+            $('#weapon').addClass('cermin');
+            $('#kamu_benar').addClass('red');
+            $('#blok_pembahasan').addClass('gradasi-merah');
+            
+            // update UI Hasil
+            $('#weapon__'+id_soal).addClass('cermin');
+            $('#row_hasil__'+id_soal).addClass('gradasi-merah');
+          } // end if jawaban salah
+        }
+
 
         // pencarian yang benar
         abjad.forEach((value, index) => {
@@ -692,6 +725,8 @@ if($jumlah_soal){
       let encrypted = CryptoJS.AES.encrypt(cidnjpp, "DIPA Joiner");
       $('#cidnjpp').val(encrypted);
       
+
+      
       // for server
       // let decrypted = CryptoJS.AES.decrypt(encrypted, "DIPA Joiner");
       // $('#cidnjpp').val(decrypted.toString(CryptoJS.enc.Utf8));
@@ -709,6 +744,7 @@ if($jumlah_soal){
         // go to hasil quiz
         // console.log('go to hasil quiz');
         clearInterval(timer);
+        $('#blok_reject').hide();
         $('#blok_pembahasan').slideUp();
         $('#blok_timer_nav').slideUp();
         $('#blok_navigasi_soal').show();

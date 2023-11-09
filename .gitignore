@@ -5,6 +5,11 @@ docs/
 uploads/
 
 
+*.jpg
+*.jpeg
+*.png
+*.gif
+
 *.xls*
 *.doc*
 *.csv

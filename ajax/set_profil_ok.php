@@ -1,6 +1,6 @@
 <?php 
 include 'instruktur_only.php';
-include '../conn.php';
+//include '../conn.php';
 
 # ================================================
 # GET VERIF VARIABLES

@@ -102,7 +102,9 @@ if($id_sesi==''){
 }
 
 
-
+$jp_info = ''; //zzz suspend fitur
+$info_sesi = ''; //zzz suspend fitur
+$form = ''; //zzz suspend fitur
 ?>
 <section id="about" class="about">
   <div class="container">
@@ -115,6 +117,12 @@ if($id_sesi==''){
     <div class="wadah gradasi-hijau" data-aos='fade-up'>
       <div style='padding-bottom: 10px; margin-bottom: 10px; border-bottom: solid 1px #ccc; color: darkblue'>
         <?=$jp_info?>
+        <div class="alert alert-danger tengah">
+          Maaf, fitur ini di suspend dikarenakan sulitnya dalam proses verifikasi. | Fitur dialihkan ke <a href="?tanam_soal">Tanam Soal</a>
+          <hr>
+          <?=meme('funny')?>
+
+        </div>
       </div>
 
       <?=$info_sesi?>

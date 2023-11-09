@@ -100,7 +100,7 @@ if(file_exists($path_profil)){
 # ========================================================
 # PROFIL PERANG
 # ========================================================
-$path_profil_perang = "assets/img/peserta/peserta-$id_peserta-64.jpg";
+$path_profil_perang = "assets/img/peserta/wars/peserta-$id_peserta.jpg";
 $path_profil_perang_na = $path_profil_na;
 if(file_exists($path_profil_perang)){
   $punya_profil_perang = true;
@@ -196,3 +196,27 @@ if($punya_biodata){
 
 
 
+
+
+
+
+# ============================================================
+# AUTO-SELF UPDATE EVERY HOUR | AVAILABLE SOAL
+# ============================================================
+$selisih = $id_role==1 ? (strtotime('now') - strtotime($d_peserta['last_update_available_soal'])) : 0;
+$available_soal = $d_peserta['available_soal'];
+if($selisih>3600 || $d_peserta['available_soal']==''){
+  $s = "SELECT a.id FROM tb_soal_pg a 
+  LEFT JOIN tb_perang b ON a.id=b.id_soal AND b.id_penjawab=$id_peserta 
+  WHERE (a.id_status is null OR a.id_status >= 0) 
+  AND b.id is null 
+  AND a.id_pembuat!=$id_peserta 
+  ";
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  $available_soal = mysqli_num_rows($q);
+
+  $s = "UPDATE tb_peserta SET last_update_available_soal=CURRENT_TIMESTAMP, available_soal=$available_soal WHERE id=$id_peserta 
+  ";
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  // die('UPDATED');
+}

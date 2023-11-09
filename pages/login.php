@@ -16,7 +16,8 @@ if(isset($_COOKIE[$dipa_cookie])) {
     # ========================================================
     # RESET COOKIE
     # ========================================================
-    setcookie($dipa_cookie, $username, time() + (86400), "/"); // 86400 = 1 day
+    // harus sebelum kode <html>
+    // setcookie($dipa_cookie, $username, time() + (86400), "/"); // 86400 = 1 day
 
     echo '<script>location.replace("?")</script>';
     exit;

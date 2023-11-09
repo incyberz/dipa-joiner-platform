@@ -1,4 +1,3 @@
-<section id="about" class="about"><div class="container">
 <style>
   .unclicked{background: #aaa;}
   .opsi{margin-top:4px; font-size:small; border: none;color:#555}
@@ -53,8 +52,9 @@ if(isset($_POST['btn_simpan'])){
   ($_POST[id_sesi],$id_peserta,'$kalimat_soal','$_POST[my_tags]','$opsies','$jawaban',$status)
   ";
   // echo "<pre>$s</pre>";
+  // zzz poin membuat soal belum disimpan
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-  echo div_alert('success','Simpan Soal sukses.');
+  echo div_alert('success','Simpan Soal sukses. | <a href="?soal_saya">Soal Saya</a>');
   // echo '<script>location.replace("?soal_saya")</script>';
   exit;
 }
@@ -228,7 +228,7 @@ if($id_sesi==''){
 
 <script>
   $(function(){
-    let tags = $('#tags').text().split(', ');
+    let tags = $('#tags').text().split(',');
     let my_tags = [];
     let minimal_30_huruf = $('#minimal_30_huruf').text();
     let img_check = '<img src="assets/img/icons/check.png" alt="ok" height="20px" />';
@@ -328,8 +328,9 @@ if($id_sesi==''){
 
           my_tags = []; // re-empty tags
           tags.forEach(tag => {
-            if(kalimat_soal_full.toLocaleLowerCase().search(tag.toLowerCase())>=0){
-              my_tags.push(tag)
+            if(kalimat_soal_full.toLocaleLowerCase().search(tag.toLowerCase().trim())>=0){
+              my_tags.push(tag);
+
             }
           });
 

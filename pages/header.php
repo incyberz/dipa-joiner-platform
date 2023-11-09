@@ -12,6 +12,9 @@ $s = "SELECT 1 FROM tb_pertanyaan WHERE verif_status is null";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $jumlah_ask = mysqli_num_rows($q);
 
+$red = $available_soal ? 'red' : 'green';
+$available_soal_show = "<span class='count_badge badge_$red' id='available_soal'>$available_soal</span>" ;
+
 ?>
 <header id="header" class="fixed-top d-flex align-items-center">
   <div class="container d-flex align-items-center justify-content-between">
@@ -60,11 +63,12 @@ $jumlah_ask = mysqli_num_rows($q);
           $li_ask = ($id_role<=1 || $jumlah_ask==0) ? '' : "<li><a href='?chats' class='proper'><span class='biru tebal'>Chats</span> <span class='count_badge badge_red' id='jumlah_ask'>$jumlah_ask</span></a></li>";
           echo "
           $li_verif $li_ask
-            <li class='dropdown'><a  href='#'><span class='tebal darkred'>Perang</span> <i class='bi bi-chevron-down'></i></a>
+            <li class='dropdown'><a  href='#'><span class='tebal darkred'>Perang $available_soal_show</span> <i class='bi bi-chevron-down'></i></a>
               <ul>
                 <li><a href='?tanam_soal'>Tanam Soal</a></li>
                 <li><a href='?soal_saya'>Soal Saya</a></li>
                 <li><a href='?perang_soal'>Perang Soal</a></li>
+                <li><a href='?war_history'>War History</a></li>
               </ul>
             </li>
             <li class='dropdown'><a  href='#'><span class='tebal darkblue'>Belajar</span> <i class='bi bi-chevron-down'></i></a>
@@ -73,11 +77,11 @@ $jumlah_ask = mysqli_num_rows($q);
                 <li><a href='?activity&jenis=latihan'>Latihan Praktikum</a></li>
                 <li><a href='?activity&jenis=tugas'>Tugas Proyek</a></li>
                 <li><a href='?activity&jenis=challenge'>Challenges</a></li>
-                <li><a href='?bertanya'>Bertanya</a></li>
-                <li><a href='?my_questions'>Pertanyaan Saya</a></li>
-                <li><a href='?chats'>Chats</a></li>
+                <li class='hideit'><a href='?bertanya'>Bertanya</a></li>
+                <li class='hideit'><a href='?my_questions'>Pertanyaan Saya</a></li>
+                <li class='hideit'><a href='?chats'>Chats</a></li>
                 <li class=hideit><a href='?quiz'>Kuis PG</a></li>
-                <li class=><a href='?ujian'>Ujian</a></li>
+                <li class=><a href='?ujian'>Ujian UTS/UAS</a></li>
               </ul>
             </li>
             <li class='dropdown'><a class=getstarted href='#'><span>$nickname_show</span> <i class='bi bi-chevron-down'></i></a>

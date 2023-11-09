@@ -48,7 +48,7 @@ foreach ($arr_data as $d) {
 
   $jawaban = strtoupper($jawaban)=='NULL' ? 'NULL' : "'$jawaban'";
 
-  $s = "SELECT 1 FROM tb_perang WHERE id_soal=$id_soal AND id_penjawab=$id_penjawab";
+  $s = "SELECT id FROM tb_perang WHERE id_soal=$id_soal AND id_penjawab=$id_penjawab";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   if(mysqli_num_rows($q)==0){
     $values.= "(
@@ -90,6 +90,25 @@ foreach ($arr_data as $d) {
         $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
       }
     }
+  }else{
+    // jika sudah pakai fitur auto-save perang when load
+    if(mysqli_num_rows($q)>1) die('Tidak boleh dua user berperang di satu soal.');
+    $d = mysqli_fetch_assoc($q);
+    $id_perang = $d['id'];
+
+    $s = "UPDATE tb_perang SET 
+      id_soal = '$id_soal',
+      id_penjawab = '$id_penjawab',
+      id_pembuat = '$id_pembuat',
+      jawaban = $jawaban,
+      is_benar = '$is_benar',
+      poin_penjawab = '$poin_penjawab',
+      poin_pembuat = '$poin_pembuat',
+      tanggal = '$tanggal'      
+    WHERE id='$id_perang'";
+    $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+
+
   }
 } // end foreach data
 

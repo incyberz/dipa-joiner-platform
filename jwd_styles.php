@@ -47,15 +47,15 @@
   margin-left:5px;
   border-radius:5px
 }.badge_red{
-  background:linear-gradient(#fee,#f66);
+  background:linear-gradient(#fee,#f66); color: #a33;
 }.badge_green{
-  background:linear-gradient(#efe,#6f6);
+  background:linear-gradient(#efe,#6f6); color: #33f;
 }.badge_blue{
-  background:linear-gradient(#eef,#66f);
+  background:linear-gradient(#eef,#66f); color: #55f;
 }.badge_pink{
-  background:linear-gradient(#fef,#f6f);
+  background:linear-gradient(#fef,#f6f); color: #55f;
 }.badge_gray{
-  background:linear-gradient(#eee,#666);
+  background:linear-gradient(#eee,#666); color: #f55;
 }
 
 .f7px{font-size:7px}
@@ -77,6 +77,41 @@
 .f38px{font-size:38px}
 .f40px{font-size:40px}
 .f50px{font-size:50px}
+
+.f7{font-size:7px}
+.f8{font-size:8px}
+.f9{font-size:9px}
+.f10{font-size:10px}
+.f12{font-size:12px}
+.f14{font-size:14px}
+.f18{font-size:18px}
+.f20{font-size:20px}
+.f22{font-size:22px}
+.f24{font-size:24px}
+.f26{font-size:26px}
+.f28{font-size:28px}
+.f30{font-size:30px}
+.f32{font-size:32px}
+.f34{font-size:34px}
+.f36{font-size:36px}
+.f38{font-size:38px}
+.f40{font-size:40px}
+.f50{font-size:50px}
+
+
+/* PERANG SOAL STYLES */
+#blok_kuis,#blok_hasil{max-width:500px; margin:auto}
+.opsi,.opsi_reject{border: solid 1px #ccc;  padding: 5px; border-radius: 5px; margin-bottom: 5px; cursor:pointer}
+.unclicked{background: #cff;}
+.unclicked_reject{background: #fcc;}
+.clicked{background: #ccf; font-weight:bold; color: darkblue; border: solid 2px blue}
+.clicked_reject{background: #fcc; font-weight:bold; color: darkred; border: solid 2px red}
+.opsi:hover{background: #fcf; }
+.blok_soal{background:linear-gradient(#fff,#efe)}
+.blok_timer{font-size:60px}
+.profil_pembuat, .profil_penjawab{width: 64px; height:64px; object-fit:cover; border-radius: 50%; background: gray}
+.cermin{-webkit-transform: scaleX(-1);transform: scaleX(-1);}
+
 
 .meme{
   border-radius: 10px;

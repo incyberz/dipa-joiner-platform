@@ -85,6 +85,7 @@ if(isset($_POST['btn_accept_points'])){
               Jawablah semua soal milik seorang kawanmu
             </div>
           </div>
+          <div class='tengah kecil'><a class='btn btn-secondary btn-sm' href='?war_history'>War History</a></div>
         </div>
   
   

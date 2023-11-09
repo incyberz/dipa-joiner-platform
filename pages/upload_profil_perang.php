@@ -2,35 +2,70 @@
 $judul = 'Profile';
 
 ?>
-<style>.blok_upload{max-width:500px}</style>
+<style>
+.blok_upload{max-width:500px;margin:auto}
+.example{height:64px;height:64px;object-fit:cover;border-radius:50%}
+</style>
 <section id="upload_profil" class="upload_profil">
   <div class="container">
 
     <?php
+    $src_profil_perang = "assets/img/peserta/war-$id_peserta.jpg";
+
     if(isset($_POST['btn_upload'])){
-      $tipe = 'publik';
-
-      $target = "assets/img/peserta/peserta-$id_peserta.jpg";
-      // echo $target;
-
-      if(move_uploaded_file($_FILES[$tipe.'_profil']['tmp_name'],$target)){
-        $s = "UPDATE tb_peserta SET profil_ok=null WHERE id=$id_peserta";
-        $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-
-        echo '<section><div>'.div_alert('success',"Upload profil berhasil.").'</div></section><script>location.replace("?")</script>';
+      if(move_uploaded_file($_FILES['profil_perang']['tmp_name'],$src_profil_perang)){
+        echo '<section><div>'.div_alert('success',"Upload profil berhasil.").'</div></section><script>location.replace("?upload_profil_perang")</script>';
       }else{
         echo div_alert('danger',"Upload gagal.");
       }
 
-      echo '<hr><a class="btn btn-primary" href="?upload_profil">Back to My Profile</a>';
+      echo '<hr><a class="btn btn-primary" href="?upload_profil_perang">Back to Upload Profile Perang</a>';
 
       exit;
     }
 
-    $no_profil_perang = meme_src('soldier');
-    $src_profil_perang = "assets/img/peserta/peserta-$id_peserta-64.jpg";
-    $profil_perang = file_exists($src_profil_perang) ? $src_profil_perang : $no_profil_perang;
+    $src_no_profil_perang = meme_src('soldier');
+
+
+
     $alert = 'Upload profil yang cocok buat kamu perang!!';
+
+    $path = 'assets/img/peserta/wars';
+    $rexample = scandir($path);
+    $examples = '';
+    $i=0;
+    foreach ($rexample as $x) {
+      $i++; if($i==9) break;
+      if(strlen($x)>2){
+        $examples .= "<img src='$path/$x' class=example />";
+      }
+    }
+
+    if(file_exists($src_profil_perang)){
+      $hideit_blok_upload = 'hideit';
+      $src = $src_profil_perang;
+
+      if(file_exists("$path/peserta-$id_peserta.jpg")){
+        $info = "Profil perang kamu sudah terverifikasi. Kamu bisa mengakses fitur <a href='?perang_soal'>Perang Soal</a> secara penuh. Jika ingin mengubah kembali foto profil silahkan reupload.";
+        $status_show = "<span class='darkblue'>Verified</span>";
+      }else{
+        $info = "Kamu sudah upload profil perang akan tetapi belum diverifikasi oleh instruktur. Silahkan <a href='?pengajar'>whatsapp beliau</a> untuk mempercepat proses verifikasi profil ini. Jika ingin mengubahnya silahkan reupload.";
+        $status_show = "<span class='darkred'>Belum diverifikasi</span>";
+      }
+
+      $blok_status = "
+        <div id='blok_status'>
+          <div><span class='abu miring'>Status:</span> $status_show</div>
+          <div class='abu kecil mb2'>$info</div>
+          <button class='btn btn-secondary btn-sm' id=btn_reupload>Reupload</button>
+          <hr>
+        </div>
+      ";
+    }else{
+      $blok_status = '';
+      $src = $src_no_profil_perang;
+      $hideit_blok_upload = '';
+    }    
 
 
     ?>
@@ -38,19 +73,32 @@ $judul = 'Profile';
       <h4>Upload Profile Perang</h4>
       <p class='kecil darkblue'>Mesti gaya, foto close-up!! No masker, no sun-glassess. Lihat contoh!</p>
       <div class="text-center">
-        <img onclick='alert("<?=$alert?>")' class='foto_profil' src='<?=$profil_perang?>'>
+        <img onclick='alert("<?=$alert?>")' class='foto_profil' src='<?=$src?>'>
       </div>
-      <form method=post enctype='multipart/form-data'>
-        <div class="mb-2 mt-2">
-          <input accept='.jpg' class='form-control' type="file" name="profil_perang" required>
+      <?=$blok_status?>
+      <div id="blok_upload" class='<?=$hideit_blok_upload?>'>
+        <form method=post enctype='multipart/form-data'>
+          <div class="mb-2 mt-2">
+            <input accept='.jpg' class='form-control' type="file" name="profil_perang" required>
+          </div>
+          <div class="kecil miring abu mt1 mb1 kiri">)* ekstensi harus JPG</div>
+          <button class='btn btn-info btn-block btn-sm' name=btn_upload>Upload</button>
+        </form>
+        <div>
+          <div class='kecil darkblue mb2'>Contoh profil yang benar:</div> 
+          <?=$examples?>
         </div>
-        <button class='btn btn-info btn-block btn-sm' name=btn_upload>Upload</button>
-        <div class="kecil miring abu mt-2">)* ekstensi JPG</div>
-      </form>
+      </div>
     </div>
 
-    <div class="tengah kecil" data-aos="fade-up" data-aos-delay="300">Back to <a href="?dashboard">Dashboard</a></div>
+    <div class="tengah kecil mt2" data-aos="fade-up" data-aos-delay="300">Back to <a href="?perang_soal">Perang Soal Home</a></div>
 
 
   </div>
 </section>
+
+<script>
+  $(function(){
+    $('#btn_reupload').click(function(){$('#blok_upload').slideToggle()})
+  })
+</script>
