@@ -220,3 +220,28 @@ if($selisih>3600 || $d_peserta['available_soal']==''){
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   // die('UPDATED');
 }
+
+
+
+
+
+
+# ============================================================
+# VERIF COUNTS FOR DOSEN
+# ============================================================
+$jumlah_verif_war = 0;
+$jumlah_verif_profil = 0;
+if($id_role!=1){
+  $rfiles = scandir('assets/img/peserta/');
+  foreach ($rfiles as $file) {
+    if(strpos("salt$file",'peserta-')){
+      $jumlah_verif_profil++;
+    }
+    if(strpos("salt$file",'war-')){
+      if(!strpos("salt$file",'reject.jpg')){
+        $jumlah_verif_war++;
+        // echo "<div style='margin-top: 300px; font-size: 50px'> $file</div>";
+      }
+    }
+  }
+}

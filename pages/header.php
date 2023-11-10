@@ -59,10 +59,15 @@ $available_soal_show = "<span class='count_badge badge_$red' id='available_soal'
         $nickname_show = isset($_SESSION['dipa_master_username']) ? "Login As $username | $my_points LP" : "$username | $my_points LP";        
         $unlog_link = isset($_SESSION['dipa_master_username']) ? "<li><a href='?login_as&unlog'>Unlog</a></li>" : '';
         if($is_login){
-          $li_verif = ($id_role<=1 || $jumlah_verif==0) ? '' : "<li><a href='?verif' class='proper'><span class='biru tebal'>Verif</span> <span class='count_badge badge_red' id='jumlah_verif'>$jumlah_verif</span></a></li>";
-          $li_ask = ($id_role<=1 || $jumlah_ask==0) ? '' : "<li><a href='?chats' class='proper'><span class='biru tebal'>Chats</span> <span class='count_badge badge_red' id='jumlah_ask'>$jumlah_ask</span></a></li>";
+          $li_verif = ($id_role==1 || $jumlah_verif==0) ? '' : "<li><a href='?verif' class='proper'><span class='biru tebal'>Verif</span> <span class='count_badge badge_red' id='jumlah_verif'>$jumlah_verif</span></a></li>";
+          $li_ask = ($id_role==1 || $jumlah_ask==0) ? '' : "<li><a href='?chats' class='proper'><span class='biru tebal'>Chats</span> <span class='count_badge badge_red' id='jumlah_ask'>$jumlah_ask</span></a></li>";
+          $li_verif_war = ($id_role==1 || $jumlah_verif_war==0) ? '' : "<li><a href='?verifikasi_war_profil' class='proper'><span class='biru tebal'>WarProfil</span> <span class='count_badge badge_red' id='jumlah_verif_war'>$jumlah_verif_war</span></a></li>";
+
+
           echo "
-          $li_verif $li_ask
+            $li_verif 
+            $li_ask 
+            $li_verif_war
             <li class='dropdown'><a  href='#'><span class='tebal darkred'>Perang $available_soal_show</span> <i class='bi bi-chevron-down'></i></a>
               <ul>
                 <li><a href='?tanam_soal'>Tanam Soal</a></li>

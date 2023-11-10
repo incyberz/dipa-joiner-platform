@@ -10,10 +10,14 @@ $judul = 'Profile';
   <div class="container">
 
     <?php
+    $blok_status = '';
     $src_profil_perang = "assets/img/peserta/war-$id_peserta.jpg";
+    $src_profil_perang_rejected = "assets/img/peserta/war-$id_peserta-reject.jpg";
+    $is_reject = file_exists($src_profil_perang_rejected) ? 1 : 0;
 
     if(isset($_POST['btn_upload'])){
       if(move_uploaded_file($_FILES['profil_perang']['tmp_name'],$src_profil_perang)){
+        unlink($src_profil_perang_rejected);
         echo '<section><div>'.div_alert('success',"Upload profil berhasil.").'</div></section><script>location.replace("?upload_profil_perang")</script>';
       }else{
         echo div_alert('danger',"Upload gagal.");
@@ -41,7 +45,17 @@ $judul = 'Profile';
       }
     }
 
-    if(file_exists($src_profil_perang)){
+
+    echo "is_reject : $is_reject";
+
+    $btn_reupload = "<button class='btn btn-secondary btn-sm' id=btn_reupload>Reupload</button>";
+    if($is_reject){
+      $info = "Kamu sudah upload profil perang akan tetapi instruktur menolaknya, <span class=darkred>mungkin kurang layak</span> untuk Perang! <span class='tebal darkred'>Jangan foto formal!</span> Silahkan <a href='?pengajar'>whatsapp beliau</a> jika ada kesalahan. Sekarang <span class=blue>silahkan reupload sesuai contoh profil</span>.";
+      $status_show = "<span class='darkred'>Profil Ditolak</span>";
+      $src = $src_profil_perang_rejected;
+      $btn_reupload = '';
+
+    }else if(file_exists($src_profil_perang)){
       $hideit_blok_upload = 'hideit';
       $src = $src_profil_perang;
 
@@ -53,20 +67,19 @@ $judul = 'Profile';
         $status_show = "<span class='darkred'>Belum diverifikasi</span>";
       }
 
-      $blok_status = "
-        <div id='blok_status'>
-          <div><span class='abu miring'>Status:</span> $status_show</div>
-          <div class='abu kecil mb2'>$info</div>
-          <button class='btn btn-secondary btn-sm' id=btn_reupload>Reupload</button>
-          <hr>
-        </div>
-      ";
     }else{
-      $blok_status = '';
       $src = $src_no_profil_perang;
       $hideit_blok_upload = '';
     }    
-
+    
+    $blok_status = "
+      <div id='blok_status'>
+        <div><span class='abu miring'>Status:</span> $status_show</div>
+        <div class='abu kecil mb2'>$info</div>
+        $btn_reupload
+        <hr>
+      </div>
+    ";
 
     ?>
     <div class="wadah tengah blok_upload" data-aos="fade-up" data-aos-delay="150" >

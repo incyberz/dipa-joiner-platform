@@ -23,6 +23,7 @@ $id_role = 0;
 $status = 0;
 $my_points = 0;
 $punya_profil = '';
+$available_soal = 0;
 
 include 'config.php';
 
@@ -69,6 +70,8 @@ if($parameter=='logout'){
 $insho_styles = $online_version ? 'insho_styles.php' : '../insho_styles.php';
 include $insho_styles;
 include 'jwd_styles.php';
+include 'include/meme.php';
+include 'include/insho_functions.php';
 ?>
 
 <!DOCTYPE html>

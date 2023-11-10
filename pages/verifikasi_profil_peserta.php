@@ -96,6 +96,7 @@ if(mysqli_num_rows($q)==0){
 
 
 echo $id_role==2 ? "<div class='wadah gradasi-hijau flexy'>$divs</div>" : "<div class='wadah tengah'>$divs</div>";
+if($id_role==2) include 'verifikasi_war_profil.php';
 
 
 
@@ -111,12 +112,7 @@ echo $id_role==2 ? "<div class='wadah gradasi-hijau flexy'>$divs</div>" : "<div 
 
 
 
-
-?>
-<!-- ============================================================== -->
-  </div>
-</section>
-<script>
+?></div></section><script>
   $(function(){
     $('.btn_aksi').click(function(){
       let tid = $(this).prop('id');

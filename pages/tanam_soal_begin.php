@@ -54,7 +54,7 @@ if(isset($_POST['btn_simpan'])){
   // echo "<pre>$s</pre>";
   // zzz poin membuat soal belum disimpan
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-  echo div_alert('success','Simpan Soal sukses. | <a href="?soal_saya">Soal Saya</a>');
+  echo div_alert('success','Simpan Soal sukses. | <a href="?soal_saya">Soal Saya</a> |  <a href="?tanam_soal">Tanam Lagi</a>');
   // echo '<script>location.replace("?soal_saya")</script>';
   exit;
 }
