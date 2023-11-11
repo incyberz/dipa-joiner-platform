@@ -706,7 +706,7 @@ if($jumlah_soal){
       let d = new Date();
       let saat_ini = d.getFullYear()
         +'-'+(d.getMonth()+1)
-        +'-'+d.getDay()
+        +'-'+d.getDate()
         +' '+d.getHours()
         +':'+d.getMinutes()
         +':'+d.getSeconds();

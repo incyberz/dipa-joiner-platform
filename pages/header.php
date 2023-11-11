@@ -60,7 +60,7 @@ $available_soal_show = "<span class='count_badge badge_$red' id='available_soal'
         $unlog_link = isset($_SESSION['dipa_master_username']) ? "<li><a href='?login_as&unlog'>Unlog</a></li>" : '';
         if($is_login){
           $li_verif = ($id_role==1 || $jumlah_verif==0) ? '' : "<li><a href='?verif' class='proper'><span class='biru tebal'>Verif</span> <span class='count_badge badge_red' id='jumlah_verif'>$jumlah_verif</span></a></li>";
-          $li_ask = ($id_role==1 || $jumlah_ask==0) ? '' : "<li><a href='?chats' class='proper'><span class='biru tebal'>Chats</span> <span class='count_badge badge_red' id='jumlah_ask'>$jumlah_ask</span></a></li>";
+          $li_ask = ($id_role==1 || $jumlah_ask==0) ? '' : "<li class='hideit suspend zzz'><a href='?chats' class='proper'><span class='biru tebal'>Chats</span> <span class='count_badge badge_red' id='jumlah_ask'>$jumlah_ask</span></a></li>";
           $li_verif_war = ($id_role==1 || $jumlah_verif_war==0) ? '' : "<li><a href='?verifikasi_war_profil' class='proper'><span class='biru tebal'>WarProfil</span> <span class='count_badge badge_red' id='jumlah_verif_war'>$jumlah_verif_war</span></a></li>";
 
 

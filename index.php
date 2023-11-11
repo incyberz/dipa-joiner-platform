@@ -24,6 +24,7 @@ $status = 0;
 $my_points = 0;
 $punya_profil = '';
 $available_soal = 0;
+$id_room = 1; //zzz
 
 include 'config.php';
 

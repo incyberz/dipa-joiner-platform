@@ -69,11 +69,34 @@ if(isset($_POST['btn_simpan'])){
 
 $id_sesi = $_GET['id_sesi'] ?? '';
 $info_sesi = '';
+$pilih_sesi = '';
 if($id_sesi==''){
-  include 'include/arr_sesi.php';
-  $pilih_sesi = '';
-  foreach ($arr_sesi as $key => $sesi){
-    $tags = $arr_tags[$key];
+  // include 'include/arr_sesi.php';
+  $s = "SELECT a.*, a.id as id_sesi FROM tb_sesi a WHERE a.id_room=$id_room ORDER BY a.no";
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  while($d=mysqli_fetch_assoc($q)){
+    $id_sesi=$d['id_sesi'];
+    $tmp_jumlah_soal=$d['tmp_jumlah_soal_pg'] ?? 0;
+
+    if($id_role!=1){
+      // dosen only
+      $s2 = "SELECT 1 FROM tb_soal_pg WHERE id_sesi=$id_sesi AND (id_status is null OR id_status >= 0)";
+      $q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));
+      $jumlah_soal = mysqli_num_rows($q2);
+      
+      if($jumlah_soal!=$tmp_jumlah_soal){
+        // update
+        $s2 = "UPDATE tb_sesi SET tmp_jumlah_soal_pg=$jumlah_soal WHERE id=$id_sesi";
+        $q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));
+      }
+
+    }else{
+      $jumlah_soal = $tmp_jumlah_soal;
+    }
+
+    $badge_green = $jumlah_soal ? 'badge_green' : 'badge_red';
+
+    $tags = $d['tags'];
     $r = explode(';',$tags);
     sort($r);
     $imp = $tags=='' ? '<span class=red>belum bisa mengajukan kalimat_soal karena belum ada tags sesi.</span>' : implode(', ',$r);
@@ -81,9 +104,17 @@ if($id_sesi==''){
     $danger = $tags=='' ? 'danger' : 'success'; 
     $href = $tags=='' 
     ? "'#' onclick='alert(\"Maaf, belum bisa mengajukan kalimat_soal pada sesi ini karena instuktur belum setting tags untuk sesi ini.\")'" 
-    : "'?tanam_soal&id_sesi=$key'";
-    $pilih_sesi .= "<div class='col-md-4 mb2'><a class='btn btn-$danger btn-sm mb1 btn-block' href=$href>P$arr_no_sesi[$key] $sesi</a>$tags_show</div>";
-  } 
+    : "'?tanam_soal&id_sesi=$id_sesi'";
+    $pilih_sesi .= "
+      <div class='col-md-4 mb2'>
+        <a class='btn btn-$danger btn-sm mb1 btn-block' href=$href>
+          P$d[no] $d[nama] <span class='count_badge $badge_green'>$jumlah_soal</span>
+        </a>
+        $tags_show
+      </div>
+    ";
+  }
+
 
   $info_sesi = "
     <div class='darkblue tebal'>Silahkan pilih di sesi manakah kamu ingin membuat soal:</div><hr>
@@ -101,14 +132,6 @@ if($id_sesi==''){
   $info_sesi = "
     <div>Sesi: <code>$nama_sesi</code> | <a href='?tanam_soal'>pilih sesi lain</a></div>
   ";
-
-
-
-
-
-
-
-
 
 
 
