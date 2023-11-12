@@ -33,13 +33,14 @@ $link2 = "<a href='?soal_saya'>Soal Saya</a>";
 $link3 = "<a href='?perang_soal'>Perang Home</a>";
 $link4 = "<a href='?war_history&all_wars'>All Wars</a>";
 $link5 = "<a href='?war_history'>My Wars</a>";
+$link6 = "<a href='?war_summary'>War Summary</a>";
 
 $second_link = $all_wars ? $link5 : $link4;
 echo "
   <div class='section-title' data-aos-zzz='fade-up'>
     <h2>War History</h2>
     <p>
-      <div>$link3 | $second_link</div>
+      <div>$link3 | $second_link | $link6</div>
       $nav_kelas
     </p>
   </div>

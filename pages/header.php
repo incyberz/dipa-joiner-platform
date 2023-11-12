@@ -74,6 +74,7 @@ $available_soal_show = "<span class='count_badge badge_$red' id='available_soal'
                 <li><a href='?soal_saya'>Soal Saya</a></li>
                 <li><a href='?perang_soal'>Perang Soal</a></li>
                 <li><a href='?war_history'>War History</a></li>
+                <li><a href='?war_summary'>War Summary</a></li>
               </ul>
             </li>
             <li class='dropdown'><a  href='#'><span class='tebal darkblue'>Belajar</span> <i class='bi bi-chevron-down'></i></a>

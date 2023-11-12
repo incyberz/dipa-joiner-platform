@@ -25,9 +25,30 @@ $path = "assets/img/peserta/wars/peserta-$id_peserta.jpg";
 $path = file_exists($path) ? $path : $path_na;
 $profil_penjawab = "<img src='$path' class=profil_penjawab>";
 
+
+$values_id_soals = '';
+foreach ($arr_id_soal as $id_soal) {
+  if(strlen($id_soal)>0){
+    array_push($arr_id_soal,$id_soal);
+    $values_id_soals .= " a.id=$id_soal OR";
+  }
+}
+$values_id_soals = "($values_id_soals)";
+$values_id_soals = str_replace('OR)',')',$values_id_soals);
+
+
+
 # =============================================================
 # MAIN SELECT
 # =============================================================
+$left_join_where = "
+  LEFT JOIN tb_perang c ON a.id=c.id_soal AND c.id_penjawab=$id_peserta 
+  WHERE c.id is null 
+";
+
+//resuming Quiz
+if(count($arr_id_soal)) $left_join_where = "WHERE $values_id_soals ";
+
 $s = "SELECT 
 a.id as id_soal,
 a.id_pembuat,
@@ -42,13 +63,14 @@ b.username as username_pembuat,
 
 FROM tb_soal_pg a 
 JOIN tb_peserta b ON a.id_pembuat=b.id 
-LEFT JOIN tb_perang c ON a.id=c.id_soal AND c.id_penjawab=$id_peserta 
-WHERE a.id_pembuat!=$id_peserta 
+$left_join_where 
+AND a.id_pembuat!=$id_peserta 
 AND (a.id_status is null OR a.id_status >= 0) 
-AND c.id is null 
 ORDER BY rand() 
 LIMIT 10
 ";
+// die($s);
+
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $jumlah_soal = mysqli_num_rows($q);
 
@@ -150,16 +172,6 @@ if($jumlah_soal){
   }
   # END WHILE 
   # =====================================================================
-
-
-
-  # =====================================================================
-  # AUTO INSERT TB_PERANG
-  # =====================================================================
-  $s = "INSERT INTO tb_perang (id_soal,id_penjawab,id_pembuat) VALUES $values";
-  $s .= '__';
-  $s = str_replace(',__','',$s);
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 
 
 
@@ -306,6 +318,27 @@ if($jumlah_soal){
 
 
   # =====================================================================
+  # SAVE TO PAKET WAR IF NONE
+  # =====================================================================
+  if(!count($arr_id_soal)){
+    $s = "INSERT INTO tb_paket_war (id_peserta,id_soals) VALUES ($id_peserta,'$id_soals')";
+    $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+
+
+    # =====================================================================
+    # AUTO INSERT TB_PERANG
+    # =====================================================================
+    $s = "INSERT INTO tb_perang (id_soal,id_penjawab,id_pembuat) VALUES $values";
+    $s .= '__';
+    $s = str_replace(',__','',$s);
+    $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+
+  }
+
+
+
+
+  # =====================================================================
   # FINAL OUTPUT
   # =====================================================================
   echo "
@@ -371,6 +404,7 @@ if($jumlah_soal){
     let durasi_show = '';
     let milidetik_show = '';
     let jawaban = '';
+    let cjawaban = '';
     let cidnj = ''; // current id_soal + id_peserta + jawaban
     let cidnjpp = 'initial value'; // current id_soal + id_peserta + jawaban + pp
     let arr_idnj = []; //id_soal + jawaban
@@ -510,6 +544,7 @@ if($jumlah_soal){
         let rid = tid.split('__');
         let id_soal = rid[1];
         jawaban = $(this).text().slice(3);
+        cjawaban = jawaban;
         cidnj = id_soal+'~~'+id_peserta+'~~'+jawaban;
         arr_idnj[id_soal] = cidnj;
         let username_pembuat = $('#username_pembuat__'+id_soal).text();
@@ -634,6 +669,8 @@ if($jumlah_soal){
         $('#kamu_benar').removeClass('blue');
         $('#kamu_benar').removeClass('red');
         $('#weapon').removeClass('cermin');
+
+        console.log(cjawaban);
 
         if(cjawaban=='NULL'){
           // tidak menjawab

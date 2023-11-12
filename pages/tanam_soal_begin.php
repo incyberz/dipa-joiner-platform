@@ -72,7 +72,7 @@ $info_sesi = '';
 $pilih_sesi = '';
 if($id_sesi==''){
   // include 'include/arr_sesi.php';
-  $s = "SELECT a.*, a.id as id_sesi FROM tb_sesi a WHERE a.id_room=$id_room ORDER BY a.no";
+  $s = "SELECT a.*, a.id as id_sesi FROM tb_sesi a WHERE a.id_room='$id_room' ORDER BY a.no";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   while($d=mysqli_fetch_assoc($q)){
     $id_sesi=$d['id_sesi'];

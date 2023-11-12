@@ -129,5 +129,13 @@ if($values){
   poin_pembuat,
   tanggal) VALUES $values";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  
 }
+// update paket war completed
+$last_60 = date('Y-m-d H:i:s',strtotime('now') - (60*60)); // 1 jam for reupdate summary
+$last_30 = date('Y-m-d H:i:s',strtotime('now') - (30*60)); // 20 menit for resuming quiz
+$s = "UPDATE tb_paket_war SET is_completed=1 WHERE id_peserta='$id_peserta' AND tanggal >= '$last_30'";
+$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$s = "UPDATE tb_perang_summary SET last_update='$last_60' WHERE id='$id_peserta' ";
+$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 die('sukses');
