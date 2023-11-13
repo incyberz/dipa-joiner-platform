@@ -8,6 +8,7 @@
     </div>
 
     <?php
+    instruktur_only();
     // if($id_role==1) die(erid('roles'));
     $judul = 'Login As';
 

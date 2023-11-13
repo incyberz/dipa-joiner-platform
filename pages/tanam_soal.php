@@ -12,13 +12,13 @@ login_only();
 
 
 $link = "<a href='?soal_saya'>Soal Saya</a>";
-$link2 = "<a href='?perang_soal'>Perang Soal</a>";
+$link2 = "<a href='?perang_soal'>Perang Home</a>";
 $meme = $punya_profil_perang ? meme('menanam') : '';
 echo "
   <div class='section-title' data-aos-zzz='fade-up'>
     <h2>Menanam Soal</h2>
     <p>
-      <div>$link | $link2</div>
+      <div>$link2 | $link</div>
       <div class='kecil abu '>
         <div class=mb2>Tanamlah soal dengan benih yang berkualitas</div>
         $meme

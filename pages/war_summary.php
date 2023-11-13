@@ -12,7 +12,7 @@
 # =================================================================
 login_only();
 $link3 = "<a href='?perang_soal'>Perang Home</a>";
-$link5 = "<a href='?war_history'>War History</a>";
+$link5 = "<a href='?war_leaderboard'>War Leaderboard</a>";
 echo "
   <div class='section-title' data-aos-zzz='fade-up'>
     <h2>War Summary</h2>

@@ -401,6 +401,8 @@ if($must_update){
 }
 
 
+if($available_soal>99) $available_soal = 99;
+if($available_questions>99) $available_questions = 99;
 
 
 

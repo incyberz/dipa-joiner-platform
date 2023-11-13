@@ -70,11 +70,17 @@ $available_soal_show = "<span class='count_badge badge_$red' id='available_soal'
             $li_verif_war
             <li class='dropdown'><a  href='#'><span class='tebal darkred'>Perang $available_soal_show</span> <i class='bi bi-chevron-down'></i></a>
               <ul>
+              <li><a href='?perang_soal'>Perang Soal</a></li>
                 <li><a href='?tanam_soal'>Tanam Soal</a></li>
                 <li><a href='?soal_saya'>Soal Saya</a></li>
-                <li><a href='?perang_soal'>Perang Soal</a></li>
                 <li><a href='?war_history'>War History</a></li>
                 <li><a href='?war_summary'>War Summary</a></li>
+                <li><a href='?war_leaderboard'>War Leaderboard</a></li>
+                <li><a href='?the_best_investor'>The Best Investor</a></li>
+                <li><a href='?the_best_accuracy'>The Best Accuracy</a></li>
+                <li><a href='?lazy_soldier'>Lazy Soldier</a></li>
+                <li><a href='?good_soldier'>Good Soldier</a></li>
+                <li><a href='?war_statistics'>War Statistics</a></li>
               </ul>
             </li>
             <li class='dropdown'><a  href='#'><span class='tebal darkblue'>Belajar</span> <i class='bi bi-chevron-down'></i></a>

@@ -112,5 +112,7 @@
 .profil_pembuat, .profil_penjawab{width: 64px; height:64px; object-fit:cover; border-radius: 50%; background: gray}
 .cermin{-webkit-transform: scaleX(-1);transform: scaleX(-1);}
 
+.abugelap {color: #555}
+.abumuda {color: #aaa}
 
 </style>
