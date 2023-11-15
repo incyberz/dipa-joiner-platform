@@ -53,7 +53,7 @@ if($id_paket_soal==''){
       if($selisih_akhir<0){
         // sudah berakhir
         if($jumlah_attemp==0){
-          $list_paket .= "<div><span class='btn btn-secondary btn-block' onclick='alert(\"Maaf, Paket Soal ini sudah berakhir.\")'>$nama_paket_show<br>Sudah berakhir dan kamu tidak bisa mengikutinya kembali</span></div>";
+          $list_paket .= "<div class=mb2><span class='btn btn-secondary btn-block' onclick='alert(\"Maaf, Paket Soal ini sudah berakhir.\")'>$nama_paket_show<br>Sudah berakhir dan kamu tidak bisa mengikutinya kembali</span></div>";
         }else{
           $list_paket .= "<a href='?ujian&id_paket_soal=$d[id]' class='mb2 btn btn-secondary btn-block' >$nama_paket_show<br>Sudah berakhir dan kamu boleh melihat hasilnya</a>";
         }
@@ -110,15 +110,17 @@ if($id_paket_soal==''){
 
     }
 
-    $rand = rand(1,9);
+    $tambah_ujian = $id_role==1 ? '' : "<div class=kanan><a class='btn btn-success' href='?tambah_ujian'>Tambah Ujian</a></div>";
+    $meme = meme('funny');
   
     echo "
     <section>
       <div class=container>
+        $tambah_ujian
         <div class='mb2 darkblue bold'>Silahkan pilih Paket Soal yang tersedia:</div> 
         $list_paket
         <hr>
-        <div class='tengah' style='max-width: 300px; margin: auto'><img  class='img-fluid img-thumbnail' src='assets/img/meme/funny-$rand.jpg'></div>
+        <div class='tengah' style='max-width: 300px; margin: auto'>$meme</div>
       </div>
     </section>";
     
