@@ -1,6 +1,13 @@
 <?php
-define('PHI', 3.14);
-$jari_jari = 7;
-$luas_lingkaran = 2 * PHI * $jari_jari;
+  function tambah_spasi($a){
+    $a = str_replace('<',' < ',$a);
+    $a = str_replace('>',' > ',$a);
+    $a = str_replace('< =','<=',$a);
+    $a = str_replace('> =','>=',$a);
+    $a = str_replace('  ',' ',$a);
+    return $a;
+  }
 
-echo "Luas lingkaran : $luas_lingkaran";
+  $b = '<b>asd a <= b then</b>';
+  echo '<textarea>'.tambah_spasi("$b").'</textarea>';
+

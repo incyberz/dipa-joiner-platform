@@ -36,7 +36,9 @@ $s = "SELECT (
   a.my_question_verified +
   a.my_question_decided +
   a.my_question_promoted 
-  ) my_questions, b.nama as nama_peserta 
+  ) my_questions, 
+b.id as id_peserta, 
+b.nama as nama_peserta 
 FROM tb_perang_summary a JOIN tb_peserta b ON a.id=b.id 
 WHERE b.id_role=1 
 AND b.kelas != 'BOCIL' 
@@ -46,7 +48,10 @@ $rnama = [];
 $rpoints = [];
 while($d=mysqli_fetch_assoc($q)){
   if($d['my_questions']==0) continue;
-  array_push($rnama,$d['nama_peserta']);
+
+  $img = $id_role==1 ? '' : "<img src='assets/img/peserta/wars/peserta-$d[id_peserta].jpg' class='profil_pembuat' ><br> ";
+
+  array_push($rnama,$img.$d['nama_peserta']);
   array_push($rpoints,$d['my_questions']);
 }
 

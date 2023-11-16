@@ -47,6 +47,20 @@ if(isset($_POST['btn_simpan'])){
 
   $status = $id_role==1 ? 'NULL' : 2;
 
+  function tambah_spasi($a){
+    $a = str_replace('<',' < ',$a);
+    $a = str_replace('>',' > ',$a);
+    $a = str_replace('< =','<=',$a);
+    $a = str_replace('> =','>=',$a);
+    $a = str_replace('  ',' ',$a);
+    return $a;
+  }
+
+
+  $kalimat_soal = tambah_spasi($kalimat_soal);
+  $jawaban = tambah_spasi($jawaban);
+  $opsies = tambah_spasi($opsies);
+
   $s = "INSERT INTO tb_soal_pg 
   (id_sesi,id_pembuat,kalimat_soal,tags,opsies,jawaban,id_status) values 
   ($_POST[id_sesi],$id_peserta,'$kalimat_soal','$_POST[my_tags]','$opsies','$jawaban',$status)

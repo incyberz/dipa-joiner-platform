@@ -93,6 +93,7 @@ $available_soal_show = "<span class='count_badge badge_$red' id='available_soal'
                 <li class='hideit'><a href='?my_questions'>Pertanyaan Saya</a></li>
                 <li class='hideit'><a href='?chats'>Chats</a></li>
                 <li class=hideit><a href='?quiz'>Kuis PG</a></li>
+                <li class=><a href='?presensi'>Presensi</a></li>
                 <li class=><a href='?ujian'>Ujian UTS/UAS</a></li>
               </ul>
             </li>

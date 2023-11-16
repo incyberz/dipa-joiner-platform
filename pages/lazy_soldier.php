@@ -36,6 +36,7 @@ echo "
 $sql_kelas = $id_role ==1 ? "a.kelas = '$kelas' " : '1';
 
 $s = "SELECT 
+a.id as id_peserta,
 a.nama as nama_peserta,
 a.kelas,
 a.username,
@@ -76,11 +77,13 @@ while($d=mysqli_fetch_assoc($q)){
     ";
   }
 
+  $img = $id_role==1 ? '' : "<img src='assets/img/peserta/peserta-$d[id_peserta].jpg' class='profil_pembuat' > <span>&nbsp;</span> ";
+
   $lazys.= "
     $div_header
     <div class='flexy btop pt1 pb1'>
       <div style='flex:1' class='tengah'>$no</div>
-      <div style='flex:5'>$nama $login_as</div>
+      <div style='flex:5'>$img $nama $login_as</div>
       <div style='flex:3' class=kanan>$d[play_count]</div>
     </div>
   ";
