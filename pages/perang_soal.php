@@ -10,12 +10,21 @@ if(isset($_POST['btn_accept_points'])){
   // handle next soal | ga dijawab
   echo div_alert('success',"Memproses poin request...");
   echo "<span class=debug id=encdata>$_POST[cidnjpp]</span>";
+
+  //get last id_paket_war
+  $s = "SELECT id as id_paket_war FROM tb_paket_war WHERE id_peserta=$id_peserta ORDER BY tanggal DESC LIMIT 1";
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  $d = mysqli_fetch_assoc($q);
+  $id_paket_war = $d['id_paket_war'];
+  echo "<span class=debug>id_paket_war:<span id=id_paket_war>$id_paket_war</span></span>";
+
   ?><script>
     $(function(){
       let buyar = $('#encdata').text();
       let debuyar = CryptoJS.AES.decrypt(buyar, "DIPA Joiner");
       let asli = debuyar.toString(CryptoJS.enc.Utf8);
-      let link_ajax = "ajax/kirim_hasil_kuis.php?data="+asli;
+      let id_paket_war = $('#id_paket_war').text();
+      let link_ajax = `ajax/kirim_hasil_kuis.php?id_paket_war=${id_paket_war}&data=`+asli;
 
       $.ajax({
         url:link_ajax,

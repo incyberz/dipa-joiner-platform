@@ -1,3 +1,4 @@
+<section id="about" class="about"><div class="container">
 <?php
 // login_only(); // boleh tidak login
 $get_kelas = $_GET['kelas'] ?? '';
@@ -21,47 +22,57 @@ $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $d = mysqli_fetch_assoc($q);
 $last_update_point = $d['last_update_point'];
 $selisih = $id_role==2 ? 600 : (strtotime('now') - strtotime($last_update_point));
-if($selisih>=600 and $id_role!=3){
+if($selisih>=600 and $id_role!=3 and $is_login){
 
   // reupdate grades
   echo div_alert('info','Reupdate Grades ... please wait!');
-  $s = "SELECT a.id, 
-  (
-    SELECT COUNT(1) FROM tb_pertanyaan  
-    WHERE id_penanya=a.id 
-  ) as count_bertanya,
-  (
-    SELECT COUNT(1) FROM tb_jawaban_chat  
-    WHERE id_penjawab=a.id 
-  ) as count_menjawab,
-  (
-    SELECT SUM(poin) FROM tb_pertanyaan  
-    WHERE id_penanya=a.id 
-    AND verif_date is not null 
-  ) as poin_bertanya,
-  (
-    SELECT SUM(poin) FROM tb_jawaban_chat  
-    WHERE id_penjawab=a.id 
-    AND verif_date is not null 
-  ) as poin_menjawab,
-  (
-    SELECT SUM(get_point) FROM tb_bukti_latihan 
-    WHERE id_peserta=a.id 
-    AND tanggal_verifikasi is not null 
-    AND status=1
-  ) as total_poin_latihan,
-  (
-    SELECT SUM(get_point) FROM tb_bukti_tugas 
-    WHERE id_peserta=a.id 
-    AND tanggal_verifikasi is not null 
-    AND status=1
-  ) as total_poin_tugas,
-  (
-    SELECT SUM(get_point) FROM tb_bukti_challenge 
-    WHERE id_peserta=a.id 
-    AND tanggal_verifikasi is not null 
-    AND status=1
-  ) as total_poin_challenge 
+  $s = "SELECT 
+    a.id, 
+    (
+      SELECT poin_presensi FROM tb_presensi_summary   
+      WHERE id_peserta=a.id 
+      AND id_room=$id_room  
+      ) as poin_presensi,
+    (
+      SELECT war_points FROM tb_perang_summary   
+      WHERE id=a.id 
+      ) as war_points,
+    (
+      SELECT COUNT(1) FROM tb_pertanyaan  
+      WHERE id_penanya=a.id 
+      ) as count_bertanya,
+    (
+      SELECT COUNT(1) FROM tb_jawaban_chat  
+      WHERE id_penjawab=a.id 
+      ) as count_menjawab,
+    (
+      SELECT SUM(poin) FROM tb_pertanyaan  
+      WHERE id_penanya=a.id 
+      AND verif_date is not null 
+      ) as poin_bertanya,
+    (
+      SELECT SUM(poin) FROM tb_jawaban_chat  
+      WHERE id_penjawab=a.id 
+      AND verif_date is not null 
+      ) as poin_menjawab,
+    (
+      SELECT SUM(get_point) FROM tb_bukti_latihan 
+      WHERE id_peserta=a.id 
+      AND tanggal_verifikasi is not null 
+      AND status=1
+      ) as total_poin_latihan,
+    (
+      SELECT SUM(get_point) FROM tb_bukti_tugas 
+      WHERE id_peserta=a.id 
+      AND tanggal_verifikasi is not null 
+      AND status=1
+      ) as total_poin_tugas,
+    (
+      SELECT SUM(get_point) FROM tb_bukti_challenge 
+      WHERE id_peserta=a.id 
+      AND tanggal_verifikasi is not null 
+      AND status=1
+      ) as total_poin_challenge 
 
   
   FROM tb_peserta a 
@@ -70,6 +81,8 @@ if($selisih>=600 and $id_role!=3){
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   while ($d=mysqli_fetch_assoc($q)) {
     // echo "<hr>$d[id] :: $d[total_poin_latihan]";
+    $poin_presensi = $d['poin_presensi'] ?? 0;
+    $war_points = $d['war_points'] ?? 0;
     $count_bertanya = $d['count_bertanya'] ?? 0;
     $count_menjawab = $d['count_menjawab'] ?? 0;
     $poin_bertanya = $d['poin_bertanya'] ?? 0;
@@ -80,19 +93,15 @@ if($selisih>=600 and $id_role!=3){
 
     $total_poin_bertanya = $poin_bertanya + $count_bertanya*100;
     $total_poin_menjawab = $poin_menjawab + $count_menjawab*10;
-    $total_poin = $total_poin_bertanya
+    $total_poin = 0
+                  +$poin_presensi
+                  +$war_points 
+                  +$total_poin_bertanya
                   +$total_poin_menjawab
                   +$total_poin_latihan
                   +$total_poin_tugas
                   +$total_poin_challenge;
 
-    if($d['id']==31) echo "
-    $total_poin = $poin_bertanya + $count_bertanya*100 = $total_poin_bertanya<br>
-                  +$poin_menjawab + $count_menjawab*10 = $total_poin_menjawab<br>
-                  +$total_poin_latihan<br>
-                  +$total_poin_tugas<br>
-                  +$total_poin_challenge;
-    ";
 
     $s2 = "UPDATE tb_peserta SET 
     akumulasi_poin=$total_poin,
@@ -191,24 +200,22 @@ if($id_role==2 && $get_kelas!='all'){
   }
 }
 ?>
-<section id="about" class="about">
-  <div class="container">
 
-    <!-- <div class="section-title" data-aos="fade-up">
-      <h2>Grades</h2>
-    </div> -->
 
-    <h4 class='darkblue bold text-center consolas mb-4' data-aos="fade-up" data-aos-delay="150"><?=$judul?></h4>
-    <div class="grades" data-aos="fade-up" data-aos-delay="150">
-      <p>Berikut adalah 10 Peserta Terbaik <span class="darkred"><?=$kelas_show?></span>.</p>
+<!-- <div class="section-title" data-aos="fade-up">
+  <h2>Grades</h2>
+</div> -->
 
-      <?=$tb?>
-      <div class="kecil miring abu">
-        Poin didapatkan dari pengerjaan tugas secara ontime, posting pertanyaan berbobot, atau aktifitas belajar lainnya.
-      </div>
-    </div>
+<h4 class='darkblue bold text-center consolas mb-4' data-aos="fade-up" data-aos-delay="150"><?=$judul?></h4>
+<div class="grades" data-aos="fade-up" data-aos-delay="150">
+  <p>Berikut adalah 10 Peserta Terbaik <span class="darkred"><?=$kelas_show?></span>.</p>
 
-    
-
+  <?=$tb?>
+  <div class="kecil miring abu">
+    Poin didapatkan dari pengerjaan tugas secara ontime, posting pertanyaan berbobot, atau aktifitas belajar lainnya.
   </div>
-</section>
+</div>
+
+
+
+</div></section>

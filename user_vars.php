@@ -60,6 +60,8 @@ $rank_global = $d_peserta['rank_global'];
 $total_kelas_ini = $d_peserta['total_kelas_ini'];
 $profil_ok = $d_peserta['profil_ok'];
 
+$total_kelas_peserta = $total_kelas_ini;
+
 
 
 

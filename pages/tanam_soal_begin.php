@@ -53,6 +53,8 @@ if(isset($_POST['btn_simpan'])){
     $a = str_replace('< =','<=',$a);
     $a = str_replace('> =','>=',$a);
     $a = str_replace('  ',' ',$a);
+    $a = str_replace('&','n',$a);
+    $a = str_replace('#','[hashtag]',$a);
     return $a;
   }
 
@@ -327,11 +329,18 @@ if($id_sesi==''){
       let rid = tid.split('__');
       let aksi = rid[0];
       let abjad = rid[1];
+
+      // replace hashtag dan ampersand
+      let v = $(this).val();
+      v = v.replace('#', 'hashtag');
+      v = v.replace('&', 'ampersand');
+      $(this).val(v.substring(0,30));
       
       opsi__a = $('#opsi__a').val().trim();
       opsi__b = $('#opsi__b').val().trim();
       opsi__c = $('#opsi__c').val().trim();
       opsi__d = $('#opsi__d').val().trim();
+
 
       kalimat_soal = $('#kalimat_soal').val().trim();
       reset_form();

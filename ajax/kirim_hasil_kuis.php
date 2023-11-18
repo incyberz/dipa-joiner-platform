@@ -9,9 +9,13 @@ include 'session_user.php';
 # GET VARIABEL
 # ================================================
 $do_banned = 0;
+$id_paket_war = $_GET['id_paket_war'] ?? die(erid('id_paket_war')); if($id_paket_war=='') die(erid("id_paket_war::null"));
 $data = $_GET['data'] ?? die(erid('data')); if($data=='') die(erid("data::null"));
 
 // $data = "6~~44~~luas permukaan~~0~~34~~12~~51~~2023-11-2 12:48:25~~~7~~44~~menghasilkan output yang benar~~0~~34~~12~~54~~2023-11-2 12:48:33~~~8~~44~~menghasilkan output yg keliru~~1~~114~~8~~51~~2023-11-2 12:48:38~~~9~~44~~NULL~~-1~~0~~0~~54~~2023-11-2 12:48:20~~~";
+$s = "UPDATE tb_paket_war SET jawabans='$data' WHERE id=$id_paket_war"; // for debugging
+$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+
 
 $rdata = explode('~~~',$data);
 foreach ($rdata as $value) {
@@ -69,7 +73,7 @@ foreach ($arr_data as $d) {
       if(mysqli_num_rows($q)>=4){
         // do banned
         $do_banned = 1;
-        $s = "UPDATE tb_soal SET id_status=-1 WHERE id=$id_soal";
+        $s = "UPDATE tb_soal_pg SET id_status=-1 WHERE id=$id_soal";
         $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 
         // set 0 to passive point
@@ -86,7 +90,7 @@ foreach ($arr_data as $d) {
       $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
       if(mysqli_num_rows($q)>=9){
         // do verified
-        $s = "UPDATE tb_soal SET id_status=1 WHERE id=$id_soal";
+        $s = "UPDATE tb_soal_pg SET id_status=1 WHERE id=$id_soal";
         $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
       }
     }

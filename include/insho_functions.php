@@ -59,3 +59,15 @@ function eta($eta,$indo=1){
     }    
   }
 }
+
+
+function jsurl($a){
+  echo "<script>location.replace('$a')</script>";
+  exit;
+}
+
+function jsreload(){
+  echo "<script>location.reload()</script>";
+  exit;
+}
+

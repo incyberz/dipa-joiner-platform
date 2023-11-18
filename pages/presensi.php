@@ -1,27 +1,392 @@
 <section id="about" class="about"><div class="container">
   <style>
+    .border_blue{border: solid 3px blue;}
+    .border_red{border: solid 1px #f55;}
+    .border_green{border: solid 1px #5f5;}
   </style>
 <?php
 # =================================================================
 login_only();
-$link3 = "<a href='?perang_soal'>Perang Home</a>";
-$link5 = "<a href='?the_best_accuracy'>Best Accuracy</a>";
+include 'include/date_managements.php';
+$rekap = $id_role==1 ? '<p class=f14>Presenting your work! Not only a signature.</p>' : "<a href='?presensi_rekap'>Rekap Presensi</a>";
 echo "
   <div class='section-title' data-aos-zzz='fade-up'>
     <h2>Presensi Kuliah</h2>
-    <p>Presenting your work! Not only signature.</p>
+    $rekap
   </div>
 ";
 
 # =========================================================
 # INITIAL VARIABLE
 # =========================================================
+$basic_point = 3000;
+$persen_up = 117;
+$multiplier_reduction_per_presenter = 3.4; //pengurangan poin per presenters
+$syarat_soal_count = 1; // 1 soal per minggu
+$is_ontime_now = 0;
+$is_telat_now = 0;
+$sudah_presensi = 0;
+$dikurangi_persen = 50; // jika telat dikurangi 50% + durasi hari telat
+$ris_ontime = [];
+$rpresenters_kelas = [];
+$sesi_aktif = 0;
+
+
+
+
+# =========================================================
+# BASIC POINT UP IF ONTIME
+# =========================================================
+$s = "SELECT 
+(
+  SELECT id   
+  FROM tb_presensi_summary 
+  WHERE id_peserta=$id_peserta
+  AND id_room=$id_room) id_presensi_summary,
+(
+  SELECT id   
+  FROM tb_sesi a 
+  WHERE a.awal_presensi_default >= '$ahad_skg'  
+  AND a.akhir_presensi_default < '$ahad_depan' 
+  AND a.id_room=$id_room) id_sesi_aktif,
+(
+  SELECT COUNT(1)  
+  FROM tb_presensi a 
+  JOIN tb_sesi b ON a.id_sesi=b.id 
+  WHERE a.id_peserta=$id_peserta 
+  AND a.is_ontime = 1 
+  AND b.id_room=$id_room) jumlah_ontime,
+(
+  SELECT SUM(poin)  
+  FROM tb_presensi a 
+  JOIN tb_sesi b ON a.id_sesi=b.id 
+  WHERE a.id_peserta=$id_peserta 
+  AND b.id_room=$id_room) jumlah_poin_presensi,
+(
+  SELECT COUNT(1)  
+  FROM tb_presensi a 
+  JOIN tb_sesi b ON a.id_sesi=b.id 
+  WHERE a.id_peserta=$id_peserta 
+  AND b.id_room=$id_room) jumlah_presensi
+  ";
+
+  // echo "<pre>$s</pre>";
+
+$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$d = mysqli_fetch_assoc($q);
+$id_presensi_summary = $d['id_presensi_summary'];
+# =========================================================
+# CREATE PRESENSI SUMMARY IF NOT EXITS
+# =========================================================
+if($id_presensi_summary==''){
+  $s = "INSERT INTO tb_presensi_summary (id_peserta,id_room) VALUES ($id_peserta,$id_room)";
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  jsreload();
+}
+
+$jumlah_ontime = $d['jumlah_ontime'];
+$jumlah_presensi = $d['jumlah_presensi'];
+$id_sesi_aktif = $d['id_sesi_aktif'];
+$jumlah_poin_presensi = $d['jumlah_poin_presensi'] ?? 0;
+$syarat_play_count = $jumlah_presensi+1;
+
+for ($i=1; $i <= $jumlah_ontime; $i++) { 
+  $basic_point = round($basic_point * $persen_up / 100,0);
+  // echo "<h1>$i x upper points | $syarat_play_count | $basic_point</h1>";
+}
+
 
 
 
 # =========================================================
 # MAIN SELECT
 # =========================================================
+$div = '';
+$s = "SELECT a.*,
+a.id as id_sesi,
+(SELECT COUNT(1) FROM tb_soal_pg WHERE id_pembuat=$id_peserta AND id_sesi=a.id) jumlah_soal,
+(SELECT COUNT(1) FROM tb_paket_war WHERE id_peserta=$id_peserta AND is_completed=1) play_count , 
+(
+  SELECT 1 FROM tb_presensi WHERE id_peserta=$id_peserta 
+  AND id_sesi=a.id) sudah_presensi, 
+(
+  SELECT COUNT(1) FROM tb_presensi p 
+  JOIN tb_peserta q ON p.id_peserta=q.id 
+  WHERE p.id_sesi=a.id AND q.kelas='$kelas') presenters_kelas, 
+(
+  SELECT COUNT(1) FROM tb_presensi p 
+  JOIN tb_sesi q ON p.id_sesi=q.id 
+  WHERE p.id_peserta=$id_peserta 
+  AND q.id_room=$id_room) jumlah_presensi 
+
+FROM tb_sesi a 
+WHERE a.id_room=$id_room";
+// echo "<pre>$s</pre>";
+$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$presenters_kelas_last_active_sesi = 0;
+$is_ontime_now = 0;
+while($d=mysqli_fetch_assoc($q)){
+
+  // $d['play_count'] = 999; //zzz
+  // $d['jumlah_soal'] = 999; //zzz
+
+  $id_sesi=$d['id_sesi'];
+  $sudah_presensi=$d['sudah_presensi'];
+
+  $awal_presensi = $d['awal_presensi_default']; //zzz awal presensi sebenarnya di tabel lain
+  $akhir_presensi = $d['akhir_presensi_default']; //zzz akhir presensi sebenarnya di tabel lain
+
+  $tnow = strtotime('now');
+  $tawal = strtotime($awal_presensi);
+  $takhir = strtotime($akhir_presensi);
+  
+  # ===============================================================
+  # MINGGU SEKARANG
+  # ===============================================================
+  $is_ontime_now = 0;
+  $is_telat_now = 0;
+  $sudah_dibuka = $tnow>=$tawal ? 1 : 0;
+  $belum_ditutup = $tnow<$takhir ? 1 : 0;
+  $sedang_berlangsung = $sudah_dibuka && $belum_ditutup ? 1 : 0;
+  
+  $sesi_aktif++;
+  $ris_ontime[$id_sesi] = 0;
+  if($sudah_dibuka){ // sudah dibuka
+    $rpresenters_kelas[$id_sesi] = $d['presenters_kelas'];
+    $presenters_kelas_last_active_sesi = $d['presenters_kelas'];
+
+    if($belum_ditutup){ // berlangsung
+      $is_ontime_now = 1;
+      $ris_ontime[$id_sesi] = 1;
+
+    }else{ // sudah dibuka, dan sudah ditutup (lampau, telat presensi)
+      $is_telat_now = 1;
+    }
+
+
+  }else{ // belum dibuka
+    $sesi_aktif--;
+  }
+  
+  
+
+  $jadwal_kuliah_show = date('D, M d, H:i', strtotime($d['jadwal_kuliah_default']));
+  $awal_presensi_show = date('M d, Y, H:i', $tawal);
+  $akhir_presensi_show = date('M d, Y, H:i', $takhir);
+
+  $jadwal_kuliah_show.= ' ~ <span class=abu>'.eta(-$tnow + strtotime($d['jadwal_kuliah_default'])).'</span>';
+  $awal_presensi_show.= ' ~ <span class=abu>'.eta(-$tnow + $tawal).'</span>';
+  $akhir_presensi_show.= ' ~ <span class=abu>'.eta(-$tnow + $takhir).'</span>';
+
+  $akhir_presensi_show = $is_telat_now ? "<span class=red>$akhir_presensi_show</span>" : $akhir_presensi_show;
+
+
+  if($sudah_presensi) {
+    $s2 = "SELECT * FROM tb_presensi WHERE id_peserta=$id_peserta AND id_sesi=$id_sesi";
+    $q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));
+    $d2 = mysqli_fetch_assoc($q2);
+
+    $poin = number_format($d2['poin'],0);
+    $tgl = date('D, M d, H:i:s', strtotime($d2['tanggal']));
+
+    $img_ontime = '<img src="assets/img/icons/ontime.png" height=50px />';
+    $img_late = '<img src="assets/img/icons/late.png" height=50px />';
+    $img = $d2['is_ontime'] ? $img_ontime : $img_late;
+    $sudah_presensi = $d2['is_ontime'] ? '<span class="biru tebal">Ontime</span>' : '<span class="darkred">Telat Presensi</span>';
+
+    $btn_presensi = "
+    <div >
+    <div>$img</div>
+    <div>$sudah_presensi <span class='miring abu'>at $tgl</span></div>
+    <div>$poin LP</div>
+    </div>
+    ";
+
+    $syarat_presensi = "
+      <div class=mb2>Soal saya: $d[jumlah_soal] | <a href='?tanam_soal&id_sesi=$id_sesi'>Tanam Lagi</a></div> 
+    ";
+
+  }else{ //belum presensi
+
+    $jumlah_soal = $d['jumlah_soal'];
+    $play_count = $d['play_count'];
+    $syarat_soal = "$jumlah_soal of $syarat_soal_count";
+    $syarat_play = "$play_count of $syarat_play_count";
+
+
+    if($jumlah_soal<$syarat_soal_count){
+      $syarat_soal = "<span class=red>$syarat_soal</span> | <a href='?tanam_soal&id_sesi=$id_sesi'>Tanam</a>";
+    }else{
+      $syarat_soal = "<span class=green>$syarat_soal</span> <img src='assets/img/icons/check.png' height=20px />";
+    }
+
+    if($play_count<$syarat_play_count){
+      $syarat_play = "<span class=red>$syarat_play</span> | <a href='?perang_soal&mode=random'>Play</a>";
+    }else{
+      $syarat_play = "<span class=green>$syarat_play</span> <img src='assets/img/icons/check.png' height=20px />";
+    }
+
+    $dikurangi = '';
+    // boleh present
+    if($jumlah_soal>=$syarat_soal_count and $play_count>=$syarat_play_count){
+      if($is_telat_now){
+        $saya_hadir = 'Saya Hadir Telat';
+        $durasi_hari = durasi_hari($now,$akhir_presensi);
+        $dikurangi_persen -= $durasi_hari;
+        if($dikurangi_persen>90) $dikurangi_persen=90;
+        $lp = round($dikurangi_persen * $basic_point/100,0);
+        $dikurangi = "<span class=red>Poin dikurangi $lp LP | <span id=dikurangi_persen>$dikurangi_persen</span>%</span>";
+        $primary = 'warning';
+      }else{ // boleh present dan di sesi ini tidak telat
+        if($sudah_dibuka){
+          $saya_hadir = 'Saya Hadir';
+          $dikurangi = '';
+          $primary = 'primary';
+        }else{ // boleh present, tidak telat, tapi belum dibuka
+          $saya_hadir = 'Belum dibuka';
+          $dikurangi = '';
+          $primary = 'secondary';
+        }
+      }
+
+
+      $btn_presensi = $sudah_dibuka ? "
+        <form method=post>
+          <button class='btn btn-$primary btn-sm btn-block' value=$id_sesi name=btn_saya_hadir><span class=f12>$saya_hadir</span></button>
+          $dikurangi
+        </form>
+      " : 
+      "<button class='btn btn-$primary btn-sm btn-block' disabled><span class=f12>$saya_hadir</span></button>"
+      ;
+    }else{ // syarat kurang
+      $btn_presensi = "
+        <button class='btn btn-secondary btn-sm btn-block' onclick='alert(\"Maaf, kamu belum memenuhi syarat presensi.\")'><span class=f12>Saya Hadir</span></button>
+      ";
+    }
+
+    $syarat_presensi = "
+      <div class='abu miring'>Syarat presensi:</div> 
+      <div class=mb1>Soal saya: $syarat_soal</div> 
+      <div class=mb2>Play count: $syarat_play</div>
+    ";
+
+  }
+
+  $border_blue = $is_ontime_now ? 'border_blue' : '';
+  $border_blue = $is_telat_now ? 'border_red' : $border_blue;
+  $border_blue = $sudah_presensi ? 'border_green' : $border_blue;
+  $hijau = $is_ontime_now ? 'hijau' : '';
+
+  $j=0;
+  $div.= "
+    <div class='gradasi-$hijau mb2 bordered br5 p2 f12 $border_blue' id='row_presensi__$id_sesi'>
+      <div class='row'>
+        <div class='col-lg-3'>
+          <div class='mb1 darkblue tebal'>P$d[no] $d[nama]</div>
+          <div class='mb1 abu miring'>$d[presenters_kelas] of $total_kelas_peserta sudah hadir</div>
+        </div>
+        <div class='col-lg-4'>
+          <div><span class='abu miring'>Jadwal Kuliah:</span> $jadwal_kuliah_show</div>
+          <div><span class='abu miring'>Pembukaan:</span> $awal_presensi_show</div>
+          <div class=mb1><span class='abu miring'>Penutupan:</span> $akhir_presensi_show</div>
+        </div>
+        <div class='col-lg-2'>
+          $syarat_presensi
+        </div>
+        <div class='col-lg-3'>
+          $btn_presensi
+        </div>
+      </div>
+    </div>
+  ";
+
+}
+
+
+
+$basic_point -= round($presenters_kelas_last_active_sesi*$multiplier_reduction_per_presenter,0);
+// echo "<h1>presenters_kelas_last_active_sesi: $presenters_kelas_last_active_sesi</h1>";
+
+// echo '<pre>';
+// var_dump($rpresenters_kelas);
+// echo '</pre>';
+
+$epp_detik = $basic_point;
+$epp_milidetik = 99-(date('s') % 80 ). rand(22,99);
+
+# =========================================================
+# POST HANDLER
+# =========================================================
+if(isset($_POST['btn_saya_hadir'])){
+  $id = $_POST['btn_saya_hadir'];
+
+  $s = "SELECT 1 FROM tb_presensi WHERE id_sesi=$id AND id_peserta=$id_peserta";
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  if(mysqli_num_rows($q)==0){
+    $poin = $ris_ontime[$id] ? $basic_point : $basic_point - round($basic_point*$dikurangi_persen/100,0);
+    $s = "INSERT INTO tb_presensi 
+    (id_peserta,id_sesi,poin,is_ontime) VALUES 
+    ($id_peserta,$id,$poin,$ris_ontime[$id])";
+    // echo $s;
+    $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  }
+
+  jsurl('?presensi');
+}
+
+
+# =========================================================
+# UPDATE DATA PRESENSI
+# =========================================================
+$s = "UPDATE tb_presensi_summary SET 
+jumlah_ontime = $jumlah_ontime,
+jumlah_presensi = $jumlah_presensi,
+poin_presensi = $jumlah_poin_presensi,
+last_update = CURRENT_TIMESTAMP 
+WHERE id_peserta=$id_peserta 
+AND id_room=$id_room 
+";
+// echo "<pre>$s</pre>";
+$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+
+
+# =========================================================
+# FINAL OUTPUT
+# =========================================================
+$persen_ontime = $sesi_aktif==0 ? 0 : round($jumlah_ontime/$sesi_aktif*100,0);
+$epp_milidetik = $persen_ontime==100 ? '0000' : $epp_milidetik;
+echo "
+<div class='tengah wadah' style='max-width:500px; margin:auto; margin-bottom: 30px'>
+  <div>Your Present:</div>
+  <div class='f50 darkblue'><span id=persen_ontime>$persen_ontime</span>%</div>
+  <div class=' kecil abu miring'>$jumlah_ontime of $sesi_aktif sessies | Poin: $jumlah_poin_presensi LP</div>
+  <hr>
+  <div class='kecil abu '>Ontime Points next: <span class='consolas darkred'><span id=epp_detik>$epp_detik</span>.<span id=epp_milidetik>$epp_milidetik</span> LP</span></div>
+</div>
+$div";
+
+if($persen_ontime!=100){
+  echo "
+    <script>
+      $(function(){
+        let epp_detik = $('#epp_detik').text();
+        let epp_milidetik = $('#epp_milidetik').text();
+
+        let = setInterval(() => {
+          if(epp_milidetik==0){
+            epp_milidetik=9999;
+            epp_detik--;
+          }else{
+            epp_milidetik--;
+          }
+          $('#epp_detik').text(epp_detik);
+          $('#epp_milidetik').text(epp_milidetik);
+        }, 35);
+
+      })
+    </script>
+  ";
+}
 
 
 
@@ -37,8 +402,3 @@ echo "
 
 
 ?></div></section>
-<script>
-  $(function(){
-
-  })
-</script>
