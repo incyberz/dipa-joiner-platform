@@ -25,6 +25,8 @@ $my_points = 0;
 $punya_profil = '';
 $available_soal = 0;
 $id_room = 1; //zzz
+$nama_room = 'Matematika Informatika'; //zzz
+$room = 'MAFI'; //zzz
 
 include 'config.php';
 
