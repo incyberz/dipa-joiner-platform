@@ -7,7 +7,7 @@
           Maaf, page ini masih dalam tahap pengembangan.
         </div>
 
-      <p>Berikut adalah DIPA Teams on-progress.</p>
+      <p>Berikut adalah DIPA Teams on-progress. | <a href="?mhs">Peserta Mhs</a> </p>
     </div>
 
     <style>

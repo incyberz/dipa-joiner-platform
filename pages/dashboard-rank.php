@@ -11,7 +11,7 @@
   </div>
   
   <div class='blok_nilai_akhir'>
-    <span class="abu">Nilai Akhir:</span> <span class="nilai_akhir_hm"><?=$hm?></span> <span class="nilai_akhir_angka">(<?=$nilai_akhir?>)</span> <a href="?nilai_saya"><i class="bi bi-arrow-right-circle-fill "></i></a>
+    <span class="abu">Nilai Akhir:</span> <span class="nilai_akhir_hm"><?=$hm?></span> <span class="nilai_akhir_angka">(<?=$nilai_akhir?>)</span> <a href="?nilai_akhir"><i class="bi bi-arrow-right-circle-fill "></i></a>
   </div>
 
 </div>

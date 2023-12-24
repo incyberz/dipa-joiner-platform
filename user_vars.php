@@ -6,12 +6,13 @@ $undef = '<span class="red kecil miring">undefined</span>';
 # GET DATA PESERTA
 # ========================================================
 $s = "SELECT a.*, b.sebagai,
-(SELECT 1 FROM tb_biodata WHERE id_peserta=a.id) punya_biodata ,
+(SELECT 1 FROM tb_biodata WHERE id=a.id) punya_biodata ,
 (
   SELECT count(1) FROM tb_peserta WHERE status=1 AND kelas=a.kelas) total_kelas_ini 
 FROM tb_peserta a 
 JOIN tb_role b ON a.id_role=b.id 
 WHERE a.username='$username'";
+// echo $s;
 $sd = $s;
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 if(mysqli_num_rows($q)==0) die("mhs_var :: Mahasiswa dengan Username: $username tidak ditemukan.");
@@ -176,25 +177,25 @@ if($nilai_akhir==0){
 
 
 
-$pekerjaan = '';
-$testimony = '';
-$alamat = '';
-$desa = '';
-$kec = '';
-$kab = '';
-if($punya_biodata){
-  $s = "SELECT * FROM tb_biodata WHERE id_peserta=$id_peserta";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-  if(mysqli_num_rows($q)){
-    $d=mysqli_fetch_assoc($q);
-    $pekerjaan = $d['pekerjaan'];
-    $testimony = $d['testimony'];
-    $alamat = $d['alamat'];
-    $desa = $d['desa'];
-    $kec = $d['kec'];
-    $kab = $d['kab'];
-  }
-}
+// $pekerjaan = '';
+// $testimony = '';
+// $alamat = '';
+// $desa = '';
+// $kec = '';
+// $kab = '';
+// if($punya_biodata){
+//   $s = "SELECT * FROM tb_biodata WHERE id_peserta=$id_peserta";
+//   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+//   if(mysqli_num_rows($q)){
+//     $d=mysqli_fetch_assoc($q);
+//     $pekerjaan = $d['pekerjaan'];
+//     $testimony = $d['testimony'];
+//     $alamat = $d['alamat'];
+//     $desa = $d['desa'];
+//     $kec = $d['kec'];
+//     $kab = $d['kab'];
+//   }
+// }
 
 
 

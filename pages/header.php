@@ -103,8 +103,10 @@ $available_soal_show = "<span class='count_badge badge_$red' id='available_soal'
                 <li><a href='?my_points'>My Points</a></li>
                 <li><a href='?nilai_akhir'>Nilai Akhir</a></li>
                 <li><a href='?upload_profil'>My Profile</a></li>
+                <li><a href='?biodata'>My Biodata</a></li>
                 <li><a href='?verifikasi_profil_peserta'>Verifikasi Profil Peserta</a></li>
-                <li><a href='?polling_uts'>Polling UTS</a></li>
+                <li><a href='?polling'>Polling UTS</a></li>
+                <li><a href='?polling&u=uas'>Polling UAS</a></li>
                 <li class='hideit'><a href='?my_testimony'>My Testimony</a></li>
                 <li class=hideit><a href='?my_biodata'>My Biodata</a></li>
                 <li><a href='?ubah_password'>Ubah Password</a></li>

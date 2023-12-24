@@ -66,7 +66,7 @@ $debug .= "<br>jumlah_attemp:<span id=jumlah_attemp>$jumlah_attemp</span>";
 # =======================================================
 # SUBMIT HANDLER
 # =======================================================
-if(isset($_POST['btn_submit'])){
+if(isset($_POST['btn_submit_jawaban_ujian'])){
   $jawabans = $_POST['jawabans'];
   $jawabans .= '___';
   $jawabans = str_replace('|___','',$jawabans);
@@ -90,7 +90,14 @@ if(isset($_POST['btn_submit'])){
 
   echo div_alert('success','Submit Jawaban sukses');
   echo '<script>document.cookie = "jawabans=";</script>'; //clear cookie
-  echo '<script>location.replace("?ujian")</script>'; //redirect
+  if($dm){
+    echo "<hr>location.replace skipped.<hr>$s";
+    echo 'var_dump($arr_kj)<pre>';
+    var_dump($arr_kj);
+    echo '</pre>';
+  }else{
+    echo "<script>location.replace('?ujian&id_paket_soal=$_GET[id_paket_soal]#blok_hasil_ujian')</script>"; //redirect
+  }
 
   exit;
 }
@@ -200,7 +207,9 @@ if($selisih>0){ //belum mulai
   }else{
     if($start){
       $countdown = "
-        <div id='countdown' class='gradasi-merah' style='position:fixed; bottom: 10px; padding: 5px 10px; left: 10px; font: 30px consolas; color: darkred; border-radius: 10px; border: solid 2px darkblue; box-shadow: 0 0 8px gray; z-index:999'>00:00</div>
+        <div style='position:fixed; bottom: 10px; padding: 5px 10px; left: 10px; border-radius: 10px; border: solid 2px darkblue; box-shadow: 0 0 8px gray; z-index:999; background:white'>
+          <span id='countdown' style='font: 30px consolas; color: darkred;'>00:00</span> <span id=sekian_soal_lagi><span id=belum_dijawab_count2>10</span> soal lagi</span>
+        </div>
       ";
     }
   }
@@ -367,7 +376,7 @@ if($selisih<=0 and $selisih_akhir >= 0 and $jumlah_attemp<$max_attemp and $start
     <div class="" data-aos="fade" data-aos-delay=800>
       <?=$info_paket_soal?>
     </div>
-    <div class="wadah gradasi-hijau tengah" data-aos='fade-up' data-aos-delay='150'>
+    <div id=blok_hasil_ujian class="wadah gradasi-hijau tengah" data-aos='fade-up' data-aos-delay='150'>
       <?=$blok_timer?>
     </div>
     <?=$list_soal?>
@@ -440,7 +449,7 @@ if($selisih<=0 and $selisih_akhir >= 0 and $jumlah_attemp<$max_attemp and $start
     let kues='';
     dkue.forEach((kue) => {
       if(kue.substring(0,9)=='jawabans='){
-        kues = kue.substring(9,500);
+        kues = kue.substring(9,5000);
       }
     })
  
@@ -466,13 +475,36 @@ if($selisih<=0 and $selisih_akhir >= 0 and $jumlah_attemp<$max_attemp and $start
           $('#btn_false__'+id).removeClass('btn-secondary');
           $('#btn_false__'+id).addClass('btn-warning');
         }else{
-          console.log('Undefined KJ :'+kj);
+          let z = document.getElementsByClassName('btn_pg__'+id);
+          if(z.length==0){
+            console.log('Undefined KJ :'+kj, id);
+          }else{
+            console.log('Perform Loop opsi PG id: '+ id);
+            for (let i = 0; i < z.length; i++) {
+              if(z[i].innerText == kj){
+                $('#btn_pg__'+id+'__'+i).addClass('btn-success');
+              }
+              // console.log(z[i].innerText);
+            }
+          }
         } 
       }
     })
     // END COOKIE HANDLER
 
-    console.log(jawaban_set);
+    console.log('jumlah jawaban Set(): ',jawaban_set.size);
+    console.log('jumlah soal: ',jumlah_soal);
+    if(jawaban_set.size == jumlah_soal){
+      $('#span_submit').hide();
+      $('#check_submit').prop('disabled',0);
+    }
+
+    let belum_dijawab_count = jumlah_soal - jawaban_set.size;
+    $('#belum_dijawab_count').text(belum_dijawab_count);
+    $('#belum_dijawab_count2').text(belum_dijawab_count);
+    if(belum_dijawab_count==0){
+      $('#sekian_soal_lagi').html('<span class="kecil green">All done!</span>');
+    }    
 
 
     // ==============================================
@@ -528,7 +560,7 @@ if($selisih<=0 and $selisih_akhir >= 0 and $jumlah_attemp<$max_attemp and $start
           clearInterval(countdown);
           // location.reload();
           // document.btn_submit.submit();
-          $('.btn_tf').hide();
+          $('.btn_jawab').hide();
           $('#blok_btn_submit').show();
           $('#span_submit').hide();
           alert('Waktu Habis! Silahkan Submit Jawaban Anda.');
@@ -560,11 +592,11 @@ if($selisih<=0 and $selisih_akhir >= 0 and $jumlah_attemp<$max_attemp and $start
     // CLICK HANDLER
     // ==============================================
     $('#check_submit').click(function(){
-      $('#btn_submit').prop('disabled',!$(this).prop('checked'))
+      $('#btn_submit_jawaban_ujian').prop('disabled',!$(this).prop('checked'))
     })
 
 
-    $('.btn_tf').click(function(){
+    $('.btn_jawab').click(function(){
       let tid = $(this).prop('id');
       let rid = tid.split('__');
       let btn = rid[0];
@@ -577,12 +609,26 @@ if($selisih<=0 and $selisih_akhir >= 0 and $jumlah_attemp<$max_attemp and $start
         $('#btn_false__'+id_assign_soal).removeClass('btn-warning');
         $('#btn_false__'+id_assign_soal).addClass('btn-secondary');
         jawaban = 'T';
-      }else{
+      }else if(btn=='btn_false'){
         jawaban = 'F';
         $(this).addClass('btn-warning');
         $(this).removeClass('btn-secondary');
         $('#btn_true__'+id_assign_soal).removeClass('btn-success');
         $('#btn_true__'+id_assign_soal).addClass('btn-secondary');
+      }else if(btn=='btn_pg'){ // 
+        jawaban = $(this).text();
+        key = rid[2];
+        console.log('jawaban-pg: '+jawaban, 'key: '+key);
+        $('.btn_pg__'+id_assign_soal).removeClass('btn-success');
+        $('.btn_pg__'+id_assign_soal).addClass('btn-secondary');
+        $(this).addClass('btn-success');
+
+        if(jawaban_set.size>=jumlah_soal-1){
+          $('#check_submit').prop('disabled',0);
+        }
+      }else{ 
+        console.log('Undefined btn opsi name index[0]');
+        return;
       }
       $('#div_soal__'+id_assign_soal).removeClass('belum_dijawab');
       $('#jawaban__'+id_assign_soal).text(id_assign_soal+'__'+jawaban);
@@ -592,6 +638,11 @@ if($selisih<=0 and $selisih_akhir >= 0 and $jumlah_attemp<$max_attemp and $start
 
       let belum_dijawab_count = jumlah_soal - jawaban_set.size;
       $('#belum_dijawab_count').text(belum_dijawab_count);
+      $('#belum_dijawab_count2').text(belum_dijawab_count);
+      if(belum_dijawab_count==0){
+        $('#sekian_soal_lagi').html('<span class="kecil green">All done!</span>');
+      }
+
 
       
       let jawabans='';
@@ -600,7 +651,9 @@ if($selisih<=0 and $selisih_akhir >= 0 and $jumlah_attemp<$max_attemp and $start
         jawabans += rj[i].innerText + '|';
       }
       $('#jawabans').val(jawabans);
+      console.log('LENGTH OF JAWABANS: '+jawabans.length);
       document.cookie = 'jawabans=' + jawabans;
+      // console.log('SET-COOKIE :\n'+jawabans);
 
       
       

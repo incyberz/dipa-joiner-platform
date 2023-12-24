@@ -40,11 +40,21 @@ $today = date('Y-m-d');
 # =========================================================
 # MAIN SELECT
 # =========================================================
-$rstats = ['Hari ini','Minggu ini'];
+$rstats = ['Hari ini','Minggu ini','All time'];
 foreach ($rstats as $saat) {
 
-  $and_tanggal = $saat=='Hari ini' ? "AND tanggal >= '$today'" : "AND tanggal >= '$ahad_skg'" ;
-  $now_show = $saat=='Hari ini' ? $now_show : $minggu_ini_show;
+  if($saat=='Hari ini'){
+    $and_tanggal = "AND tanggal >= '$today'";
+    $now_show = $now_show;
+  }elseif($saat=='Minggu ini'){
+    $and_tanggal = "AND tanggal >= '$ahad_skg'";
+    $now_show = $minggu_ini_show;
+  }else{
+    $and_tanggal = "AND 1";
+    $now_show = 'Dari P1 hingga sekarang';
+  }
+  // $and_tanggal = $saat=='Hari ini' ? "AND tanggal >= '$today'" : "AND tanggal >= '$ahad_skg'" ;
+  // $now_show = $saat=='Hari ini' ? $now_show : $minggu_ini_show;
 
   
   $s = "SELECT 
@@ -100,6 +110,8 @@ echo "
     ".$stats['Hari ini']."
     <div>&nbsp;</div>
     ".$stats['Minggu ini']."
+    <div>&nbsp;</div>
+    ".$stats['All time']."
   </div>
 ";
 

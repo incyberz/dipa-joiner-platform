@@ -48,7 +48,7 @@ if((strtotime($tanggal_pembahasan)-strtotime('now')) >= 0){
     <ol>
       <li>Upload foto profil yang baik | <a href='?upload_profil'>Upload</a></li>
       <li>Foto profil sudah terverifikasi oleh intruktur | <a href='?verifikasi_profil_peserta'>Lihat Status Profil</a></li>
-      <li>Kamu sudah mengisi polling pasca ujian | <a href='?polling_uts'>Isi Polling</a></li>
+      <li>Kamu sudah mengisi polling pasca ujian | <a href='?polling'>Isi Polling</a></li>
     </ol>
   </div>");
 }else{
@@ -66,7 +66,7 @@ if((strtotime($tanggal_pembahasan)-strtotime('now')) >= 0){
 
     if(!$sudah_polling){
       $dari = urlencode("?pembahasan_soal&id_paket_soal=$id_paket_soal");
-      echo div_alert('info', "Untuk mengakses Fitur Pembahasan Soal, silahkan kamu mengisi dahulu Polling dan Kuesioner ya!! Agar web DIPA ini semakin baik. <hr><a class='btn btn-primary btn-sm btn-block' href='?polling_uts&dari=$dari'>Polling UTS</a>");
+      echo div_alert('info', "Untuk mengakses Fitur Pembahasan Soal, silahkan kamu mengisi dahulu Polling dan Kuesioner ya!! Agar web DIPA ini semakin baik. <hr><a class='btn btn-primary btn-sm btn-block' href='?polling&dari=$dari'>Polling UTS</a>");
     }else{
       if($profil_ok==-1){
         echo div_alert('danger', 'Wah maaf! Silahkan ganti profil dulu dengan yang baik. | <a href="?verifikasi_profil_peserta">Status Profile</a>');
@@ -84,11 +84,21 @@ if((strtotime($tanggal_pembahasan)-strtotime('now')) >= 0){
         JOIN tb_paket_soal b ON a.id_paket_soal=b.id 
         WHERE a.id_paket_soal=$id_paket_soal 
         AND a.id_peserta=$id_peserta";
+        // echo $s;
         $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
         if(mysqli_num_rows($q)==0) die(div_alert('danger','Data Jawaban tidak ditemukan'));
-        $d=mysqli_fetch_assoc($q);
-        $jawabans = $d['jawabans'];
-        $tmp_jawabans = $d['tmp_jawabans'];
+        // if(mysqli_num_rows($q)>1) die(div_alert('danger','zzz Data Jawaban tidak ditemukan'));
+
+        $nilai_max = 0;
+        while($d=mysqli_fetch_assoc($q)){
+          if($d['nilai']<$nilai_max) continue;
+          $nilai_max = $d['nilai'];
+          $jawabans = $d['jawabans'];
+          $tmp_jawabans = $d['tmp_jawabans'];
+        }
+
+        // echo "<hr>$jawabans<hr>".strlen($jawabans);
+
 
         $ranswer = [];
         $rjawabans = explode('|',$jawabans);
