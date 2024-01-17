@@ -32,9 +32,9 @@ foreach ($arr_kelas as $k => $jp) $data_csv[$k] = '';
 # =======================================================
 $sql_id_peserta = $id_role==1 ? "a.id=$id_peserta" : '1';
 $nama_paket_soal_uts = 'Soal UTS Semester 1 TA. 2023/2024';
-$nama_paket_soal_uas = 'Soal UTS Semester 1 TA. 2023/2024';
+$nama_paket_soal_uas = 'Soal UAS 2023';
 $nama_paket_soal_remed_uts = 'Soal Pasca UTS';
-$nama_paket_soal_remed_uas = 'Soal Pasca UAS';
+$nama_paket_soal_remed_uas = 'Soal Remed UAS';
 
 $from_tb_jawabans = "FROM tb_jawabans p 
   JOIN tb_paket_soal q ON p.id_paket_soal=q.id 
@@ -67,6 +67,9 @@ b.*,
 (
   SELECT p.nilai $from_tb_jawabans = '$nama_paket_soal_uas'
   ORDER BY p.nilai DESC LIMIT 1) nilai_uas ,
+(
+  SELECT p.tanggal_submit $from_tb_jawabans = '$nama_paket_soal_uas'
+  ORDER BY p.nilai DESC LIMIT 1) submit_uas ,
 (
   SELECT p.tanggal_submit $from_tb_jawabans = '$nama_paket_soal_uas'
   ORDER BY p.nilai DESC LIMIT 1) tanggal_submit_uas, 
@@ -111,7 +114,7 @@ $rbobot['Rank Kelas'] = 15;
 $rbobot['UTS'] = 15;
 $rbobot['UAS'] = 20;
 $rbobot['Remed UTS'] = 5;
-$rbobot['Remed UAS'] = 0;
+$rbobot['Remed UAS'] = 5;
 
 $tr='';
 $td_bobot = '';
@@ -156,6 +159,7 @@ $nilai_akhir=0;
 $total_kelas_ini=0;
 $nilai_uts=0;
 $nilai_uas=0;
+$submit_uas='';
 
 $nilai_remed_uts=0;
 $nilai_remed_uas=0;
@@ -190,6 +194,7 @@ while ($d=mysqli_fetch_assoc($q)) {
   $total_kelas_ini=$d['total_kelas_ini'];
   $nilai_uts=$d['nilai_uts'];
   $nilai_uas=$d['nilai_uas'];
+  $submit_uas=$d['submit_uas'];
   $nilai_remed_uts=$d['nilai_remed_uts'];
   $nilai_remed_uas=$d['nilai_remed_uas'];
 
@@ -283,7 +288,7 @@ while ($d=mysqli_fetch_assoc($q)) {
     <td>$d[rank_global] <span class='kecil miring abu'>of $total_peserta</span><div class='kecil miring abu'>$konversi_rank_global</div></td>
     <td>$d[rank_kelas] <span class='kecil miring abu'>of $d[total_kelas_ini]</span><div class='kecil miring abu'>$konversi_rank_kelas</div></td>
     <td>$d[nilai_uts]</td>
-    <td>$d[nilai_uas]</td>
+    <td>$d[nilai_uas]<div class='abu f12'>$submit_uas</div></td>
     <td>$d[nilai_remed_uts]</td>
     <td>$d[nilai_remed_uas]</td>
     <td>$nilai_akhir $delete</td>

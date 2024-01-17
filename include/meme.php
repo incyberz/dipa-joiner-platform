@@ -8,8 +8,8 @@
 }
 </style>
 <?php
-function meme($nama){
-  $r = rand(1,9);
+function meme($nama,$max=9){
+  $r = rand(1,$max);
   $me = "assets/img/meme/$nama-$r.jpg";
   if(file_exists($me)){
     return "<img class=meme src='$me' />";

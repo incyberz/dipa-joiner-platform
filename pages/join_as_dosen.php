@@ -1,3 +1,7 @@
+<style>
+  form label {margin: ; color: #555}
+  form small {color: gray; }
+</style>
 <?php
 $pesan_join='';
 $nama = '';
@@ -78,27 +82,27 @@ $hideit_btn_join = ($nama!='' and $username!='' and $select_kelas!='0') ? '' : '
   <?=$pesan_join?>
 </div>
 
-<div class="wadah gradasi-hijau" data-aos="fade-up" data-aos-delay="150" style='max-width:500px; margin:auto'>
+<div class="wadah gradasi-hijau" data-aos="fade-up" data-aos-delay="150">
   <form method=post>
     <div class="form-group">
       <label for="nama">Nama Lengkap</label>
-      <input class='form-control input_isian mt1' type="text" id='nama' name='nama' required maxlength=20 minlength=3 value='<?=$nama?>'>
+      <input class='form-control input_isian' type="text" id='nama' name='nama' required maxlength=20 minlength=3 value='<?=$nama?>'>
     </div>
     <div class="form-group">
-      <label for="username">Username</label>
-      <input class='form-control input_isian mt1' type="text" id='username' name='username' required maxlength=20 minlength=3 value='<?=$username?>'>
-      <div class='kecil miring mt1'>Untuk mahasiswa, username harus nama depan atau nama panggilan kamu.</div>
+      <label for="username">Nama Panggilan / Nickname</label>
+      <input class='form-control input_isian' type="text" id='username' name='username' required maxlength=20 minlength=3 value='<?=$username?>'>
+      <small class='miring'>Max 10 huruf dan tanpa spasi</small>
     </div>
     <div class="form-group">
       <label for="select_kelas">Kelas</label>
       <select name="select_kelas" id="select_kelas" class="form-control">
         <option value="0">--Pilih--</option>
         <?=$option_kelas?>
-        <!-- <option value="new" class='kecil miring abu'>buat kelas baru...</option> -->
+        <option value="new" class='kecil miring abu'>buat kelas baru...</option>
       </select>
       <div class="wadah hideit mt2" id="blok_new_kelas">
         <label for="kelas_new">Silahkan masukan kelas baru Anda:</label>
-        <input class='form-control input_isian mt1' type="text" id='kelas_new' name='kelas_new' placeholder='kelas baru' value='null' required maxlength=20 minlength=4>
+        <input class='form-control input_isian' type="text" id='kelas_new' name='kelas_new' placeholder='kelas baru' value='null' required maxlength=20 minlength=4>
         <small class=miring>Max 20 karakter tanpa spasi</small>
       </div>
 
@@ -135,16 +139,6 @@ $hideit_btn_join = ($nama!='' and $username!='' and $select_kelas!='0') ? '' : '
       }
     })
 
-    $('#username').keyup(function(){
-      $(this).val(
-        $(this).val()
-        .trim()
-        .toLowerCase()
-        .replace(/ /g, '')
-        .replace(/[!@#$%^&*()+\-=\[\]{},;:'`"\\|<>\/?~]/gim, '')
-      );
-
-    });
     $('.input_isian').keyup(function(){
       let link_wa = 'https://api.whatsapp.com/send?phone=6287729007318&text=*Verification Link Request*%0a%0a';
       let nama = $('#nama').val();

@@ -3,8 +3,11 @@
 <?php
 # =================================================================
 login_only();
+if(!$status_room) die($div_alert_closed);
 $mode = $_GET['mode'] ?? '';
 $start = $_GET['start'] ?? '';
+
+
 
 if(isset($_POST['btn_accept_points'])){
   // handle next soal | ga dijawab

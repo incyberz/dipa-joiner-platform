@@ -3,11 +3,11 @@
     <?php
     $as = $_GET['as'] ?? '';
     if($as!=''){
-      if(file_exists("join_as_$as.php")){
-        include "join_as_$as.php";
-
+      if(file_exists("pages/join_as_$as.php")){
+        include "join_as_mhs.php";
+        
       }else{
-        div_alert('danger','Maaf, fitur ini masih dalam tahap pengembangan.');
+        echo div_alert('danger','Maaf, fitur ini masih dalam tahap pengembangan.');
       }
     }else{ 
       $arr_as = ['mhs','dosen','praktisi','industri'];

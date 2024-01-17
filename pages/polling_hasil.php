@@ -41,7 +41,7 @@ while ($d=mysqli_fetch_assoc($q)) {
 # =========================================================
 # GET POLLING ANSWER
 # =========================================================
-$s = "SELECT a.id as id_peserta, a.* FROM tb_polling_answer a WHERE a.untuk='$u'";
+$s = "SELECT a.id as id_peserta, a.* FROM tb_polling_answer a WHERE a.id_untuk like '%-$u'";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $jumlah_responden = mysqli_num_rows($q);
 $ranswers = [];
@@ -61,7 +61,11 @@ while ($d=mysqli_fetch_assoc($q)){
         $poll[$no][$an]++;
       }else{
         // echo 'ini isian';
-        array_push($poll_isian[$no], [$d['id_peserta'], $d['nama_responden'],$an]);
+        // echo "poll_isian[$no], [$d[id_peserta], $d[nama_responden],an:$an]";
+        // echo '<pre>';
+        // var_dump($poll_isian);
+        // echo '</pre>';
+        array_push($poll_isian[$no], [$d['id_untuk'], $d['nama_responden'],$an]);
       }
 
     }
@@ -79,16 +83,15 @@ while ($d=mysqli_fetch_assoc($q)){
 # =========================================================
 // $jawaban_isian = [];
 foreach ($poll_isian as $no => $arr_isians) {
-  echo "<br>Nomor $no zzz";
+  // echo "<br>Nomor $no zzz";
   
   foreach ($arr_isians as $key => $arr_isian) {
     $responden = ucwords(strtolower($arr_isian[1]));
-    $jawaban_isian[$no] .= "<div><span class='abu kecil miring'>id:$arr_isian[0] | $responden</span> ~ $arr_isian[2]</div>";
-    echo '<pre>';
-    var_dump($arr_isian);
-    echo '</pre>';
-    # code...
+    $id_untuk = $arr_isian[0];
+    $isian = ($arr_isian[2]=="NULL" || $arr_isian[2]=='') ? '-' : $arr_isian[2];
+    $jawaban_isian[$no] .= "<tr><td class='abu kecil miring'>$responden</td><td>$isian</td></tr>";
   }
+  $jawaban_isian[$no] = "<table class=table>$jawaban_isian[$no]</table>";
 }
 
 
@@ -107,7 +110,7 @@ foreach ($rpolling as $no => $rtanya) {
   $polls.="<span class=debug><span class=jawabans id=jawabans__$no></span></span>";
 
   if($rtanya[1]=='isian' || $rtanya[1]=='uraian' ){
-    $opsi = $jawaban_isian[$no];
+    $opsi = '<div class=wadah>'.$jawaban_isian[$no].'</div>';
 
 
   }else{

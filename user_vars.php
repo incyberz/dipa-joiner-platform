@@ -6,7 +6,10 @@ $undef = '<span class="red kecil miring">undefined</span>';
 # GET DATA PESERTA
 # ========================================================
 $s = "SELECT a.*, b.sebagai,
-(SELECT 1 FROM tb_biodata WHERE id=a.id) punya_biodata ,
+(SELECT 1 FROM tb_biodata WHERE id=a.id) punya_biodata,
+(SELECT nik FROM tb_biodata WHERE id=a.id) nik,
+(SELECT 1 FROM tb_polling_answer WHERE id_untuk=concat(a.id,'-uts')) sudah_polling_uts,
+(SELECT 1 FROM tb_polling_answer WHERE id_untuk=concat(a.id,'-uas')) sudah_polling_uas,
 (
   SELECT count(1) FROM tb_peserta WHERE status=1 AND kelas=a.kelas) total_kelas_ini 
 FROM tb_peserta a 
@@ -50,6 +53,9 @@ $akumulasi_poin = $d_peserta['akumulasi_poin'];
 $password = $d_peserta['password'];
 $status = $d_peserta['status'];
 $punya_biodata = $d_peserta['punya_biodata'];
+$nik = $d_peserta['nik'];
+$sudah_polling_uts = $d_peserta['sudah_polling_uts'];
+$sudah_polling_uas = $d_peserta['sudah_polling_uas'];
 $is_depas = $password=='' ? 1 : 0;
 
 $my_points = number_format($akumulasi_poin,0);

@@ -17,16 +17,13 @@ if(0){
 session_start();
 // session_destroy(); exit;
 // echo '<pre style="margin-top: 170px">'; var_dump($_SESSION); echo '</pre>';
-$dm = 1;
+$dm = 0;
 $is_login = 0;
 $id_role = 0;
 $status = 0;
 $my_points = 0;
 $punya_profil = '';
 $available_soal = 0;
-$id_room = 1; //zzz
-$nama_room = 'Matematika Informatika'; //zzz
-$room = 'MAFI'; //zzz
 
 include 'config.php';
 
@@ -75,6 +72,30 @@ include $insho_styles;
 include 'jwd_styles.php';
 include 'include/meme.php';
 include 'include/insho_functions.php';
+
+# ========================================================
+# ROOM PROPERTIES
+# ========================================================
+# null = 0 = belum aktif
+# -1 = selesai (auto jika tidak diantara awal dan akhir )
+# 1 = aktif
+# ========================================================
+echo '<pre style=margin:100px>';
+var_dump($_SESSION);
+echo '</pre>';
+$id_room = $_SESSION['dipa_id_room'] ?? '';
+if($username){
+  if($id_room){
+    include 'room_vars.php';
+  }else{
+    $parameter = 'pilih_room';
+  }
+}
+// $id_room = 1; //zzz
+// $nama_room = 'Matematika Informatika'; //zzz
+// $room = 'MAFI'; //zzz
+// $status_room = 0; //closed zzz
+// $div_alert_closed = div_alert('danger',meme('closed',6)."<hr>Maaf, room ini udah ditutup. Sampai jumpa di room selanjutnya!");
 ?>
 
 <!DOCTYPE html>
@@ -129,7 +150,7 @@ include 'include/insho_functions.php';
 
 <body>
 
-  <?php include 'pages/header.php'; ?>
+  <?php if($id_room) include 'pages/header.php'; ?>
   <?php if(!$is_login and $parameter=='') include 'pages/hero.php'; ?>
   <main id="main" style='padding-top:50pxs;' >
     <?php include 'routing.php'; ?>

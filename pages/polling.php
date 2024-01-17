@@ -41,7 +41,7 @@ if(isset($_POST['btn_submit'])){
 # =========================================================
 # CEK JIKA SUDAH POLLING
 # =========================================================
-$s = "SELECT * FROM tb_polling_answer WHERE  id_untuk like '%-$u'";
+$s = "SELECT * FROM tb_polling_answer WHERE  id_untuk like '$id_peserta-$u'";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $arr_jawaban = [];
 $arr_isian = [];
@@ -166,8 +166,10 @@ foreach ($rpolling as $no => $rtanya) {
   <?=$polls?>
   <form method=post>
 
-    <input type="hiddena" name=nama_responden value='<?=$nama_responden?>'>
-    <textarea type="hiddena" id=jawabans name=jawabans class='form-control merah' rows=5></textarea>
+    <div class="hideit">
+      <input type="hidden" name=nama_responden value='<?=$nama_responden?>'>
+      <textarea id=jawabans name=jawabans class='form-control merah' rows=5></textarea>
+    </div>
     <button class="btn btn-primary btn-block" id=btn_submit name=btn_submit disabled><?=$submit_caption?></button>
   </form>
 </div>

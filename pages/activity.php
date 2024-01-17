@@ -1,4 +1,5 @@
 <?php
+if(!$status_room) die("<section><div class=container>$div_alert_closed</div></section>");
 $jenis = $_GET['jenis'] ?? '';
 $no = $_GET['no'] ?? '';
 

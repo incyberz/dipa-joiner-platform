@@ -70,7 +70,7 @@ $available_soal_show = "<span class='count_badge badge_$red' id='available_soal'
             $li_verif_war
             <li class='dropdown'><a  href='#'><span class='tebal darkred'>Perang $available_soal_show</span> <i class='bi bi-chevron-down'></i></a>
               <ul>
-              <li><a href='?perang_soal'>Perang Soal</a></li>
+                <li><a href='?perang_soal'>Perang Soal</a></li>
                 <li><a href='?tanam_soal'>Tanam Soal</a></li>
                 <li><a href='?soal_saya'>Soal Saya</a></li>
                 <li><a href='?war_history'>War History</a></li>
@@ -83,7 +83,7 @@ $available_soal_show = "<span class='count_badge badge_$red' id='available_soal'
                 <li><a href='?war_statistics'>War Statistics</a></li>
               </ul>
             </li>
-            <li class='dropdown'><a  href='#'><span class='tebal darkblue'>Belajar</span> <i class='bi bi-chevron-down'></i></a>
+            <li class='dropdown'><a  href='#'><span class='tebal darkblue'>$room</span> <i class='bi bi-chevron-down'></i></a>
               <ul>
                 <li><a href='?list_sesi'>List Sesi</a></li>
                 <li><a href='?activity&jenis=latihan'>Latihan Praktikum</a></li>
@@ -109,6 +109,7 @@ $available_soal_show = "<span class='count_badge badge_$red' id='available_soal'
                 <li><a href='?polling&u=uas'>Polling UAS</a></li>
                 <li class='hideit'><a href='?my_testimony'>My Testimony</a></li>
                 <li class=hideit><a href='?my_biodata'>My Biodata</a></li>
+                <li><a href='?pilih_room'>Pilih Room</a></li>
                 <li><a href='?ubah_password'>Ubah Password</a></li>
                 <li><a href='?logout' onclick='return confirm(\"Yakin untuk Logout?\")' class=red>Logout</a></li>
               </ul>

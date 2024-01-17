@@ -253,14 +253,17 @@ if($selisih>0){ //belum mulai
     }    
     $dari = urlencode("?ujian&id_paket_soal=$id_paket_soal");
     $info_pembahasan .= "<hr><a class='btn btn-primary btn-block' href='?pembahasan_soal&id_paket_soal=$id_paket_soal&dari=$dari'>Lihat Pembahasan</a>";
-    // if((strtotime($tanggal_pembahasan)-strtotime('now')) >= 0){
-    //   $info_pembahasan = "<hr><div class='miring darkred'>Pembahasan soal akan muncul pada tanggal $tanggal_pembahasan_show</div>";
-    // }else{
-    //   $dari = urlencode("?ujian&id_paket_soal=$id_paket_soal");
-    //   $info_pembahasan = "<hr><a class='btn btn-primary btn-block' href='?pembahasan_soal&id_paket_soal=$id_paket_soal&dari=$dari'>Lihat Pembahasan</a>";
 
-    // }
-
+    if(!$nik){
+      $list_jawabans = div_alert('danger',"Sepertinya kamu belum mengisi Biodata Peserta. <a class='btn btn-primary mt2 w-100' href='?biodata'>Isi Biodata Peserta</a><hr><span class='abu kecil'>Silahkan isi dahulu agar dapat melihat hasil ujian.</span>");
+      $info_pembahasan = '';
+    }
+    
+    if($untuk='uas' && !$sudah_polling_uas){
+      $list_jawabans = div_alert('danger',"Sepertinya kamu belum Polling UAS. <a class='btn btn-primary mt2 w-100' href='?polling&u=uas'>Isi Polling UAS</a>. <hr><span class='abu kecil'>Silahkan isi dahulu agar dapat melihat hasil ujian.</span>");
+      $info_pembahasan = '';
+    }
+    
     $blok_timer .= "
       <div class='wadah kiri bg-white'>
         Jawaban kamu:

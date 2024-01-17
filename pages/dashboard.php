@@ -71,7 +71,7 @@ if(!isset($_SESSION['dipa_username'])){
   exit;
 }
 
-$pekerjaan = $pekerjaan=='' ? "$sebagai" : $pekerjaan;
+$pekerjaan = (!isset($pekerjaan) || $pekerjaan=='') ? "$sebagai" : $pekerjaan;
 
 $src = "assets/img/peserta/peserta-$id_peserta.jpg";
 if(!file_exists($src)){
@@ -87,6 +87,7 @@ if(!file_exists($src)){
   <div class="container">
 
     <div class="section-title" data-aos="fade-up">
+      <?php if(!$status_room) echo div_alert('info', meme('closed',6).'<hr>Room ini sudah ditutup.');  ?>
       <h2>Dashboard</h2>
       <p>Welcome <span class='tebal darkblue'><?=$nama_peserta?></span>! Anda login sebagai <span class='tebal darkblue'><?=$sebagai?></span>.</p>
     </div>
