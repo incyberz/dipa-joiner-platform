@@ -1,4 +1,3 @@
-<section id="about" class="about"><div class="container">
 <script src="assets/js/aes.js" integrity="sha256-/H4YS+7aYb9kJ5OKhFYPUjSJdrtV6AeyJOtTkw6X72o=" crossorigin="anonymous"></script>
 <?php
 # =================================================================
@@ -138,7 +137,7 @@ if(isset($_POST['btn_accept_points'])){
 
 
 
-?></div></section>
+?>
 <script>
   $(function(){
     $('#pvp_mode').click(function(){

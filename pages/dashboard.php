@@ -71,6 +71,7 @@ if(!isset($_SESSION['dipa_username'])){
   exit;
 }
 
+
 $pekerjaan = (!isset($pekerjaan) || $pekerjaan=='') ? "$sebagai" : $pekerjaan;
 
 $src = "assets/img/peserta/peserta-$id_peserta.jpg";
@@ -83,60 +84,63 @@ if(!file_exists($src)){
 
 
 ?>
-<section id="dashboard" class="dashboard">
-  <div class="container">
+<div class="section-title" data-aos="fade-up">
+  <?php if(!$status_room) echo div_alert('info', meme('closed',6).'<hr>Room ini sudah ditutup.');  ?>
+  <h2>Dashboard</h2>
+  <p>Welcome 
+    <span class='tebal darkblue'><?=$nama_peserta?></span>
+    ! Anda login sebagai 
+    <span class='tebal darkblue'><?=$sebagai?></span>
+    kelas 
+    <span class='tebal darkblue'><?=$kelas?> </span>
+    pada Room 
+    <span class='tebal darkblue'><?=$nama_room?></span>.
+  </p>
+</div>
 
-    <div class="section-title" data-aos="fade-up">
-      <?php if(!$status_room) echo div_alert('info', meme('closed',6).'<hr>Room ini sudah ditutup.');  ?>
-      <h2>Dashboard</h2>
-      <p>Welcome <span class='tebal darkblue'><?=$nama_peserta?></span>! Anda login sebagai <span class='tebal darkblue'><?=$sebagai?></span>.</p>
-    </div>
-
-    <div class="row profile">
-      <div class="col-xl-4" data-aos=fade-up data-aos-delay=150>
-        <?php include 'dashboard-rank.php'; ?>
-      </div>
-
-      <div class="col-xl-8" data-aos=fade-up data-aos-delay=300>
-
-        <div class="card">
-          <div class="card-body pt-3">
-            <!-- Bordered Tabs -->
-            <ul class="nav nav-tabs nav-tabs-bordered" role="tablist">
-
-              <li class="nav-item" role="presentation">
-                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-points" aria-selected="true" role="tab">Points</button>
-              </li>
-
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-overview" aria-selected="false" tabindex='-1' role="tab">Profile</button>
-              </li>
-
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit" aria-selected="false" tabindex="-1" role="tab">Edit Profile</button>
-              </li>
-
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings" aria-selected="false" tabindex="-1" role="tab">Settings</button>
-              </li>
-
-            </ul>
-            <div class="tab-content pt-2">
-
-              <?php include 'dashboard-my-points.php'; ?>
-              <?php include 'dashboard-about.php'; ?>
-              <?php include 'dashboard-edit-profile.php'; ?>
-              <?php include 'dashboard-settings.php'; ?>
-
-            </div><!-- End Bordered Tabs -->
-
-          </div>
-        </div>
-
-      </div>      
-    </div>
-    
-
+<div class="row profile">
+  <div class="col-xl-4" data-aos=fade-up data-aos-delay=150>
+    <?php include 'dashboard-rank.php'; ?>
   </div>
-</section>
+
+  <div class="col-xl-8" data-aos=fade-up data-aos-delay=300>
+
+    <div class="card">
+      <div class="card-body pt-3">
+        <!-- Bordered Tabs -->
+        <ul class="nav nav-tabs nav-tabs-bordered" role="tablist">
+
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-points" aria-selected="true" role="tab">Points</button>
+          </li>
+
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-overview" aria-selected="false" tabindex='-1' role="tab">Profile</button>
+          </li>
+
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit" aria-selected="false" tabindex="-1" role="tab">Edit Profile</button>
+          </li>
+
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings" aria-selected="false" tabindex="-1" role="tab">Settings</button>
+          </li>
+
+        </ul>
+        <div class="tab-content pt-2">
+
+          <?php include 'dashboard-my-points.php'; ?>
+          <?php include 'dashboard-about.php'; ?>
+          <?php include 'dashboard-edit-profile.php'; ?>
+          <?php include 'dashboard-settings.php'; ?>
+
+        </div><!-- End Bordered Tabs -->
+
+      </div>
+    </div>
+
+  </div>      
+</div>
+
+
 

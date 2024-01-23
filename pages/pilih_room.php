@@ -16,8 +16,7 @@
         if(isset($_POST['btn_pilih'])){
 
           $_SESSION['dipa_id_room'] = $_POST['btn_pilih'];
-          jsurl();
-
+          jsurl('?');
         }
 
         $s = "SELECT a.*,
@@ -25,9 +24,8 @@
         a.status as status_room,
         a.id as id_room,
         b.nama as creator,
-        b.id as id_creator,
-        (
-          SELECT id FROM tb_room_player WHERE id_peserta=$id_peserta AND id_room=a.id) masuk_peserta 
+        b.id as id_creator 
+        
         FROM tb_room a 
         JOIN tb_peserta b ON a.created_by=b.id  
         ORDER BY a.status DESC
@@ -47,10 +45,18 @@
             $gradasi = 'merah';
             $btn = "<span class='btn btn-secondary mt2 w-100' onclick='alert(\"Room belum diaktifkan oleh Dosen. Segera hubungi beliau via whatsApp!\")'>Inactive</span>";
           }
+          
+          if($id_room==$d['id_room']){
+            $wadah_active = 'wadah_active';
+            $btn = "<span class='btn btn-secondary mt2 w-100' onclick='alert(\"Kamu sedang berada di room ini.\")'>Selected</span>";
+          }else{
+            $wadah_active = '';
+
+          }
 
           echo "
             <div class='col-md-4 col-lg-3'>
-              <div class='wadah gradasi-$gradasi tengah'>
+              <div class='wadah $wadah_active gradasi-$gradasi tengah'>
                 <div class='darkblue f18'>$d[room]</div>
                 <div class=f12>Status: $status</div>
                 <img src='assets/img/peserta/peserta-$d[id_creator].jpg' alt='pengajar' class='foto_profil'>

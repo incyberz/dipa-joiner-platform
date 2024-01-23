@@ -17,13 +17,16 @@ if(0){
 session_start();
 // session_destroy(); exit;
 // echo '<pre style="margin-top: 170px">'; var_dump($_SESSION); echo '</pre>';
-$dm = 0;
+$dm = 1;
 $is_login = 0;
 $id_role = 0;
 $status = 0;
 $my_points = 0;
 $punya_profil = '';
 $available_soal = 0;
+$kelas = '';
+
+$tahun_ajar = 20232;
 
 include 'config.php';
 
@@ -80,10 +83,8 @@ include 'include/insho_functions.php';
 # -1 = selesai (auto jika tidak diantara awal dan akhir )
 # 1 = aktif
 # ========================================================
-echo '<pre style=margin:100px>';
-var_dump($_SESSION);
-echo '</pre>';
 $id_room = $_SESSION['dipa_id_room'] ?? '';
+$status_room = '';
 if($username){
   if($id_room){
     include 'room_vars.php';
@@ -152,8 +153,12 @@ if($username){
 
   <?php if($id_room) include 'pages/header.php'; ?>
   <?php if(!$is_login and $parameter=='') include 'pages/hero.php'; ?>
-  <main id="main" style='padding-top:50pxs;' >
-    <?php include 'routing.php'; ?>
+  <main id="main">
+    <section>
+      <div class="container">
+        <?php include 'routing.php'; ?>
+      </div>
+    </section>
   </main>
   <?php include 'pages/footer.php'; ?>
   

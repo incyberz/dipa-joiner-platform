@@ -1,4 +1,4 @@
-<section id="about" class="about"><div class="container">
+
 <?php
 # =================================================================
 login_only();
@@ -49,10 +49,16 @@ echo "
 $s = "SELECT a.*,
 a.id as id_perang,
 b.username as penjawab,
-b.kelas as kelas_penjawab,
 c.id_status as id_status_soal,
 (SELECT username FROM tb_peserta WHERE id=a.id_pembuat) pembuat,   
-(SELECT kelas FROM tb_peserta WHERE id=a.id_pembuat) kelas_pembuat   
+(
+  SELECT p.kelas FROM tb_kelas_peserta p 
+  JOIN tb_kelas q ON p.kelas=q.kelas   
+  WHERE id_peserta=a.id_penjawab AND q.tahun_ajar=$tahun_ajar) kelas_penjawab,   
+(
+  SELECT p.kelas FROM tb_kelas_peserta p 
+  JOIN tb_kelas q ON p.kelas=q.kelas   
+  WHERE id_peserta=a.id_pembuat AND q.tahun_ajar=$tahun_ajar) kelas_pembuat    
 FROM tb_perang a 
 JOIN tb_peserta b ON a.id_penjawab=b.id 
 JOIN tb_soal_pg c ON a.id_soal=c.id 
@@ -120,14 +126,14 @@ if(mysqli_num_rows($q)==0){
       $guns = $d['is_benar']==1 ? '<span class=blue>menjawab benar</span>' : $guns;
       $guns = $d['is_benar']==-1 ? '<span class=red>rejecting</span>' : $guns;
       $guns = $id_role==1 ? $guns : "$img_guns<div class=mt3>$guns</div>";
-      $poin_penjawab_show = $id_role==1 ? "$d[poin_penjawab] LP" : "$d[kelas_penjawab] | $d[poin_penjawab] LP";
-      $poin_pembuat_show = "$d[kelas_pembuat] | $d[poin_pembuat] LP";
+      $poin_penjawab_show = "$d[kelas_penjawab] | $d[poin_penjawab] LP";
     }else{
       $you = 'You';
       $guns = $img_guns;
       $poin_penjawab_show = "$d[poin_penjawab] LP";
-      $poin_pembuat_show = "$d[poin_pembuat] LP";
+      // $poin_pembuat_show = "$d[poin_pembuat] LP";
     }
+    $poin_pembuat_show = "$d[kelas_pembuat] | $d[poin_pembuat] LP";
 
     $div .= "
       <div class='btop gradasi-$gradasi pb2'>
@@ -171,7 +177,7 @@ if(mysqli_num_rows($q)==0){
 
 
 
-?></div></section>
+?>
 <script>
   $(function(){
 

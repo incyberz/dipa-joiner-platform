@@ -112,7 +112,7 @@ if($id_role==2) include 'verifikasi_war_profil.php';
 
 
 
-?></div></section><script>
+?><script>
   $(function(){
     $('.btn_aksi').click(function(){
       let tid = $(this).prop('id');

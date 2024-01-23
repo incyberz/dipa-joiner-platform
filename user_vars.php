@@ -1,30 +1,40 @@
 <?php 
+if(!$tahun_ajar) die(erid('tahun_ajar at user_vars'));
+if($dm) echo "<div style='height:50px'>.</div>DEBUG MODE ON<hr>";  
+
 $today=date('Y-m-d');
 $undef = '<span class="red kecil miring">undefined</span>';
 
 # ========================================================
-# GET DATA PESERTA
+# SELECT DATA PESERTA
 # ========================================================
-$s = "SELECT a.*, b.sebagai,
-(SELECT 1 FROM tb_biodata WHERE id=a.id) punya_biodata,
-(SELECT nik FROM tb_biodata WHERE id=a.id) nik,
-(SELECT 1 FROM tb_polling_answer WHERE id_untuk=concat(a.id,'-uts')) sudah_polling_uts,
-(SELECT 1 FROM tb_polling_answer WHERE id_untuk=concat(a.id,'-uas')) sudah_polling_uas,
-(
-  SELECT count(1) FROM tb_peserta WHERE status=1 AND kelas=a.kelas) total_kelas_ini 
-FROM tb_peserta a 
-JOIN tb_role b ON a.id_role=b.id 
-WHERE a.username='$username'";
-// echo $s;
-$sd = $s;
+$s = "SELECT a.id as id_peserta, a.* 
+FROM tb_peserta a WHERE a.username='$username' ";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-if(mysqli_num_rows($q)==0) die("mhs_var :: Mahasiswa dengan Username: $username tidak ditemukan.");
-$d_peserta = mysqli_fetch_assoc($q);
+if(!mysqli_num_rows($q)) die('Username tidak ditemukan.');
+$d=mysqli_fetch_assoc($q);
+$id_peserta = $d['id_peserta'];
+$nama_peserta = ucwords(strtolower($d['nama']));
+$no_wa = $d['no_wa'] ?? '';
+$no_wa_show = $no_wa==''?$undef:substr($no_wa,0,4).'***'.substr($no_wa,strlen($no_wa)-3,3);
+$password = $d['password'];
+$is_depas = $password=='' ? 1 : 0;
+$status = $d['status'];
+$profil_ok = $d['profil_ok'];
+$last_update_available_soal = $d['last_update_available_soal'];
+$available_soal = $d['available_soal'];
 
-$folder_uploads = $d_peserta['folder_uploads'];
-$id_role = $d_peserta['id_role'];
+
+# ========================================================
+# FOLDER UPLOADS HANDLER
+# ========================================================
+$folder_uploads = $d['folder_uploads'];
+$id_role = $d['id_role'];
 if($folder_uploads==''){
-  $a = '_'.strtolower($d_peserta['nama']);
+  # ========================================================
+  # AUTO-CREATE FOLDER UPLOADS
+  # ========================================================
+  $a = '_'.strtolower($d['nama']);
   $a = str_replace(' ','',$a);
   $a = str_replace('.','',$a);
   $a = str_replace(',','',$a);
@@ -36,40 +46,70 @@ if($folder_uploads==''){
   $ss = "UPDATE tb_peserta set folder_uploads='$a' where username='$username'";
   $qq = mysqli_query($cn,$ss)or die("Update folder_uploads error. ".mysqli_error($cn));
 }
-
 if(!file_exists("uploads/$folder_uploads")) mkdir("uploads/$folder_uploads");
 
 
 
-$id_peserta = $d_peserta['id'];
-$nama = $d_peserta['nama'];
-$kelas = $d_peserta['kelas'];
-$sebagai = $d_peserta['sebagai'];
-$nama_peserta = $d_peserta['nama'];
-$nama_peserta = ucwords(strtolower($nama_peserta));
-$no_wa = $d_peserta['no_wa']!=''?$d_peserta['no_wa']:'';
-$no_wa_show = $no_wa==''?$undef:substr($no_wa,0,4).'***'.substr($no_wa,strlen($no_wa)-3,3);
-$akumulasi_poin = $d_peserta['akumulasi_poin'];
-$password = $d_peserta['password'];
-$status = $d_peserta['status'];
+# ========================================================
+# GET DATA POIN
+# ========================================================
+$s = "SELECT * FROM tb_poin WHERE id_peserta=$id_peserta";
+$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$d = mysqli_fetch_assoc($q);
+$akumulasi_poin = $d['akumulasi_poin'] ?? 0;
+$my_points = number_format($akumulasi_poin,0);
+$uts = $d['uts'] ?? 0;
+$uas = $d['uas'] ?? 0;
+$nilai_akhir = $d['nilai_akhir'] ?? 0;
+$rank_kelas = $d['rank_kelas'] ?? 0;
+$rank_global = $d['rank_global'] ?? 0;
+$poin_latihan = $d['poin_latihan'] ?? 0;
+$poin_tugas = $d['poin_tugas'] ?? 0;
+$poin_challenge = $d['poin_challenge'] ?? 0;
+$poin_bertanya = $d['poin_bertanya'] ?? 0;
+$poin_menjawab = $d['poin_menjawab'] ?? 0;
+
+
+# ========================================================
+# GET DATA PROSES BELAJAR
+# ========================================================
+$s = "SELECT b.sebagai,
+(SELECT 1 FROM tb_biodata WHERE id=a.id) punya_biodata,
+(SELECT nik FROM tb_biodata WHERE id=a.id) nik,
+(SELECT 1 FROM tb_polling_answer WHERE id_untuk=concat(a.id,'-uts')) sudah_polling_uts,
+(SELECT 1 FROM tb_polling_answer WHERE id_untuk=concat(a.id,'-uas')) sudah_polling_uas,
+(
+  SELECT p.kelas FROM tb_kelas_peserta p  
+  JOIN tb_kelas q ON p.kelas=q.kelas  
+  WHERE q.tahun_ajar=$tahun_ajar
+  AND p.id_peserta=$id_peserta) kelas,
+(
+  SELECT count(1) FROM tb_kelas_peserta p  
+  JOIN tb_kelas q ON p.kelas=q.kelas  
+  WHERE q.tahun_ajar=$tahun_ajar) total_kelas_ini 
+
+FROM tb_peserta a 
+JOIN tb_role b ON a.id_role=b.id 
+WHERE a.username='$username'";
+echo $s;
+$sd = $s;
+$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+if(mysqli_num_rows($q)==0) die("mhs_var :: Mahasiswa dengan Username: $username tidak ditemukan.");
+$d_peserta = mysqli_fetch_assoc($q);
+
+
 $punya_biodata = $d_peserta['punya_biodata'];
 $nik = $d_peserta['nik'];
 $sudah_polling_uts = $d_peserta['sudah_polling_uts'];
 $sudah_polling_uas = $d_peserta['sudah_polling_uas'];
-$is_depas = $password=='' ? 1 : 0;
 
-$my_points = number_format($akumulasi_poin,0);
-$uts = $d_peserta['uts'] ?? 0;
-$uas = $d_peserta['uas'] ?? 0;
-$nilai_akhir = $d_peserta['nilai_akhir'];
-$rank_kelas = $d_peserta['rank_kelas'];
-$rank_global = $d_peserta['rank_global'];
 $total_kelas_ini = $d_peserta['total_kelas_ini'];
-$profil_ok = $d_peserta['profil_ok'];
 
 $total_kelas_peserta = $total_kelas_ini;
 
 
+$kelas = $d_peserta['kelas'];
+$sebagai = $d_peserta['sebagai'];
 
 
 
@@ -155,7 +195,8 @@ if($rank_kelas){
 # ============================================================
 # AVERAGE DAN NILAI AKHIR
 # ============================================================
-$s = "SELECT AVG(akumulasi_poin) as average FROM tb_peserta WHERE status=1";
+$s = "SELECT AVG(a.akumulasi_poin) as average FROM tb_poin a 
+JOIN tb_peserta b ON a.id_peserta=b.id WHERE b.status=1";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $d = mysqli_fetch_assoc($q);
 $average = $d['average'];
@@ -212,9 +253,8 @@ if($nilai_akhir==0){
 # ============================================================
 # AUTO-SELF UPDATE EVERY HOUR | AVAILABLE SOAL
 # ============================================================
-$selisih = $id_role==1 ? (strtotime('now') - strtotime($d_peserta['last_update_available_soal'])) : 0;
-$available_soal = $d_peserta['available_soal'];
-if($selisih>3600 || $d_peserta['available_soal']==''){
+$selisih = $id_role==1 ? (strtotime('now') - strtotime($last_update_available_soal)) : 0;
+if($selisih>3600 || $available_soal==''){
   $s = "SELECT a.id FROM tb_soal_pg a 
   LEFT JOIN tb_perang b ON a.id=b.id_soal AND b.id_penjawab=$id_peserta 
   WHERE (a.id_status is null OR a.id_status >= 0) 
@@ -434,3 +474,12 @@ if($id_role!=1){
     }
   }
 }
+
+
+if($dm)
+echo "
+  <div class='debug'>
+    <h1>Debugging User Vars</h1>
+    <br>kelas: $kelas
+  </div>
+";

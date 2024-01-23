@@ -1,32 +1,27 @@
-<section id="pengajar" class="pengajar section-bg">
-  <div class="container">
+<div class="section-title" data-aos="fade-up">
+  <h2>Pengajar</h2>
+  <p>Assalamu'alaikum! Halo semuanya! Perkenalkan nama Bapak, Iin Sholihin, seorang Freelance Programmer, Lecturer, dan juga Farmer. Untuk lebih detail silahkan klik Link Github bapak.</p>
+</div>
 
-    <div class="section-title" data-aos="fade-up">
-      <h2>Pengajar</h2>
-      <p>Assalamu'alaikum! Halo semuanya! Perkenalkan nama Bapak, Iin Sholihin, seorang Freelance Programmer, Lecturer, dan juga Farmer. Untuk lebih detail silahkan klik Link Github bapak.</p>
-    </div>
 
- 
 
-    <div data-aos=fade-up>
-      <div class="blok_profile_pengajar">
-        <img src="assets/img/pengajar/abi.jpg" class="foto_profil" onclick="alert('Hai!! Ingin belajar animasi CSS seperti ini?!')">
-      </div>
-      <a class='btn btn-primary btn-block' href="https://github.com/incyberz" target=_blank onclick='return confirm("Ingin membuka Profil Github Pa Iin di jendela baru?")'>Goto: Githubnya Pak Iin.</a>
-
-      <div class="wadah mt-4 gradasi-hijau">
-        <div class='mb-2'>Jika punya pesan buat pa iin, silahkan ketik aja disini ya:</div>
-        <div class="kecil miring abu">)* minimal 50 karakter. Anda mengetik <span id=jumlah_karakter>0</span> of 300 karakter</div>
-        <textarea class='form-control mb2' rows=5 id=pesan_wa maxlength=300></textarea>
-        <button class="btn btn-success btn-block" onclick="alert('Isi dulu pesannya ya! Minimal 50 karakter, maksimal 300 karakter.')" id=btn_kirim>Kirim Pesan WhatsApp</button>
-        <a class="btn btn-primary btn-block hideit" id=link_send_wa >Kirim Pesan WhatsApp</a>
-        <div class="kecil miring abu">Powered by WhatsApp Gateway .. wanna learn?!</div>
-      </div>
-
-    </div>
-
+<div data-aos=fade-up>
+  <div class="blok_profile_pengajar">
+    <img src="assets/img/pengajar/abi.jpg" class="foto_profil" onclick="alert('Hai!! Ingin belajar animasi CSS seperti ini?!')">
   </div>
-</section>
+  <a class='btn btn-primary btn-block' href="https://github.com/incyberz" target=_blank onclick='return confirm("Ingin membuka Profil Github Pa Iin di jendela baru?")'>Goto: Githubnya Pak Iin.</a>
+
+  <div class="wadah mt-4 gradasi-hijau">
+    <div class='mb-2'>Jika punya pesan buat pa iin, silahkan ketik aja disini ya:</div>
+    <div class="kecil miring abu">)* minimal 50 karakter. Anda mengetik <span id=jumlah_karakter>0</span> of 300 karakter</div>
+    <textarea class='form-control mb2' rows=5 id=pesan_wa maxlength=300></textarea>
+    <button class="btn btn-success btn-block" onclick="alert('Isi dulu pesannya ya! Minimal 50 karakter, maksimal 300 karakter.')" id=btn_kirim>Kirim Pesan WhatsApp</button>
+    <a class="btn btn-primary btn-block hideit" id=link_send_wa >Kirim Pesan WhatsApp</a>
+    <div class="kecil miring abu">Powered by WhatsApp Gateway .. wanna learn?!</div>
+  </div>
+
+</div>
+
 
 <script type="text/javascript">
   $(document).ready(function(){

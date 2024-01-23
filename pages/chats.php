@@ -226,15 +226,11 @@ $o = "
 }.ul_jawabans li{
   margin-bottom: 5px;
 }</style>
-<section id="about" class="about">
-  <div class="container">
-    <div class="section-title" data-aos="fade-up">
-      <h2 class=proper>Chats</h2>
-      <p><?=$sub_judul?></p>
-    </div>
-    <?=$o?>
-  </div>
-</section>
+<div class="section-title" data-aos="fade-up">
+  <h2 class=proper>Chats</h2>
+  <p><?=$sub_judul?></p>
+</div>
+<?=$o?>
 
 
 

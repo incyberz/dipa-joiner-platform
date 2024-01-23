@@ -3,8 +3,6 @@
   .bar-batang{border: solid 1px #eee; border-radius: 6px; font-size: 8px}
   .bar-stars{border: solid 1px #eee}
 </style>
-<section id="pengajar" class="pengajar section-bg">
-  <div class="container">
 <?php
 $u = $_GET['u'] ?? 'uts';
 # ====================================================================
@@ -245,5 +243,3 @@ echo "
 
 # ====================================================================
 ?>
-  </div>
-</section>

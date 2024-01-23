@@ -1,4 +1,3 @@
-<section id="about" class="about"><div class="container">
 <style>
   .unclicked{background: #aaa;}
   .opsi{margin-top:4px; font-size:small; border: none;color:#555}

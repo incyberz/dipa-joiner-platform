@@ -53,22 +53,17 @@ while ($d=mysqli_fetch_assoc($q)) {
   border-radius: 5px;
   margin: 0 5px 5px 30px;
 }</style>
-<section id="about" class="about">
-  <div class="container">
 
-    <div class="section-title" data-aos="fade-up">
-      <h2>My-Question</h2>
-      <p>Berikut adalah pertanyaan yang pernah kamu ajukan!</p>
-    </div>
+<div class="section-title" data-aos="fade-up">
+  <h2>My-Question</h2>
+  <p>Berikut adalah pertanyaan yang pernah kamu ajukan!</p>
+</div>
 
-    <div class="wadah gradasi-hijau" data-aos='fade-up'>
-      <?=$tb?>
-    </div>
+<div class="wadah gradasi-hijau" data-aos='fade-up'>
+  <?=$tb?>
+</div>
 
-    <div class="kanan" data-aos='fade-up'><a href="?bertanya" class='btn btn-success btn-sm'>Ajukan Pertanyaan Baru</a></div>
-
-  </div>
-</section>
+<div class="kanan" data-aos='fade-up'><a href="?bertanya" class='btn btn-success btn-sm'>Ajukan Pertanyaan Baru</a></div>
 
 
 

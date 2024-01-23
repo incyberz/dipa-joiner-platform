@@ -32,44 +32,40 @@ if(isset($_POST['btn_ubah_password'])){
 $hideit = $d_peserta['password']==''?'hideit':'';
 
 ?>
-<section id="ubah_password" class="" data-aos="fade-left">
-  <div class="container">
 
-    <div class="section-title">
-      <h2>Ubah Password</h2>
-      <p><?=$depas_note?></p>
+<div class="section-title">
+  <h2>Ubah Password</h2>
+  <p><?=$depas_note?></p>
+</div>
+
+<div class="wadah">
+  <form method="post">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" class="form-control" id="username" value="<?=$username?>" disabled>
+      <input type="hidden" value="<?=$username?>" name="username">
     </div>
-    
-    <div class="wadah">
-      <form method="post">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" class="form-control" id="username" value="<?=$username?>" disabled>
-          <input type="hidden" value="<?=$username?>" name="username">
-        </div>
 
-        <div class="form-group <?=$hideit?>">
-          <label for="password_lama">Password Lama</label>
-          <input type="password" minlength=3 maxlength=20 class="form-control" id="password_lama" name="password_lama" value="<?=$password_lama?>">
-        </div>
-
-
-        <div class="form-group">
-          <label for="password">Password Baru</label>
-          <input type="password" minlength=3 maxlength=20 class="form-control" id="password" name="password" >
-        </div>
-
-        <div class="form-group">
-          <label for="cpassword">Konfirmasi Password</label>
-          <input type="password" minlength=3 maxlength=20 class="form-control" id="cpassword" name="cpassword" >
-        </div>
-
-        <div class="form-group">
-          <button class="btn btn-primary btn-block" name="btn_ubah_password">Ubah Password</button>
-        </div>
-
-
-      </form>
+    <div class="form-group <?=$hideit?>">
+      <label for="password_lama">Password Lama</label>
+      <input type="password" minlength=3 maxlength=20 class="form-control" id="password_lama" name="password_lama" value="<?=$password_lama?>">
     </div>
-  </div>
-</section>
+
+
+    <div class="form-group">
+      <label for="password">Password Baru</label>
+      <input type="password" minlength=3 maxlength=20 class="form-control" id="password" name="password" >
+    </div>
+
+    <div class="form-group">
+      <label for="cpassword">Konfirmasi Password</label>
+      <input type="password" minlength=3 maxlength=20 class="form-control" id="cpassword" name="cpassword" >
+    </div>
+
+    <div class="form-group">
+      <button class="btn btn-primary btn-block" name="btn_ubah_password">Ubah Password</button>
+    </div>
+
+
+  </form>
+</div>

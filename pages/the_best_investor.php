@@ -1,4 +1,4 @@
-<section id="about" class="about"><div class="container">
+
   <style>
   .text-zoom{cursor: pointer; transition: .2s}
   .text-zoom:hover{letter-spacing: .5px; font-weight: bold}
@@ -145,7 +145,7 @@ echo "
 
 
 
-?></div></section>
+?>
 <script>
   $(function(){
 

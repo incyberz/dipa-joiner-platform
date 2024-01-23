@@ -106,33 +106,27 @@ $jp_info = ''; //zzz suspend fitur
 $info_sesi = ''; //zzz suspend fitur
 $form = ''; //zzz suspend fitur
 ?>
-<section id="about" class="about">
-  <div class="container">
 
-    <div class="section-title" data-aos="fade-up">
-      <h2>Bertanya</h2>
-      <p>Kamu boleh bertanya kapan saja, setiap pertanyaan berbobot akan mendapatkan poin. Double poin jika kamu bertanya pada saat sesi berlangsung atau instruktur sedang menerangkan!</p>
-    </div>
+<div class="section-title" data-aos="fade-up">
+  <h2>Bertanya</h2>
+  <p>Kamu boleh bertanya kapan saja, setiap pertanyaan berbobot akan mendapatkan poin. Double poin jika kamu bertanya pada saat sesi berlangsung atau instruktur sedang menerangkan!</p>
+</div>
 
-    <div class="wadah gradasi-hijau" data-aos='fade-up'>
-      <div style='padding-bottom: 10px; margin-bottom: 10px; border-bottom: solid 1px #ccc; color: darkblue'>
-        <?=$jp_info?>
-        <div class="alert alert-danger tengah">
-          Maaf, fitur ini di suspend dikarenakan sulitnya dalam proses verifikasi. | Fitur dialihkan ke <a href="?tanam_soal">Tanam Soal</a>
-          <hr>
-          <?=meme('funny')?>
-
-        </div>
-      </div>
-
-      <?=$info_sesi?>
-      <?=$form?>
+<div class="wadah gradasi-hijau" data-aos='fade-up'>
+  <div style='padding-bottom: 10px; margin-bottom: 10px; border-bottom: solid 1px #ccc; color: darkblue'>
+    <?=$jp_info?>
+    <div class="alert alert-danger tengah">
+      Maaf, fitur ini di suspend dikarenakan sulitnya dalam proses verifikasi. | Fitur dialihkan ke <a href="?tanam_soal">Tanam Soal</a>
+      <hr>
+      <?=meme('funny')?>
 
     </div>
-
   </div>
-</section>
 
+  <?=$info_sesi?>
+  <?=$form?>
+
+</div>
 
 
 

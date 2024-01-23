@@ -1,9 +1,12 @@
 <?php 
 if(!$id_room) die(erid('id_room'));
+
 # ========================================================
 # GET DATA ROOM
 # ========================================================
-$s = "SELECT * FROM tb_room a 
+$s = "SELECT a.*, b.nama as instruktur,
+(SELECT id FROM tb_room_kelas WHERE kelas='$kelas' AND id_room='$id_room') id_room_kelas 
+FROM tb_room a 
 JOIN tb_peserta b ON a.created_by=b.id 
 WHERE a.id=$id_room 
 ";
@@ -18,4 +21,23 @@ $d = mysqli_fetch_assoc($q);
 $room = $d['singkatan'];
 $nama_room = $d['nama'];
 $status_room = $d['status'];
+$id_room_kelas = $d['id_room_kelas'];
+$instruktur = $d['instruktur'];
 
+if(!$id_room_kelas){
+  $pesan = $id_role==2 ? "<a href='?assign_room_kelas'>Assign Room Kelas</a>" : "Segera hubungi instruktur ($instruktur)!";
+  if($dm) $pesan = "<a target=_blank href='?assign_room_kelas'>Assign Room Kelas</a>" ;
+  if($parameter!='assign_room_kelas'){
+    die(div_alert('danger',"Kelas <u>$kelas</u> belum di-assign ke room <u>$room</u>. $pesan"));
+  }
+}
+
+
+if($dm)
+echo "
+  <div class='debug'>
+    <h1>Debugging Room Vars</h1>
+    <br>id_room: $id_room
+    <br>id_room_kelas: $id_room_kelas
+  </div>
+";

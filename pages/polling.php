@@ -4,8 +4,6 @@
 .btn-active{background:linear-gradient(#cfc,#afa); border:solid 2px blue;}
 .btn-active:hover{background:linear-gradient(#dfd,#bdb)}
 </style>
-<section id="pengajar" class="pengajar section-bg">
-  <div class="container">
 <!-- ========================================================== -->
 <?php
 login_only();
@@ -176,8 +174,6 @@ foreach ($rpolling as $no => $rtanya) {
 
 
 <!-- ========================================================== -->
-  </div>
-</section>
 <script>
   $(function(){
     let isian_set = new Set();

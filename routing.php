@@ -16,7 +16,8 @@ switch ($parameter){
 
 if(!file_exists($konten)) $konten="pages/$konten.php";
 if(!file_exists($konten)){
-  include 'na.php';
+  $konten_admin = "pages/admin/$parameter.php";
+  include file_exists($konten_admin) ? $konten_admin : 'na.php';
 }else{
   if(!$punya_profil) {
     if($parameter=='login' || $parameter=='upload_profil' || !$is_login){
@@ -25,7 +26,11 @@ if(!file_exists($konten)){
       include 'pages/belum_punya_profil.php';
     } 
   }
-  include $konten;
+  if($username and !$kelas){
+    include 'pages/join_kelas.php';
+  }else{
+    include $konten;
+  }
 }
 
 if($is_login and $password=='' and $parameter!='ubah_password'){

@@ -85,6 +85,7 @@ $available_soal_show = "<span class='count_badge badge_$red' id='available_soal'
             </li>
             <li class='dropdown'><a  href='#'><span class='tebal darkblue'>$room</span> <i class='bi bi-chevron-down'></i></a>
               <ul>
+                <li><a href='?pilih_room'>Pilih Room</a></li>
                 <li><a href='?list_sesi'>List Sesi</a></li>
                 <li><a href='?activity&jenis=latihan'>Latihan Praktikum</a></li>
                 <li><a href='?activity&jenis=tugas'>Tugas Proyek</a></li>
@@ -109,13 +110,24 @@ $available_soal_show = "<span class='count_badge badge_$red' id='available_soal'
                 <li><a href='?polling&u=uas'>Polling UAS</a></li>
                 <li class='hideit'><a href='?my_testimony'>My Testimony</a></li>
                 <li class=hideit><a href='?my_biodata'>My Biodata</a></li>
-                <li><a href='?pilih_room'>Pilih Room</a></li>
                 <li><a href='?ubah_password'>Ubah Password</a></li>
                 <li><a href='?logout' onclick='return confirm(\"Yakin untuk Logout?\")' class=red>Logout</a></li>
               </ul>
             </li>
             <li class='darkred kecil tengah' style='margin-left:10px'>$kelas</li>
             $unlog_link
+          ";
+
+          # ==================================================================
+          # ADMIN ONLY
+          # ==================================================================
+          if($id_role==2) echo "
+            <li class='dropdown'><a  href='#'><span class='tebal darkblue'>$room ADMIN</span> <i class='bi bi-chevron-down'></i></a>
+              <ul>
+                <li><a href='?assign_room_kelas'>Assign Room Kelas</a></li>
+                <li><a href='?peserta_kelas'>Peserta Kelas</a></li>
+              </ul>
+            </li>
           ";
 
         }else{

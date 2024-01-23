@@ -1,4 +1,4 @@
-<section id="about" class="about"><div class="container">
+
   <style>
     .border_blue{border: solid 3px blue;}
     .border_red{border: solid 1px #f55;}
@@ -134,4 +134,4 @@ echo $div;
 
 
 
-?></div></section>
+?>

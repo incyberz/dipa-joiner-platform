@@ -220,146 +220,142 @@ $main_block = "
 <!-- <div class='gradasi-kuning text-center container' style='position:sticky; top:65px; z-index:999; padding:10px'>
   <a href='?verif'>Verifikasi Aktifitas Peserta zz<span class='badge badge-danger'>7</span></a>
 </div> -->
-<section id="activity" class="activity">
-  <div class="container">
 
-    <div class="section-title" data-aos="fade-up">
-      <h2 class=proper><?=$jenis?></h2>
-      <p><?=$yaitu?></p>
-    </div>
+<div class="section-title" data-aos="fade-up">
+  <h2 class=proper><?=$jenis?></h2>
+  <p><?=$yaitu?></p>
+</div>
 
 
-    <?=$main_block?>
+<?=$main_block?>
+
+
+<?php
+if($id_role>=2){
+
+  $verif_icon = $_GET['verif'] ?? '';
+
+  $kolom_link = $jenis=='challenge' ? 'link' : '0';
+  $s = "SELECT a.id,
+  a.folder_uploads,
+  a.nama,
+  (
+    SELECT p.id FROM tb_bukti_$jenis p
+    JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
+    WHERE p.id_peserta=a.id 
+    AND q.id_$jenis=$id_jenis) id_jenis, 
+  (
+    SELECT 1 FROM tb_bukti_$jenis p 
+    JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
+    WHERE p.id_peserta=a.id 
+    AND q.id_$jenis=$id_jenis) sudah_mengerjakan, 
+  (
+    SELECT 1 FROM tb_bukti_$jenis p 
+    JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
+    WHERE p.id_peserta=a.id 
+    AND q.id_$jenis=$id_jenis 
+    AND tanggal_verifikasi is null) belum_verif, 
+  (
+    SELECT 1 FROM tb_bukti_$jenis p 
+    JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
+    WHERE p.id_peserta=a.id 
+    AND q.id_$jenis=$id_jenis 
+    AND tanggal_verifikasi is not null 
+    AND status=-1) kena_reject, 
+  (
+    SELECT $kolom_link FROM tb_bukti_$jenis p 
+    JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
+    WHERE p.id_peserta=a.id 
+    AND q.id_$jenis=$id_jenis) link  
+  FROM tb_peserta  a 
+  WHERE a.id_role=1  
+  AND status = 1 
+  ORDER BY a.nama
+  ";
+  // echo "<pre>$s</pre>";
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  $rsudah = [];
+  $rbelum = [];
+  $runverif = [];
+  $rreject = [];
+  $rid = [];
+  $rid_jenis = [];
+  $rfu = [];
+  $rlink = [];
+  while ($d=mysqli_fetch_assoc($q)) {
+    $folder_uploads = $d['folder_uploads'];
+    $nama = ucwords(strtolower($d['nama']));
+    if($d['sudah_mengerjakan']){
+      array_push($rsudah,$nama);
+      if($d['belum_verif']){
+        array_push($rid,$d['id']);
+        array_push($rid_jenis,$d['id_jenis']);
+        array_push($runverif,$nama);
+        array_push($rfu,$folder_uploads);
+        if($jenis=='challenge'){
+          $rlink[$d['id']] = $d['link'];
+        }
+      } 
+      if($d['kena_reject']){
+        array_push($rreject,$nama);
+      }
+    }else{
+      array_push($rbelum,$nama);
+    }
+  }
 
   
-    <?php
-    if($id_role>=2){
-
-      $verif_icon = $_GET['verif'] ?? '';
-
-      $kolom_link = $jenis=='challenge' ? 'link' : '0';
-      $s = "SELECT a.id,
-      a.folder_uploads,
-      a.nama,
-      (
-        SELECT p.id FROM tb_bukti_$jenis p
-        JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
-        WHERE p.id_peserta=a.id 
-        AND q.id_$jenis=$id_jenis) id_jenis, 
-      (
-        SELECT 1 FROM tb_bukti_$jenis p 
-        JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
-        WHERE p.id_peserta=a.id 
-        AND q.id_$jenis=$id_jenis) sudah_mengerjakan, 
-      (
-        SELECT 1 FROM tb_bukti_$jenis p 
-        JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
-        WHERE p.id_peserta=a.id 
-        AND q.id_$jenis=$id_jenis 
-        AND tanggal_verifikasi is null) belum_verif, 
-      (
-        SELECT 1 FROM tb_bukti_$jenis p 
-        JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
-        WHERE p.id_peserta=a.id 
-        AND q.id_$jenis=$id_jenis 
-        AND tanggal_verifikasi is not null 
-        AND status=-1) kena_reject, 
-      (
-        SELECT $kolom_link FROM tb_bukti_$jenis p 
-        JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
-        WHERE p.id_peserta=a.id 
-        AND q.id_$jenis=$id_jenis) link  
-      FROM tb_peserta  a 
-      WHERE a.id_role=1  
-      AND status = 1 
-      ORDER BY a.nama
-      ";
-      // echo "<pre>$s</pre>";
-      $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-      $rsudah = [];
-      $rbelum = [];
-      $runverif = [];
-      $rreject = [];
-      $rid = [];
-      $rid_jenis = [];
-      $rfu = [];
-      $rlink = [];
-      while ($d=mysqli_fetch_assoc($q)) {
-        $folder_uploads = $d['folder_uploads'];
-        $nama = ucwords(strtolower($d['nama']));
-        if($d['sudah_mengerjakan']){
-          array_push($rsudah,$nama);
-          if($d['belum_verif']){
-            array_push($rid,$d['id']);
-            array_push($rid_jenis,$d['id_jenis']);
-            array_push($runverif,$nama);
-            array_push($rfu,$folder_uploads);
-            if($jenis=='challenge'){
-              $rlink[$d['id']] = $d['link'];
-            }
-          } 
-          if($d['kena_reject']){
-            array_push($rreject,$nama);
-          }
-        }else{
-          array_push($rbelum,$nama);
-        }
-      }
-
-      
-      $sudah = ''; foreach ($rsudah as $key => $value) $sudah .= ($key+1).". $value; ";
-      $belum = ''; foreach ($rbelum as $key => $value) $belum .= ($key+1).". $value; ";
-      $reject = ''; foreach ($rreject as $key => $value) $reject .= ($key+1).". $value; ";
+  $sudah = ''; foreach ($rsudah as $key => $value) $sudah .= ($key+1).". $value; ";
+  $belum = ''; foreach ($rbelum as $key => $value) $belum .= ($key+1).". $value; ";
+  $reject = ''; foreach ($rreject as $key => $value) $reject .= ($key+1).". $value; ";
 
 
-      $unverif = ''; 
-      foreach ($runverif as $key => $value){
-        if($jenis=='latihan'){
-          $path_bukti = "uploads/$rfu[$key]/$jenis$no.jpg";
-          $bukti_show = file_exists($path_bukti) ? "<img src='$path_bukti' class=img-fluid>" : "$path_bukti :: Bukti gambar tidak ada. $pada_wag";
-        }elseif($jenis=='tugas'){
-          $path_bukti = "uploads/$rfu[$key]/$jenis$no.zip";
-          $bukti_show = file_exists($path_bukti) ? "<a href='$path_bukti' target=_blank>Download ZIP File</a>" : "$path_bukti :: Bukti file ZIP tidak ada. $pada_wag";
-        }elseif($jenis=='challenge'){
-          $link = $rlink[$rid[$key]];
-          $bukti_show = "Challenge's Link : <a href='$link' target=_blank>$link</a>";
-        }
+  $unverif = ''; 
+  foreach ($runverif as $key => $value){
+    if($jenis=='latihan'){
+      $path_bukti = "uploads/$rfu[$key]/$jenis$no.jpg";
+      $bukti_show = file_exists($path_bukti) ? "<img src='$path_bukti' class=img-fluid>" : "$path_bukti :: Bukti gambar tidak ada. $pada_wag";
+    }elseif($jenis=='tugas'){
+      $path_bukti = "uploads/$rfu[$key]/$jenis$no.zip";
+      $bukti_show = file_exists($path_bukti) ? "<a href='$path_bukti' target=_blank>Download ZIP File</a>" : "$path_bukti :: Bukti file ZIP tidak ada. $pada_wag";
+    }elseif($jenis=='challenge'){
+      $link = $rlink[$rid[$key]];
+      $bukti_show = "Challenge's Link : <a href='$link' target=_blank>$link</a>";
+    }
 
-        $btn_accept = $id_role!=3 ? "<button class='btn btn-success btn-sm btn_aksi btn-block mb1' id=accept__$rid_jenis[$key]>Accept</button>" : "<button class='btn btn-success btn-sm btn-block mb1' onclick='alert(\"Anda Login sebagai Supervisor! Terimakasih sudah mencoba Accept $jenis dari Peserta. Poin peserta akan direkap jika sudah terverifikasi oleh instruktur.\")'>Accept</button>";
-        
-        $btn_reject = $id_role!=3 ? "<button class='btn btn-danger btn-sm btn_aksi btn-block mb1' id=reject__$rid_jenis[$key]>Reject</button>" : "<button class='btn btn-danger btn-sm btn-block mb1' onclick='alert(\"Anda Login sebagai Supervisor! Terimakasih sudah mencoba Reject $jenis dari Peserta. Reject wajib disertai dengan alasan reject agar peserta segera re-upload revisi $jenis-nya.\")'>Reject</button>";
-        
-        $img_or_zip = $verif_icon ? "
-          <div class=wadah id=blok_bukti__$rid_jenis[$key]>
-            $bukti_show 
-            <div class='row mt-2'> 
-              <div class='col-sm-6'>
-                $btn_accept
-              </div>
-              <div class=col-sm-6>
-                $btn_reject
-              </div>
-            </div>
+    $btn_accept = $id_role!=3 ? "<button class='btn btn-success btn-sm btn_aksi btn-block mb1' id=accept__$rid_jenis[$key]>Accept</button>" : "<button class='btn btn-success btn-sm btn-block mb1' onclick='alert(\"Anda Login sebagai Supervisor! Terimakasih sudah mencoba Accept $jenis dari Peserta. Poin peserta akan direkap jika sudah terverifikasi oleh instruktur.\")'>Accept</button>";
+    
+    $btn_reject = $id_role!=3 ? "<button class='btn btn-danger btn-sm btn_aksi btn-block mb1' id=reject__$rid_jenis[$key]>Reject</button>" : "<button class='btn btn-danger btn-sm btn-block mb1' onclick='alert(\"Anda Login sebagai Supervisor! Terimakasih sudah mencoba Reject $jenis dari Peserta. Reject wajib disertai dengan alasan reject agar peserta segera re-upload revisi $jenis-nya.\")'>Reject</button>";
+    
+    $img_or_zip = $verif_icon ? "
+      <div class=wadah id=blok_bukti__$rid_jenis[$key]>
+        $bukti_show 
+        <div class='row mt-2'> 
+          <div class='col-sm-6'>
+            $btn_accept
           </div>
-        " : '';
-        $unverif .= ($key+1).". $value; <span class=debug>id_bukti: $rid_jenis[$key]</span> $img_or_zip<br>";
-      } 
+          <div class=col-sm-6>
+            $btn_reject
+          </div>
+        </div>
+      </div>
+    " : '';
+    $unverif .= ($key+1).". $value; <span class=debug>id_bukti: $rid_jenis[$key]</span> $img_or_zip<br>";
+  } 
 
-      $btn = ($verif_icon=='' and count($runverif)>0) ? "<a href='?activity&jenis=$jenis&no=$no&verif=1' class='proper btn btn-success btn-block'>Show Image / Bukti $jenis</a>" : '';
+  $btn = ($verif_icon=='' and count($runverif)>0) ? "<a href='?activity&jenis=$jenis&no=$no&verif=1' class='proper btn btn-success btn-block'>Show Image / Bukti $jenis</a>" : '';
 
-      $belum_diverif = count($runverif)==0 ? '<span class="green miring">-- all verified --</span> ' : '<div class="tebal darkred">Belum diverifikasi '.count($runverif).' peserta:</div>';
+  $belum_diverif = count($runverif)==0 ? '<span class="green miring">-- all verified --</span> ' : '<div class="tebal darkred">Belum diverifikasi '.count($runverif).' peserta:</div>';
 
-      $info_reject = count($rreject) ? "<div class='wadah red'>Rejected: $reject</div>" : '';
+  $info_reject = count($rreject) ? "<div class='wadah red'>Rejected: $reject</div>" : '';
 
-      echo '<div class=wadah data-aos=fade-up><div class="tebal biru">Dikerjakan oleh '.count($rsudah).' peserta:</div>'.$sudah.$info_reject.'</div>';
-      echo '<div class=wadah data-aos=fade-up>'.$belum_diverif.$unverif.$btn.'</div>';
-      echo '<div class=wadah data-aos=fade-up><div class="tebal red">Belum mengerjakan '.count($rbelum).' peserta:</div>'.$belum.'</div>';
+  echo '<div class=wadah data-aos=fade-up><div class="tebal biru">Dikerjakan oleh '.count($rsudah).' peserta:</div>'.$sudah.$info_reject.'</div>';
+  echo '<div class=wadah data-aos=fade-up>'.$belum_diverif.$unverif.$btn.'</div>';
+  echo '<div class=wadah data-aos=fade-up><div class="tebal red">Belum mengerjakan '.count($rbelum).' peserta:</div>'.$belum.'</div>';
 
-    } 
-    ?>
+} 
+?>
 
-  </div>
-</section>
 
 
 

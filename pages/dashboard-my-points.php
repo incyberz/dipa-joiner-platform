@@ -7,27 +7,27 @@
 
   <div class="row">
     <div class="col-lg-3 col-md-4 label ">Poin Latihan</div>
-    <div class="col-lg-9 col-md-8"><?=$d_peserta['poin_latihan']?> LP</div>
+    <div class="col-lg-9 col-md-8"><?=$poin_latihan?> LP</div>
   </div>
 
   <div class="row">
     <div class="col-lg-3 col-md-4 label ">Poin tugas</div>
-    <div class="col-lg-9 col-md-8"><?=$d_peserta['poin_tugas']?> LP</div>
+    <div class="col-lg-9 col-md-8"><?=$poin_tugas?> LP</div>
   </div>
 
   <div class="row">
     <div class="col-lg-3 col-md-4 label ">Poin challenge</div>
-    <div class="col-lg-9 col-md-8"><?=$d_peserta['poin_challenge']?> LP</div>
+    <div class="col-lg-9 col-md-8"><?=$poin_challenge?> LP</div>
   </div>
 
   <div class="row">
     <div class="col-lg-3 col-md-4 label ">Poin bertanya</div>
-    <div class="col-lg-9 col-md-8"><?=$d_peserta['poin_bertanya']?> LP</div>
+    <div class="col-lg-9 col-md-8"><?=$poin_bertanya?> LP</div>
   </div>
 
   <div class="row">
     <div class="col-lg-3 col-md-4 label ">Poin menjawab</div>
-    <div class="col-lg-9 col-md-8"><?=$d_peserta['poin_menjawab']?> LP</div>
+    <div class="col-lg-9 col-md-8"><?=$poin_menjawab?> LP</div>
   </div>
 
   <div class="row">

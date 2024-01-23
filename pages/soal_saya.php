@@ -1,5 +1,3 @@
-<section id="about" class="about">
-  <div class="container">
 <?php
 # =================================================================
 login_only();
@@ -69,5 +67,3 @@ echo $div;
 
 
 ?>
-  </div>
-</section>

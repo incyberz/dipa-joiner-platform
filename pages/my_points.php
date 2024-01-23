@@ -142,39 +142,34 @@ foreach ($rjenis as $key => $jenis) {
 
 
 ?>
-<section id="my_points" class="my_points">
-  <div class="container">
 
-    <div class="section-title" data-aos="fade-up">
-      <h2>My Points</h2>
-      <p>Berikut adalah history poin yang dikumpulkan melalui latihan, tugas, pertanyaan, dan aktifitas training lainnya.</p>
-    </div>
+<div class="section-title" data-aos="fade-up">
+  <h2>My Points</h2>
+  <p>Berikut adalah history poin yang dikumpulkan melalui latihan, tugas, pertanyaan, dan aktifitas training lainnya.</p>
+</div>
 
-    <div class="wadah gradasi-hijau" data-aos=fade-up>
-      <h3>Poin Latihan</h3>
-      <?=$data['latihan']?>
-    </div>
-    
-    <div class="wadah gradasi-kuning" data-aos=fade-up>
-      <h3>Poin Tugas</h3>
-      <?=$data['tugas']?>
-    </div>
-    
-    <div class="wadah gradasi-pink" data-aos=fade-up>
-      <h3>Poin Challenge</h3>
-      <?=$data['challenge']?>
-    </div>
-    
+<div class="wadah gradasi-hijau" data-aos=fade-up>
+  <h3>Poin Latihan</h3>
+  <?=$data['latihan']?>
+</div>
 
-    <div class="wadah gradasi-hijau" data-aos=fade-up>
-      <h3>Poin Bertanya</h3>
-      <?=$data['pertanyaan']?>
-    </div>
-    
-    <div class="wadah gradasi-kuning" data-aos=fade-up>
-      <h3>Poin Menjawab</h3>
-      <?=$data['jawaban']?>
-    </div>
-    
-  </div>
-</section>
+<div class="wadah gradasi-kuning" data-aos=fade-up>
+  <h3>Poin Tugas</h3>
+  <?=$data['tugas']?>
+</div>
+
+<div class="wadah gradasi-pink" data-aos=fade-up>
+  <h3>Poin Challenge</h3>
+  <?=$data['challenge']?>
+</div>
+
+
+<div class="wadah gradasi-hijau" data-aos=fade-up>
+  <h3>Poin Bertanya</h3>
+  <?=$data['pertanyaan']?>
+</div>
+
+<div class="wadah gradasi-kuning" data-aos=fade-up>
+  <h3>Poin Menjawab</h3>
+  <?=$data['jawaban']?>
+</div>

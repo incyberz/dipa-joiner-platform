@@ -1,4 +1,3 @@
-<section id="about" class="about"><div class="container">
 <?php
 # =================================================================
 instruktur_only();
@@ -34,7 +33,7 @@ if($mode==''){
 
 
 
-?></div></section>
+?>
 <script>
   $(function(){
 

@@ -88,12 +88,6 @@ $rekap = "<div style='overflow:scroll;height:80vh'><table class='table table-str
 
 ?>
 <style>td{padding:2px}.u150px{width:150px}</style>
-<section id="services" class="services">
-  <div class="container">
-    <h3>Rekap Nilai</h3>
+<h3>Rekap Nilai</h3>
 
-    <?=$rekap?>
-
-  </div>
-</section>
-
+<?=$rekap?>
