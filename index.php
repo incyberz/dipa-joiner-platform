@@ -21,7 +21,6 @@ $dm = 1;
 $is_login = 0;
 $id_role = 0;
 $status = 0;
-$my_points = 0;
 $punya_profil = '';
 $available_soal = 0;
 $kelas = '';
@@ -31,6 +30,9 @@ $tahun_ajar = 20232;
 $id_room_kelas = '';
 $room = '';
 $nama_room = '';
+
+$unset = '<span class="consolas f12 red miring">unset</span>';
+$null = '<span class="consolas f12 red miring">null</span>';
 
 include 'config.php';
 
@@ -79,6 +81,7 @@ include $insho_styles;
 include 'jwd_styles.php';
 include 'include/meme.php';
 include 'include/insho_functions.php';
+include 'include/img_icon.php';
 
 # ========================================================
 # ROOM PROPERTIES
@@ -92,6 +95,7 @@ $status_room = '';
 if($username){
   if($id_room){
     include 'room_vars.php';
+    include 'room_data.php';
     include 'wars_data.php';
   }else{
     if($password){
@@ -190,3 +194,5 @@ if($username){
 </body>
 
 </html>
+
+<?php include 'include/js_btn_aksi.php'; ?>

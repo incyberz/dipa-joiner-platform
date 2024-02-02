@@ -39,7 +39,7 @@ if(isset($_GET['id'])){
   $s = "SELECT * FROM tb_pertanyaan WHERE id_penanya=$id";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   while($d=mysqli_fetch_assoc($q)){
-    $s = "DELETE FROM tb_jawaban_chat WHERE id_pertanyaan=$d[id]";
+    $s = "DELETE FROM tb_pertanyaan_reply WHERE id_pertanyaan=$d[id]";
     echo "<hr>$s";
     $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   }

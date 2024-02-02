@@ -50,7 +50,15 @@ while ($d=mysqli_fetch_assoc($q)) {
   }
 }
 
-$s = "SELECT * FROM tb_sesi WHERE id_room=$id_room ORDER BY no";
+$s = "SELECT a.*,
+(
+  SELECT p.tanggal FROM tb_sesi_kelas p 
+  WHERE p.id_sesi=a.id 
+  AND p.kelas='$kelas' 
+  AND p.is_terlaksana=1 
+  ) tanggal_pelaksanaan 
+FROM tb_sesi a 
+WHERE a.id_room=$id_room ORDER BY a.no";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $tr='';
 $i=0;
@@ -95,8 +103,8 @@ while ($d=mysqli_fetch_assoc($q)) {
     $tags_show = $tags_show;
     $fitur_sesi = "$latihans $challenges $asks";
   }
-  
-  $debug = '';
+
+  $pelaksanaan = $d['tanggal_pelaksanaan'] ? $d['tanggal_pelaksanaan'] : '<span class="f12 miring abu">belum dilaksanakan</span>';
 
   $tr.= "
     <div class='wadah gradasi-hijau' data-aos='fade-up' style='display:grid;grid-template-columns: 100px auto;grid-gap:10px'>
@@ -105,11 +113,11 @@ while ($d=mysqli_fetch_assoc($q)) {
         <div class='no_sesi'>$i</div>
       </div>
       <div>
-        $debug 
         <div class=nama_sesi>$nama_show</div>
         <div class='kecil miring abu'>$ket_show</div>
         <div class='kecil miring abu'>tags : $tags_show</div>
         <div class='mt1'>$fitur_sesi</div>
+        <div class='mt1'>$pelaksanaan</div>
       </div>
     </div>
   ";

@@ -46,13 +46,12 @@ if($selisih>=600 and $id_role!=3 and $is_login){
     (
       SELECT poin_presensi FROM tb_presensi_summary   
       WHERE id_peserta=a.id 
-      AND id_room_kelas = $id_room_kelas  
       AND id_room=$id_room  
       ) as poin_presensi,
     (
       SELECT war_points FROM tb_war_summary   
       WHERE id=a.id 
-      AND id_room_kelas = $id_room_kelas  
+      AND id_room = $id_room  
       ) as war_points,
     (
       SELECT COUNT(1) FROM tb_pertanyaan  
@@ -60,7 +59,7 @@ if($selisih>=600 and $id_role!=3 and $is_login){
       AND id_room_kelas = $id_room_kelas  
       ) as count_bertanya,
     (
-      SELECT COUNT(1) FROM tb_jawaban_chat  
+      SELECT COUNT(1) FROM tb_pertanyaan_reply  
       WHERE id_penjawab=a.id 
       AND id_room_kelas = $id_room_kelas  
       ) as count_menjawab,
@@ -71,25 +70,29 @@ if($selisih>=600 and $id_role!=3 and $is_login){
       AND verif_date is not null 
       ) as poin_bertanya,
     (
-      SELECT SUM(poin) FROM tb_jawaban_chat  
+      SELECT SUM(poin) FROM tb_pertanyaan_reply  
       WHERE id_penjawab=a.id 
       AND id_room_kelas = $id_room_kelas  
       AND verif_date is not null 
       ) as poin_menjawab,
     (
-      SELECT SUM(get_point) FROM tb_bukti_latihan 
-      WHERE id_peserta=a.id 
-      AND id_room_kelas = $id_room_kelas  
-      AND tanggal_verifikasi is not null 
+      SELECT SUM(p.get_point) FROM tb_bukti_latihan p 
+      JOIN tb_assign_latihan q ON p.id_assign_latihan=q.id 
+      WHERE p.id_peserta=a.id 
+      AND q.id_room_kelas = $id_room_kelas  
+      AND p.tanggal_verifikasi is not null 
       AND status=1
       ) as total_poin_latihan,
     (
-      SELECT SUM(get_point) FROM tb_bukti_challenge 
-      WHERE id_peserta=a.id 
-      AND id_room_kelas = $id_room_kelas  
-      AND tanggal_verifikasi is not null 
+      SELECT SUM(p.get_point) FROM tb_bukti_challenge p 
+      JOIN tb_assign_challenge q ON p.id_assign_challenge=q.id 
+      WHERE p.id_peserta=a.id 
+      AND q.id_room_kelas = $id_room_kelas  
+      AND p.tanggal_verifikasi is not null 
       AND status=1
-      ) as total_poin_challenge 
+      ) as total_poin_challenge
+
+
 
   
   FROM tb_peserta a 

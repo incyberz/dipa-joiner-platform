@@ -39,30 +39,39 @@ $nama_paket_soal_remed_uas = 'Soal Remed UAS';
 $from_tb_jawabans = "FROM tb_jawabans p 
   JOIN tb_paket_soal q ON p.id_paket_soal=q.id 
   WHERE p.id_peserta=a.id 
+  AND p.id_room=$id_room 
   AND q.nama ";
 
 $s = "SELECT  
 a.id as id_peserta,
 a.nama as nama_peserta,
 a.nim,
-a.kelas,
-a.rank_global,
-a.rank_kelas,
+b.kelas,
 b.*,
+c.*,
 (SELECT jumlah_ontime FROM tb_presensi_summary WHERE id_peserta=a.id AND id_room=$id_room) jumlah_ontime,
-(SELECT jumlah_presensi FROM tb_presensi_summary WHERE id_peserta=a.id AND id_room=$id_room) total_ontime,
-(SELECT COUNT(1) FROM tb_bukti_latihan WHERE id_peserta=a.id) jumlah_latihan,
-(SELECT COUNT(1) FROM tb_bukti_challenge WHERE id_peserta=a.id) jumlah_challenge,
-
-
+(
+  SELECT COUNT(1) FROM tb_sesi p 
+  JOIN tb_sesi_kelas q ON p.id=q.id_sesi 
+  WHERE p.id_room=$id_room 
+  AND q.kelas=b.kelas 
+  AND q.is_terlaksana=1) count_sesi_terlaksana,
+(
+  SELECT COUNT(1) FROM tb_bukti_latihan p 
+  JOIN tb_assign_latihan q ON p.id_assign_latihan=q.id  
+  WHERE p.id_peserta=a.id 
+  AND q.id_room_kelas=$id_room_kelas) count_latihan,
+(
+  SELECT COUNT(1) FROM tb_bukti_challenge p 
+  JOIN tb_assign_challenge q ON p.id_assign_challenge=q.id  
+  WHERE p.id_peserta=a.id 
+  AND q.id_room_kelas=$id_room_kelas) count_challenge,
 (
   SELECT p.nilai $from_tb_jawabans = '$nama_paket_soal_uts'
   ORDER BY p.nilai DESC LIMIT 1) nilai_uts, 
 (
   SELECT p.tanggal_submit $from_tb_jawabans = '$nama_paket_soal_uts'
   ORDER BY p.nilai DESC LIMIT 1) tanggal_submit_uts, 
-
-
 (
   SELECT p.nilai $from_tb_jawabans = '$nama_paket_soal_uas'
   ORDER BY p.nilai DESC LIMIT 1) nilai_uas ,
@@ -72,34 +81,41 @@ b.*,
 (
   SELECT p.tanggal_submit $from_tb_jawabans = '$nama_paket_soal_uas'
   ORDER BY p.nilai DESC LIMIT 1) tanggal_submit_uas, 
-
-
 (
   SELECT p.nilai $from_tb_jawabans = '$nama_paket_soal_remed_uts'
   ORDER BY p.nilai DESC LIMIT 1) nilai_remed_uts ,
 (
   SELECT p.tanggal_submit $from_tb_jawabans = '$nama_paket_soal_remed_uts'
   ORDER BY p.nilai DESC LIMIT 1) tanggal_submit_remed_uts, 
-
-
 (
   SELECT p.nilai $from_tb_jawabans = '$nama_paket_soal_remed_uas'
   ORDER BY p.nilai DESC LIMIT 1) nilai_remed_uas ,
 (
   SELECT p.tanggal_submit $from_tb_jawabans = '$nama_paket_soal_remed_uas'
   ORDER BY p.nilai DESC LIMIT 1) tanggal_submit_remed_uas, 
-
-
 (
-  SELECT count(1) FROM tb_peserta WHERE status=1 AND kelas=a.kelas) total_kelas_ini 
+  SELECT count(1) FROM tb_kelas_peserta p  
+  JOIN tb_kelas q ON p.kelas=q.kelas  
+  WHERE q.tahun_ajar=$tahun_ajar 
+  AND q.kelas=b.kelas) total_peserta_kelas,
+(
+  SELECT rank_global FROM tb_poin   
+  WHERE id_room=$id_room  
+  AND id_peserta=a.id) rank_global,
+(
+  SELECT rank_kelas FROM tb_poin   
+  WHERE id_room=$id_room  
+  AND id_peserta=a.id) rank_kelas
+
 
 FROM tb_peserta a 
-JOIN tb_kelas b ON a.kelas=b.kelas 
+JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
+JOIN tb_kelas c ON b.kelas=c.kelas 
 WHERE a.status=1 
 AND password is not null 
 AND a.id_role=1 
 AND $sql_id_peserta
-ORDER BY a.kelas, a.nama
+ORDER BY b.kelas, a.nama
 ";
 // echo "<pre>$s</pre>";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
@@ -142,8 +158,8 @@ $i=0;
 $last_kelas = '';
 $nama_peserta = '';
 
-$jumlah_latihan=0;
-$jumlah_challenge=0;
+$count_latihan=0;
+$count_challenge=0;
 $rank_global=0;
 $rank_kelas=0;
 
@@ -153,7 +169,7 @@ $konversi_rank_global=0;
 $konversi_rank_kelas=0;
 
 $nilai_akhir=0;
-$total_kelas_ini=0;
+$total_peserta_kelas=0;
 $nilai_uts=0;
 $nilai_uas=0;
 $submit_uas='';
@@ -182,65 +198,71 @@ while ($d=mysqli_fetch_assoc($q)) {
   $nama_peserta = strtoupper($d['nama_peserta']);
 
   $jumlah_ontime=$d['jumlah_ontime'];
-  $total_ontime=$d['total_ontime']; // jumlah_presensi
-  $jumlah_latihan=$d['jumlah_latihan'];
-  $jumlah_challenge=$d['jumlah_challenge'];
+  $count_sesi_terlaksana=$d['count_sesi_terlaksana']; // jumlah_presensi
+  $count_latihan=$d['count_latihan'];
+  $count_challenge=$d['count_challenge'];
   $rank_global=$d['rank_global'];
   $rank_kelas=$d['rank_kelas'];
-  $total_kelas_ini=$d['total_kelas_ini'];
+  $total_peserta_kelas=$d['total_peserta_kelas'];
   $nilai_uts=$d['nilai_uts'];
   $nilai_uas=$d['nilai_uas'];
   $submit_uas=$d['submit_uas'];
   $nilai_remed_uts=$d['nilai_remed_uts'];
   $nilai_remed_uas=$d['nilai_remed_uas'];
 
-  $red = $jumlah_latihan==0 ? 'gradasi-merah' : '';
-  $red = ($jumlah_latihan>0 && $jumlah_latihan<=3) ? 'gradasi-kuning' : $red;
+  $red = $count_latihan==0 ? 'gradasi-merah' : '';
+  $red = ($count_latihan>0 && $count_latihan<=3) ? 'gradasi-kuning' : $red;
 
-  $delete = $jumlah_latihan>3 ? '' : "<span class='delete_peserta pointer' id=delete_peserta__$d[id_peserta] >$img[delete]</span>";
+  $delete = $count_latihan>3 ? '' : "<span class='delete_peserta pointer' id=delete_peserta__$d[id_peserta] >$img[delete]</span>";
 
 
   if($jumlah_ontime==0){
+    $jumlah_ontime=0;
     $konversi_ontime=0;
-  }elseif($jumlah_ontime==1 and $total_ontime==1){
+  }elseif($jumlah_ontime==1 and $count_sesi_terlaksana==1){
     $konversi_ontime = 100;
-  }elseif($jumlah_ontime==$total_ontime){
+  }elseif($jumlah_ontime==$count_sesi_terlaksana){
     $konversi_ontime = 100;
   }else{
-    $konversi_ontime = number_format(50 + ($jumlah_ontime-1)*((round($total_ontime*8/10,0)/$total_ontime)*(100/$total_ontime)),0);
+    $konversi_ontime = number_format(50 + ($jumlah_ontime-1)*((round($count_sesi_terlaksana*8/10,0)/$count_sesi_terlaksana)*(100/$count_sesi_terlaksana)),0);
     if($konversi_ontime>100) $konversi_ontime=100;
   }
 
-  if($jumlah_latihan==0){
+  if($count_latihan==0){
     $konversi_latihan=0;
-  }elseif($jumlah_latihan==1 and $total_latihan==1){
+  }elseif($count_latihan==1 and $total_latihan==1){
     $konversi_latihan = 100;
-  }elseif($jumlah_latihan==$total_latihan){
+  }elseif($count_latihan==$total_latihan){
     $konversi_latihan = 100;
   }else{
-    $konversi_latihan = number_format(50 + ($jumlah_latihan-1)*((round($total_latihan*8/10,0)/$total_latihan)*(100/$total_latihan)),0);
+    $konversi_latihan = number_format(50 + ($count_latihan-1)*((round($total_latihan*8/10,0)/$total_latihan)*(100/$total_latihan)),0);
     if($konversi_latihan>100) $konversi_latihan=100;
   }
 
-  }else{
-  }
+  // }else{
+  // }
 
-  if($jumlah_challenge==0){
+  if($count_challenge==0){
     $konversi_challenge=0;
-  }elseif($jumlah_challenge==1 and $total_challenge==1){
+  }elseif($count_challenge==1 and $total_challenge==1){
     $konversi_challenge = 100;
-  }elseif($jumlah_challenge==$total_challenge){
+  }elseif($count_challenge==$total_challenge){
     $konversi_challenge = 100;
   }else{
-    $konversi_challenge = round(50 + ($jumlah_challenge-1)*((round($total_challenge*8/10,0)/$total_challenge)*(100/$total_challenge)),0);
+    $konversi_challenge = round(50 + ($count_challenge-1)*((round($total_challenge*8/10,0)/$total_challenge)*(100/$total_challenge)),0);
     if($konversi_challenge>100) $konversi_challenge=100;
   }
 
-  $konversi_rank_global = round(110-(($d['rank_global']-1)*((round($total_peserta*8/10,0)/$total_peserta)*(100/$total_peserta))),0);
-  if($konversi_rank_global>100) $konversi_rank_global=100;
+  if($rank_global){
+    $konversi_rank_global = round(110-(($d['rank_global']-1)*((round($total_peserta*8/10,0)/$total_peserta)*(100/$total_peserta))),0);
+    if($konversi_rank_global>100) $konversi_rank_global=100;
+  }
 
-  $konversi_rank_kelas = round(110-(($d['rank_kelas']-1)*((round($d['total_kelas_ini']*8/10,0)/$d['total_kelas_ini'])*(100/$d['total_kelas_ini']))),0);
-  if($konversi_rank_kelas>100) $konversi_rank_kelas=100;
+
+  if($rank_kelas){
+    $konversi_rank_kelas = round(110-(($d['rank_kelas']-1)*((round($d['total_peserta_kelas']*8/10,0)/$d['total_peserta_kelas'])*(100/$d['total_peserta_kelas']))),0);
+    if($konversi_rank_kelas>100) $konversi_rank_kelas=100;
+  }
 
   $nilai_harian = round((
     $rbobot['Count Ontime'] * $konversi_ontime + 
@@ -268,10 +290,10 @@ while ($d=mysqli_fetch_assoc($q)) {
     <td>$no</td>
     <td>$nama_peserta<div class='kecil miring abu'>$d[kelas]</div></td>
     <td>$d[jumlah_ontime]<div class='kecil miring abu'>$konversi_ontime</div></td>
-    <td>$d[jumlah_latihan]<div class='kecil miring abu'>$konversi_latihan</div></td>
-    <td>$d[jumlah_challenge]<div class='kecil miring abu'>$konversi_challenge</div></td>
+    <td>$d[count_latihan]<div class='kecil miring abu'>$konversi_latihan</div></td>
+    <td>$d[count_challenge]<div class='kecil miring abu'>$konversi_challenge</div></td>
     <td>$d[rank_global] <span class='kecil miring abu'>of $total_peserta</span><div class='kecil miring abu'>$konversi_rank_global</div></td>
-    <td>$d[rank_kelas] <span class='kecil miring abu'>of $d[total_kelas_ini]</span><div class='kecil miring abu'>$konversi_rank_kelas</div></td>
+    <td>$d[rank_kelas] <span class='kecil miring abu'>of $d[total_peserta_kelas]</span><div class='kecil miring abu'>$konversi_rank_kelas</div></td>
     <td>$d[nilai_uts]</td>
     <td>$d[nilai_uas]<div class='abu f12'>$submit_uas</div></td>
     <td>$d[nilai_remed_uts]</td>
@@ -287,13 +309,15 @@ while ($d=mysqli_fetch_assoc($q)) {
   if($nilai_uas=='') $nilai_uas='NULL';
   if($nilai_remed_uts=='') $nilai_remed_uts='NULL';
   if($nilai_remed_uas=='') $nilai_remed_uas='NULL';
-  $s2 = "UPDATE tb_peserta SET 
+  $s2 = "UPDATE tb_poin SET 
   uts=$nilai_uts,
   uas=$nilai_uas,
   remed_uts=$nilai_remed_uts,
   remed_uas=$nilai_remed_uas,
   nilai_akhir='$nilai_akhir' 
-  WHERE id=$d[id_peserta]";
+  WHERE id=$d[id_peserta] 
+  AND id_room=$id_room 
+  ";
   $q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));
 
   $tanggal_submit_uts = $d['tanggal_submit_uts'] ?? '-'; // ZZZ tanggal submit only for UTS
@@ -312,11 +336,11 @@ if($id_role!=1){
   }
 }
 
-$div_row[1] = ['Count Ontime',"$jumlah_ontime <span class='kecil miring abu'>of $total_ontime</span>",$konversi_ontime.' <span class="kecil miring abu">x '.$rbobot['Count Ontime'].'%</span>'];
-$div_row[2] = ['Count Latihan',"$jumlah_latihan <span class='kecil miring abu'>of $total_latihan</span>",$konversi_latihan.' <span class="kecil miring abu">x '.$rbobot['Count Latihan'].'%</span>'];
-$div_row[3] = ['Count Challenge',"$jumlah_challenge <span class='kecil miring abu'>of $total_challenge</span>",$konversi_challenge.' <span class="kecil miring abu">x '.$rbobot['Count Challenge'].'%</span>'];
+$div_row[1] = ['Count Ontime',"$jumlah_ontime <span class='kecil miring abu'>of $count_sesi_terlaksana</span>",$konversi_ontime.' <span class="kecil miring abu">x '.$rbobot['Count Ontime'].'%</span>'];
+$div_row[2] = ['Count Latihan',"$count_latihan <span class='kecil miring abu'>of $total_latihan</span>",$konversi_latihan.' <span class="kecil miring abu">x '.$rbobot['Count Latihan'].'%</span>'];
+$div_row[3] = ['Count Challenge',"$count_challenge <span class='kecil miring abu'>of $total_challenge</span>",$konversi_challenge.' <span class="kecil miring abu">x '.$rbobot['Count Challenge'].'%</span>'];
 $div_row[4] = ['Rank Global',"$rank_global <span class='kecil miring abu'>of $total_peserta</span>",$konversi_rank_global.' <span class="kecil miring abu">x '.$rbobot['Rank Global'].'%</span>'];
-$div_row[5] = ['Rank Kelas',"$rank_kelas <span class='kecil miring abu'>of $total_kelas_ini</span>",$konversi_rank_kelas.' <span class="kecil miring abu">x '.$rbobot['Rank Kelas'].'%</span>'];
+$div_row[5] = ['Rank Kelas',"$rank_kelas <span class='kecil miring abu'>of $total_peserta_kelas</span>",$konversi_rank_kelas.' <span class="kecil miring abu">x '.$rbobot['Rank Kelas'].'%</span>'];
 $div_row[6] = ['UTS','-',$nilai_uts.' <span class="kecil miring abu">x '.$rbobot['UTS'].'%</span>'];
 $div_row[7] = ['UAS','-',$nilai_uas.' <span class="kecil miring abu">x '.$rbobot['UAS'].'%</span>'];
 $div_row[8] = ['Remed UTS','-',$nilai_remed_uts.' <span class="kecil miring abu">x '.$rbobot['Remed UTS'].'%</span>'];

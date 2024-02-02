@@ -104,15 +104,25 @@ for ($i=1; $i <= $jumlah_ontime; $i++) {
 $div = '';
 $s = "SELECT a.*,
 a.id as id_sesi,
-(SELECT COUNT(1) FROM tb_soal_pg WHERE id_pembuat=$id_peserta AND id_sesi=a.id) jumlah_soal,
-(SELECT COUNT(1) FROM tb_paket_war WHERE id_peserta=$id_peserta AND is_completed=1) play_count , 
 (
-  SELECT 1 FROM tb_presensi WHERE id_peserta=$id_peserta 
+  SELECT COUNT(1) FROM tb_soal_pg p 
+  WHERE p.id_pembuat=$id_peserta 
+  AND p.id_sesi=a.id) jumlah_soal,
+(
+  SELECT COUNT(1) FROM tb_paket_war p 
+  WHERE id_peserta=$id_peserta 
+  AND is_completed=1 
+  AND id_room=$id_room) play_count , 
+(
+  SELECT 1 FROM tb_presensi 
+  WHERE id_peserta=$id_peserta 
   AND id_sesi=a.id) sudah_presensi, 
 (
   SELECT COUNT(1) FROM tb_presensi p 
   JOIN tb_peserta q ON p.id_peserta=q.id 
-  WHERE p.id_sesi=a.id AND q.kelas='$kelas') presenters_kelas, 
+  JOIN tb_kelas_peserta r ON q.id=r.id_peserta  
+  WHERE p.id_sesi=a.id 
+  AND r.kelas='$kelas') presenters_kelas, 
 (
   SELECT COUNT(1) FROM tb_presensi p 
   JOIN tb_sesi q ON p.id_sesi=q.id 
@@ -283,7 +293,7 @@ while($d=mysqli_fetch_assoc($q)){
       <div class='row'>
         <div class='col-lg-3'>
           <div class='mb1 darkblue tebal'>P$d[no] $d[nama]</div>
-          <div class='mb1 abu miring'>$d[presenters_kelas] of $total_kelas_peserta sudah hadir</div>
+          <div class='mb1 abu miring'>$d[presenters_kelas] of $total_peserta_kelas sudah hadir</div>
         </div>
         <div class='col-lg-4'>
           <div><span class='abu miring'>Jadwal Kuliah:</span> $jadwal_kuliah_show</div>

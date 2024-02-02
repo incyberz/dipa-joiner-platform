@@ -2,7 +2,7 @@
   <div class='section-title' data-aos-zzz='fade-up'>
     <h2>Pilih Room</h2>
     <p>
-      Choose for your active room!
+      Welcome <u><?=$nama_peserta?></u>! Kamu berada di kelas <u><?=$kelas?></u>. Silahkan Pilih Room!
     </p>
   </div>
 
