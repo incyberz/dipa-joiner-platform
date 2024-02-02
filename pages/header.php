@@ -1,6 +1,6 @@
 <?php
 $jumlah_verif = 0;
-$rjenis = ['latihan','tugas','challenge'];
+$rjenis = ['latihan','challenge'];
 foreach ($rjenis as $key => $jenis) {
   $s = "SELECT 1 FROM tb_bukti_$jenis WHERE tanggal_verifikasi is null"; 
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
@@ -86,9 +86,8 @@ $available_soal_show = "<span class='count_badge badge_$red' id='available_soal'
             <li class='dropdown'><a  href='#'><span class='tebal darkblue'>$room</span> <i class='bi bi-chevron-down'></i></a>
               <ul>
                 <li><a href='?pilih_room'>Pilih Room</a></li>
-                <li><a href='?list_sesi'>List Sesi</a></li>
+                <li><a href='?list_sesi'>Learning Path</a></li>
                 <li><a href='?activity&jenis=latihan'>Latihan Praktikum</a></li>
-                <li><a href='?activity&jenis=tugas'>Tugas Proyek</a></li>
                 <li><a href='?activity&jenis=challenge'>Challenges</a></li>
                 <li class='hideit'><a href='?bertanya'>Bertanya</a></li>
                 <li class='hideit'><a href='?my_questions'>Pertanyaan Saya</a></li>
@@ -125,7 +124,8 @@ $available_soal_show = "<span class='count_badge badge_$red' id='available_soal'
             <li class='dropdown'><a  href='#'><span class='tebal darkblue'>$room ADMIN</span> <i class='bi bi-chevron-down'></i></a>
               <ul>
                 <li><a href='?assign_room_kelas'>Assign Room Kelas</a></li>
-                <li><a href='?peserta_kelas'>Peserta Kelas</a></li>
+                <li><a href='?master&p=latihan'>Master Latihan</a></li>
+                <li><a href='?master&p=challenge'>Master Challenge</a></li>
               </ul>
             </li>
           ";

@@ -27,19 +27,36 @@ if(isset($_POST['btn_drop_room_kelas'])){
   echo div_alert('success',"Drop Room Kelas sukses.");
 }
 
-$s = "SELECT a.kelas,b.fakultas FROM tb_room_kelas a JOIN tb_kelas b ON a.kelas=b.kelas WHERE a.id_room=$id_room";
+$s = "SELECT a.id as id_room_kelas,a.kelas,b.fakultas FROM tb_room_kelas a JOIN tb_kelas b ON a.kelas=b.kelas WHERE a.id_room=$id_room";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 
 $li_assigned = '';
 $arr_assigned_kelas = [];
 while($d=mysqli_fetch_assoc($q)){
   $btn = "<button class='mb2' name=btn_drop_room_kelas value='$d[kelas]' >Drop</button>";
-  $li_assigned.= "<li class=''>$d[fakultas] ~ $d[kelas] ~ $btn</li>";
+  $li_assigned.= "
+    <li class=''>
+      $d[fakultas] ~ 
+      $d[kelas] ~ 
+      $btn ~ 
+      <a href='?assign_peserta_kelas&kelas=$d[kelas]'>Assign Peserta Kelas</a>  ~ 
+    </li>
+  ";
   array_push($arr_assigned_kelas,$d['kelas']);
 }
 
 ?>
-<h1>Assign Room Kelas for Instruktur</h1>
+<h1>Assign Room Kelas</h1>
+<div class="flexy">
+  <div class="wadah">
+    Kelas
+  </div>
+  <div class="wadah">--></div>
+  <div class="wadah">
+    Room
+  </div>
+</div>
+
 <table>
   <tr>
     <td valign=top>

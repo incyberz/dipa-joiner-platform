@@ -42,7 +42,7 @@ $values_id_soals = str_replace('OR)',')',$values_id_soals);
 # MAIN SELECT
 # =============================================================
 $left_join_where = "
-  LEFT JOIN tb_perang c ON a.id=c.id_soal AND c.id_penjawab=$id_peserta 
+  LEFT JOIN tb_war c ON a.id=c.id_soal AND c.id_penjawab=$id_peserta 
   WHERE c.id is null 
 ";
 
@@ -63,9 +63,11 @@ b.username as username_pembuat,
 
 FROM tb_soal_pg a 
 JOIN tb_peserta b ON a.id_pembuat=b.id 
+JOIN tb_sesi d ON a.id_sesi=d.id 
 $left_join_where 
 AND a.id_pembuat!=$id_peserta 
-AND (a.id_status is null OR a.id_status >= 0) 
+AND (a.id_status is null OR a.id_status >= 0)  
+AND d.id_room=$id_room 
 ORDER BY rand() 
 LIMIT 10
 ";
@@ -74,7 +76,7 @@ LIMIT 10
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $jumlah_soal = mysqli_num_rows($q);
 
-// autosave tb_perang if loaded
+// autosave tb_war if loaded
 // zzz here
 if($jumlah_soal){
   // echo div_alert('info', "Terdapat $jumlah_soal soal yang dapat kamu jawab.");
@@ -91,7 +93,7 @@ if($jumlah_soal){
     $username_pembuat=$d['username_pembuat'];
 
     $durasi=$d['durasi'] ?? $durasi_default;
-    $values .= "($id_soal,$id_peserta,$id_pembuat),";
+    $values .= "($id_room,$id_soal,$id_peserta,$id_pembuat),";
 
     $id_soals.="$id_soal,";
 
@@ -321,16 +323,17 @@ if($jumlah_soal){
   # SAVE TO PAKET WAR IF NONE
   # =====================================================================
   if(!count($arr_id_soal)){
-    $s = "INSERT INTO tb_paket_war (id_peserta,id_soals) VALUES ($id_peserta,'$id_soals')";
+    $s = "INSERT INTO tb_paket_war (id_room,id_peserta,id_soals) VALUES ($id_room,$id_peserta,'$id_soals')";
     $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 
 
     # =====================================================================
     # AUTO INSERT TB_PERANG
     # =====================================================================
-    $s = "INSERT INTO tb_perang (id_soal,id_penjawab,id_pembuat) VALUES $values";
+    $s = "INSERT INTO tb_war (id_room,id_soal,id_penjawab,id_pembuat) VALUES $values";
     $s .= '__';
     $s = str_replace(',__','',$s);
+    // echo $s;
     $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 
   }

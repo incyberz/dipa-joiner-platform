@@ -50,7 +50,7 @@ if(isset($_GET['id'])){
   
 
 
-  $s = "DELETE FROM tb_perang WHERE id_penjawab=$id";
+  $s = "DELETE FROM tb_war WHERE id_penjawab=$id";
   echo "<hr>$s";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 

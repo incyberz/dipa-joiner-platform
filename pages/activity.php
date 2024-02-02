@@ -4,7 +4,7 @@ $jenis = $_GET['jenis'] ?? '';
 $no = $_GET['no'] ?? '';
 
 if($jenis==''){
-  $rjenis = ['latihan','tugas','challenge'];
+  $rjenis = ['latihan','challenge'];
   $j='';
   foreach ($rjenis as $key => $value) $j .= "<a href='?activity&jenis=$value data-aos='fade-up'' class='proper btn btn-info mb2'>$value</a> ";
   echo "<section><div class=container><div data-aos='fade-up'><p>Silahkan pilih jenis aktivitas:</p>$j</div></div></section>";
@@ -13,7 +13,6 @@ if($jenis==''){
 
 $ryaitu = [
   'latihan' => 'Yaitu praktikum yang persis dicontohkan oleh instruktur atau materi yang sudah disampaikan. Kamu wajib mengerjakannya.',
-  'tugas' => 'Yaitu praktikum membangun Aplikasi Web berdasarkan studi kasus dari Dunia Usaha dan Industri (DUDI). Kamu wajib membangunnya menggunakan HTML, CSS, JS, dan PHP.',
   'challenge' => 'Yaitu pembuktian bahwa kamu sudah siap terjun ke Dunia Usaha dan Industri (DUDI). Kamu wajib membangun salah satu portfolio system yang berhasil kamu buat.'
 ];
 $yaitu = $ryaitu[$jenis];
@@ -34,7 +33,7 @@ if(isset($_POST['btn_upload'])){
   $id_assign_jenis = $_POST['id_assign_jenis'];
   $s = "SELECT a.*,b.*  
   FROM tb_assign_$jenis a 
-  JOIN tb_act_$jenis b ON a.id_$jenis=b.id 
+  JOIN tb_$jenis b ON a.id_$jenis=b.id 
   WHERE a.id=$id_assign_jenis";
     echo "<pre>$s</pre>";
 
@@ -65,7 +64,6 @@ if(isset($_POST['btn_upload'])){
 
   $rtarget = [
     'latihan' => "uploads/$folder_uploads/$jenis$no_jenis.jpg",
-    'tugas' => "uploads/$folder_uploads/$jenis$no_jenis.zip",
     'challenge' => '',
   ];
   
@@ -101,7 +99,7 @@ if(isset($_POST['btn_upload'])){
     tanggal_upload = CURRENT_TIMESTAMP 
     WHERE id=$id_bukti
     ";
-    $pesan_upload = div_alert('info','Kamu sudah upload bukti tugas sebelumnya, replace berhasil.');
+    $pesan_upload = div_alert('info','Kamu sudah upload bukti sebelumnya, replace berhasil.');
   }  
 
   if(isset($_FILES['bukti'])){
@@ -128,6 +126,17 @@ if(isset($_POST['btn_upload'])){
 # NORMAL FLOW
 # ============================================
 if($no==''){
+
+  $s = "SELECT nama FROM tb_$jenis WHERE id_room=$id_room";
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  $count_jenis = mysqli_num_rows($q);
+
+  $list = '';
+  while($d=mysqli_fetch_assoc($q)){
+    $list.="<li>$d[nama]</li>";
+  }
+  echo "List $jenis yang tersedia: <ol>$list</ol><hr>";
+
   $s = "SELECT a.no, b.nama,
   (
     SELECT 1 FROM tb_bukti_$jenis 
@@ -135,16 +144,19 @@ if($no==''){
     AND id_assign_$jenis=a.id 
     AND id_peserta=$id_peserta) sudah_mengerjakan   
   FROM tb_assign_$jenis a 
-  JOIN tb_act_$jenis b ON a.id_$jenis=b.id 
+  JOIN tb_$jenis b ON a.id_$jenis=b.id 
   WHERE no is not null 
-  AND kelas='$kelas'
+  AND id_room_kelas='$id_room_kelas'
   order by no";
   // echo "<pre>$s</pre>";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   if(mysqli_num_rows($q)==0){
-    echo '<section><div class=container>';
-    echo div_alert('danger',"Maaf, belum ada data $jenis untuk kelas $kelas.");
-    echo '</div></section>';
+    if($count_jenis){
+      echo div_alert('danger',"Terdapat $count_jenis $jenis yang belum di-assign oleh instruktur untuk kelas $kelas");
+    }else{
+      echo div_alert('danger',"Maaf, belum ada satupun $jenis pada room $room. Beritahukan hal ini kepada instruktur!");
+    }
+
   }else{
     $rno = '';
     while ($d=mysqli_fetch_assoc($q)) {
@@ -152,8 +164,6 @@ if($no==''){
       $rno .= "<a class='btn btn-$primary btn-sm mb2' href='?activity&jenis=$jenis&no=$d[no]'>$d[no]. $d[nama]</a> ";
     }
     echo "
-    <section>
-      <div class=container data-aos='fade-up'>
         Silahkan pilih $jenis:
         <div class=wadah>
           $rno
@@ -161,8 +171,7 @@ if($no==''){
         <div class='kecil miring'>
           <span class=hijau>hijau: sudah dikerjakan</span>; <span class=biru>biru: belum kamu kerjakan</span>
         </div>
-      </div>
-    </section>";
+    ";
   }
   
   // exit;

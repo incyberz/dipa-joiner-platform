@@ -23,11 +23,16 @@ if($id_role==2){
 }else{ $sql_profil_ok = '1';} 
 $s = "SELECT a.id as id_peserta,
 a.nama as nama_peserta,
-a.kelas,
+b.kelas,
 a.profil_ok 
 
 FROM tb_peserta a 
+JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
+JOIN tb_kelas c ON b.kelas=c.kelas 
+JOIN tb_room_kelas d ON c.kelas=d.kelas 
 WHERE a.status=1 
+AND c.tahun_ajar = $tahun_ajar  
+AND d.id_room=$id_room 
 AND $sql_id_peserta  
 AND $sql_profil_ok   
 ";

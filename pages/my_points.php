@@ -1,5 +1,5 @@
 <?php
-$rjenis = ['latihan','tugas','challenge','pertanyaan','jawaban'];
+$rjenis = ['latihan','challenge','pertanyaan','jawaban'];
 $data = [];
 
 foreach ($rjenis as $key => $jenis) {
@@ -26,7 +26,7 @@ foreach ($rjenis as $key => $jenis) {
     (SELECT nama FROM tb_peserta WHERE id=a.verified_by) as verifikator  
     FROM tb_bukti_$jenis a 
     JOIN tb_assign_$jenis b ON a.id_assign_$jenis=b.id 
-    JOIN tb_act_$jenis c ON b.id_$jenis=c.id
+    JOIN tb_$jenis c ON b.id_$jenis=c.id
     WHERE a.id_peserta=$id_peserta 
     ORDER BY b.no 
     ";
@@ -37,7 +37,7 @@ foreach ($rjenis as $key => $jenis) {
     $data[$jenis] = '';
     $summary=0;
     while ($d=mysqli_fetch_assoc($q)) {
-      if($jenis=='latihan'||$jenis=='tugas'||$jenis=='challenge'){
+      if($jenis=='latihan'||$jenis=='challenge'){
         $hijau = $d['tanggal_verifikasi']=='' ? 'merah' : 'hijau';
         $tanggal_upload = date('d-m-y H:i',strtotime($d['tanggal_upload']));
         $tanggal_verifikasi = date('d-m-y H:i',strtotime($d['tanggal_verifikasi']));
@@ -145,17 +145,12 @@ foreach ($rjenis as $key => $jenis) {
 
 <div class="section-title" data-aos="fade-up">
   <h2>My Points</h2>
-  <p>Berikut adalah history poin yang dikumpulkan melalui latihan, tugas, pertanyaan, dan aktifitas training lainnya.</p>
+  <p>Berikut adalah history poin yang dikumpulkan melalui latihan, challenge, pertanyaan, dan aktifitas training lainnya.</p>
 </div>
 
 <div class="wadah gradasi-hijau" data-aos=fade-up>
   <h3>Poin Latihan</h3>
   <?=$data['latihan']?>
-</div>
-
-<div class="wadah gradasi-kuning" data-aos=fade-up>
-  <h3>Poin Tugas</h3>
-  <?=$data['tugas']?>
 </div>
 
 <div class="wadah gradasi-pink" data-aos=fade-up>

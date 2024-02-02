@@ -59,12 +59,13 @@ c.id_status as id_status_soal,
   SELECT p.kelas FROM tb_kelas_peserta p 
   JOIN tb_kelas q ON p.kelas=q.kelas   
   WHERE id_peserta=a.id_pembuat AND q.tahun_ajar=$tahun_ajar) kelas_pembuat    
-FROM tb_perang a 
+FROM tb_war a 
 JOIN tb_peserta b ON a.id_penjawab=b.id 
 JOIN tb_soal_pg c ON a.id_soal=c.id 
 
 WHERE $sql_my_wars 
-AND $sql_kelas
+AND $sql_kelas 
+AND id_room=$id_room
 
 ORDER BY a.tanggal DESC 
 LIMIT $limit

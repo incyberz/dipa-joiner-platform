@@ -47,6 +47,8 @@ foreach ($rexample as $x) {
 echo "is_reject : $is_reject";
 
 $btn_reupload = "<button class='btn btn-secondary btn-sm' id=btn_reupload>Reupload</button>";
+$status_show = '';
+$info = '';
 if($is_reject){
   $info = "Kamu sudah upload profil perang akan tetapi instruktur menolaknya, <span class=darkred>mungkin kurang layak</span> untuk Perang! <span class='tebal darkred'>Jangan foto formal!</span> Silahkan <a href='?pengajar'>whatsapp beliau</a> jika ada kesalahan. Sekarang <span class=blue>silahkan reupload sesuai contoh profil</span>.";
   $status_show = "<span class='darkred'>Profil Ditolak</span>";

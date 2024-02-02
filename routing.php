@@ -23,7 +23,9 @@ if(!file_exists($konten)){
     if($parameter=='login' || $parameter=='upload_profil' || !$is_login){
       // hide ask upload profil
     }else{
-      include 'pages/belum_punya_profil.php';
+      if($password){
+        include 'pages/belum_punya_profil.php';
+      }
     } 
   }
   if($username and !$kelas){
@@ -33,10 +35,12 @@ if(!file_exists($konten)){
   }
 }
 
-if($is_login and $password=='' and $parameter!='ubah_password'){
-  if(!isset($_SESSION['dipa_master_username'])){
-    echo '<script>location.replace("?ubah_password")</script>';
-    exit;
+if($parameter!='ubah_password'){
+  if($is_login and $password==''){
+    if(!isset($_SESSION['dipa_master_username'])){
+      echo '<script>location.replace("?ubah_password")</script>';
+      exit;
+    }
   }
 }
 

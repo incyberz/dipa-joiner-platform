@@ -39,9 +39,9 @@ $s = "SELECT (
   ) my_questions, 
 b.id as id_peserta, 
 b.nama as nama_peserta 
-FROM tb_perang_summary a JOIN tb_peserta b ON a.id=b.id 
+FROM tb_war_summary a JOIN tb_peserta b ON a.id=b.id 
 WHERE b.id_role=1 
-AND b.kelas != 'BOCIL' 
+AND id_room=$id_room 
 ORDER BY my_questions DESC LIMIT 10";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $rnama = [];

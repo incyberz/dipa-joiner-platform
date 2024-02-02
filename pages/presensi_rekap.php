@@ -63,7 +63,6 @@ JOIN tb_peserta b ON a.id_peserta=b.id
 JOIN tb_kelas c ON b.kelas=c.kelas  
 WHERE a.id_room=$id_room 
 AND b.status=1 
-AND b.kelas != 'BOCIL' 
 ORDER BY c.shift, b.kelas, b.nama 
 ";
 // echo "<pre>$s</pre>";

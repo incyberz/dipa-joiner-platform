@@ -33,7 +33,7 @@ $jpa = mysqli_num_rows($q);
 $o .= "<div class=mb2 data-aos=fade-up >Jumlah peserta aktif <span class=darkred>$kelas</span> : $jpa peserta.</div>";
 
 $img_check_path = 'assets/img/icons/check.png';
-$rjenis = ['latihan','tugas','challenge'];
+$rjenis = ['latihan','challenge'];
 foreach ($rjenis as $key => $jenis){
   $s = "SELECT a.no,b.*, 
   (
@@ -50,7 +50,7 @@ foreach ($rjenis as $key => $jenis){
     AND p.tanggal_verifikasi is not null 
     AND p.status=-1)  as jumlah_reject
   FROM tb_assign_$jenis a 
-  JOIN tb_act_$jenis b ON a.id_$jenis=b.id 
+  JOIN tb_$jenis b ON a.id_$jenis=b.id 
   WHERE a.kelas='$kelas' 
   ";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));

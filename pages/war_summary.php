@@ -27,7 +27,7 @@ echo "
 # =========================================================
 // move to user_vars
 
-$s = "SELECT 1 FROM tb_perang_summary";
+$s = "SELECT 1 FROM tb_war_summary WHERE id_room=$id_room";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $jumlah_player = mysqli_num_rows($q);
 

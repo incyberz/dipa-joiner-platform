@@ -13,7 +13,7 @@ if(isset($_POST['btn_ubah_password'])){
   if($_POST['password']==$_POST['username']){
     echo div_alert('danger', 'Password tidak boleh sama dengan Username.');
   }elseif($_POST['password']==$_POST['cpassword']){
-    if($d_peserta['password']!=md5($_POST['password_lama']) and $d_peserta['password']!=''){
+    if($password!=md5($_POST['password_lama']) and $password!=''){
       echo div_alert('danger', 'Password lama Anda tidak sesuai.');
     }else{
       $s = "UPDATE tb_peserta SET password=md5('$_POST[password]') WHERE username='$username'";
@@ -29,7 +29,7 @@ if(isset($_POST['btn_ubah_password'])){
   }
 }
 
-$hideit = $d_peserta['password']==''?'hideit':'';
+$hideit = $password ? '' : 'hideit';
 
 ?>
 

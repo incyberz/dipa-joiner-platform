@@ -52,7 +52,6 @@ b.*,
 (SELECT jumlah_ontime FROM tb_presensi_summary WHERE id_peserta=a.id AND id_room=$id_room) jumlah_ontime,
 (SELECT jumlah_presensi FROM tb_presensi_summary WHERE id_peserta=a.id AND id_room=$id_room) total_ontime,
 (SELECT COUNT(1) FROM tb_bukti_latihan WHERE id_peserta=a.id) jumlah_latihan,
-(SELECT COUNT(1) FROM tb_bukti_tugas WHERE id_peserta=a.id) jumlah_tugas,
 (SELECT COUNT(1) FROM tb_bukti_challenge WHERE id_peserta=a.id) jumlah_challenge,
 
 
@@ -144,13 +143,11 @@ $last_kelas = '';
 $nama_peserta = '';
 
 $jumlah_latihan=0;
-$jumlah_tugas=0;
 $jumlah_challenge=0;
 $rank_global=0;
 $rank_kelas=0;
 
 $konversi_latihan=0;
-$konversi_tugas=0;
 $konversi_challenge=0;
 $konversi_rank_global=0;
 $konversi_rank_kelas=0;
@@ -187,7 +184,6 @@ while ($d=mysqli_fetch_assoc($q)) {
   $jumlah_ontime=$d['jumlah_ontime'];
   $total_ontime=$d['total_ontime']; // jumlah_presensi
   $jumlah_latihan=$d['jumlah_latihan'];
-  $jumlah_tugas=$d['jumlah_tugas'];
   $jumlah_challenge=$d['jumlah_challenge'];
   $rank_global=$d['rank_global'];
   $rank_kelas=$d['rank_kelas'];
@@ -226,15 +222,7 @@ while ($d=mysqli_fetch_assoc($q)) {
     if($konversi_latihan>100) $konversi_latihan=100;
   }
 
-  if($jumlah_tugas==0){
-    $konversi_tugas=0;
-  }elseif($jumlah_tugas==1 and $total_tugas==1){
-    $konversi_tugas = 100;
-  }elseif($jumlah_tugas==$total_tugas){
-    $konversi_tugas = 100;
   }else{
-    $konversi_tugas = number_format(50 + ($jumlah_tugas-1)*((round($total_tugas*8/10,0)/$total_tugas)*(100/$total_tugas)),0);
-    if($konversi_tugas>100) $konversi_tugas=100;
   }
 
   if($jumlah_challenge==0){
@@ -254,10 +242,9 @@ while ($d=mysqli_fetch_assoc($q)) {
   $konversi_rank_kelas = round(110-(($d['rank_kelas']-1)*((round($d['total_kelas_ini']*8/10,0)/$d['total_kelas_ini'])*(100/$d['total_kelas_ini']))),0);
   if($konversi_rank_kelas>100) $konversi_rank_kelas=100;
 
-  $nilai_tugas = round((
+  $nilai_harian = round((
     $rbobot['Count Ontime'] * $konversi_ontime + 
     $rbobot['Count Latihan'] * $konversi_latihan + 
-    $rbobot['Count Tugas'] * $konversi_tugas + 
     $rbobot['Count Challenge'] * $konversi_challenge + 
     $rbobot['Rank Global'] * $konversi_rank_global + 
     $rbobot['Rank Kelas'] * $konversi_rank_kelas  
@@ -266,7 +253,6 @@ while ($d=mysqli_fetch_assoc($q)) {
   $nilai_akhir = round((
     $rbobot['Count Ontime'] * $konversi_ontime + 
     $rbobot['Count Latihan'] * $konversi_latihan + 
-    $rbobot['Count Tugas'] * $konversi_tugas + 
     $rbobot['Count Challenge'] * $konversi_challenge + 
     $rbobot['Rank Global'] * $konversi_rank_global + 
     $rbobot['Rank Kelas'] * $konversi_rank_kelas + 
@@ -283,7 +269,6 @@ while ($d=mysqli_fetch_assoc($q)) {
     <td>$nama_peserta<div class='kecil miring abu'>$d[kelas]</div></td>
     <td>$d[jumlah_ontime]<div class='kecil miring abu'>$konversi_ontime</div></td>
     <td>$d[jumlah_latihan]<div class='kecil miring abu'>$konversi_latihan</div></td>
-    <td>$d[jumlah_tugas]<div class='kecil miring abu'>$konversi_tugas</div></td>
     <td>$d[jumlah_challenge]<div class='kecil miring abu'>$konversi_challenge</div></td>
     <td>$d[rank_global] <span class='kecil miring abu'>of $total_peserta</span><div class='kecil miring abu'>$konversi_rank_global</div></td>
     <td>$d[rank_kelas] <span class='kecil miring abu'>of $d[total_kelas_ini]</span><div class='kecil miring abu'>$konversi_rank_kelas</div></td>
@@ -313,7 +298,7 @@ while ($d=mysqli_fetch_assoc($q)) {
 
   $tanggal_submit_uts = $d['tanggal_submit_uts'] ?? '-'; // ZZZ tanggal submit only for UTS
   $nim = $d['nim'] ?? '-';
-  $data_csv[$kelas_ini] .= "$no,$nama_peserta,$nim,$tanggal_submit_uts,$nilai_tugas,$nilai_uts,-\n";
+  $data_csv[$kelas_ini] .= "$no,$nama_peserta,$nim,$tanggal_submit_uts,$nilai_harian,$nilai_uts,-\n";
 }
 
 $link_download_csv = '';
@@ -329,15 +314,14 @@ if($id_role!=1){
 
 $div_row[1] = ['Count Ontime',"$jumlah_ontime <span class='kecil miring abu'>of $total_ontime</span>",$konversi_ontime.' <span class="kecil miring abu">x '.$rbobot['Count Ontime'].'%</span>'];
 $div_row[2] = ['Count Latihan',"$jumlah_latihan <span class='kecil miring abu'>of $total_latihan</span>",$konversi_latihan.' <span class="kecil miring abu">x '.$rbobot['Count Latihan'].'%</span>'];
-$div_row[3] = ['Count Tugas',"$jumlah_tugas <span class='kecil miring abu'>of $total_tugas</span>",$konversi_tugas.' <span class="kecil miring abu">x '.$rbobot['Count Tugas'].'%</span>'];
-$div_row[4] = ['Count Challenge',"$jumlah_challenge <span class='kecil miring abu'>of $total_challenge</span>",$konversi_challenge.' <span class="kecil miring abu">x '.$rbobot['Count Challenge'].'%</span>'];
-$div_row[5] = ['Rank Global',"$rank_global <span class='kecil miring abu'>of $total_peserta</span>",$konversi_rank_global.' <span class="kecil miring abu">x '.$rbobot['Rank Global'].'%</span>'];
-$div_row[6] = ['Rank Kelas',"$rank_kelas <span class='kecil miring abu'>of $total_kelas_ini</span>",$konversi_rank_kelas.' <span class="kecil miring abu">x '.$rbobot['Rank Kelas'].'%</span>'];
-$div_row[7] = ['UTS','-',$nilai_uts.' <span class="kecil miring abu">x '.$rbobot['UTS'].'%</span>'];
-$div_row[8] = ['UAS','-',$nilai_uas.' <span class="kecil miring abu">x '.$rbobot['UAS'].'%</span>'];
-$div_row[9] = ['Remed UTS','-',$nilai_remed_uts.' <span class="kecil miring abu">x '.$rbobot['Remed UTS'].'%</span>'];
-$div_row[10] = ['Remed UAS','-',$nilai_remed_uas.' <span class="kecil miring abu">x '.$rbobot['Remed UAS'].'%</span>'];
-$div_row[11] = ['<span class=darkblue>Nilai Akhir</span>','-',"<span class=blue style=font-size:30px>$nilai_akhir</span>"];
+$div_row[3] = ['Count Challenge',"$jumlah_challenge <span class='kecil miring abu'>of $total_challenge</span>",$konversi_challenge.' <span class="kecil miring abu">x '.$rbobot['Count Challenge'].'%</span>'];
+$div_row[4] = ['Rank Global',"$rank_global <span class='kecil miring abu'>of $total_peserta</span>",$konversi_rank_global.' <span class="kecil miring abu">x '.$rbobot['Rank Global'].'%</span>'];
+$div_row[5] = ['Rank Kelas',"$rank_kelas <span class='kecil miring abu'>of $total_kelas_ini</span>",$konversi_rank_kelas.' <span class="kecil miring abu">x '.$rbobot['Rank Kelas'].'%</span>'];
+$div_row[6] = ['UTS','-',$nilai_uts.' <span class="kecil miring abu">x '.$rbobot['UTS'].'%</span>'];
+$div_row[7] = ['UAS','-',$nilai_uas.' <span class="kecil miring abu">x '.$rbobot['UAS'].'%</span>'];
+$div_row[8] = ['Remed UTS','-',$nilai_remed_uts.' <span class="kecil miring abu">x '.$rbobot['Remed UTS'].'%</span>'];
+$div_row[9] = ['Remed UAS','-',$nilai_remed_uas.' <span class="kecil miring abu">x '.$rbobot['Remed UAS'].'%</span>'];
+$div_row[10] = ['<span class=darkblue>Nilai Akhir</span>','-',"<span class=blue style=font-size:30px>$nilai_akhir</span>"];
 
 $rows='';
 foreach ($div_row as $v) {

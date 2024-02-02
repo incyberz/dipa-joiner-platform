@@ -1,20 +1,11 @@
-<?php
-if($dm)
-echo "
-  <div class='debug'>
-    <br>is_login: $is_login
-    <br>kelas: $kelas
-    <br>status_room: $status_room
-  </div>
-";
-?>
-
 <div class="section-title" data-aoszzz="fade-up">
   <?php if(!$status_room and $id_room) echo div_alert('info', meme('closed',6).'<hr>Room ini sudah ditutup.');  ?>
   <h2>Join Kelas</h2>
   <p>Sepertinya kamu belum punya kelas pada tahun ajar <?=$tahun_ajar?>. Silahkan join class atau hubungi Instruktur jika ada kesulitan!</p>
 </div>
 <?php
+echo "<h1>zzz Enter Join Kelas</h1>";
+
 # ====================================================
 # PROCESSOR: JOIN KELAS
 # ====================================================

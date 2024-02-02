@@ -20,7 +20,7 @@ b.no as no_sesi,
 (SELECT id FROM tb_bukti_$jenis WHERE id_peserta=$id_peserta AND id_assign_$jenis=a.id) as id_bukti
 FROM tb_assign_$jenis a 
 JOIN tb_sesi b ON a.id_sesi=b.id 
-JOIN tb_act_$jenis c ON a.id_$jenis=c.id 
+JOIN tb_$jenis c ON a.id_$jenis=c.id 
 WHERE a.no=$no 
 AND kelas='$kelas'
 ";
@@ -75,7 +75,7 @@ if($id_bukti!=''){
   }
   
 
-  if($jenis=='latihan' || $jenis=='tugas'){
+  if($jenis=='latihan'){
     $jpg = $jenis=='latihan' ? 'jpg' : 'zip';
     $path_file = "uploads/$folder_uploads/$jenis$d[no].$jpg";
     $img_or_zip = $jenis=='latihan' ? "
@@ -130,20 +130,17 @@ if($status==-1 and $jenis=='challenge'){
 $hasil = "<div class='wadah'><div>Hasil $jenis:</div>$hasil$btn_hapus</div>";
 
 $info_ekstensi = [
-  'latihan' => 'ekstensi harus JPG, jika tugas coding posisikan bukti screenshoot: kiri code, kanan hasil',
-  'tugas' => 'ekstensi harus ZIP, masukan semua file web dan file database (SQL) kamu ke file ZIP, lalu upload!',
+  'latihan' => 'ekstensi harus JPG, jika latihan coding posisikan bukti screenshoot: kiri code, kanan hasil',
   'challenge' => 'harus berupa link-online diawali dg http atau https, misal: http://iin-sholihin.github.io, https://insho.rf.gd',
 ];
 
 $accept_ekstensi = [
   'latihan' => '.jpg,.jpeg',
-  'tugas' => '.zip',
   'challenge' => '',
 ];
 
 $input_type = [
   'latihan' => 'file',
-  'tugas' => 'file',
   'challenge' => 'text minlength=15 maxlength=100',
 ];
 
@@ -315,9 +312,6 @@ if($id_role>=2){
     if($jenis=='latihan'){
       $path_bukti = "uploads/$rfu[$key]/$jenis$no.jpg";
       $bukti_show = file_exists($path_bukti) ? "<img src='$path_bukti' class=img-fluid>" : "$path_bukti :: Bukti gambar tidak ada. $pada_wag";
-    }elseif($jenis=='tugas'){
-      $path_bukti = "uploads/$rfu[$key]/$jenis$no.zip";
-      $bukti_show = file_exists($path_bukti) ? "<a href='$path_bukti' target=_blank>Download ZIP File</a>" : "$path_bukti :: Bukti file ZIP tidak ada. $pada_wag";
     }elseif($jenis=='challenge'){
       $link = $rlink[$rid[$key]];
       $bukti_show = "Challenge's Link : <a href='$link' target=_blank>$link</a>";
@@ -444,7 +438,7 @@ if($id_role>=2){
           return;
         }
       }else if(aksi=='accept'){
-        let y = confirm('Ingin verifikasi (accept) tugas ini?');
+        let y = confirm('Ingin verifikasi (accept) aktifitas ini?');
         if(!y) return; 
       }else{
         alert('Unhandle aksi: '+aksi);

@@ -5,7 +5,20 @@
 .fixed{position:fixed; top:90px;right:15px;background:yellow; border-radius:10px; padding:10px;z-index:999}
 </style>
 <?php
-$judul = 'List Sesi';
+$s = "SELECT 1 FROM tb_sesi WHERE id_room=$id_room";
+$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$count_sesi = mysqli_num_rows($q);
+
+if(isset($_POST['btn_tambah_sesi'])){
+  $new_count_sesi = $count_sesi+1;
+  $s = "INSERT INTO tb_sesi (id_room,no,nama) VALUES ($id_room,$new_count_sesi,'NEW SESI $new_count_sesi')";
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  echo div_alert('success','Sesi Baru berhasil dibuat.');
+  jsurl();
+  exit;
+}
+
+$judul = 'Learning Path';
 $edit_mode = $_GET['edit_mode'] ?? '';
 if($id_role==2 and $edit_mode){
   $toggle_edit = '<div class=fixed><a class="btn btn-danger btn-sm" href="?list_sesi">Exit Edit Mode</a></div>';
@@ -17,7 +30,7 @@ if($id_role==2 and $edit_mode){
   
 
 
-$s = "SELECT * FROM tb_assign_latihan WHERE kelas='$kelas' ORDER BY no ";
+$s = "SELECT * FROM tb_assign_latihan WHERE id_room_kelas='$id_room_kelas' ORDER BY no ";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 while ($d=mysqli_fetch_assoc($q)) {
   if(isset($rlats[$d['id_sesi']])){
@@ -27,17 +40,7 @@ while ($d=mysqli_fetch_assoc($q)) {
   }
 }
 
-$s = "SELECT * FROM tb_assign_tugas WHERE kelas='$kelas' ORDER BY no ";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-while ($d=mysqli_fetch_assoc($q)) {
-  if(isset($rtugas[$d['id_sesi']])){
-    array_push($rtugas[$d['id_sesi']],$d['no']);
-  }else{
-    $rtugas[$d['id_sesi']][0] = $d['no']; 
-  }
-}
-
-$s = "SELECT * FROM tb_assign_challenge WHERE kelas='$kelas' ORDER BY no ";
+$s = "SELECT * FROM tb_assign_challenge WHERE id_room_kelas='$id_room_kelas' ORDER BY no ";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 while ($d=mysqli_fetch_assoc($q)) {
   if(isset($rchallenge[$d['id_sesi']])){
@@ -47,11 +50,7 @@ while ($d=mysqli_fetch_assoc($q)) {
   }
 }
 
-// echo '<pre>';
-// var_dump($rlats);
-// echo '</pre>';
-
-$s = "SELECT * FROM tb_sesi ORDER BY no";
+$s = "SELECT * FROM tb_sesi WHERE id_room=$id_room ORDER BY no";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $tr='';
 $i=0;
@@ -63,13 +62,6 @@ while ($d=mysqli_fetch_assoc($q)) {
   if(isset($rlats[$i])){
     foreach ($rlats[$i] as $key => $value) {
       $latihans .= "<a href='?activity&jenis=latihan&no=$value' class='btn btn-success btn-sm' onclick='return confirm(\"Menuju laman Latihan?\")'>L$value</a> ";
-    }
-  }
-
-  $tugas = '';
-  if(isset($rtugas[$i])){
-    foreach ($rtugas[$i] as $key => $value) {
-      $tugas .= "<a href='?activity&jenis=tugas&no=$value' class='btn btn-primary btn-sm' onclick='return confirm(\"Menuju laman Tugas?\")'>T$value</a> ";
     }
   }
 
@@ -90,31 +82,24 @@ while ($d=mysqli_fetch_assoc($q)) {
     $asks = '';
   }
 
-  $selisih = strtotime('now') - strtotime($d['tanggal']);
-  $hijau = $selisih>0 ? 'kuning' : 'hijau';
-  $lampau = $selisih>0 ? '<code class=miring>(sesi lampau)</code>' : '';
-  $disabled = $selisih>0 ? 'disabled' : '';
-
   if($id_role==2 and $edit_mode){
     $r = explode(', ',$d['tags']); sort($r);
     $tags_sort = implode(', ',$r);
-    $nama_show = "$lampau<input class='form-control input_editable mb1' name=nama id=nama__$id value='$d[nama]' $disabled>";
+    $nama_show = "<input class='form-control input_editable mb1' name=nama id=nama__$id value='$d[nama]'>";
     $ket_show = "<textarea class='form-control input_editable mb1' name=ket id=ket__$id>$d[ket]</textarea>";
     $tags_show = "<input class='form-control input_editable mb1' name=tags id=tags__$id value='$tags_sort'>";
-    $tanggal_show = "pelaksanaan:<input class='form-control input_editable mb1' name=tanggal id=tanggal__$id value='$d[tanggal]'  $disabled>durasi (menit):<input class='form-control input_editable mb1' name=durasi id=durasi__$id value='$d[durasi]' $disabled>";
     $fitur_sesi = '';
   }else{
-    $nama_show = $d['nama']." $lampau";
+    $nama_show = $d['nama'];
     $ket_show = $d['ket'];
-    $tanggal_show = date('D, d M Y H:i',strtotime($d['tanggal'])).' :: '.$d['durasi'].' menit';
     $tags_show = $tags_show;
-    $fitur_sesi = "$latihans $tugas $challenges $asks";
+    $fitur_sesi = "$latihans $challenges $asks";
   }
   
   $debug = '';
 
   $tr.= "
-    <div class='wadah gradasi-$hijau' data-aos='fade-up' style='display:grid;grid-template-columns: 100px auto;grid-gap:10px'>
+    <div class='wadah gradasi-hijau' data-aos='fade-up' style='display:grid;grid-template-columns: 100px auto;grid-gap:10px'>
       <div class='text-center wadah bg-white'>
         sesi 
         <div class='no_sesi'>$i</div>
@@ -124,7 +109,6 @@ while ($d=mysqli_fetch_assoc($q)) {
         <div class=nama_sesi>$nama_show</div>
         <div class='kecil miring abu'>$ket_show</div>
         <div class='kecil miring abu'>tags : $tags_show</div>
-        <div class='kecil miring abu'>$tanggal_show</div>
         <div class='mt1'>$fitur_sesi</div>
       </div>
     </div>
@@ -141,7 +125,13 @@ $list = "<div>$toggle_edit$tr</div>";
 
 
 
-
+$form_tambah_sesi = $id_role!=2 ? '' : "
+<form method=post>
+  <div class='kanan'>
+    <button class='btn btn-success' onclick='return confirm('Tambah Sesi untuk Room ini?')' name=btn_tambah_sesi>Tambah Sesi</button>
+  </div>
+</form>
+";
 
 
 
@@ -151,9 +141,10 @@ $list = "<div>$toggle_edit$tr</div>";
 
 <div class="section-title" data-aos="fade-up">
   <h2><?=$judul?></h2>
-  <p>Berikut adalah Sesi-sesi Perkuliahan Matematika Informatika</p>
+  <p>Berikut adalah Sesi-sesi Perkuliahan <?=$nama_room?> (<?=$count_sesi?> sesi)</p>
 </div>
 
+<?=$form_tambah_sesi?>
 <?=$list?>
 
 

@@ -59,16 +59,16 @@ foreach ($rstats as $saat) {
   
   $s = "SELECT 
   a.nama as nama_peserta,
-  a.kelas,
   a.username,
-  (SELECT COUNT(1) FROM tb_perang WHERE id_penjawab=a.id $and_tanggal) war_counts, 
+  b.kelas,
+  (SELECT COUNT(1) FROM tb_war WHERE id_penjawab=a.id $and_tanggal) war_counts, 
   (SELECT COUNT(1) FROM tb_soal_pg WHERE id_pembuat=a.id $and_tanggal) new_questions 
   
   FROM tb_peserta a 
-  JOIN tb_kelas b ON a.kelas=b.kelas  
+  JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
+  JOIN tb_kelas c ON b.kelas=c.kelas   
   WHERE a.id_role = 1 
-  AND a.kelas != 'BOCIL' 
-  ORDER BY b.shift, a.kelas, a.nama";
+  ORDER BY c.shift, b.kelas, a.nama";
   
   // echo "<pre>$s</pre>";
   

@@ -26,7 +26,8 @@ if(isset($_POST['btn_accept_points'])){
       let debuyar = CryptoJS.AES.decrypt(buyar, "DIPA Joiner");
       let asli = debuyar.toString(CryptoJS.enc.Utf8);
       let id_paket_war = $('#id_paket_war').text();
-      let link_ajax = `ajax/kirim_hasil_kuis.php?id_paket_war=${id_paket_war}&data=`+asli;
+      let id_room = $('#id_room').text();
+      let link_ajax = `ajax/kirim_hasil_kuis.php?id_paket_war=${id_paket_war}&id_room=${id_room}&data=`+asli;
 
       $.ajax({
         url:link_ajax,
@@ -42,7 +43,8 @@ if(isset($_POST['btn_accept_points'])){
         }
       })
     })
-  </script><?php
+  </script>
+  <?php
 }else{
   // normal view
   $durasi = 30; //default

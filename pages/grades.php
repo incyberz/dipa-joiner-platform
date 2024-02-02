@@ -50,7 +50,7 @@ if($selisih>=600 and $id_role!=3 and $is_login){
       AND id_room=$id_room  
       ) as poin_presensi,
     (
-      SELECT war_points FROM tb_perang_summary   
+      SELECT war_points FROM tb_war_summary   
       WHERE id=a.id 
       AND id_room_kelas = $id_room_kelas  
       ) as war_points,
@@ -84,13 +84,6 @@ if($selisih>=600 and $id_role!=3 and $is_login){
       AND status=1
       ) as total_poin_latihan,
     (
-      SELECT SUM(get_point) FROM tb_bukti_tugas 
-      WHERE id_peserta=a.id 
-      AND id_room_kelas = $id_room_kelas  
-      AND tanggal_verifikasi is not null 
-      AND status=1
-      ) as total_poin_tugas,
-    (
       SELECT SUM(get_point) FROM tb_bukti_challenge 
       WHERE id_peserta=a.id 
       AND id_room_kelas = $id_room_kelas  
@@ -112,7 +105,6 @@ if($selisih>=600 and $id_role!=3 and $is_login){
     $poin_bertanya = $d['poin_bertanya'] ?? 0;
     $poin_menjawab = $d['poin_menjawab'] ?? 0;
     $total_poin_latihan = $d['total_poin_latihan'] ?? 0;
-    $total_poin_tugas = $d['total_poin_tugas'] ?? 0;
     $total_poin_challenge = $d['total_poin_challenge'] ?? 0;
 
     $total_poin_bertanya = $poin_bertanya + $count_bertanya*100;
@@ -123,7 +115,6 @@ if($selisih>=600 and $id_role!=3 and $is_login){
                   +$total_poin_bertanya
                   +$total_poin_menjawab
                   +$total_poin_latihan
-                  +$total_poin_tugas
                   +$total_poin_challenge;
 
 
@@ -134,7 +125,6 @@ if($selisih>=600 and $id_role!=3 and $is_login){
                   +total_poin_bertanya: $total_poin_bertanya
                   +total_poin_menjawab: $total_poin_menjawab
                   +total_poin_latihan: $total_poin_latihan
-                  +total_poin_tugas: $total_poin_tugas
                   +total_poin_challenge: $total_poin_challenge;
     ";
                   
@@ -143,7 +133,6 @@ if($selisih>=600 and $id_role!=3 and $is_login){
     poin_bertanya=$total_poin_bertanya,
     poin_menjawab=$total_poin_menjawab,
     poin_latihan=$total_poin_latihan,
-    poin_tugas=$total_poin_tugas,
     poin_challenge=$total_poin_challenge,
     last_update_point=CURRENT_TIMESTAMP 
     WHERE id_peserta=$d[id] ";
@@ -262,6 +251,6 @@ if($id_role==2 && $get_kelas!='all'){
 
   <?=$tb?>
   <div class="kecil miring abu">
-    Poin didapatkan dari pengerjaan tugas secara ontime, posting pertanyaan berbobot, atau aktifitas belajar lainnya.
+    Poin didapatkan dari pengerjaan latihan secara ontime, posting pertanyaan berbobot, atau aktifitas belajar lainnya.
   </div>
 </div>

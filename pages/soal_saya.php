@@ -18,13 +18,14 @@ echo "
 ";
 
 $s="SELECT a.*,
-(SELECT SUM(poin_pembuat) FROM tb_perang WHERE id_soal=a.id AND id_pembuat=$id_peserta) earned_points, 
+(SELECT SUM(poin_pembuat) FROM tb_war WHERE id_soal=a.id AND id_pembuat=$id_peserta) earned_points, 
 (SELECT status FROM tb_status_soal WHERE id=a.id_status) status_soal 
 FROM tb_soal_pg a 
-WHERE id_pembuat=$id_peserta";
+JOIN tb_sesi b ON a.id_sesi=b.id 
+WHERE id_pembuat=$id_peserta AND b.id_room=$id_room";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $r = rand(1,9);
-$div = div_alert('danger tengah',"<img class=meme src='assets/img/meme/dont-have-$r.jpg'><div class=mt2>Kamu belum punya Soal PG</div> <hr> $link");
+$div = div_alert('danger tengah',"<img class=meme src='assets/img/meme/dont-have-$r.jpg'><div class=mt2>Kamu belum punya Soal PG di room ini.</div> <hr> $link");
 if(mysqli_num_rows($q)){
   $div = '';
   $i=0;

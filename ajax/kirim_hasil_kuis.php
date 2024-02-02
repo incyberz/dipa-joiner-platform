@@ -9,7 +9,8 @@ include 'session_user.php';
 # GET VARIABEL
 # ================================================
 $do_banned = 0;
-$id_paket_war = $_GET['id_paket_war'] ?? die(erid('id_paket_war')); if($id_paket_war=='') die(erid("id_paket_war::null"));
+$id_paket_war = $_GET['id_paket_war'] ?? die(erid('id_paket_war')); if(!$id_paket_war) die(erid("id_paket_war::empty"));
+$id_room = $_GET['id_room'] ?? die(erid('id_room')); if(!$id_room) die(erid("id_room::empty"));
 $data = $_GET['data'] ?? die(erid('data')); if($data=='') die(erid("data::null"));
 
 // $data = "6~~44~~luas permukaan~~0~~34~~12~~51~~2023-11-2 12:48:25~~~7~~44~~menghasilkan output yang benar~~0~~34~~12~~54~~2023-11-2 12:48:33~~~8~~44~~menghasilkan output yg keliru~~1~~114~~8~~51~~2023-11-2 12:48:38~~~9~~44~~NULL~~-1~~0~~0~~54~~2023-11-2 12:48:20~~~";
@@ -52,10 +53,11 @@ foreach ($arr_data as $d) {
 
   $jawaban = strtoupper($jawaban)=='NULL' ? 'NULL' : "'$jawaban'";
 
-  $s = "SELECT id FROM tb_perang WHERE id_soal=$id_soal AND id_penjawab=$id_penjawab";
+  $s = "SELECT id FROM tb_war WHERE id_soal=$id_soal AND id_penjawab=$id_penjawab AND id_room=$id_room";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   if(mysqli_num_rows($q)==0){
     $values.= "(
+      '$id_room',
       '$id_soal',
       '$id_penjawab',
       '$id_pembuat',
@@ -68,7 +70,7 @@ foreach ($arr_data as $d) {
     // update status soal
     if($is_benar==-1){
       // banned jika ada 5 rejecter
-      $s = "SELECT 1 FROM tb_perang WHERE is_benar=-1 AND id_soal=$id_soal";
+      $s = "SELECT 1 FROM tb_war WHERE is_benar=-1 AND id_soal=$id_soal";
       $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
       if(mysqli_num_rows($q)>=4){
         // do banned
@@ -78,7 +80,7 @@ foreach ($arr_data as $d) {
 
         // set 0 to passive point
         // add 200k to each rejecter
-        $s = "UPDATE tb_perang SET poin_penjawab=200,poin_pembuat=0 WHERE id=$id_soal";
+        $s = "UPDATE tb_war SET poin_penjawab=200,poin_pembuat=0 WHERE id=$id_soal";
         $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
         
       }
@@ -86,7 +88,7 @@ foreach ($arr_data as $d) {
 
     }else{
       // verifikasi jika ada 10 penjawab
-      $s = "SELECT 1 FROM tb_perang WHERE is_benar!=-1 AND id_soal=$id_soal";
+      $s = "SELECT 1 FROM tb_war WHERE is_benar!=-1 AND id_soal=$id_soal";
       $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
       if(mysqli_num_rows($q)>=9){
         // do verified
@@ -100,7 +102,7 @@ foreach ($arr_data as $d) {
     $d = mysqli_fetch_assoc($q);
     $id_perang = $d['id'];
 
-    $s = "UPDATE tb_perang SET 
+    $s = "UPDATE tb_war SET 
       id_soal = '$id_soal',
       id_penjawab = '$id_penjawab',
       id_pembuat = '$id_pembuat',
@@ -123,7 +125,9 @@ if($values){
   $values .= '__';
   $values = str_replace(',__','',$values);
   
-  $s = "INSERT INTO tb_perang (
+  //id_room belum zzz debug
+  $s = "INSERT INTO tb_war (
+  id_room,
   id_soal,
   id_penjawab,
   id_pembuat,
@@ -140,6 +144,6 @@ $last_60 = date('Y-m-d H:i:s',strtotime('now') - (60*60)); // 1 jam for reupdate
 $last_30 = date('Y-m-d H:i:s',strtotime('now') - (30*60)); // 20 menit for resuming quiz
 $s = "UPDATE tb_paket_war SET is_completed=1 WHERE id_peserta='$id_peserta' AND tanggal >= '$last_30'";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-$s = "UPDATE tb_perang_summary SET last_update='$last_60' WHERE id='$id_peserta' ";
+$s = "UPDATE tb_war_summary SET last_update='$last_60' WHERE id='$id_peserta' ";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 die('sukses');

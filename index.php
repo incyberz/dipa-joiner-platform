@@ -25,8 +25,12 @@ $my_points = 0;
 $punya_profil = '';
 $available_soal = 0;
 $kelas = '';
+$sebagai = '';
 
 $tahun_ajar = 20232;
+$id_room_kelas = '';
+$room = '';
+$nama_room = '';
 
 include 'config.php';
 
@@ -88,8 +92,11 @@ $status_room = '';
 if($username){
   if($id_room){
     include 'room_vars.php';
+    include 'wars_data.php';
   }else{
-    $parameter = 'pilih_room';
+    if($password){
+      $parameter = 'pilih_room';
+    }
   }
 }
 // $id_room = 1; //zzz
@@ -151,7 +158,10 @@ if($username){
 
 <body>
 
-  <?php if($id_room) include 'pages/header.php'; ?>
+  <?php // include 'pages/header.php'; ?>
+  <?php 
+    if(!$is_login || $id_room) include 'pages/header.php'; 
+  ?>
   <?php if(!$is_login and $parameter=='') include 'pages/hero.php'; ?>
   <main id="main">
     <section>
@@ -160,6 +170,7 @@ if($username){
       </div>
     </section>
   </main>
+  <?php include 'debug.php'; ?>
   <?php include 'pages/footer.php'; ?>
   
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>

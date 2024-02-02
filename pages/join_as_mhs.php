@@ -29,13 +29,39 @@ if(isset($_POST['btn_join'])){
   if(mysqli_num_rows($q)){
     $pesan_join = "<div class='alert alert-danger' data-aos='fade-left'>Nickname <b><u>$username</u></b> sudah ada. Silahkan tambahkan nickname Anda dengan angka, nama tengah, atau nama belakang kamu (tanpa spasi) agar tetap mudah diingat.</div>";
 
-  }else{
-    
+  }else{ // input username sudah unik
+
+    // default status peserta baru = aktif
+    $status = 1;
+
+    // add peserta
     $s = "INSERT INTO tb_peserta 
-    (username,nama,kelas,status) VALUES 
-    ('$username','$nama','$kelas','0')";
+    (username,nama,status) VALUES 
+    ('$username','$nama','$status') 
+    ON DUPLICATE KEY UPDATE date_created=CURRENT_TIMESTAMP 
+    ";
     $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-    echo div_alert('success',"Join sebagai $as dengan nickname: <b>$username</b> berhasil.<hr><span class='tebal darkred'>Mohon tunggu! redirecting...</span>");
+    echo div_alert('success','Insert peserta baru sukses...');
+    
+    // get id_peserta
+    $s = "SELECT id FROM tb_peserta where username='$username'";
+    $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+    $d = mysqli_fetch_assoc($q);
+    $id_peserta = $d['id'];
+    echo div_alert('info','Getting new id_peserta sukses...');
+
+    // assign kelas peserta
+    $s = "INSERT INTO tb_kelas_peserta 
+    (id_peserta,kelas) VALUES 
+    ('$id_peserta','$kelas')";
+    $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+    echo div_alert('success',"Assign peserta baru ke kelas <u>$kelas</u> sukses...");
+
+
+
+
+
+    echo div_alert('success',"Semua proses join selesai.<hr><span class='tebal darkred'>Mohon tunggu! redirecting...</span>");
 
     $pesan = div_alert('success',"Join sebagai $as dengan nickname: <b>$username</b> berhasil.<hr><span class='darkblue'>Silahkan Anda login dengan username yang barusan Anda buat.
     <ul>
@@ -58,7 +84,7 @@ if(isset($_POST['btn_join'])){
 
 
 
-$s = "SELECT kelas FROM tb_kelas WHERE status=1";
+$s = "SELECT kelas FROM tb_kelas WHERE tahun_ajar=$tahun_ajar AND status=1 AND (jenjang='D3' OR jenjang='S1') ";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $option_kelas = '';
 while ($d=mysqli_fetch_assoc($q)) {
@@ -90,7 +116,7 @@ $hideit_btn_join = ($nama!='' and $username!='' and $select_kelas!='0') ? '' : '
       <div class='kecil miring mt1'>Untuk mahasiswa, username harus nama depan atau nama panggilan kamu.</div>
     </div>
     <div class="form-group">
-      <label for="select_kelas">Kelas</label>
+      <label for="select_kelas">Kelas <span class="f12 abu">pada TA <?=$tahun_ajar?></span></label>
       <select name="select_kelas" id="select_kelas" class="form-control">
         <option value="0">--Pilih--</option>
         <?=$option_kelas?>
@@ -141,10 +167,21 @@ $hideit_btn_join = ($nama!='' and $username!='' and $select_kelas!='0') ? '' : '
         .trim()
         .toLowerCase()
         .replace(/ /g, '')
-        .replace(/[!@#$%^&*()+\-=\[\]{},;:'`"\\|<>\/?~]/gim, '')
+        .replace(/[!@#$%^&*()+\-=\[\]{}.,;:'`"\\|<>\/?~]/gim, '')
       );
 
     });
+
+    $('#nama').keyup(function(){
+      $(this).val(
+        $(this).val()
+        .toUpperCase()
+        .replace(/  /g, ' ')
+        .replace(/[!@#$%^&*()+\-_=\[\]{}.,;:'`"\\|<>\/?~0-9]/gim, '')
+      );
+
+    });
+
     $('.input_isian').keyup(function(){
       let link_wa = 'https://api.whatsapp.com/send?phone=6287729007318&text=*Verification Link Request*%0a%0a';
       let nama = $('#nama').val();
