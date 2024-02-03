@@ -30,28 +30,30 @@ echo "
 # =========================================================
 # MAIN SELECT
 # =========================================================
-$s = "SELECT (
-  ((a.count_answer_right + a.count_reject)/
-  (a.count_answer_right + a.count_reject + a.count_answer_false + a.count_not_answer))*100 
+$s = "SELECT 
+  (
+    (
+      (a.count_answer_right + a.count_reject)/
+      (a.count_answer_right + a.count_reject + a.count_answer_false + a.count_not_answer)
+    )*100 
   ) accuracy, 
 b.id as id_peserta, 
 b.nama as nama_peserta 
-FROM tb_war_summary a JOIN tb_peserta b ON a.id=b.id 
+FROM tb_war_summary a 
+JOIN tb_peserta b ON a.id_peserta=b.id 
 WHERE b.id_role=1 
 AND id_room=$id_room 
 ORDER BY accuracy DESC LIMIT 10";
+// echo $s;
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $rnama = [];
 $rpoints = [];
 while($d=mysqli_fetch_assoc($q)){
-  if($d['accuracy']==0) continue;
-  $img = $id_role==1 ? '' : "<img src='assets/img/peserta/wars/peserta-$d[id_peserta].jpg' class='profil_pembuat' ><br> ";
+  // if($d['accuracy']==0) continue;
+  $img = $id_role==1 ? '' : "<div><img src='assets/img/peserta/wars/peserta-$d[id_peserta].jpg' class='profil_pembuat' ></div> ";
   array_push($rnama,$img.$d['nama_peserta']);
-  array_push($rpoints,$d['accuracy']);
+  array_push($rpoints,$d['accuracy']??0);
 }
-
-$war_th = 'th';
-$war_rank = '1';
 
 $juara1 = ucwords(strtolower($rnama[0]));
 $juara2 = ucwords(strtolower($rnama[1]));
@@ -91,7 +93,6 @@ echo "
   <div class='wadah gradasi-hijau' id=blok_summary>
 
     <div class='wadah tengah ' style='background: linear-gradient(#ffbbff,#fef)'>
-      <div class='debug'><span class='rank_number f50'>$war_rank</span> <span class='rank_th'>$war_th</span></div>
       <img src=assets/img/gifs/medal1-1.gif height=90px>
       <div class='darkblue mt1 f20'>$juara1</div>
       <div class=' darkblue '>$poin_juara1 %</div>

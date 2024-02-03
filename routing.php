@@ -23,7 +23,7 @@ if(!file_exists($konten)){
     if($parameter=='login' || $parameter=='upload_profil' || !$is_login){
       // hide ask upload profil
     }else{
-      if($password){
+      if($password and $id_room){
         include 'pages/belum_punya_profil.php';
       }
     } 

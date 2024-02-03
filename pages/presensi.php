@@ -28,7 +28,7 @@ $is_telat_now = 0;
 $sudah_presensi = 0;
 $dikurangi_persen = 50; // jika telat dikurangi 50% + durasi hari telat
 $ris_ontime = [];
-$rpresenters_kelas = [];
+// $rpresenters_kelas = [];
 $sesi_aktif = 0;
 
 
@@ -122,12 +122,38 @@ a.id as id_sesi,
   JOIN tb_peserta q ON p.id_peserta=q.id 
   JOIN tb_kelas_peserta r ON q.id=r.id_peserta  
   WHERE p.id_sesi=a.id 
-  AND r.kelas='$kelas') presenters_kelas, 
+  AND r.kelas='$kelas') count_presenters, 
 (
   SELECT COUNT(1) FROM tb_presensi p 
   JOIN tb_sesi q ON p.id_sesi=q.id 
   WHERE p.id_peserta=$id_peserta 
-  AND q.id_room=$id_room) jumlah_presensi 
+  AND q.id_room=$id_room) jumlah_presensi,
+(
+  SELECT awal_presensi FROM tb_sesi_kelas p 
+  WHERE p.kelas='$kelas' 
+  AND p.id_sesi=a.id) awal_presensi,
+(
+  SELECT akhir_presensi FROM tb_sesi_kelas p 
+  WHERE p.kelas='$kelas' 
+  AND p.id_sesi=a.id) akhir_presensi,
+(
+  SELECT jadwal_kuliah FROM tb_sesi_kelas p 
+  WHERE p.kelas='$kelas' 
+  AND p.id_sesi=a.id) jadwal_kuliah,
+(
+  SELECT COUNT(1) FROM tb_assign_latihan p 
+  WHERE p.id_room_kelas='$id_room_kelas' 
+  AND p.is_wajib=1
+  AND p.id_sesi=a.id) latihan_count,
+(
+  SELECT COUNT(1) FROM tb_bukti_latihan p 
+  JOIN tb_assign_latihan q ON p.id_assign_latihan=q.id  
+  WHERE q.id_room_kelas='$id_room_kelas' 
+  AND q.is_wajib=1
+  AND q.id_sesi=a.id
+  AND p.id_peserta=$id_peserta) my_latihan_count 
+
+
 
 FROM tb_sesi a 
 WHERE a.id_room=$id_room";
@@ -137,14 +163,15 @@ $presenters_kelas_last_active_sesi = 0;
 $is_ontime_now = 0;
 while($d=mysqli_fetch_assoc($q)){
 
-  // $d['play_count'] = 999; //zzz
-  // $d['jumlah_soal'] = 999; //zzz
+  // $d['play_count'] = 999; //debug var
+  // $d['jumlah_soal'] = 999; //debug var
 
   $id_sesi=$d['id_sesi'];
   $sudah_presensi=$d['sudah_presensi'];
 
-  $awal_presensi = $d['awal_presensi_default']; //zzz awal presensi sebenarnya di tabel lain
-  $akhir_presensi = $d['akhir_presensi_default']; //zzz akhir presensi sebenarnya di tabel lain
+  $jadwal_kuliah = $d['jadwal_kuliah'] ?? $d['jadwal_kuliah_default'];
+  $awal_presensi = $d['awal_presensi'] ?? $d['awal_presensi_default'];
+  $akhir_presensi = $d['akhir_presensi'] ?? $d['akhir_presensi_default'];
 
   $tnow = strtotime('now');
   $tawal = strtotime($awal_presensi);
@@ -162,8 +189,8 @@ while($d=mysqli_fetch_assoc($q)){
   $sesi_aktif++;
   $ris_ontime[$id_sesi] = 0;
   if($sudah_dibuka){ // sudah dibuka
-    $rpresenters_kelas[$id_sesi] = $d['presenters_kelas'];
-    $presenters_kelas_last_active_sesi = $d['presenters_kelas'];
+    // $rpresenters_kelas[$id_sesi] = $d['count_presenters'];
+    $presenters_kelas_last_active_sesi = $d['count_presenters'];
 
     if($belum_ditutup){ // berlangsung
       $is_ontime_now = 1;
@@ -179,14 +206,27 @@ while($d=mysqli_fetch_assoc($q)){
   }
   
   
+  if($jadwal_kuliah){
+    $jadwal_kuliah_show = date('D, M d, H:i', strtotime($jadwal_kuliah));
+    $jadwal_kuliah_show.= ' ~ <span class=abu>'.eta(-$tnow + strtotime($d['jadwal_kuliah_default'])).'</span>';
+  }else{
+    $jadwal_kuliah_show = $unset;
+  }
 
-  $jadwal_kuliah_show = date('D, M d, H:i', strtotime($d['jadwal_kuliah_default']));
-  $awal_presensi_show = date('M d, Y, H:i', $tawal);
-  $akhir_presensi_show = date('M d, Y, H:i', $takhir);
+  if($awal_presensi){
+    $awal_presensi_show = date('M d, Y, H:i', $tawal);
+    $awal_presensi_show.= ' ~ <span class=abu>'.eta(-$tnow + $tawal).'</span>';
+  }else{
+    $awal_presensi_show = $unset;
+  }
+  
+  if($akhir_presensi){
+    $akhir_presensi_show = date('M d, Y, H:i', $takhir);
+    $akhir_presensi_show.= ' ~ <span class=abu>'.eta(-$tnow + $takhir).'</span>';
+  }else{
+    $akhir_presensi_show = $unset;
+  }
 
-  $jadwal_kuliah_show.= ' ~ <span class=abu>'.eta(-$tnow + strtotime($d['jadwal_kuliah_default'])).'</span>';
-  $awal_presensi_show.= ' ~ <span class=abu>'.eta(-$tnow + $tawal).'</span>';
-  $akhir_presensi_show.= ' ~ <span class=abu>'.eta(-$tnow + $takhir).'</span>';
 
   $akhir_presensi_show = $is_telat_now ? "<span class=red>$akhir_presensi_show</span>" : $akhir_presensi_show;
 
@@ -223,6 +263,11 @@ while($d=mysqli_fetch_assoc($q)){
     $syarat_soal = "$jumlah_soal of $syarat_soal_count";
     $syarat_play = "$play_count of $syarat_play_count";
 
+    $my_latihan_count = $d['my_latihan_count'];
+    $latihan_count = $d['latihan_count'];
+    $syarat_latihan_count = $latihan_count ? 1 : 0;
+    $syarat_latihan = "$my_latihan_count of $syarat_latihan_count";
+
 
     if($jumlah_soal<$syarat_soal_count){
       $syarat_soal = "<span class=red>$syarat_soal</span> | <a href='?tanam_soal&id_sesi=$id_sesi'>Tanam</a>";
@@ -236,48 +281,63 @@ while($d=mysqli_fetch_assoc($q)){
       $syarat_play = "<span class=green>$syarat_play</span> <img src='assets/img/icons/check.png' height=20px />";
     }
 
-    $dikurangi = '';
-    // boleh present
-    if($jumlah_soal>=$syarat_soal_count and $play_count>=$syarat_play_count){
-      if($is_telat_now){
-        $saya_hadir = 'Saya Hadir Telat';
-        $durasi_hari = durasi_hari($now,$akhir_presensi);
-        $dikurangi_persen -= $durasi_hari;
-        if($dikurangi_persen>90) $dikurangi_persen=90;
-        $lp = round($dikurangi_persen * $basic_point/100,0);
-        $dikurangi = "<span class=red>Poin dikurangi $lp LP | <span id=dikurangi_persen>$dikurangi_persen</span>%</span>";
-        $primary = 'warning';
-      }else{ // boleh present dan di sesi ini tidak telat
-        if($sudah_dibuka){
-          $saya_hadir = 'Saya Hadir';
-          $dikurangi = '';
-          $primary = 'primary';
-        }else{ // boleh present, tidak telat, tapi belum dibuka
-          $saya_hadir = 'Belum dibuka';
-          $dikurangi = '';
-          $primary = 'secondary';
-        }
+    if($syarat_latihan_count){
+      if($my_latihan_count<$syarat_latihan_count){
+        $syarat_latihan = "<span class=red>$syarat_latihan</span> | <a href='?perang_soal&mode=random'>Play</a>";
+      }else{
+        $syarat_latihan = "<span class=green>$syarat_latihan</span> <img src='assets/img/icons/check.png' height=20px />";
       }
-
-
-      $btn_presensi = $sudah_dibuka ? "
-        <form method=post>
-          <button class='btn btn-$primary btn-sm btn-block' value=$id_sesi name=btn_saya_hadir><span class=f12>$saya_hadir</span></button>
-          $dikurangi
-        </form>
-      " : 
-      "<button class='btn btn-$primary btn-sm btn-block' disabled><span class=f12>$saya_hadir</span></button>"
-      ;
-    }else{ // syarat kurang
-      $btn_presensi = "
-        <button class='btn btn-secondary btn-sm btn-block' onclick='alert(\"Maaf, kamu belum memenuhi syarat presensi.\")'><span class=f12>Saya Hadir</span></button>
-      ";
+    }else{
+      $syarat_latihan = '-';
     }
+
+    $dikurangi = '';
+    if($awal_presensi and $akhir_presensi){ // batasan presensi OK
+      if($jumlah_soal>=$syarat_soal_count and $play_count>=$syarat_play_count){ // boleh present
+        if($is_telat_now){
+          $saya_hadir = 'Saya Hadir Telat';
+          $durasi_hari = $akhir_presensi ? durasi_hari($now,$akhir_presensi) : 0;
+          $dikurangi_persen -= $durasi_hari;
+          if($dikurangi_persen>90) $dikurangi_persen=90;
+          $lp = round($dikurangi_persen * $basic_point/100,0);
+          $dikurangi = "<span class=red>Poin dikurangi $lp LP | <span id=dikurangi_persen>$dikurangi_persen</span>%</span>";
+          $primary = 'warning';
+        }else{ // boleh present dan di sesi ini tidak telat
+          if($sudah_dibuka){
+            $saya_hadir = 'Saya Hadir';
+            $dikurangi = '';
+            $primary = 'primary';
+          }else{ // boleh present, tidak telat, tapi belum dibuka
+            $saya_hadir = 'Belum dibuka';
+            $dikurangi = '';
+            $primary = 'secondary';
+          }
+        }
+  
+  
+        $btn_presensi = $sudah_dibuka ? "
+          <form method=post>
+            <button class='btn btn-$primary btn-sm btn-block' value=$id_sesi name=btn_saya_hadir><span class=f12>$saya_hadir</span></button>
+            $dikurangi
+          </form>
+        " : 
+        "<button class='btn btn-$primary btn-sm btn-block' disabled><span class=f12>$saya_hadir</span></button>"
+        ;
+      }else{ // syarat kurang
+        $btn_presensi = "
+          <button class='btn btn-secondary btn-sm btn-block' onclick='alert(\"Maaf, kamu belum memenuhi syarat presensi.\")'><span class=f12>Saya Hadir</span></button>
+        ";
+      }
+    }else{
+      $btn_presensi = '<span class=red>Batasan Presensi Unset.</span> <div class="kecil darkblue mt1">Segera lapor ke instruktur!</div>';
+    }
+
 
     $syarat_presensi = "
       <div class='abu miring'>Syarat presensi:</div> 
       <div class=mb1>Soal saya: $syarat_soal</div> 
-      <div class=mb2>Play count: $syarat_play</div>
+      <div class=mb1>Play count: $syarat_play</div>
+      <div class=mb2>Latihan: $syarat_latihan</div>
     ";
 
   }
@@ -293,7 +353,7 @@ while($d=mysqli_fetch_assoc($q)){
       <div class='row'>
         <div class='col-lg-3'>
           <div class='mb1 darkblue tebal'>P$d[no] $d[nama]</div>
-          <div class='mb1 abu miring'>$d[presenters_kelas] of $total_peserta_kelas sudah hadir</div>
+          <div class='mb1 abu miring'>$d[count_presenters] of $total_peserta_kelas sudah hadir</div>
         </div>
         <div class='col-lg-4'>
           <div><span class='abu miring'>Jadwal Kuliah:</span> $jadwal_kuliah_show</div>

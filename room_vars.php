@@ -25,10 +25,12 @@ $id_room_kelas = $d['id_room_kelas'];
 $instruktur = $d['instruktur'];
 
 if(!$id_room_kelas){
-  $pesan = $id_role==2 ? "<a href='?assign_room_kelas'>Assign Room Kelas</a>" : "Segera hubungi instruktur ($instruktur)!";
-  if($dm) $pesan = "<a target=_blank href='?assign_room_kelas'>Assign Room Kelas</a>" ;
+  $pesan = $id_role==2 ? "<a href='?assign_room_kelas'>Assign Room Kelas</a>" : "Jika memang kelas kamu benar dan berhak masuk ke room ini, segera hubungi instruktur ($instruktur) agar segera melakukan proses Assign-Room-Kelas!";
+  // if($dm) $pesan = "<a target=_blank href='?assign_room_kelas'>Assign Room Kelas</a>" ;
   if($parameter!='assign_room_kelas'){
-    die(div_alert('danger',"Kelas <u>$kelas</u> belum di-assign ke room <u>$room</u>. $pesan"));
+    unset($_SESSION['dipa_id_room']);
+    echo 'Unsetting selected room... success.';
+    die(div_alert('danger',"<hr>Kelas <u>$kelas</u> belum di-assign ke room <u>$room</u>. $pesan"));
   }
 }
 

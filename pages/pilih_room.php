@@ -1,4 +1,4 @@
-<section>
+<!-- <section> -->
   <div class='section-title' data-aos-zzz='fade-up'>
     <h2>Pilih Room</h2>
     <p>
@@ -74,4 +74,8 @@
       </div>
     </form>
   </div>
-</section>";
+  <hr>
+  <div class="tengah">
+    <a href="?logout" onclick='return confirm("Logout?")'>Logout</a>
+  </div>
+<!-- </section>"; -->

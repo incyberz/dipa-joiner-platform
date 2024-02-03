@@ -1,12 +1,4 @@
 <?php
-if($dm)
-echo "
-  <div class='debug'>
-    <h1>Debugging Grades</h1>
-    <br>kelas: $kelas
-    <br>id_room_kelas: $id_room_kelas
-  </div>
-";
 // login_only(); // boleh tidak login
 $get_kelas = $_GET['kelas'] ?? '';
 if(($get_kelas=='all' and $id_role==1) || $get_kelas=='') die("<script>location.replace('?grades&kelas=$kelas')</script>");
@@ -24,7 +16,10 @@ if($kelas!='all'){
   $arr_rank_kelas[$kelas] = 0;
 }
 
-$s = "SELECT a.last_update_point FROM tb_poin a JOIN tb_peserta b ON a.id_peserta=b.id ORDER BY a.last_update_point DESC LIMIT 1 ";
+$s = "SELECT a.last_update_point 
+FROM tb_poin a JOIN tb_peserta b ON a.id_peserta=b.id 
+WHERE id_room=$id_room  
+ORDER BY a.last_update_point DESC LIMIT 1 ";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 if(!mysqli_num_rows($q)){
   // belum ada data poin
@@ -228,14 +223,17 @@ if(mysqli_num_rows($q)){
   $tb = "$selamat<div class='mb2  '>$toggle_profil</div><table class='table table-striped table-hover'>$tr</table>";
 }
 
-$kelas_show = $get_kelas=='' ? 'Semua Kelas' : "Kelas $get_kelas";
+$img = img_icon('detail');
+$kelas_show = $get_kelas=='' ? 'Semua Kelas' : "Kelas $get_kelas <span class=btn_aksi id=kelas_lain__toggle>$img</span>";
+$li = '';
 if($id_role==2 && $get_kelas!='all'){
   $kelas_show.= ' | <a href="?grades&kelas=all">All Kelas</a>';
 }else{
-  $s = "SELECT kelas from tb_kelas WHERE tahun_ajar=$tahun_ajar";
+  $s = "SELECT kelas from tb_kelas WHERE tahun_ajar=$tahun_ajar AND status=1";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   while ($d=mysqli_fetch_assoc($q)) {
-    $kelas_show.= " | <a href='?grades&kelas=$d[kelas]'>$d[kelas]</a>";
+    if($d['kelas']==$get_kelas) continue;
+    $li.= "<li><a href='?grades&kelas=$d[kelas]'>$d[kelas]</a></li>";
   }
 }
 ?>
@@ -251,6 +249,9 @@ if($id_role==2 && $get_kelas!='all'){
 </div>
 <div class="grades" data-aos="fade-up" data-aos-delay="150">
   <p>Berikut adalah 10 Peserta Terbaik <span class="darkred"><?=$kelas_show?></span>.</p>
+  <ol class='kiri f12 hideit' id=kelas_lain>
+    <?=$li?>
+  </ol>
 
   <?=$tb?>
   <div class="kecil miring abu">

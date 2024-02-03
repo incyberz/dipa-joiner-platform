@@ -33,7 +33,7 @@ echo "
 # =========================================================
 $s = "SELECT a.war_points, b.nama as nama_peserta 
 FROM tb_war_summary a 
-JOIN tb_peserta b ON a.id=b.id 
+JOIN tb_peserta b ON a.id_peserta=b.id 
 WHERE b.id_role=1 
 AND id_room=$id_room 
 ORDER BY war_points DESC LIMIT 10";
@@ -44,9 +44,6 @@ while($d=mysqli_fetch_assoc($q)){
   array_push($rnama,$d['nama_peserta']);
   array_push($rpoints,$d['war_points']);
 }
-
-$war_th = 'th';
-$war_rank = '1';
 
 $juara1 = ucwords(strtolower($rnama[0]));
 $juara2 = ucwords(strtolower($rnama[1]));
@@ -86,7 +83,6 @@ echo "
   <div class='wadah gradasi-hijau' id=blok_summary>
 
     <div class='wadah tengah ' style='background: linear-gradient(#ffbbff,#fef)'>
-      <div class='debug'><span class='rank_number f50'>$war_rank</span> <span class='rank_th'>$war_th</span></div>
       <img src=assets/img/gifs/medal1-1.gif height=90px>
       <div class='darkblue mt1 f20'>$juara1</div>
       <div class=' darkblue '>$poin_juara1 LP</div>

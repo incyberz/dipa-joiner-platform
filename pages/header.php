@@ -12,8 +12,8 @@ $s = "SELECT 1 FROM tb_pertanyaan WHERE verif_status is null";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $jumlah_ask = mysqli_num_rows($q);
 
-$red = $available_soal ? 'red' : 'green';
-$available_soal_show = "<span class='count_badge badge_$red' id='available_soal'>$available_soal</span>" ;
+$red = $available_questions ? 'red' : 'green';
+$available_question_show = "<span class='count_badge badge_$red' id='available_questions'>$available_questions</span>" ;
 
 ?>
 <header id="header" class="fixed-top d-flex align-items-center">
@@ -68,7 +68,7 @@ $available_soal_show = "<span class='count_badge badge_$red' id='available_soal'
             $li_verif 
             $li_ask 
             $li_verif_war
-            <li class='dropdown'><a  href='#'><span class='tebal darkred'>Perang $available_soal_show</span> <i class='bi bi-chevron-down'></i></a>
+            <li class='dropdown'><a  href='#'><span class='tebal darkred'>Perang $available_question_show</span> <i class='bi bi-chevron-down'></i></a>
               <ul>
                 <li><a href='?perang_soal'>Perang Soal</a></li>
                 <li><a href='?tanam_soal'>Tanam Soal</a></li>

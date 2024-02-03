@@ -20,10 +20,10 @@ if($id_role!=1){
     $nav_kelas.= "<a href='?war_history&all_wars&kelas=$kelas'>$kelas</a> | ";
   }
   $nav_kelas = "<div class=kecil>$nav_kelas</div>";
-  $sql_kelas = $get_kelas=='' ? 1 : "b.kelas = '$get_kelas'";
+  $sql_kelas = $get_kelas=='' ? 1 : "d.kelas = '$get_kelas'";
   $sql_my_wars = $all_wars ? '1' : "a.id_penjawab=$id_peserta";
 }else{
-  $sql_my_wars = $all_wars ? "b.kelas='$kelas'" : "a.id_penjawab=$id_peserta";
+  $sql_my_wars = $all_wars ? "d.kelas='$kelas'" : "a.id_penjawab=$id_peserta";
   $sql_kelas = '1';
   $nav_kelas = "<div class='kecil mt2 abu'>Jejak perang yang tak terlupakan.</div> ";
 }
@@ -62,6 +62,7 @@ c.id_status as id_status_soal,
 FROM tb_war a 
 JOIN tb_peserta b ON a.id_penjawab=b.id 
 JOIN tb_soal_pg c ON a.id_soal=c.id 
+JOIN tb_kelas_peserta d ON b.id=d.id_peserta 
 
 WHERE $sql_my_wars 
 AND $sql_kelas 

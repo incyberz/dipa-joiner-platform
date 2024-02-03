@@ -88,11 +88,18 @@ $info_sesi = '';
 $pilih_sesi = '';
 if($id_sesi==''){
   // include 'include/arr_sesi.php';
-  $s = "SELECT a.*, a.id as id_sesi FROM tb_sesi a WHERE a.id_room='$id_room' ORDER BY a.no";
+  $s = "SELECT a.*, a.id as id_sesi,
+  (
+    SELECT count(1) FROM tb_soal_pg p 
+    WHERE id_pembuat=$id_peserta 
+    AND id_sesi=a.id) my_soal_count 
+  FROM tb_sesi a 
+  WHERE a.id_room='$id_room' ORDER BY a.no";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   while($d=mysqli_fetch_assoc($q)){
     $id_sesi=$d['id_sesi'];
     $tmp_jumlah_soal=$d['tmp_jumlah_soal_pg'] ?? 0;
+    $my_soal_count=$d['my_soal_count'] ;
 
     if($id_role!=1){
       // dosen only
@@ -106,11 +113,9 @@ if($id_sesi==''){
         $q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));
       }
 
-    }else{
-      $jumlah_soal = $tmp_jumlah_soal;
     }
 
-    $badge_green = $jumlah_soal ? 'badge_green' : 'badge_red';
+    $badge_green = $my_soal_count ? 'badge_green' : 'badge_red';
 
     $tags = $d['tags'];
     $r = explode(';',$tags);
@@ -124,7 +129,7 @@ if($id_sesi==''){
     $pilih_sesi .= "
       <div class='col-md-4 mb2'>
         <a class='btn btn-$danger btn-sm mb1 btn-block' href=$href>
-          P$d[no] $d[nama] <span class='count_badge $badge_green'>$jumlah_soal</span>
+          P$d[no] $d[nama] <span class='count_badge $badge_green'>$my_soal_count</span>
         </a>
         $tags_show
       </div>

@@ -44,8 +44,6 @@ foreach ($rexample as $x) {
 }
 
 
-echo "is_reject : $is_reject";
-
 $btn_reupload = "<button class='btn btn-secondary btn-sm' id=btn_reupload>Reupload</button>";
 $status_show = '';
 $info = '';

@@ -27,13 +27,16 @@ $s = "SELECT
 (
   SELECT count(1) FROM tb_kelas_peserta p  
   JOIN tb_kelas q ON p.kelas=q.kelas  
+  JOIN tb_peserta r ON p.id_peserta=r.id 
   WHERE q.tahun_ajar=$tahun_ajar 
+  AND r.id_role = $id_role 
+  AND r.status = 1 
   AND q.kelas='$kelas') total_peserta_kelas 
 
 FROM tb_peserta a 
 JOIN tb_role b ON a.id_role=b.id 
 WHERE a.username='$username'";
-// echo $s;
+// echo "<pre>$s</pre>";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 if(mysqli_num_rows($q)==0) die("mhs_var :: Mahasiswa dengan Username: $username tidak ditemukan.");
 $d = mysqli_fetch_assoc($q);
@@ -99,6 +102,24 @@ if(file_exists($path_profil_perang)){
 # ========================================================
 # RANK KELAS DAN JUMLAH PESERTA
 # ========================================================
+$s = "SELECT a.id_peserta 
+FROM tb_poin a 
+JOIN tb_peserta b ON a.id_peserta=b.id 
+WHERE a.id_room=$id_room 
+AND b.status = 1 
+AND b.id_role = $id_role 
+
+ORDER BY a.akumulasi_poin DESC";
+$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$rank_kelas = 1;
+$i=1;
+while($d=mysqli_fetch_assoc($q)){
+  if($d['id_peserta']==$id_peserta){
+    $rank_kelas = $i;
+    break;
+  }
+  $i++;
+}
 /*
 if(!$rank_kelas){
   $s = "SELECT a.id,  
@@ -117,7 +138,7 @@ if(!$rank_kelas){
 }
 */
 
-$rank_kelas = 1;
+// $rank_kelas = 1;
 
 if($rank_kelas){
   if($rank_kelas%10==1){
@@ -178,25 +199,7 @@ if($nilai_akhir==0){
 
 
 
-# ============================================================
-# AUTO-SELF UPDATE EVERY HOUR | AVAILABLE SOAL
-# ============================================================
-$selisih = $id_role==1 ? (strtotime('now') - strtotime($last_update_available_soal)) : 0;
-if($selisih>3600 || !$available_soal){
-  $s = "SELECT a.id FROM tb_soal_pg a 
-  LEFT JOIN tb_war b ON a.id=b.id_soal AND b.id_penjawab=$id_peserta 
-  WHERE (a.id_status is null OR a.id_status >= 0) 
-  AND b.id is null 
-  AND a.id_pembuat!=$id_peserta 
-  ";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-  $available_soal = mysqli_num_rows($q);
 
-  $s = "UPDATE tb_peserta SET last_update_available_soal=CURRENT_TIMESTAMP, available_soal=$available_soal WHERE id=$id_peserta 
-  ";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-  // die('UPDATED');
-}
 
 
 

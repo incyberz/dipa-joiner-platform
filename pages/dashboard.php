@@ -1,3 +1,5 @@
+<?php if(!$id_room) jsurl('?pilih_room'); ?>
+
 <style>
   .blok_rank,.blok_nilai_akhir{border-top: solid 1px #ccc; margin: 0 10px; text-align:center}
   .nama_peserta{font-size: 24px; margin:0}

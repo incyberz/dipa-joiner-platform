@@ -17,8 +17,6 @@ $ryaitu = [
 ];
 $yaitu = $ryaitu[$jenis];
 
-echo "<span class=debug id=jenis>$jenis</span>";
-
 $img_check_path = 'assets/img/icons/check.png';
 $pesan_upload = '';
 if(isset($_POST['btn_hapus'])){
@@ -178,4 +176,9 @@ if($no==''){
 
 }else{
   include 'activity_show.php';
+}
+
+
+if($id_role==2){
+  include 'activity_admin.php';
 }

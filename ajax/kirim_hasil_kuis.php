@@ -70,7 +70,7 @@ foreach ($arr_data as $d) {
     // update status soal
     if($is_benar==-1){
       // banned jika ada 5 rejecter
-      $s = "SELECT 1 FROM tb_war WHERE is_benar=-1 AND id_soal=$id_soal";
+      $s = "SELECT 1 FROM tb_war WHERE is_benar=-1 AND id_soal=$id_soal AND id_room=$id_room";
       $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
       if(mysqli_num_rows($q)>=4){
         // do banned
@@ -142,8 +142,8 @@ if($values){
 // update paket war completed
 $last_60 = date('Y-m-d H:i:s',strtotime('now') - (60*60)); // 1 jam for reupdate summary
 $last_30 = date('Y-m-d H:i:s',strtotime('now') - (30*60)); // 20 menit for resuming quiz
-$s = "UPDATE tb_paket_war SET is_completed=1 WHERE id_peserta='$id_peserta' AND tanggal >= '$last_30'";
+$s = "UPDATE tb_paket_war SET is_completed=1 WHERE id_peserta='$id_peserta' AND tanggal >= '$last_30' AND id_room=$id_room";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-$s = "UPDATE tb_war_summary SET last_update='$last_60' WHERE id='$id_peserta' ";
+$s = "UPDATE tb_war_summary SET last_update='$last_60' WHERE id='$id_peserta'  AND id_room=$id_room";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 die('sukses');
