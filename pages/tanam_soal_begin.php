@@ -63,6 +63,8 @@ if(isset($_POST['btn_simpan'])){
   $jawaban = tambah_spasi($jawaban);
   $opsies = tambah_spasi($opsies);
 
+  $_POST['my_tags'] = trim($_POST['my_tags']);
+
   $s = "INSERT INTO tb_soal_pg 
   (id_sesi,id_pembuat,kalimat_soal,tags,opsies,jawaban,id_status) values 
   ($_POST[id_sesi],$id_peserta,'$kalimat_soal','$_POST[my_tags]','$opsies','$jawaban',$status)
@@ -439,6 +441,7 @@ if($id_sesi==''){
 
     $('#btn_cek_similaritas').click(function(){
       let link_ajax = `ajax/cek_similaritas_soal.php?my_tags=${my_tags}&kalimat_soal=${kalimat_soal_full}`;
+      console.log('link_ajax:',link_ajax);
 
       $.ajax({
         url:link_ajax,

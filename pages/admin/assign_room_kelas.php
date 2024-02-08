@@ -66,14 +66,15 @@ while($d=mysqli_fetch_assoc($q)){
           <ol>
             <?php
 
-            $s = "SELECT * FROM tb_kelas WHERE tahun_ajar=$tahun_ajar ORDER BY fakultas,prodi,shift";
+            $s = "SELECT * FROM tb_kelas WHERE tahun_ajar=$tahun_ajar ORDER BY status DESC,fakultas,semester,prodi,shift";
             $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 
             while($d=mysqli_fetch_assoc($q)){
               if(in_array($d['kelas'],$arr_assigned_kelas)) continue;
-              $color = $d['shift'] ? 'green' : 'darkblue';
+              $color = $d['shift']=='P' ? 'blue' : 'darkred';
+              $color = $d['status'] ? $color : 'abu miring';
               $btn = "<button class='mb2' name=btn_assign_room_kelas value='$d[kelas]' >Assign</button>";
-              echo "<li class='$color'>$d[fakultas] ~ $d[kelas] ~ $btn</li>";
+              echo "<li class='$color'>$d[fakultas] ~ $d[kelas] $d[shift] ~ $btn</li>";
             }
             ?>
           </ol>   

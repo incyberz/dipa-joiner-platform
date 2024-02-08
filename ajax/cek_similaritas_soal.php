@@ -43,18 +43,18 @@ $my_tags = $_GET['my_tags'] ?? die(erid('my_tags')); if($my_tags=='') die(erid("
 $kalimat_soal = $_GET['kalimat_soal'] ?? die(erid('kalimat_soal')); if($kalimat_soal=='') die(erid("kalimat_soal::null"));
 
 
-
 # ================================================
 # SIMILARITY CHECK
 # ================================================
 $rtags_soal = explode(',',$my_tags);
 $tags_like = '( 0 ';
-for ($i=0; $i < count($rtags_soal); $i++) { 
-	$tags_like .= " OR a.tags like '%$rtags_soal[$i]%'";
+for ($i=0; $i < count($rtags_soal); $i++) {
+	$ctag = trim($rtags_soal[$i]); 
+	$tags_like .= " OR a.tags like '%$ctag%'";
 }
 $tags_like .= ' ) ';
 
-$tags_like = '1'; //zzz debug
+// $tags_like = '1'; //zzz debug
 
 
 $s = "SELECT 
@@ -73,9 +73,12 @@ and $tags_like
 and c.id_room='$id_room'
 ";
 
+
 // die($s);
 $q = mysqli_query($cn,$s) or die('Error jx_soal_similarity_check. '.mysqli_error($cn));
 $total_soal = mysqli_num_rows($q);
+
+
 if($total_soal==0) die('sukses__1');
 
 $rsoal = [];
@@ -101,10 +104,12 @@ usort($rsoal, function($a,$b){
 
 $z='';
 $count_row_similar = 3;
+$reach_too_similar = '';
 if($total_soal<$count_row_similar) $count_row_similar=$total_soal;
 for ($i=0; $i < $count_row_similar ; $i++) { 
 	$persen_similar = $rsoal[$i][0];
 	if($persen_similar>75){
+		$reach_too_similar = $persen_similar;
 
 		$id_soal 			= $rsoal[$i][1];
 		$kalimat_soal = $rsoal[$i][2];
@@ -117,7 +122,9 @@ for ($i=0; $i < $count_row_similar ; $i++) {
 	}
 }
 
-echo "sukses__$persen_similar"."__$z";
+$final_similar = $reach_too_similar ? $reach_too_similar : $persen_similar;
+
+echo "sukses__$final_similar"."__$z";
 
 
 

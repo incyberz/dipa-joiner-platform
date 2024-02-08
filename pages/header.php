@@ -1,12 +1,18 @@
 <?php
 $jumlah_verif = 0;
 $rjenis = ['latihan','challenge'];
-foreach ($rjenis as $key => $jenis) {
-  $s = "SELECT 1 FROM tb_bukti_$jenis WHERE tanggal_verifikasi is null"; 
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-  $jumlah_verif += mysqli_num_rows($q);
+if($id_room){
+  foreach ($rjenis as $key => $jenis) {
+    $s = "SELECT 1 FROM tb_bukti_$jenis a 
+    JOIN tb_assign_$jenis b ON a.id_assign_$jenis=b.id 
+    JOIN tb_sesi c ON b.id_sesi=c.id
+    WHERE a.verified_by is null 
+    AND c.id_room = $id_room 
+    "; 
+    $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+    $jumlah_verif += mysqli_num_rows($q);
+  }
 }
-
 $jumlah_ask = 0;
 $s = "SELECT 1 FROM tb_pertanyaan WHERE verif_status is null"; 
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
@@ -59,7 +65,7 @@ $available_question_show = "<span class='count_badge badge_$red' id='available_q
         $nickname_show = isset($_SESSION['dipa_master_username']) ? "Login As $username | $my_points LP" : "$username | $my_points LP";        
         $unlog_link = isset($_SESSION['dipa_master_username']) ? "<li><a href='?login_as&unlog'>Unlog</a></li>" : '';
         if($is_login){
-          $li_verif = ($id_role==1 || $jumlah_verif==0) ? '' : "<li><a href='?verif' class='proper'><span class='biru tebal'>Verif</span> <span class='count_badge badge_red' id='jumlah_verif'>$jumlah_verif</span></a></li>";
+          $li_verif = ($id_role==1 || !$jumlah_verif) ? '' : "<li><a href='?verif' class='proper'><span class='biru tebal'>Verif</span> <span class='count_badge badge_red' id='jumlah_verif'>$jumlah_verif</span></a></li>";
           $li_ask = ($id_role==1 || $jumlah_ask==0) ? '' : "<li class='hideit suspend zzz'><a href='?chats' class='proper'><span class='biru tebal'>Chats</span> <span class='count_badge badge_red' id='jumlah_ask'>$jumlah_ask</span></a></li>";
           $li_verif_war = ($id_role==1 || $jumlah_verif_war==0) ? '' : "<li><a href='?verifikasi_war_profil' class='proper'><span class='biru tebal'>WarProfil</span> <span class='count_badge badge_red' id='jumlah_verif_war'>$jumlah_verif_war</span></a></li>";
 
@@ -87,7 +93,7 @@ $available_question_show = "<span class='count_badge badge_$red' id='available_q
               <ul>
                 <li><a href='?pilih_room'>Pilih Room</a></li>
                 <li><a href='?list_sesi'>Learning Path</a></li>
-                <li><a href='?activity&jenis=latihan'>Latihan Praktikum</a></li>
+                <li><a href='?activity&jenis=latihan'>Latihan</a></li>
                 <li><a href='?activity&jenis=challenge'>Challenges</a></li>
                 <li class='hideit'><a href='?bertanya'>Bertanya</a></li>
                 <li class='hideit'><a href='?my_questions'>Pertanyaan Saya</a></li>

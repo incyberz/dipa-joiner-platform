@@ -43,7 +43,6 @@ include 'config.php';
 # COOKIE AND LOGIN PROCESS
 # ========================================================
 $dipa_cookie = 'dipa_username';
-include 'pages/login_process.php';
 
 
 

@@ -6,6 +6,6 @@ $username = $_SESSION['dipa_username'];
 $id_role = $_SESSION['dipa_id_role'];
 $id_peserta = $_SESSION['dipa_id_peserta'];
 
-$id_room = 1; /// zzz debug
+$id_room = $_SESSION['dipa_id_room'];
 
 include '../conn.php';

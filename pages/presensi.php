@@ -470,5 +470,5 @@ if($persen_ontime!=100){
 
 
 
-
+if($id_role==2) include 'admin/manage_presensi.php';
 ?>

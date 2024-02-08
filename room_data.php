@@ -105,11 +105,19 @@ if(file_exists($path_profil_perang)){
 $s = "SELECT a.id_peserta 
 FROM tb_poin a 
 JOIN tb_peserta b ON a.id_peserta=b.id 
+JOIN tb_kelas_peserta c ON b.id=c.id_peserta 
+JOIN tb_kelas d ON c.kelas=d.kelas 
 WHERE a.id_room=$id_room 
 AND b.status = 1 
-AND b.id_role = $id_role 
+AND b.id_role = 1 
+AND d.tahun_ajar = $tahun_ajar 
+AND d.status = 1 
+AND c.kelas = '$kelas'
 
-ORDER BY a.akumulasi_poin DESC";
+ORDER BY a.akumulasi_poin DESC;
+";
+// echo $s;
+// die("<pre>$s</pre>");
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $rank_kelas = 1;
 $i=1;

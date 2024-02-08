@@ -3,6 +3,8 @@ $pesan_login = '<p>Silahkan masukan Username dan password untuk login. Untuk pas
 $username = '';
 $password = '';
 
+include 'login_process.php';
+
 if(isset($_COOKIE[$dipa_cookie])) {
   $cookie_username = $_COOKIE[$dipa_cookie];
   $s = "SELECT id,id_role,username from tb_peserta WHERE username='$cookie_username'";

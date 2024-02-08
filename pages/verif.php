@@ -1,214 +1,286 @@
 <?php
-if($id_role<=1) die('<script>location.replace("?")</script>');
+if($id_role<=1) jsurl('?');
+$get_kelas = $_GET['kelas'] ?? '';
+$get_history = $_GET['history'] ?? '';
 
-$kelas = $_GET['kelas'] ?? '';
-if($kelas==''){
+if($get_history){
+  $judul = 'Histori Verifikasi';
+  $judul2 = 'Cek Verifikasi';
+  $url = '';
+  $sql_not = 'not';
+  $h2_history = 'History';
+}else{
+  $judul = 'Verifikasi Latihan dan Challenge';
+  $judul2 = 'Histori Verifikasi';
+  $url = '&history=1';
+  $sql_not = '';
+  $h2_history = 'Verifikasi';
+}
 
+echo "
+  <div class='flexy flex-between'>
+    <h1 class='abu tebal f12 mb2'>$judul</h1>
+    <h2><a class=' tebal f12 mb2' href='?verif$url'>$judul2</a></h2>
+  </div>
+";
 
-  $s = "SELECT kelas FROM tb_kelas";
-  $links = '';
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-  while ($d=mysqli_fetch_assoc($q)) {
-    $links .= "<a class='btn btn-primary btn-sm' href='?verif&kelas=$d[kelas]'>$d[kelas]</a> ";
+include 'verif_process.php';
+
+function menit_show($m){
+  if(!$m || intval($m)<1) return null;
+  if($m >= 60*24*365){
+    // 1 year
+    return intval($m/(60*24*365)).' tahun';
+  }elseif($m >= 60*24*30){
+    // 1 month
+    return intval($m/(60*24*30)).' bulan';
+  }elseif($m >= 60*24){
+    // 1 day
+    return intval($m/(60*24)).' hari';
+  }elseif($m >= 60){
+    // 1 hour
+    return intval($m/(60)).' jam';
+  }else{
+    return $m.' menit';
   }
+}
 
-  die("
-    <section class='about'>
-      <div class='container'>
-        <div class='mb2'>Silahkan pilih kelas:</div>
-        $links
 
-      </div>
-    </section>
+$s = "SELECT b.* FROM tb_room_kelas a 
+JOIN tb_kelas b ON a.kelas=b.kelas 
+WHERE a.id_room=$id_room 
+-- AND b.prodi != 'DEV'
+";
+$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+if(!mysqli_num_rows($q)){
+  die('Room ini belum punya kelas.');
+}else{
+  $font_size = $get_kelas ? 'f10' : 'f16';
+  $li = "<li><a class='$font_size' href='?verif&history=$get_history' >All Kelas</a></li>";
+  while($d=mysqli_fetch_assoc($q)){
+    $reg = strtoupper($d['shift'])=='P' ? 'REG' : 'NR';
+    $font_size = $d['kelas']==$get_kelas ? 'f16' : 'f10';
+    $li.= "<li><a class='$font_size' href='?verif&history=$get_history&kelas=$d[kelas]'>$d[prodi]-$reg-SM$d[semester]</a></li>";
+  }
+  echo "
+  <style>#list_kelas li{list-style:none}</style>
+  <ul class='flexy m0 p0' id=list_kelas>$li</ul>
+  ";
+}
 
-  ");
+$sql_kelas = $get_kelas ? "g.kelas = '$get_kelas'" : '1';
+
+$jumlah_verif = 0;
+$rjenis = ['latihan','challenge'];
+foreach ($rjenis as $key => $jenis) {
+  $s = "SELECT 
+  a.id as id_bukti,
+  a.*,
+  b.id as id_assign,
+  c.no as no_sesi,
+  c.nama as nama_sesi,
+  d.id as id_peserta,
+  d.nama as nama_peserta,
+  d.folder_uploads,
+  e.id as id_jenis,
+  e.nama as nama_jenis,
+  e.*,
+  g.kelas,
+  (SELECT nama FROM tb_peserta WHERE id=a.verified_by) verifikator 
+
+  FROM tb_bukti_$jenis a 
+  JOIN tb_assign_$jenis b ON a.id_assign_$jenis=b.id 
+  JOIN tb_sesi c ON b.id_sesi=c.id
+  JOIN tb_peserta d ON a.id_peserta=d.id 
+  JOIN tb_$jenis e ON b.id_$jenis=e.id 
+  JOIN tb_kelas_peserta f ON f.id_peserta=d.id 
+  JOIN tb_kelas g ON f.kelas=g.kelas 
+  JOIN tb_room_kelas h ON g.kelas=h.kelas 
+  WHERE a.verified_by is $sql_not null 
+  AND c.id_room = $id_room 
+  AND h.id_room = $id_room 
+  AND $sql_kelas 
+  ORDER BY g.kelas, d.nama, c.no 
+  "; 
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  $row_count = mysqli_num_rows($q);
+
+  if($row_count){
+    $tr = '';
+    $limit = 10;
+    $jumlah_verif += $row_count;
+    $i=0;
+    while($d=mysqli_fetch_assoc($q)){
+      $i++;
+      if($i>$limit){
+        $tr.= "
+          <tr>
+            <td colspan=100% class='red f12 miring'>Data limitted, hanya tampil $limit row dari total $row_count. Silahkan Approve/Reject !</td>
+          </tr>
+        ";
+      }else{ // row <= 10
+
+        $id_jenis=$d['id_jenis'];
+        $id_bukti=$d['id_bukti'];
+  
+        if($jenis=='latihan'){
+          $href = "uploads/$d[folder_uploads]/latihan-$d[id_assign].jpg";
+          if(file_exists($href)){
+            $link_show_image = "<a target=_blank href='$href'>Show Image</a>";
+          }else{
+            $link_show_image = '<span class="red consolas f12 miring">Image missing</span>';
+          }
+          
+          $show_bukti = "
+            <div class='darkblue tebal f14 consolas'>
+              $link_show_image
+            </div>
+          ";
+        }else{
+          $link = strlen($d['link'])>30 ? substr($d['link'],0,30).'...' : $d['link'];
+          $show_bukti = "<a class='consolas f14 tebal' target=_blank href='$d[link]'>Open Link</a>
+          <div class='f10 abu'>$link</div>
+          ";
+        }
+  
+        if(!$get_history){
+          $form_approve = "
+          <div class='hideit wadah gradasi-hijau' id=form_approve$id_bukti>
+            <form method=post>
+              <div class='consolas f10 abu mb2'>Form Approve</div>
+              <input name=poin_tambahan class='form-control form-control-sm mb2' placeholder='Nilai tambahan dari instruktur'>
+              <input name=apresiasi class='form-control form-control-sm mb2' placeholder='Apresiasi Selamat! Anda berhasil...'>
+              <button class='btn btn-success btn-sm w-100' name=btn_approve value='1__".$id_bukti."__$jenis'>Approve</button>
+            </form>
+          </div>
+          ";
+    
+          $form_reject = "
+          <div class='hideit wadah gradasi-merah' id=form_reject$id_bukti>
+            <form method=post>
+              <div class='consolas f10 abu mb2'>Form Reject</div>
+              <textarea name=alasan_reject class='form-control form-control-sm mb2' placeholder='Alasan reject...' rows=4 required minlength=10></textarea>
+              <button class='btn btn-danger btn-sm w-100' name=btn_approve value='-1__$id_bukti'>Reject</button>
+            </form>
+          </div>
+          ";
+        }
+  
+        $img_detail = img_icon('detail');
+        $img_approve = img_icon('check');
+        $img_reject = img_icon('reject');
+        $icon_peserta = img_icon('mhs');
+  
+        $src_profil = "assets/img/peserta/peserta-$d[id_peserta].jpg";
+        if(file_exists($src_profil)){
+          $dual_id = $id_peserta."__$id_bukti";
+          $div_img_peserta = "<div class=hideit id=div_img_peserta__$dual_id>$src_profil</div>";
+          $span_icon = "<span class=icon_peserta id=icon_peserta__$dual_id>$icon_peserta</span>";
+        }else{
+          $div_img_peserta = '';
+          $span_icon = '';
+        }
+
+        $get_point_show = number_format($d['get_point'],0);
+        $basic_point_show = number_format($d['basic_point'],0);
+        $ontime_point_show = number_format($d['ontime_point'],0);
+        $ontime_dalam_show = menit_show($d['ontime_dalam']);
+        $ontime_deadline_show = menit_show($d['ontime_deadline']);
+
+        $max_point = $d['get_point']==($d['basic_point']+$d['ontime_point']) ? '<span class="green bold">max-point</span>' : '';
+
+        if($get_history){
+
+          $tgl = date('M d, H:i',strtotime($d['tanggal_verifikasi']));
+          $td_approve = "
+          <div>by: $d[verifikator]</div>
+          <div class='f12 abu'>at $tgl</div>
+          ";
+        }else{
+          $td_approve = "
+            <div class='f12 bold consolas mb1'>
+              <span class='btn_aksi pointer darkblue' id=form_approve".$id_bukti."__toggle>$img_approve</span>
+              <span class='btn_aksi pointer darkred' id=form_reject".$id_bukti."__toggle>$img_reject</span>
+            </div>
+            $form_approve
+            $form_reject
+          ";
+        }
+
+
+
+        $tr.= "
+          <tr>
+            <td>$i</td>
+            <td>
+              $d[nama_peserta]  $span_icon 
+              <div class='f12 abu'>$d[kelas]</div> 
+              $div_img_peserta
+            </td>
+            <td>
+              $d[nama_jenis] 
+              <span class='btn_aksi' id=detail".$id_bukti."__toggle>$img_detail</span>
+              <div class='f12 abu'>$get_point_show LP $max_point</div> 
+              <div class='hideit f12 abu wadah mt1' id=detail$id_bukti>
+                <ul class='p0 pl2 m0'>
+                  <li>P$d[no_sesi] $d[nama_sesi]</li>
+                  <li>Basic point: $basic_point_show</li>
+                  <li>Ontime point: $ontime_point_show</li>
+                  <li>Ontime dalam: $ontime_dalam_show</li>
+                  <li>Ontime deadline: $ontime_deadline_show</li>
+                </ul>
+              </div>
+            </td>
+            <td>$show_bukti</td>
+            <td>$td_approve</td>
+          </tr>
+        ";
+      } // end row <= 10
+    }
+
+
+    echo "
+      <h2 class='proper f18 mt4 darkblue gradasi-biru p2'>$h2_history Bukti $jenis</h2>
+      <table class=table>
+        <thead>
+          <th>No</th>
+          <th>Nama</th>
+          <th class=proper>Nama $jenis</th>
+          <th class=proper>Bukti $jenis</th>
+          <th>Approve</th>
+        </thead>
+        $tr
+      </table>
+    ";
+
+
+  }else{ // no need verif
+    $pada_kelas = $get_kelas ? " pada kelas $get_kelas" : '.';
+    if($get_history){
+      echo div_alert('info',"Belum ada history $jenis yang telah Anda verifikasi$pada_kelas");
+    }else{
+      echo div_alert('info',"Belum ada $jenis yang harus Anda verifikasi$pada_kelas");
+    }
+  } // end no need verif
+
 }
 
 
 
-$o='';
-$s = "SELECT 1 FROM tb_peserta WHERE status=1 and id_role=1 and kelas='$kelas'";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-$jpa = mysqli_num_rows($q);
-$o .= "<div class=mb2 data-aos=fade-up >Jumlah peserta aktif <span class=darkred>$kelas</span> : $jpa peserta.</div>";
-
-$img_check_path = 'assets/img/icons/check.png';
-$rjenis = ['latihan','challenge'];
-foreach ($rjenis as $key => $jenis){
-  $s = "SELECT a.no,b.*, 
-  (
-    SELECT count(1) FROM tb_bukti_$jenis p 
-    WHERE id_assign_$jenis=a.id)  as jumlah_submiter,
-  (
-    SELECT count(1) FROM tb_bukti_$jenis p 
-    WHERE id_assign_$jenis=a.id 
-    AND p.tanggal_verifikasi is not null 
-    AND p.status=1)  as jumlah_verif,
-  (
-    SELECT count(1) FROM tb_bukti_$jenis p 
-    WHERE id_assign_$jenis=a.id 
-    AND p.tanggal_verifikasi is not null 
-    AND p.status=-1)  as jumlah_reject
-  FROM tb_assign_$jenis a 
-  JOIN tb_$jenis b ON a.id_$jenis=b.id 
-  WHERE a.kelas='$kelas' 
-  ";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-
-  
-  $last_jenis = '';
-  $delay = 0;
-  $i = 0;
-  if(mysqli_num_rows($q)){
-    while ($d=mysqli_fetch_assoc($q)) {
-      $i++;
-
-      $jumlah_submiter = $d['jumlah_submiter']>$jpa ? $jpa : $d['jumlah_submiter'];
-      $jumlah_verif = $d['jumlah_verif'];
-      $jumlah_reject = $d['jumlah_reject'];
-      $jumlah_unverif = $jumlah_submiter-$jumlah_verif-$jumlah_reject;
-
-      if($jumlah_submiter==$jumlah_verif){
-        $jumlah_show = '<span class="hijau miring">all verified</span>';
-      }elseif($jumlah_unverif>0 and $jumlah_reject>0){
-        $jumlah_show = "<span class='hijau miring'>$jumlah_verif verified</span>";
-        $jumlah_show .= " :: <span class='red miring'>$jumlah_unverif unverified</span>";
-        $jumlah_show .= " :: <span class='darkred miring'>$jumlah_reject rejected</span>";
-      }elseif($jumlah_unverif>0){
-        $jumlah_show = "<span class='hijau miring'>$jumlah_verif verified</span>";
-        $jumlah_show .= " :: <span class='red miring'>$jumlah_unverif unverified</span>";
-      }elseif($jumlah_reject>0){
-        $jumlah_show = "<span class='hijau miring'>$jumlah_verif verified</span>";
-        $jumlah_show .= " :: <span class='darkred miring'>$jumlah_reject rejected</span>";
-      }
-
-      $persen_submiter = round($jumlah_submiter/$jpa*100,0);
-      $green = $persen_submiter==100 ? 'hijau' : 'darkred';
-      $jumlah_show = $persen_submiter==0 ? '<span class="abu miring">none</span>' : $jumlah_show;
-
-      $judul = $last_jenis==$jenis ? '' : "<div class='tebal darkblue proper mb2 '>verifikasi $jenis</div>";
-      $delay = $last_jenis==$jenis ? $delay : $delay += 300;
-      $wadah = $last_jenis==$jenis ? '' : "<div class=wadah data-aos=fade-up data-aos-delay=$delay>";
-      $end_wadah = ($last_jenis==$jenis or $last_jenis=='') ? '' : '</div>';
-
-      echo "<h1>$last_jenis==$jenis</h1>";
-
-      $grad = $persen_submiter>=50 ? '#faf,#f5f' : '#faa,#f55';
-      $grad = $persen_submiter>=75 ? '#aaf,#55f' : $grad;
-      $grad = $persen_submiter>=90 ? '#9d9,#3d3' : $grad;
-
-      $o .= "
-        $end_wadah$wadah$judul$d[no]. 
-        <a href='?activity&jenis=$jenis&no=$d[no]'>$d[nama]</a> : 
-
-
-        <div class='ml4 mb2 kecil'>
-          <span class=$green>$jumlah_submiter ($persen_submiter%) submiter</span> 
-          :: 
-          $jumlah_show
-          <div class='progress'>
-            <div class='progress-bar' role=progressbar aria-valuenow=$persen_submiter aria-valuemin=0 aria-valuemax=100 style='width:$persen_submiter%; background: linear-gradient($grad)'>
-            </div>
-          </div> 
-        </div>
-      ";
-      $last_jenis = $jenis;
-    } //end while
-  }else{
-    $o.= "<div class='mb4 mt4 abu miring wadah' data-aos=fade-left data-aos-delay=300>Verifikasi $jenis belum ada.";
-  }
-
-  $o .= '</div>';
-} //end foreach
-
 ?>
-<!-- <style>
-.tiga_digit{width:50px;text-align:center;font-family:consolas}
-.label_editable{display:inline-block; width:120px;}
-</style> -->
-<section class="about">
-  <div class="container">
-
-    <div class="section-title" data-aos="fade-up">
-      <h2 class=proper>Verifikasi</h2>
-    </div>
-
-    <?=$o?>
-
-  </div>
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script>
   $(function(){
-    let jenis = $('#jenis').text();
-    let id_sesi = $('#id_sesi').text();
-    let id_jenis = $('#id_jenis').text();
-    // alert(id_jenis);
-
-    $('#set_now').click(function(){
-      // alert(1)
-      let nd = new Date();
-      let y = nd.getFullYear();
-      let m = nd.getMonth()+1;
-      let d = nd.getDate();
-      let h = nd.getHours();
-      let i = nd.getMinutes();
-      // console.log(y,m,d,h,i)
-
-      let z = confirm('Isi tanggal mulai ke saat ini?'); 
-      if(!z) return;
-
-      $('#tanggal_'+jenis+'__'+id_jenis).val(`${y}-${m}-${d} ${h}:${i}`);
-    })
-
-    $('.input_editable').focusout(function(){
-      // alert($(this).prop('id'))
+    $(".icon_peserta").click(function(){
       let tid = $(this).prop('id');
       let rid = tid.split('__');
-      let kolom = rid[0];
-      let id_jenis = rid[1];
-
-      let isi_lama = $('#'+kolom+'2__'+id_jenis).text();
-      let isi_baru = $(this).val().trim();
-      if(isi_lama==isi_baru) return;
-      if(isi_baru==''){
-        let y = confirm('Ingin mengosongkan data?');
-        if(!y){
-          // console.log(isi_lama);
-          $('#'+tid).val(isi_lama);
-          return;
-        }
-        // $('#'+tid).val(isi_lama);
-      }
-      let aksi = 'ubah';
-      let link_ajax = `ajax/ajax_crud_jenis.php?aksi=${aksi}&id=${id_jenis}&kolom=${kolom}&isi_baru=${isi_baru}&id_sesi=${id_sesi}&jenis=${jenis}`
-      // alert(link_ajax);
-      $.ajax({
-        url:link_ajax,
-        success:function(a){
-          if(a.trim()=='sukses'){
-            $('#'+tid).addClass('gradasi-hijau biru');
-            $('#'+kolom+'2__'+id_jenis).text(isi_baru);
-          }else{
-            alert(a)
-          }
-        }
-      })
-
+      let aksi = rid[0];
+      let id_peserta = rid[1];
+      let id_bukti = rid[2];
+      let dual_id = id_peserta + '__' + id_bukti;
+      let src = $("#div_img_peserta__"+dual_id).text();
+      $("#div_img_peserta__"+dual_id).html(`<img class='foto_profil' src='${src}'/>`);
+      $("#div_img_peserta__"+dual_id).fadeIn();
+      $("#icon_peserta__"+dual_id).fadeOut();
     })
   })
 </script>

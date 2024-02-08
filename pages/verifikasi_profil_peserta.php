@@ -62,15 +62,15 @@ if(mysqli_num_rows($q)==0){
                 <table width=100%>
                   <tr>
                     <td width=50%>
-                      <button class='btn btn-success btn-sm btn-block btn_aksi' id=accept__$id>Accept</button>
+                      <button class='btn btn-success btn-sm btn-block btn_verif' id=accept__$id>Accept</button>
                     </td>
                     <td width=50%>
-                      <button class='btn btn-danger btn-sm btn-block btn_aksi' id=reject__$id>Reject</button>
+                      <button class='btn btn-danger btn-sm btn-block btn_verif' id=reject__$id>Reject</button>
                     </td>
                   </tr>
                   <tr>
                     <td colspan=2>
-                      <button class='btn btn-primary btn-sm btn-block btn_aksi' id=formal__$id>Formal</button>
+                      <button class='btn btn-primary btn-sm btn-block btn_verif' id=formal__$id>Formal</button>
                     </td>
                   </tr>
                 </table>
@@ -119,7 +119,7 @@ if($id_role==2) include 'verifikasi_war_profil.php';
 
 ?><script>
   $(function(){
-    $('.btn_aksi').click(function(){
+    $('.btn_verif').click(function(){
       let tid = $(this).prop('id');
       let rid = tid.split('__');
       let aksi = rid[0];
