@@ -12,30 +12,31 @@ c.kelas,
   SELECT p.id FROM tb_bukti_$jenis p
   JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
   WHERE p.id_peserta=a.id 
-  AND q.id_$jenis=$id_jenis) id_jenis, 
+  AND q.id_$jenis=$id_jenis) id_jenis,
 (
   SELECT 1 FROM tb_bukti_$jenis p 
   JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
   WHERE p.id_peserta=a.id 
-  AND q.id_$jenis=$id_jenis) sudah_mengerjakan, 
+  AND q.id_$jenis=$id_jenis) sudah_mengerjakan ,
 (
   SELECT 1 FROM tb_bukti_$jenis p 
   JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
   WHERE p.id_peserta=a.id 
   AND q.id_$jenis=$id_jenis 
-  AND tanggal_verifikasi is null) belum_verif, 
+  AND tanggal_verifikasi is null) belum_verif,
 (
   SELECT 1 FROM tb_bukti_$jenis p 
   JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
   WHERE p.id_peserta=a.id 
   AND q.id_$jenis=$id_jenis 
   AND tanggal_verifikasi is not null 
-  AND status=-1) kena_reject, 
+  AND status=-1) kena_reject,
 (
   SELECT $kolom_link FROM tb_bukti_$jenis p 
   JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
   WHERE p.id_peserta=a.id 
   AND q.id_$jenis=$id_jenis) link  
+
 FROM tb_peserta  a 
 JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
 JOIN tb_kelas c ON b.kelas=c.kelas 
@@ -44,12 +45,14 @@ WHERE a.id_role=1
 AND a.status = 1 
 AND c.status = 1 
 AND d.id_room=$id_room 
-ORDER BY a.nama
+AND a.nama NOT LIKE '%DUMMY'
+ORDER BY c.kelas,a.nama
 ";
 // echo "<pre>$s</pre>";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $rsudah = [];
 $rsudah_kelas = [];
+$rsudah_link = [];
 $rbelum = [];
 $rbelum_kelas = [];
 $runverif = [];
@@ -66,9 +69,6 @@ while ($d=mysqli_fetch_assoc($q)) {
   $folder_uploads = $d['folder_uploads'];
   $nama = ucwords(strtolower($d['nama']));
   if($d['sudah_mengerjakan']){
-    array_push($rsudah,$nama);
-    array_push($rsudah_kelas,$d['kelas']);
-    array_push($rfu_sudah,$folder_uploads);
     if($d['belum_verif']){
       array_push($rid,$d['id']);
       array_push($rid_jenis,$d['id_jenis']);
@@ -78,12 +78,18 @@ while ($d=mysqli_fetch_assoc($q)) {
       if($jenis=='challenge'){
         $rlink[$d['id']] = $d['link'];
       }
+    }else{ // sudah mengerjakan dan sudah verif
+      if($d['kena_reject']){
+        array_push($rreject,$nama);
+        array_push($rreject_kelas,$d['kelas']);
+        array_push($rfu_reject,$folder_uploads);
+      }else{ // sudah mengerjakan dan sudah verif dan no-reject
+        array_push($rsudah,$nama);
+        array_push($rsudah_kelas,$d['kelas']);
+        array_push($rsudah_link,$d['link']);
+        array_push($rfu_sudah,$folder_uploads);
+      }
     } 
-    if($d['kena_reject']){
-      array_push($rreject,$nama);
-      array_push($rreject_kelas,$d['kelas']);
-      array_push($rfu_reject,$folder_uploads);
-    }
   }else{
     array_push($rbelum,$nama);
     array_push($rbelum_kelas,$d['kelas']);
@@ -92,19 +98,23 @@ while ($d=mysqli_fetch_assoc($q)) {
 
 
 $sudah = ''; 
-foreach ($rsudah as $key => $value){
+foreach ($rsudah as $key => $nama){
   $path_bukti = "uploads/$rfu_sudah[$key]/$jenis-$id_assign.jpg";
-  if(file_exists($path_bukti)){
-    $show_bukti =  "
-      <span class=show_bukti id=show_bukti__$id_bukti>Show Accepted Bukti</span>
-      <div class='div_bukti hideit' id=div_bukti__$id_bukti>$path_bukti</div>
-    ";
-  
+  if($jenis=='latihan'){
+    if(file_exists($path_bukti)){
+      $show_bukti =  "
+        <span class=show_bukti id=show_bukti__$id_bukti>Show Accepted Bukti</span>
+        <div class='div_bukti hideit' id=div_bukti__$id_bukti>$path_bukti</div>
+      ";
+    
+    }else{
+      $show_bukti = "<span class=red>$path_bukti :: Bukti gambar tidak ada.</span>";
+    }
   }else{
-    $show_bukti = "<span class=red>$path_bukti :: Bukti gambar tidak ada.</span>";
+    $show_bukti = "<a target=_blank href='$rsudah_link[$key]'>Link Bukti</a>";
   }
   
-  $sudah .= '<div>'.($key+1).'. '.$rsudah_kelas[$key]." ~ $value ~ $show_bukti</div> ";
+  $sudah .= '<div>'.($key+1).'. '.$rsudah_kelas[$key]." ~ $nama ~ $show_bukti</div> ";
 } 
 
 $reject = ''; 
@@ -148,11 +158,14 @@ foreach ($runverif as $key => $value){
   
   $btn_reject = $id_role!=3 ? "<button class='btn btn-danger btn-sm btn_aksi_old btn-block mb1' id=reject__$id_bukti>Reject</button>" : "<button class='btn btn-danger btn-sm btn-block mb1' onclick='alert(\"Anda Login sebagai Supervisor! Terimakasih sudah mencoba Reject $jenis dari Peserta. Reject wajib disertai dengan alasan reject agar peserta segera re-upload revisi $jenis-nya.\")'>Reject</button>";
   
+  // langsung tampil accept/reject untuk challenge
+  $hideit = $jenis=='challenge' ? '' : 'hideit';
+
   $img_or_zip = "
     <div class=wadah id=blok_bukti__$id_bukti>
       $bukti_show 
 
-      <div class='hideit' id=btn_accept_reject__$id_bukti> 
+      <div class='$hideit' id=btn_accept_reject__$id_bukti> 
         <div class='row mt-2'> 
           <div class='col-sm-6'>
             $btn_accept
@@ -180,8 +193,8 @@ echo "
   </div>
   <div id=submiter class=hideita>
   ";
-  echo '<div class=wadah data-zzz-aos=fade-up><div class="tebal biru">Dikerjakan oleh '.count($rsudah).' peserta:</div>'.$sudah.$info_reject.'</div>';
   echo '<div class=wadah data-zzz-aos=fade-up>'.$belum_diverif.$unverif.'</div>';
+  echo '<div class=wadah data-zzz-aos=fade-up><div class="tebal biru">Dikerjakan oleh '.count($rsudah).' peserta:</div>'.$sudah.$info_reject.'</div>';
   echo '<div class=wadah data-zzz-aos=fade-up><div class="tebal red">Belum mengerjakan '.count($rbelum).' peserta:</div>'.$belum.'</div>';
 
 echo '</div>';

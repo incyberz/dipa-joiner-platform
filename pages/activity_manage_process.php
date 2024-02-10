@@ -23,9 +23,9 @@ if(isset($_POST['btn_update_jenis'])){
 }
 
 if(isset($_POST['btn_update_assign'])){
-  echo '<pre>';
-  var_dump($_POST);
-  echo '</pre>';
+  // echo '<pre>';
+  // var_dump($_POST);
+  // echo '</pre>';
 
   $id = $_POST['btn_update_assign'];
   unset($_POST['btn_update_assign']);

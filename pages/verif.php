@@ -45,28 +45,8 @@ function menit_show($m){
   }
 }
 
-
-$s = "SELECT b.* FROM tb_room_kelas a 
-JOIN tb_kelas b ON a.kelas=b.kelas 
-WHERE a.id_room=$id_room 
--- AND b.prodi != 'DEV'
-";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-if(!mysqli_num_rows($q)){
-  die('Room ini belum punya kelas.');
-}else{
-  $font_size = $get_kelas ? 'f10' : 'f16';
-  $li = "<li><a class='$font_size' href='?verif&history=$get_history' >All Kelas</a></li>";
-  while($d=mysqli_fetch_assoc($q)){
-    $reg = strtoupper($d['shift'])=='P' ? 'REG' : 'NR';
-    $font_size = $d['kelas']==$get_kelas ? 'f16' : 'f10';
-    $li.= "<li><a class='$font_size' href='?verif&history=$get_history&kelas=$d[kelas]'>$d[prodi]-$reg-SM$d[semester]</a></li>";
-  }
-  echo "
-  <style>#list_kelas li{list-style:none}</style>
-  <ul class='flexy m0 p0' id=list_kelas>$li</ul>
-  ";
-}
+$param_awal = "verif&history=$get_history";
+include 'navigasi_kelas.php';
 
 $sql_kelas = $get_kelas ? "g.kelas = '$get_kelas'" : '1';
 
@@ -118,6 +98,7 @@ foreach ($rjenis as $key => $jenis) {
             <td colspan=100% class='red f12 miring'>Data limitted, hanya tampil $limit row dari total $row_count. Silahkan Approve/Reject !</td>
           </tr>
         ";
+        break;
       }else{ // row <= 10
 
         $id_jenis=$d['id_jenis'];

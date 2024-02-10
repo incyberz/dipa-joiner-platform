@@ -21,6 +21,7 @@ $jumlah_ask = mysqli_num_rows($q);
 $red = $available_questions ? 'red' : 'green';
 $available_question_show = "<span class='count_badge badge_$red' id='available_questions'>$available_questions</span>" ;
 
+$target_kelas_header = $id_role==2 ? 'all' : $kelas;
 ?>
 <header id="header" class="fixed-top d-flex align-items-center">
   <div class="container d-flex align-items-center justify-content-between">
@@ -38,7 +39,7 @@ $available_question_show = "<span class='count_badge badge_$red' id='available_q
         <li><a class="nav-link scrollto" href="?pengajar">Pengajar</a></li>
         <li><a class="nav-link scrollto" href="?teams">Teams</a></li>
         <!-- <li><a class="nav-link scrollto" href="?peserta">Peserta</a></li> -->
-        <li><a class="nav-link scrollto" href="?grades&kelas=<?=$kelas?>">Grades</a></li>
+        <li><a class="nav-link scrollto" href="?grades&kelas=<?=$target_kelas_header?>">Grades</a></li>
         <!-- <li><a class="nav-link scrollto" href="#services">Services</a></li>
         <li><a class="nav-link scrollto " href="#portfolio">Portfolio</a></li>
         <li><a class="nav-link scrollto" href="#team">Team</a></li>
@@ -129,6 +130,7 @@ $available_question_show = "<span class='count_badge badge_$red' id='available_q
           if($id_role==2) echo "
             <li class='dropdown'><a  href='#'><span class='tebal darkblue'>$room ADMIN</span> <i class='bi bi-chevron-down'></i></a>
               <ul>
+                <li><a href='?target_kelas'>Set Target Kelas</a></li>
                 <li><a href='?assign_room_kelas'>Assign Room Kelas</a></li>
                 <li><a href='?master&p=latihan'>Master Latihan</a></li>
                 <li><a href='?master&p=challenge'>Master Challenge</a></li>

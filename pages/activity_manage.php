@@ -1,5 +1,5 @@
 <hr>
-<div class="wadah gradasi-kuning">
+<div class="hideit wadah gradasi-kuning">
   <?php
   $img_detail = img_icon('detail');
 
@@ -29,7 +29,7 @@
       <table class=table>
         $tr
       </table>
-      <button class='btn btn-primary w-100' name=btn_update_assign value=$id_assign>Update Assign $jenis</button>
+      <button class='btn btn-primary w-100' name=btn_update_assign value=$id_assign>Update Assign $jenis :: $kelas</button>
     </form>
     ";
 

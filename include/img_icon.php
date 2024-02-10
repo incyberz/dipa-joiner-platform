@@ -17,13 +17,5 @@ function img_icon($nama,$w=20,$h=20){
   }
 }
 
-// function img_icon_src($nama){
-//   $r = rand(1,9);
-//   $me = "assets/img/img_icon/$nama-$r.png";
-//   if(file_exists($me)){
-//     return $me;
-//   }else{
-//     $r = rand(1,14);
-//     return "assets/img/img_icon/random/$r.png";
-//   }
-// }
+$img_edit = img_icon('edit');
+$img_add = img_icon('add');

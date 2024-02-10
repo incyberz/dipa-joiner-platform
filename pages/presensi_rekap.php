@@ -1,22 +1,23 @@
-
-  <style>
-    .border_blue{border: solid 3px blue;}
-    .border_red{border: solid 1px #f55;}
-    .border_green{border: solid 1px #5f5;}
-  </style>
 <?php
 # =================================================================
 instruktur_only();
 include 'include/date_managements.php';
+$img_ontime = img_icon('check');
+$img_late = img_icon('check_brown');
+$img_reject = img_icon('reject');
 
-$show_img = $_GET['show_img'] ?? 0;
-$menu1 = $show_img ? '<a href="?presensi_rekap">Hide Profile</a>' : '<a href="?presensi_rekap&show_img=1">Show Profile Peserta</a>';
+$target_kelas_info = $target_kelas ? "Target kelas : $target_kelas" : 'All kelas pada room ini.';
+
 echo "
   <div class='section-title' data-aos-zzz='fade-up'>
     <h2>Rekap Presensi</h2>
-    <div>$menu1</div>
+    <div>$target_kelas_info</div>
   </div>
 ";
+
+$get_kelas = $_GET['kelas'] ?? '';
+$param_awal = 'presensi_rekap';
+include 'navigasi_kelas.php';
 
 
 # ====================================================
@@ -29,101 +30,126 @@ $rid_sesi = [];
 # ====================================================
 $s = "SELECT a.*, 
 a.id as id_sesi, 
-a.nama as nama_sesi 
-FROM tb_sesi a WHERE a.id_room=$id_room";
+a.nama as nama_sesi,
+(
+  SELECT 1 FROM tb_sesi WHERE id=a.id 
+  AND '$today' > awal_presensi) is_presensi_aktif 
+FROM tb_sesi a 
+WHERE a.id_room=$id_room";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 if(mysqli_num_rows($q)==0){
   echo div_alert('danger', "Belum ada sesi pada room $room.");
 }else{
-  // $div = '';
   while($d=mysqli_fetch_assoc($q)){
-    // $id=$d['id'];
     $rid_sesi[$d['no']]=$d['id_sesi'];
-
-    // $div .= "<div>$d[nama_sesi]</div>";
+    $ris_presensi_aktif[$d['id_sesi']]=$d['is_presensi_aktif'];
   }
 }
 
-// echo '<pre>';
-// var_dump($rid_sesi);
-// echo '</pre>';
-
-// echo $div;
 
 # ====================================================
 # GET LIST PESERTA
 # ====================================================
+$sql_kelas = $target_kelas ? "c.kelas='$target_kelas'" : '1';
+if($get_kelas) $sql_kelas = "c.kelas = '$get_kelas'";
+
 $s = "SELECT 
-a.id as id_rp, 
+a.id as id_kelas_peserta, 
 b.id as id_peserta, 
 b.nama as nama_peserta ,
-b.kelas  
-FROM tb_room_player a 
+c.kelas  
+FROM tb_kelas_peserta a 
 JOIN tb_peserta b ON a.id_peserta=b.id 
-JOIN tb_kelas c ON b.kelas=c.kelas  
-WHERE a.id_room=$id_room 
+JOIN tb_kelas c ON a.kelas=c.kelas  
+JOIN tb_room_kelas d ON c.kelas=d.kelas 
+WHERE d.id_room=$id_room 
 AND b.status=1 
-ORDER BY c.shift, b.kelas, b.nama 
+AND $sql_kelas 
+AND b.nama NOT LIKE '%DUMMY%' 
+ORDER BY c.shift, c.kelas, b.nama 
 ";
 // echo "<pre>$s</pre>";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 
-$div = '';
+$tr = '';
 if(mysqli_num_rows($q)==0){
   echo div_alert('danger', "Belum ada data peserta pada room ini.");
 }else{
-  $div = '';
+
+  $table_tag = "<table class='table mt4'>";
+  
+  $th_sesi = '';
+  foreach ($rid_sesi as $no => $id_sesi) $th_sesi .= "<th>P$no</th>";
+  $thead = "
+    <thead class='gradasi-toska'>
+      <th>No</th>
+      <th>Peserta / Kelas</th>
+      $th_sesi
+    </thead>
+  ";
+
+  $tr = '';
   $i = 0;
+  $last_kelas = '';
   while($d=mysqli_fetch_assoc($q)){
-    $i++;
-    $id_rp=$d['id_rp'];
+    $id_kelas_peserta=$d['id_kelas_peserta'];
     $nama = ucwords(strtolower($d['nama_peserta']));
 
-    $sesies = '<div class="flexy tengah" style="gap:0; height: 100%">';
-    foreach ($rid_sesi as $no => $id_sesi) {
-      $sesies .= "<div class='bordered' style='flex:1; '>P$no</div>";
+    $s2 = "SELECT id as id_sesi,
+    (
+      SELECT is_ontime FROM tb_presensi 
+      WHERE id_peserta=$d[id_peserta] 
+      AND id_sesi=a.id) is_ontime   
+    FROM tb_sesi a WHERE a.id_room=$id_room";
+    $q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));
+    $td_presensi = '';
+    while($d2=mysqli_fetch_assoc($q2)){
+      $icon_hadir = '';
+      if($d2['is_ontime']==='1'){
+        $icon_hadir = $img_ontime;
+      }elseif($d2['is_ontime']==='0'){
+        $icon_hadir = $img_late;
+      }else{
+        if($ris_presensi_aktif[$d2['id_sesi']]){
+          $icon_hadir = $img_reject;
+        }else{
+          $icon_hadir = '-';
+        }
+      }
+      $td_presensi .= "<td>$icon_hadir</td>";
     }
-    $sesies .= '</div>';
+
 
     # ==============================================================
     # FINAL OUTPUT :: SHOW IMAGE OR COMPACT
     # ==============================================================
-    if($show_img){
-      $div .= "
-          <div class=mb1 style='display:grid; grid-template-columns: 300px auto'>
-            <div>
-              <div class='flexy p1 bordered'>
-                <div>
-                  <a href='assets/img/peserta/wars/peserta-$d[id_peserta]-hi.jpg' target=_blank><img src='assets/img/peserta/wars/peserta-$d[id_peserta].jpg' class=profil_penjawab ></a>
-                </div>
-                <div>
-                  <div class='kecil miring abu'>$i.</div>
-                  <div>$nama</div>
-                  <div class='miring abu kecil'>$d[kelas]</div>
-                </div>
-              </div>        
-            </div>
-            <div>
-              $sesies
-            </div>
-          </div>
-      ";
-    }else{
-      $div .= "
-        <div class=row>
-          <div class=col-lg-8>
-            <div>$i. $nama</div>
-          </div>
-          <div class=col-lg-4>
-            <div class='miring abu kecil'>$d[kelas]</div>
-          </div>
-        </div>
-      ";
+    if($last_kelas!=$d['kelas']){
+      $tr.= "</table>$table_tag$thead";
+      $i=0;
     }
-  }
-}
 
-echo $div;
+    $i++;
+    $tr.= "
+      <tr>
+        <td>$i</td>
+        <td>
+          $d[nama_peserta]
+          <div class='f12 abu'>$d[kelas]</div>
+        </td>
+        $td_presensi
+      </tr>
+    ";
+
+
+    $last_kelas = $d['kelas'];
+
+  } // end while list peserta
+
+  echo "
+      $tr
+    </table>
+  ";
+}
 
 
 

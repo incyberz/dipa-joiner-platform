@@ -108,7 +108,7 @@ $hideit_btn_join = ($nama!='' and $username!='' and $select_kelas!='0') ? '' : '
   <form method=post>
     <div class="form-group">
       <label for="nama">Nama Lengkap</label>
-      <input class='form-control input_isian mt1' type="text" id='nama' name='nama' required maxlength=20 minlength=3 value='<?=$nama?>'>
+      <input class='form-control input_isian mt1' type="text" id='nama' name='nama' required maxlength=50 minlength=3 value='<?=$nama?>'>
     </div>
     <div class="form-group">
       <label for="username">Username</label>

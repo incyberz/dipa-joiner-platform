@@ -17,7 +17,7 @@ if(0){
 session_start();
 // session_destroy(); exit;
 // echo '<pre style="margin-top: 170px">'; var_dump($_SESSION); echo '</pre>';
-$dm = 1;
+$dm = 0;
 $is_login = null;
 $id_role = null;
 $status = null;
@@ -33,6 +33,8 @@ $tahun_ajar = 20232;
 $id_room_kelas = null;
 $room = null;
 $nama_room = null;
+
+$target_kelas = $_SESSION['target_kelas'] ?? null;
 
 $unset = '<span class="consolas f12 red miring">unset</span>';
 $null = '<span class="consolas f12 red miring">null</span>';

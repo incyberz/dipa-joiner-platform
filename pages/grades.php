@@ -95,9 +95,6 @@ if($selisih>=600 and $id_role!=3 and $is_login){
       AND status=1
       ) as total_poin_challenge
 
-
-
-  
   FROM tb_peserta a 
   JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
   JOIN tb_kelas c ON b.kelas=c.kelas 
@@ -157,7 +154,7 @@ if($selisih>=600 and $id_role!=3 and $is_login){
     last_update_point=CURRENT_TIMESTAMP 
     WHERE id_peserta=$d[id_peserta] 
     AND id_room=$id_room";
-    if($id_role==2)echo "<div class='consolas f12 abu miring'>updating tb_poin success... $d[nama_peserta], total_poin: $total_poin</div>";
+    // if($id_role==2) echo "<div class='consolas f12 abu miring'>updating tb_poin success... $d[nama_peserta], total_poin: $total_poin</div>";
     // echo '<pre>';
     // var_dump($s2);
     // echo '</pre>';

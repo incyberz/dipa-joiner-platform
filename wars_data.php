@@ -56,7 +56,7 @@ if(mysqli_num_rows($q)){
   
   $selisih_war = strtotime('now')-strtotime($d['last_update']);
   // if($selisih_war>3600){
-  if($selisih_war>60){
+  if($selisih_war>3600){
     $must_update = 1; // if > 1 jam must update
   }
 

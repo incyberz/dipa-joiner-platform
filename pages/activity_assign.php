@@ -1,6 +1,20 @@
 <hr>
+<?php
+if(isset($_POST['btn_add_activity'])){
+  $s = "SELECT 1 FROM tb_$jenis WHERE nama='$_POST[nama]' and id_room=$id_room";
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  if(mysqli_num_rows($q)){
+    echo div_alert('danger',"Nama Challenge sudah ada pada room ini.");
+  }else{
+    $s = "INSERT INTO tb_$jenis (nama,id_room) VALUES ('$_POST[nama]',$id_room)";
+    $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+    jsurl();
+  }
+}
+?>
 <div class="wadah">
-  <h5 class=darkblue>Activity For Admin</h5>
+  <h2 class='abu f12 consolas'>Activity For Admin</h2>
+  <h3 class='darkblue'>Assigning for Activity</h3>
   <p>Room ini diikuti oleh kelas</p>
   <?php
   $s = "SELECT id,no,nama FROM tb_sesi WHERE id_room=$id_room";
@@ -39,17 +53,21 @@
     $id_jenis = $arr[0];
     $id_sesi = $arr[1];
 
+    
+    
     $pesan='';
     foreach ($arr_id_room_kelas as $id_rk) {
-      $s = "SELECT 1 FROM tb_assign_$jenis WHERE id_$jenis=$id_jenis AND id_sesi=$id_sesi AND id_room_kelas='$id_rk'";
+      $s = "SELECT 1 FROM tb_assign_$jenis WHERE id_$jenis=$id_jenis AND id_room_kelas='$id_rk'";
+      // die($s);
       $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
       if(mysqli_num_rows($q)){
-        $pesan.= "<div>already assigned... skipped.</div>";
+        $s = "UPDATE tb_assign_$jenis SET id_sesi=$id_sesi  WHERE id_$jenis=$id_jenis AND id_room_kelas='$id_rk'";
       }else{
         $s = "INSERT INTO tb_assign_$jenis (id_$jenis,id_sesi,id_room_kelas) VALUES ($id_jenis,$id_sesi,'$id_rk')";
-        $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-        $pesan.= "<div>Assigned to: <u>$id_rk - $arr[0] - $arr[1]</u> ... OK</div>";
       }
+      $pesan.= "<br>executing $s ...";
+      $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+      $pesan.= "success";
     }
     echo "<div class='wadah gradasi-hijau'>$pesan</div>";
     jsurl();
@@ -126,6 +144,7 @@
   }
 
   $jumlah_kelas = count($arr_id_room_kelas);
+  $img_add = img_icon('add');
 
   echo "
     <form method=post>
@@ -138,6 +157,20 @@
         </thead>
         $tr
       </table>
+    </form>
+    <form method=post>
+      <div class=flexy>
+        <div>
+          <span onclick='alert(\"Untuk membuat $jenis baru silahkan input nama $jenis lalu klik tombol Tambah.\")'>$img_add</span>        
+        </div>
+        <div>
+          <input required minlength=5 maxlength=100 class='form-control form-control-sm' name=nama placeholder='nama $jenis'>
+        </div>
+        <div>
+          <button class='btn btn-success btn-sm' name=btn_add_activity >Tambah</button>
+        </div>
+      </div>
+      <div class='abu f12 mt2'>)* Setelah membuat $jenis baru, silahkan Anda assign! Dan untuk editing properti silahkan klik pada salah satu list assigned-$jenis di paling atas</div>
     </form>
   ";
 

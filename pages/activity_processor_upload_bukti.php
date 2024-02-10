@@ -2,7 +2,10 @@
 if(isset($_POST['btn_upload'])){
 
   $id_assign_jenis = $_POST['btn_upload'];
-  $s = "SELECT a.*,b.*  
+  $s = "SELECT 
+  a.*,
+  a.tanggal as tanggal_assign,
+  b.*  
   FROM tb_assign_$jenis a 
   JOIN tb_$jenis b ON a.id_$jenis=b.id 
   WHERE a.id=$id_assign_jenis";
@@ -12,12 +15,12 @@ if(isset($_POST['btn_upload'])){
   $d = mysqli_fetch_assoc($q);
 
   $no_jenis = $d['no'];
-  $tanggal_jenis = $d['tanggal'];
   $basic_point = $d['basic_point'];
   $ontime_point = $d['ontime_point'];
   $ontime_dalam = $d['ontime_dalam'];
   $ontime_deadline = $d['ontime_deadline'];
-
+  
+  $tanggal_jenis = $d['tanggal_assign'];
   $selisih = strtotime('now')-strtotime($tanggal_jenis);
 
   $sisa_ontime_point=0;

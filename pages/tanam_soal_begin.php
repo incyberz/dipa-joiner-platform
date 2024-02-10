@@ -230,7 +230,7 @@ if($id_sesi==''){
       </div>
 
       <div id=blok_toggle_pembahasan class='hideit mt2'>
-        <span class='btn btn-secondary btn-sm kecil' id=toggle_pembahasan>Tambah Pembahasan (+50 LP):</span>
+        <span class='hideit btn btn-secondary btn-sm kecil' id=toggle_pembahasan>Tambah Pembahasan (+50 LP):</span>
       </div>
       <div id=blok_pembahasan class='hideit mt2'>
         <textarea name=pembahasan id=pembahasan class=form-control rows=6 minlength=30>$pembahasan</textarea>

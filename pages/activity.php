@@ -44,7 +44,10 @@ if(!$id_assign){
   }
   echo $list ? "<div class='wadah gradasi-kuning'>List $jenis yang belum bisa dikerjakan: <ol>$list</ol><div class='f12 biru miring'>Hubungi instruktur agar $jenis ini di-assign ke kelas kamu.</div></div>" : '';
 
-  $s = "SELECT a.id as id_assign, c.no, b.nama,
+  $s = "SELECT a.id as id_assign, 
+  b.nama,
+  (b.basic_point + b.ontime_point) as sum_point,
+  c.no, 
   (
     SELECT 1 FROM tb_bukti_$jenis 
     WHERE id_assign_$jenis=a.id 
@@ -59,7 +62,7 @@ if(!$id_assign){
   -- WHERE no is not null 
   WHERE 1  
   AND id_room_kelas='$id_room_kelas'
-  order by c.no";
+  order by c.no, sum_point";
   // echo "<pre>$s</pre>";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   if(!mysqli_num_rows($q)){
@@ -74,24 +77,27 @@ if(!$id_assign){
     while ($d=mysqli_fetch_assoc($q)) {
       $primary = $d['sudah_mengerjakan'] ? 'warning' : 'primary';
       $primary = $d['status_mengerjakan'] ? 'success' : $primary;
+      $sum_point = number_format($d['sum_point'],0);
       $rno .= "
         <div>
           <a class='btn btn-$primary btn-sm mb2' href='?activity&jenis=$jenis&id_assign=$d[id_assign]'>
             P$d[no] 
             ~ 
             $d[nama]
+            ~ 
+            $sum_point
           </a>
         </div>
       ";
     }
     echo "
-        Silahkan pilih $jenis yang dapat kamu kerjakan:
-        <div class=wadah>
-          $rno
-        </div>
-        <div class='kecil miring'>
-          <span class=hijau>hijau: sudah dikerjakan</span>; <span class=kuning>kuning: belum diverifikasi</span>; <span class=biru>biru: belum kamu kerjakan</span>
-        </div>
+      Silahkan pilih $jenis yang dapat kamu kerjakan:
+      <div class=wadah>
+        $rno
+      </div>
+      <div class='kecil miring'>
+        <span class=hijau>hijau: sudah dikerjakan</span>; <span class=kuning>kuning: belum diverifikasi</span>; <span class=biru>biru: belum kamu kerjakan</span>
+      </div>
     ";
   }
 
