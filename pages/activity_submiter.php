@@ -3,7 +3,16 @@
   .show_bukti:hover{letter-spacing: 1px}
 </style>
 <?php
-$kolom_link = $jenis=='challenge' ? 'link' : '0';
+$select_link = $jenis!='challenge' ? '0' : "link FROM tb_bukti_$jenis p 
+  JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
+  WHERE p.id_peserta=a.id 
+  AND q.id_$jenis=$id_jenis";
+$select_sublevel = $jenis!='challenge' ? '0' : "r.nama FROM tb_bukti_$jenis p 
+  JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
+  JOIN tb_sublevel_challenge r ON p.id_sublevel=r.id
+  WHERE p.id_peserta=a.id 
+  AND q.id_$jenis=$id_jenis";
+
 $s = "SELECT a.id,
 a.folder_uploads,
 a.nama,
@@ -32,10 +41,9 @@ c.kelas,
   AND tanggal_verifikasi is not null 
   AND status=-1) kena_reject,
 (
-  SELECT $kolom_link FROM tb_bukti_$jenis p 
-  JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id 
-  WHERE p.id_peserta=a.id 
-  AND q.id_$jenis=$id_jenis) link  
+  SELECT $select_link) link,
+(
+  SELECT $select_sublevel) sublevel 
 
 FROM tb_peserta  a 
 JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
@@ -65,6 +73,7 @@ $rfu_sudah = [];
 $rfu_reject = [];
 $rfu_unverif = [];
 $rlink = [];
+$rsublevel = [];
 while ($d=mysqli_fetch_assoc($q)) {
   $folder_uploads = $d['folder_uploads'];
   $nama = ucwords(strtolower($d['nama']));
@@ -77,6 +86,7 @@ while ($d=mysqli_fetch_assoc($q)) {
       array_push($rfu_unverif,$folder_uploads);
       if($jenis=='challenge'){
         $rlink[$d['id']] = $d['link'];
+        $rsublevel[$d['id']] = $d['sublevel'];
       }
     }else{ // sudah mengerjakan dan sudah verif
       if($d['kena_reject']){
@@ -151,7 +161,11 @@ foreach ($runverif as $key => $value){
     }
   }elseif($jenis=='challenge'){
     $link = $rlink[$rid[$key]];
-    $bukti_show = "Challenge's Link : <a href='$link' target=_blank>$link</a>";
+    $sublevel = $rsublevel[$rid[$key]];
+    $bukti_show = "
+      <div>Sublevel : <span class='f20 darkblue'>$sublevel</span></div>
+      Challenge's Link : <a href='$link' target=_blank>$link</a>
+    ";
   }
 
   $btn_accept = $id_role!=3 ? "<button class='btn btn-success btn-sm btn_aksi_old btn-block mb1' id=accept__$id_bukti>Accept</button>" : "<button class='btn btn-success btn-sm btn-block mb1' onclick='alert(\"Anda Login sebagai Supervisor! Terimakasih sudah mencoba Accept $jenis dari Peserta. Poin peserta akan direkap jika sudah terverifikasi oleh instruktur.\")'>Accept</button>";

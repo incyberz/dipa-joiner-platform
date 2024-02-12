@@ -3,14 +3,20 @@ if(isset($_POST['btn_submit_link'])){
   // echo '<pre>';
   // var_dump($_POST);
   // echo '</pre>';
+  $arr = explode('__',$_POST['btn_submit_link']);
 
-  $get_point = $_POST['btn_submit_link'];
+  $id_sublevel = $arr[0];
+  $get_point = $arr[1];
   $link = $_POST['bukti_link'];
+
+  if(!$id_sublevel) die('id_sublevel is null at activity sublevel process.');
+  if(!$get_point) die('id_sublevel is null at activity sublevel process.');
+  if(!$link) die('id_sublevel is null at activity sublevel process.');
 
 
   $s = "INSERT INTO tb_bukti_challenge 
-  (id_assign_challenge,get_point,id_peserta,link) VALUES 
-  ($id_assign,$get_point,$id_peserta,'$link')
+  (id_assign_challenge,get_point,id_peserta,link,id_sublevel) VALUES 
+  ($id_assign,$get_point,$id_peserta,'$link',$id_sublevel)
   ";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 

@@ -44,6 +44,7 @@ ORDER BY no
 $q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));
 $tr = '';
 $max_poin = 0;
+$id_sublevel_selected = null;
 $last_nama_sublevel = '';
 if(mysqli_num_rows($q2)==0){
   echo div_alert('danger', "Belum ada data sublevel.");
@@ -52,6 +53,7 @@ if(mysqli_num_rows($q2)==0){
     $max_poin += $d2['poin'];
     $poin_show = number_format($d2['poin'],0);
     $last_nama_sublevel = $d2['nama_sublevel'];
+    $id_sublevel_selected = $d2['id_sublevel'];
     $tr .= "
       <tr>
         <td>$d2[no]</td>
@@ -79,6 +81,8 @@ $total_point_show = number_format($total_point,0);
 
 $link_includes_show = $link_includes ? "<li>link harus mengandung kata: <u id=link_includes>$link_includes</u></li>" : '';
 $link_excludes_show = $link_excludes ? "<li>link tidak boleh ada kata: <u id=link_excludes>$link_excludes</u></li>" : '';
+
+$id_sublevel_and_total_point = $id_sublevel_selected. "__$total_point";
 
 $form_bukti = "
   <style>.label_check{transition:.2s}.label_check:hover{letter-spacing:.5px;color:darkblue}</style>
@@ -113,7 +117,7 @@ $form_bukti = "
         $link_includes_show
         $link_excludes_show
       </ul>
-      <button class='btn btn-primary w-100' name=btn_submit_link id=btn_submit_link value=$total_point disabled>Submit Link Bukti Challenge</button>
+      <button class='btn btn-primary w-100' name=btn_submit_link id=btn_submit_link value='$id_sublevel_and_total_point' disabled>Submit Link Bukti Challenge</button>
     </form>
   </div>
 ";

@@ -94,6 +94,7 @@ if($selisih>=600 and $id_role!=3 and $is_login){
       AND p.tanggal_verifikasi is not null 
       AND status=1
       ) as total_poin_challenge
+    
 
   FROM tb_peserta a 
   JOIN tb_kelas_peserta b ON a.id=b.id_peserta 

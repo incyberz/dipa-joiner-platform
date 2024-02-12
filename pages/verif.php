@@ -188,6 +188,11 @@ foreach ($rjenis as $key => $jenis) {
           ";
         }
 
+        $nama_jenis_show = $jenis=='challenge' ? "
+        <div class='abu miring f12'>$d[nama_jenis]</div>
+        Nama Sublevel
+        " 
+        : $d['nama_jenis'];
 
 
         $tr.= "
@@ -199,7 +204,7 @@ foreach ($rjenis as $key => $jenis) {
               $div_img_peserta
             </td>
             <td>
-              $d[nama_jenis] 
+              $nama_jenis_show 
               <span class='btn_aksi' id=detail".$id_bukti."__toggle>$img_detail</span>
               <div class='f12 abu'>$get_point_show LP $max_point</div> 
               <div class='hideit f12 abu wadah mt1' id=detail$id_bukti>

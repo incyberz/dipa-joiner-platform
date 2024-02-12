@@ -58,18 +58,34 @@ $pada_wag = "<a href='$d[wag]' target=_blank>Lihat Pada Whatsapp Group P$d[no_se
 $hasil = '<div class="kecil miring merah">kamu belum mengerjakan.</div>';
 if($id_bukti){
   $s2 = "SELECT a.*,b.no as no_lat, 
-  (SELECT nama FROM tb_peserta WHERE id=a.verified_by) as verified_by_name 
+  (
+    SELECT nama FROM tb_peserta 
+    WHERE id=a.verified_by) as verifikator
+
   FROM tb_bukti_$jenis a 
   JOIN tb_assign_$jenis b ON a.id_assign_$jenis=b.id 
+  JOIN tb_$jenis c ON b.id_$jenis=c.id  
   WHERE a.id=$id_bukti";
   $q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));
   $d2 = mysqli_fetch_assoc($q2);
   $tanggal_upload = $d2['tanggal_upload'];
   $get_point = $d2['get_point'];
   $tanggal_verifikasi = $d2['tanggal_verifikasi'];
-  $verified_by_name = $d2['verified_by_name'];
+  $verifikator = $d2['verifikator'];
   $status = $d2['status'];
   $alasan_reject = $d2['alasan_reject'];
+
+  $id_sublevel = '';
+  $nama_sublevel = '';
+  $no_sublevel = '';
+  if($jenis=='challenge'){
+    $id_sublevel = $d2['id_sublevel'] ?? die('id_sublevel is null at activity show.');
+    $s3 = "SELECT nama as nama_sublevel,no as no_sublevel FROM tb_sublevel_challenge WHERE id=$id_sublevel";
+    $q3 = mysqli_query($cn,$s3) or die(mysqli_error($cn));
+    $d3 = mysqli_fetch_assoc($q3);
+    $nama_sublevel = $d3['nama_sublevel'];
+    $no_sublevel = $d3['no_sublevel'];
+  }
 
   $form_hapus = "
     <form method=post>
@@ -79,7 +95,7 @@ if($id_bukti){
 
   if($tanggal_verifikasi!='' AND $status==1){
     $verif_icon = img_icon('check');
-    $verif_opsi = div_alert('success',"Selamat! Bukti kamu sudah terverifikasi oleh $verified_by_name pada $tanggal_verifikasi");
+    $verif_opsi = div_alert('success',"Selamat! Bukti kamu sudah terverifikasi oleh $verifikator pada $tanggal_verifikasi");
   }elseif($status==-1){
     $verif_icon = "<span class='red kecil miring'>(rejected :: $alasan_reject)</span>"; 
     $verif_opsi = div_alert('danger',"Maaf, bukti kamu ditolak dengan alasan $alasan_reject.$form_hapus");
@@ -119,9 +135,13 @@ if($id_bukti){
   $tanggal_upload_show = date('d/m/y H:i',strtotime($tanggal_upload));
 
   $screenshoot = $jenis=='latihan' ? 'Screenshoot' : 'Link bukti '.$jenis;
+
+  $sublevel_info = $jenis=='challenge' ? "<li class=kecil>Sublevel: <span class='f20 darkblue'>Level $no_sublevel # $nama_sublevel</span></li>" : '';
+
   $hasil = "
   <ul>
     <li><b class=darkblue>Get Point: $get_point LP</b> $verif_icon</li>
+    $sublevel_info
     <li class=kecil>Tanggal Upload: $tanggal_upload_show</li>
     <li class=kecil>Dikerjakan dalam $menit_show</li>
     <li class=kecil>$screenshoot: $scr</li>
@@ -205,7 +225,7 @@ if($id_bukti){
         </div>
       ";
 
-      $form_add_sublevel = "
+      $form_add_sublevel = $id_sublevel ? '' : "
         <form method=post>
           <div class=flexy>
             <div>+</div>
