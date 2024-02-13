@@ -1,5 +1,5 @@
 <hr>
-<div class="hideit wadah gradasi-kuning">
+<div class="wadah gradasi-kuning">
   <?php
   $img_detail = img_icon('detail');
 

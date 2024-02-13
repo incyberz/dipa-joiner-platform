@@ -107,19 +107,14 @@ if($id_bukti){
 
   if($jenis=='latihan'){
     $path_file = "uploads/$folder_uploads/$jenis-$id_assign.jpg";
-    $img_or_zip = $jenis=='latihan' ? "
+    $scr = "
       <div class=mb2 style=margin-left:-30px>
         <a href='$path_file' target=_blank onclick='return confirm(\"Buka gambar di Tab baru?\")'>
           <img src='$path_file' class='img-fluid'>
         </a>
         <div class=mt2>$verif_opsi</div>
       </div>
-    " : "
-      <a href='$path_file' target=_blank onclick='return confirm(\"Download file ZIP?\")'>Download ZIP File</a>
-      <div class=mt2>$verif_opsi</div>
     ";
-
-    $scr = $img_or_zip ;
   }else if($jenis=='challenge'){
     $scr = "<a href='$d2[link]' target=_blank>$d2[link]</a><div class=mt2>$verif_opsi</div>";
   }else{
@@ -245,7 +240,7 @@ if($id_bukti){
 
 }
 
-
+$link_panduan_show = $d['link_panduan'] ? "<a target=_blank href='$d[link_panduan]'>$d[link_panduan]</a>" : '<span class="consolas f12 miring">belum ada</span>';
 $tanggal_jenis_show = date('M d, H:i',strtotime($d['tanggal_assign']));
 $basic_point_show = number_format($d['basic_point'],0);
 $ontime_point_show = number_format($d['ontime_point'],0);
@@ -254,6 +249,10 @@ $ontime_deadline_show = eta(strtotime($tanggal_assign) - strtotime('now') + $d['
 
 $list_info = "
   <table class='table kecil mt2 table-striped'>
+    <tr>
+      <td class='tebal abu'>Link Panduan</td>
+      <td class='darkblue'>$link_panduan_show</td>
+    </tr>
     <tr>
       <td class='tebal abu'>Tanggal mulai</td>
       <td class='darkblue'>$tanggal_jenis_show</td>
@@ -296,6 +295,11 @@ echo "
   <h2 class=proper>$jenis</h2>
   <p>$yaitu</p>
 </div>
+";
+
+if($id_role==2) include 'include/form_target_kelas.php';
+
+echo "
 <div class='wadah gradasi-hijau' data-zzz-aos=fade-up>
   $pesan_upload
   
@@ -332,9 +336,9 @@ echo "
 # ADMIN ONLY
 # =========================================================
 if($id_role==2){
+  include 'activity_submiter.php';
   include 'activity_manage_process.php';
   include 'activity_manage.php';
-  include 'activity_submiter.php';
 }
 ?>
 

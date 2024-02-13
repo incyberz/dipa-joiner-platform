@@ -66,7 +66,9 @@ foreach ($rjenis as $key => $jenis) {
   e.nama as nama_jenis,
   e.*,
   g.kelas,
-  (SELECT nama FROM tb_peserta WHERE id=a.verified_by) verifikator 
+  (SELECT nama FROM tb_peserta WHERE id=a.verified_by) verifikator,
+  (SELECT nama FROM tb_sublevel_challenge WHERE id=a.id_sublevel) nama_sublevel
+
 
   FROM tb_bukti_$jenis a 
   JOIN tb_assign_$jenis b ON a.id_assign_$jenis=b.id 
@@ -80,7 +82,7 @@ foreach ($rjenis as $key => $jenis) {
   AND c.id_room = $id_room 
   AND h.id_room = $id_room 
   AND $sql_kelas 
-  ORDER BY g.kelas, d.nama, c.no 
+  ORDER BY e.nama,g.kelas, d.nama, c.no 
   "; 
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   $row_count = mysqli_num_rows($q);
@@ -190,7 +192,7 @@ foreach ($rjenis as $key => $jenis) {
 
         $nama_jenis_show = $jenis=='challenge' ? "
         <div class='abu miring f12'>$d[nama_jenis]</div>
-        Nama Sublevel
+        $d[nama_sublevel]
         " 
         : $d['nama_jenis'];
 

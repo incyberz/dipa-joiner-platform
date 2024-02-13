@@ -169,6 +169,7 @@ $only_peserta = $id_role<=1 ? ' a.id_role = 1' : '1';
 $sql_kelas = ($get_kelas=='' || $get_kelas=='all') ? '1' : "b.kelas = '$get_kelas'";
 
 $s = "SELECT *,
+d.id as id_peserta,
 (
   SELECT count(1) FROM tb_peserta p 
   JOIN tb_kelas_peserta q ON q.id_peserta=p.id 
@@ -225,10 +226,10 @@ if(mysqli_num_rows($q)){
     }
 
     $login_as = $id_role==2 ? "<a href='?login_as&username=$d[username]' target=_blank>$img_login_as</a>" : '';
-    $td_profil = ($id_role==2 and $show_img) ? "<td><img src='assets/img/peserta/peserta-$d[id].jpg' class=foto_profil></td>" : '';
+    $td_profil = ($id_role==2 and $show_img) ? "<td><img src='assets/img/peserta/wars/peserta-$d[id_peserta].jpg' class=foto_profil></td>" : '';
 
-    $toggle_profil = $id_role==2 ? "<a href='?grades&show_img=1'>Show Profile</a>" : '';
-    $toggle_profil = ($id_role==2 and $show_img) ? "<a href='?grades'>Hide Profile</a>" : $toggle_profil;
+    $toggle_profil = $id_role==2 ? "<a href='?grades&kelas=$get_kelas&show_img=1'>Show Profile</a>" : '';
+    $toggle_profil = ($id_role==2 and $show_img) ? "<a href='?grades&kelas=$get_kelas'>Hide Profile</a>" : $toggle_profil;
 
     $tr .= "
       <tr style='$tr_sty'>
