@@ -1,4 +1,29 @@
 <?php
+if(isset($_POST['btn_approve_all'])){
+  $post_jenis = $_POST['jenis'] ?? die('<span class=red>dibutuhkan data post_jenis pada verif process.</span>');
+  echo "<div class='consolas abu f12'>approving multiple bukti $post_jenis...</div><hr>";
+
+  $arr = explode(',',$_POST['btn_approve_all']);
+
+  $s = "UPDATE tb_bukti_$post_jenis SET 
+  tanggal_verifikasi=CURRENT_TIMESTAMP,
+  verified_by = $id_peserta,
+  status = 1 
+  WHERE "; //id=$id_bukti
+  foreach ($arr as $id_bukti) {
+    if($id_bukti){
+      echo "<div class='consolas abu f12'>updating bukti $post_jenis, id: $id_bukti...</div>";
+      $s.= " id=$id_bukti OR ";
+    }
+  }
+  $s.= 'false';
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  echo "<div class='alert alert-success consolas abu f12 mt2'>executing all commands...success.</div>";
+
+  jsurl('',3000);
+
+}
+
 if(isset($_POST['btn_approve'])){
   $arr = explode('__',$_POST['btn_approve']);
   $status = $arr[0];

@@ -88,6 +88,7 @@ $target_kelas_header = $id_role==2 ? 'all' : $kelas;
                 <li><a href='?lazy_soldier'>Lazy Soldier</a></li>
                 <li><a href='?good_soldier'>Good Soldier</a></li>
                 <li><a href='?war_statistics'>War Statistics</a></li>
+                <li><a href='?upload_profil_perang'>Reupload Profil Perang</a></li>
               </ul>
             </li>
             <li class='dropdown'><a  href='#'><span class='tebal darkblue'>$room</span> <i class='bi bi-chevron-down'></i></a>

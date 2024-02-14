@@ -17,7 +17,7 @@ if(0){
 session_start();
 // session_destroy(); exit;
 // echo '<pre style="margin-top: 170px">'; var_dump($_SESSION); echo '</pre>';
-$dm = 0;
+$dm = 1;
 $is_login = null;
 $id_role = null;
 $status = null;

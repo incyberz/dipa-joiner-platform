@@ -32,5 +32,10 @@ if($punya_profil_perang){
   include 'tanam_soal_begin.php';
 }else{
   $meme = meme('dont-have');
-  echo div_alert('danger tengah', "$meme <br>Kamu mesti punya profil perang dulu!<hr><a href=?upload_profil_perang>Upload Profile Pose Bebas</a>");
+  // echo div_alert('danger tengah', "$meme <br>Kamu mesti punya profil perang dulu!<hr><a href=?upload_profil_perang>Upload Profile Pose Bebas</a>");
+  
+ 
+  // zzz by-pass verifikasi profil perang
+  echo div_alert('danger tengah', "<div>Profil Perang gak ada!</div>$meme <br>Saat ini boleh tanam soal tanpa profil perang! Skip aja langsung ke bagian bawah. Jika ga mau ada tulisan ini, segera upload profil perang dan tunggu verifikasinya ya!<hr><a href=?upload_profil_perang>Upload Profile Pose Bebas</a>");
+  include 'tanam_soal_begin.php';
 }

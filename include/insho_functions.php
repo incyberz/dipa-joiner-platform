@@ -60,12 +60,20 @@ function eta($eta,$indo=1){
   }
 }
 
-function jsurl($a=''){
+function jsurl($a='',$milidetik=0){ // v1.1 revision with duration milidetik
   if($a==''){
     $arr = explode('?',$_SERVER['REQUEST_URI']);
-    jsurl("?$arr[1]");
+    jsurl("?$arr[1]",$milidetik);
+    exit;
   }
-  echo "<script>location.replace('$a')</script>";
+  echo "
+    <div class='consolas f12 abu'>Please wait, redirecting in $milidetik mili seconds...</div>
+    <script>
+      setTimeout(()=>{
+        location.replace('$a');
+      },$milidetik);
+    </script>
+  ";
   exit;
 }
 

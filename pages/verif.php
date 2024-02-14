@@ -3,6 +3,7 @@ if($id_role<=1) jsurl('?');
 $get_kelas = $_GET['kelas'] ?? '';
 $get_history = $_GET['history'] ?? '';
 
+
 if($get_history){
   $judul = 'Histori Verifikasi';
   $judul2 = 'Cek Verifikasi';
@@ -45,10 +46,22 @@ function menit_show($m){
   }
 }
 
+# =============================================================
+# NAVIGASI BY KELAS
+# =============================================================
 $param_awal = "verif&history=$get_history";
 include 'navigasi_kelas.php';
-
 $sql_kelas = $get_kelas ? "g.kelas = '$get_kelas'" : '1';
+
+# =============================================================
+# KEYWORD HANDLER
+# =============================================================
+$keyword = $_GET['keyword'] ?? '';
+if(isset($_POST['keyword'])){
+  $keyword = $_POST['keyword'];
+  jsurl("?verif&keyword=$keyword");
+}
+$sql_keyword = $keyword ? "e.nama LIKE '%$keyword%'" : '1';
 
 $jumlah_verif = 0;
 $rjenis = ['latihan','challenge'];
@@ -82,8 +95,12 @@ foreach ($rjenis as $key => $jenis) {
   AND c.id_room = $id_room 
   AND h.id_room = $id_room 
   AND $sql_kelas 
+  AND $sql_keyword 
   ORDER BY e.nama,g.kelas, d.nama, c.no 
   "; 
+  // echo '<pre>';
+  // var_dump($s);
+  // echo '</pre>';
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   $row_count = mysqli_num_rows($q);
 
@@ -92,6 +109,7 @@ foreach ($rjenis as $key => $jenis) {
     $limit = 10;
     $jumlah_verif += $row_count;
     $i=0;
+    $id_all = ''; // untuk approve all
     while($d=mysqli_fetch_assoc($q)){
       $i++;
       if($i>$limit){
@@ -101,10 +119,11 @@ foreach ($rjenis as $key => $jenis) {
           </tr>
         ";
         break;
-      }else{ // row <= 10
+      }else{ // row <= 10, belum break
 
-        $id_jenis=$d['id_jenis'];
-        $id_bukti=$d['id_bukti'];
+        $id_jenis = $d['id_jenis'];
+        $id_bukti = $d['id_bukti'];
+        $id_all .= "$id_bukti,";
   
         if($jenis=='latihan'){
           $href = "uploads/$d[folder_uploads]/latihan-$d[id_assign].jpg";
@@ -172,14 +191,14 @@ foreach ($rjenis as $key => $jenis) {
 
         $max_point = $d['get_point']==($d['basic_point']+$d['ontime_point']) ? '<span class="green bold">max-point</span>' : '';
 
-        if($get_history){
+        if($get_history){ // mode history
 
           $tgl = date('M d, H:i',strtotime($d['tanggal_verifikasi']));
           $td_approve = "
           <div>by: $d[verifikator]</div>
           <div class='f12 abu'>at $tgl</div>
           ";
-        }else{
+        }else{ // mode biasa
           $td_approve = "
             <div class='f12 bold consolas mb1'>
               <span class='btn_aksi pointer darkblue' id=form_approve".$id_bukti."__toggle>$img_approve</span>
@@ -226,28 +245,56 @@ foreach ($rjenis as $key => $jenis) {
       } // end row <= 10
     }
 
+    $bg_green = $keyword ? 'background:#0f0;' : '';
+    $clear = $keyword ? '<div class=pt2><a href=?verif class="f12">Clear</a></div>' : '';
+    $not_jenis = $jenis=='latihan' 
+    ? '<span class="not_jenis abu f12 pointer" id=not_jenis__challenge>Challenge</span>' 
+    : '<span class="not_jenis abu f12 pointer" id=not_jenis__latihan>Latihan</span>';
+    $hide = ($jenis=='challenge' and !$keyword) ? 'hideit' : ''; //default blok challenge is hide
 
     echo "
-      <h2 class='proper f18 mt4 darkblue gradasi-biru p2'>$h2_history Bukti $jenis</h2>
+    <div class='$hide' id=blok_$jenis>
+      <h2 class='proper f18 mt4 darkblue gradasi-biru p2'>$h2_history Bukti $jenis | $not_jenis</h2>
       <table class=table>
         <thead>
           <th>No</th>
-          <th>Nama</th>
-          <th class=proper>Nama $jenis</th>
+          <th>Nama Peserta</th>
+          <th class=proper>
+            <form method=post class='p0 m0'>
+              <div class=flexy style='gap:5px'>
+                <div>
+                  <input class='form-control form-control-sm' name=keyword value='$keyword' placeholder='Filter nama $jenis' style='width:160px;$bg_green'>
+                  <button class=hideit>Filter</button>
+                </div>
+                $clear
+              </div>
+            </form>
+          </th>
           <th class=proper>Bukti $jenis</th>
           <th>Approve</th>
         </thead>
         $tr
+        <tr>
+          <td colspan=3>&nbsp;</td>
+          <td colspan=100%>
+            <form method=post>
+              <input type=hidden name=jenis value='$jenis'>
+              <button class='btn btn-success proper' name=btn_approve_all value=$id_all>Approve Semua Bukti diatas</button>
+            </form>
+          </td>
+        </tr>
       </table>
+    </div>
     ";
 
 
   }else{ // no need verif
-    $pada_kelas = $get_kelas ? " pada kelas $get_kelas" : '.';
+    $pada_kelas = $get_kelas ? " pada kelas $get_kelas" : '';
+    $clear_keyword = $keyword ? " [keyword: <b class='consolas darkblue'>$keyword</b>] | <a href='?verif'>Clear Keyword</a>" : '';
     if($get_history){
-      echo div_alert('info',"Belum ada history $jenis yang telah Anda verifikasi$pada_kelas");
+      echo div_alert('info',"Data history bukti $jenis tidak ditemukan $pada_kelas $clear_keyword");
     }else{
-      echo div_alert('info',"Belum ada $jenis yang harus Anda verifikasi$pada_kelas");
+      echo div_alert('info',"Data bukti $jenis tidak ditemukan $pada_kelas $clear_keyword");
     }
   } // end no need verif
 
@@ -258,6 +305,20 @@ foreach ($rjenis as $key => $jenis) {
 ?>
 <script>
   $(function(){
+    $(".not_jenis").click(function(){
+      let tid = $(this).prop('id');
+      let rid = tid.split('__');
+      let aksi = rid[0];
+      let jenis = rid[1];
+      console.log(jenis);
+      if(jenis=='latihan'){
+        $('#blok_challenge').slideUp();
+        $('#blok_latihan').slideDown();
+      }else{
+        $('#blok_latihan').slideUp();
+        $('#blok_challenge').slideDown();
+      }
+    });
     $(".icon_peserta").click(function(){
       let tid = $(this).prop('id');
       let rid = tid.split('__');
