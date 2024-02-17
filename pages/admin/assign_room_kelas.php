@@ -73,7 +73,7 @@ while($d=mysqli_fetch_assoc($q)){
               if(in_array($d['kelas'],$arr_assigned_kelas)) continue;
               $color = $d['shift']=='P' ? 'blue' : 'darkred';
               $color = $d['status'] ? $color : 'abu miring';
-              $btn = "<button class='mb2' name=btn_assign_room_kelas value='$d[kelas]' >Assign</button>";
+              $btn = $d['status'] ? "<button class='mb2' name=btn_assign_room_kelas value='$d[kelas]' >Assign</button>" : '<span class="f10 abu miring consolas">kelas tidak aktif</span>';
               echo "<li class='$color'>$d[fakultas] ~ $d[kelas] $d[shift] ~ $btn</li>";
             }
             ?>

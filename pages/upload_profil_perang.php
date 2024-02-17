@@ -8,6 +8,7 @@ $judul = 'Profile';
 </style>
 
 <?php
+if(!$id_peserta) jsurl('?'); // jika auto-loogut
 $blok_status = '';
 $src_profil_perang = "assets/img/peserta/war-$id_peserta.jpg";
 $src_profil_perang_accepted = "assets/img/peserta/wars/peserta-$id_peserta.jpg";
@@ -61,18 +62,16 @@ if($is_reject){
   $status_show = "<span class='darkred'>Profil Ditolak, silahkan reupload!</span>";
   $src = $src_profil_perang_rejected;
 
+}else if(file_exists($src_profil_perang)){
+  $info = "Kamu sudah upload profil perang akan tetapi belum diverifikasi oleh instruktur. Silahkan <a href='?pengajar'>whatsapp beliau</a> untuk mempercepat proses verifikasi profil ini. Jika ingin mengubahnya silahkan reupload.";
+  $status_show = "<span class='darkred'>Belum diverifikasi</span>";
+  $btn_reupload = "<button class='btn btn-secondary btn-sm' id=btn_reupload>Reupload</button>";
+
 }else if(file_exists($src_profil_perang_accepted)){
   $hideit_blok_upload = 'hideit';
   $src = $src_profil_perang_accepted;
-
-  if(file_exists("$path/peserta-$id_peserta.jpg")){
-    $info = "Profil perang kamu sudah terverifikasi. Kamu bisa mengakses fitur <a href='?perang_soal'>Perang Soal</a> secara penuh. Jika ingin mengubah kembali foto profil silahkan reupload, namun kamu harus menunggu kembali verifikasi dari instruktur.";
-    $status_show = "<span class='green'>Accepted </span>";
-  }else{
-    $info = "Kamu sudah upload profil perang akan tetapi belum diverifikasi oleh instruktur. Silahkan <a href='?pengajar'>whatsapp beliau</a> untuk mempercepat proses verifikasi profil ini. Jika ingin mengubahnya silahkan reupload.";
-    $status_show = "<span class='darkred'>Belum diverifikasi</span>";
-  }
-  $btn_reupload = "<button class='btn btn-secondary btn-sm' id=btn_reupload>Reupload</button>";
+  $info = "Profil perang kamu sudah terverifikasi. Kamu bisa mengakses fitur <a href='?perang_soal'>Perang Soal</a> secara penuh. Jika ingin mengubah kembali foto profil silahkan reupload, namun kamu harus menunggu kembali verifikasi dari instruktur.";
+  $status_show = "<span class='green'>Accepted </span>";
 
 }else{
   $src = $src_no_profil_perang;

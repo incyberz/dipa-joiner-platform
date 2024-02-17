@@ -39,7 +39,15 @@ $kelas = $d['kelas'];
 $sebagai = $d['sebagai'];
 $punya_biodata = $d['punya_biodata'];
 $nik = $d['nik'];
+$kelas_show = str_replace("~$tahun_ajar",'',$kelas);
 
+# =========================================
+# AUTO INSERT BLANKO BIODATA
+# =========================================
+if(!$punya_biodata){
+  $s = "INSERT INTO tb_biodata (id) VALUES ($id_peserta)";
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+}
 
 # ========================================================
 # FOLDER UPLOADS HANDLER
@@ -63,3 +71,29 @@ if(!$folder_uploads){
   $qq = mysqli_query($cn,$ss)or die("Update folder_uploads error. ".mysqli_error($cn));
 }
 if(!file_exists("uploads/$folder_uploads")) mkdir("uploads/$folder_uploads");
+
+# ========================================================
+# PROFILE FOTO
+# ========================================================
+$path_profil = "assets/img/peserta/peserta-$id_peserta.jpg";
+$rand = rand(1,5);
+$path_profil_na = "assets/img/no_profile$rand.jpg";
+if(file_exists($path_profil)){
+  $punya_profil = true;
+}else{
+  $punya_profil = false;
+  $path_profil = $path_profil_na;
+}
+
+
+# ========================================================
+# PROFIL PERANG
+# ========================================================
+$path_profil_perang = "assets/img/peserta/wars/peserta-$id_peserta.jpg";
+$path_profil_perang_na = $path_profil_na;
+if(file_exists($path_profil_perang)){
+  $punya_profil_perang = true;
+}else{
+  $punya_profil_perang = false;
+  $path_profil_perang = $path_profil_perang_na;
+}

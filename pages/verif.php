@@ -251,6 +251,7 @@ foreach ($rjenis as $key => $jenis) {
     ? '<span class="not_jenis abu f12 pointer" id=not_jenis__challenge>Challenge</span>' 
     : '<span class="not_jenis abu f12 pointer" id=not_jenis__latihan>Latihan</span>';
     $hide = ($jenis=='challenge' and !$keyword) ? 'hideit' : ''; //default blok challenge is hide
+    $hide = ''; //zzz debug jangan hide jika latihan not found
 
     echo "
     <div class='$hide' id=blok_$jenis>

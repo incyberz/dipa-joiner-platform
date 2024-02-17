@@ -23,7 +23,17 @@ if($id_peserta==''){ // belum login
     if($dari=='reset_password') $caption = 'Reset Password';
 
     $pesan = "Request reset password dari username: <b class=darkblue>$username</b> kelas <b class=darkblue>$kelas</b>";
-    $s = "SELECT no_wa,nama FROM tb_peserta WHERE username='$username' AND kelas='$kelas'";
+    $s = "SELECT 
+    a.no_wa,
+    a.nama 
+    FROM tb_peserta a 
+    JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
+    JOIN tb_kelas c ON b.kelas=c.kelas  
+    WHERE a.username='$username' 
+    AND b.kelas='$kelas' 
+    AND c.tahun_ajar=$tahun_ajar 
+    AND c.status=1 
+    ";
     $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
     if(mysqli_num_rows($q)==0){
       $link_back = $dari=='' ? '' : " | <a href='?$dari'>Kembali</a>";

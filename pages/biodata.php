@@ -73,13 +73,7 @@ while($d=mysqli_fetch_assoc($q)){
 // var_dump($colType);
 // echo '</pre>';
 
-# =========================================
-# AUTO INSERT BLANKO BIODATA
-# =========================================
-if(!$punya_biodata){
-  $s = "INSERT INTO tb_biodata (id) VALUES ($id_peserta)";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-}
+
 
 
 # =========================================

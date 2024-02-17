@@ -3,8 +3,8 @@
 login_only();
 include 'include/arr_kelas.php';
 
-echo "<section><div class=container>
-<div class='section-title' data-aos='fade'>
+echo "
+<div class='section-title' data-zzz-aos='fade'>
   <h2>Nilai Akhir</h2>
   <p>Berikut adalah Rekap Nilai dan Nilai Akhir Anda</p>
 </div>";
@@ -54,8 +54,7 @@ c.*,
   SELECT COUNT(1) FROM tb_sesi p 
   JOIN tb_sesi_kelas q ON p.id=q.id_sesi 
   WHERE p.id_room=$id_room 
-  AND q.kelas=b.kelas 
-  AND q.is_terlaksana=1) count_sesi_terlaksana,
+  AND p.awal_presensi <= '$now') count_sesi_aktif,
 (
   SELECT COUNT(1) FROM tb_bukti_latihan p 
   JOIN tb_assign_latihan q ON p.id_assign_latihan=q.id  
@@ -119,15 +118,15 @@ ORDER BY b.kelas, a.nama
 ";
 // echo "<pre>$s</pre>";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+if(mysqli_num_rows($q)>1 and $id_role==1) die('Duplicate result found at nilai_akhir');
 
-$rbobot['Count Ontime'] = 15;
-$rbobot['Count Latihan'] = 15;
-$rbobot['Count Tugas'] = 0;
+$rbobot['Count Ontime'] = 25;
+$rbobot['Count Latihan'] = 25;
 $rbobot['Count Challenge'] = 10;
-$rbobot['Rank Global'] = 10;
-$rbobot['Rank Kelas'] = 15;
-$rbobot['UTS'] = 15;
-$rbobot['UAS'] = 20;
+$rbobot['Rank Global'] = 15;
+$rbobot['Rank Kelas'] = 25;
+$rbobot['UTS'] = 0;
+$rbobot['UAS'] = 0;
 $rbobot['Remed UTS'] = 5;
 $rbobot['Remed UAS'] = 5;
 
@@ -198,7 +197,9 @@ while ($d=mysqli_fetch_assoc($q)) {
   $nama_peserta = strtoupper($d['nama_peserta']);
 
   $jumlah_ontime=$d['jumlah_ontime'];
-  $count_sesi_terlaksana=$d['count_sesi_terlaksana']; // jumlah_presensi
+  $count_sesi_aktif=$d['count_sesi_aktif']; 
+  if(!$count_sesi_aktif) die(div_alert('danger',"count_sesi_aktif : $count_sesi_aktif canot be null"));
+
   $count_latihan=$d['count_latihan'];
   $count_challenge=$d['count_challenge'];
   $rank_global=$d['rank_global'];
@@ -219,12 +220,12 @@ while ($d=mysqli_fetch_assoc($q)) {
   if($jumlah_ontime==0){
     $jumlah_ontime=0;
     $konversi_ontime=0;
-  }elseif($jumlah_ontime==1 and $count_sesi_terlaksana==1){
+  }elseif($jumlah_ontime==1 and $count_sesi_aktif==1){
     $konversi_ontime = 100;
-  }elseif($jumlah_ontime==$count_sesi_terlaksana){
+  }elseif($jumlah_ontime==$count_sesi_aktif){
     $konversi_ontime = 100;
   }else{
-    $konversi_ontime = number_format(50 + ($jumlah_ontime-1)*((round($count_sesi_terlaksana*8/10,0)/$count_sesi_terlaksana)*(100/$count_sesi_terlaksana)),0);
+    $konversi_ontime = number_format(50 + ($jumlah_ontime-1)*((round($count_sesi_aktif*8/10,0)/$count_sesi_aktif)*(100/$count_sesi_aktif)),0);
     if($konversi_ontime>100) $konversi_ontime=100;
   }
 
@@ -235,7 +236,7 @@ while ($d=mysqli_fetch_assoc($q)) {
   }elseif($count_latihan==$total_latihan){
     $konversi_latihan = 100;
   }else{
-    $konversi_latihan = number_format(50 + ($count_latihan-1)*((round($total_latihan*8/10,0)/$total_latihan)*(100/$total_latihan)),0);
+    $konversi_latihan = !$total_latihan ? 0 : number_format(50 + ($count_latihan-1)*((round($total_latihan*8/10,0)/$total_latihan)*(100/$total_latihan)),0);
     if($konversi_latihan>100) $konversi_latihan=100;
   }
 
@@ -254,13 +255,13 @@ while ($d=mysqli_fetch_assoc($q)) {
   }
 
   if($rank_global){
-    $konversi_rank_global = round(110-(($d['rank_global']-1)*((round($total_peserta*8/10,0)/$total_peserta)*(100/$total_peserta))),0);
+    $konversi_rank_global = round(110-(($rank_global-1)*((round($total_peserta*8/10,0)/$total_peserta)*(100/$total_peserta))),0);
     if($konversi_rank_global>100) $konversi_rank_global=100;
   }
 
 
   if($rank_kelas){
-    $konversi_rank_kelas = round(110-(($d['rank_kelas']-1)*((round($d['total_peserta_kelas']*8/10,0)/$d['total_peserta_kelas'])*(100/$d['total_peserta_kelas']))),0);
+    $konversi_rank_kelas = round(110-(($rank_kelas-1)*((round($d['total_peserta_kelas']*8/10,0)/$d['total_peserta_kelas'])*(100/$d['total_peserta_kelas']))),0);
     if($konversi_rank_kelas>100) $konversi_rank_kelas=100;
   }
 
@@ -304,6 +305,12 @@ while ($d=mysqli_fetch_assoc($q)) {
   //for repeat header
   $last_kelas = $d['kelas'];
 
+  $belum = '<span class="consolas darkred f12 miring">belum</span>';
+  $nilai_uts_show = $nilai_uts ? $nilai_uts : $belum;
+  $remed_uts_show = $nilai_remed_uts ? $nilai_remed_uts : $belum;
+  $nilai_uas_show = $nilai_uas ? $nilai_uas : $belum;
+  $remed_uas_show = $nilai_remed_uas ? $nilai_remed_uas : $belum;
+  
   //autosave nilai_akhir
   if($nilai_uts=='') $nilai_uts='NULL';
   if($nilai_uas=='') $nilai_uas='NULL';
@@ -315,9 +322,12 @@ while ($d=mysqli_fetch_assoc($q)) {
   remed_uts=$nilai_remed_uts,
   remed_uas=$nilai_remed_uas,
   nilai_akhir='$nilai_akhir' 
-  WHERE id=$d[id_peserta] 
+  WHERE id_peserta=$d[id_peserta] 
   AND id_room=$id_room 
   ";
+  // echo '<pre>';
+  // var_dump($s2);
+  // echo '</pre>';
   $q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));
 
   $tanggal_submit_uts = $d['tanggal_submit_uts'] ?? '-'; // ZZZ tanggal submit only for UTS
@@ -336,15 +346,15 @@ if($id_role!=1){
   }
 }
 
-$div_row[1] = ['Count Ontime',"$jumlah_ontime <span class='kecil miring abu'>of $count_sesi_terlaksana</span>",$konversi_ontime.' <span class="kecil miring abu">x '.$rbobot['Count Ontime'].'%</span>'];
+$div_row[1] = ['Count Ontime',"$jumlah_ontime <span class='kecil miring abu'>of $count_sesi_aktif</span>",$konversi_ontime.' <span class="kecil miring abu">x '.$rbobot['Count Ontime'].'%</span>'];
 $div_row[2] = ['Count Latihan',"$count_latihan <span class='kecil miring abu'>of $total_latihan</span>",$konversi_latihan.' <span class="kecil miring abu">x '.$rbobot['Count Latihan'].'%</span>'];
 $div_row[3] = ['Count Challenge',"$count_challenge <span class='kecil miring abu'>of $total_challenge</span>",$konversi_challenge.' <span class="kecil miring abu">x '.$rbobot['Count Challenge'].'%</span>'];
 $div_row[4] = ['Rank Global',"$rank_global <span class='kecil miring abu'>of $total_peserta</span>",$konversi_rank_global.' <span class="kecil miring abu">x '.$rbobot['Rank Global'].'%</span>'];
 $div_row[5] = ['Rank Kelas',"$rank_kelas <span class='kecil miring abu'>of $total_peserta_kelas</span>",$konversi_rank_kelas.' <span class="kecil miring abu">x '.$rbobot['Rank Kelas'].'%</span>'];
-$div_row[6] = ['UTS','-',$nilai_uts.' <span class="kecil miring abu">x '.$rbobot['UTS'].'%</span>'];
-$div_row[7] = ['UAS','-',$nilai_uas.' <span class="kecil miring abu">x '.$rbobot['UAS'].'%</span>'];
-$div_row[8] = ['Remed UTS','-',$nilai_remed_uts.' <span class="kecil miring abu">x '.$rbobot['Remed UTS'].'%</span>'];
-$div_row[9] = ['Remed UAS','-',$nilai_remed_uas.' <span class="kecil miring abu">x '.$rbobot['Remed UAS'].'%</span>'];
+$div_row[6] = ['UTS','-',$nilai_uts_show.' <span class="kecil miring abu">x '.$rbobot['UTS'].'%</span>'];
+$div_row[7] = ['UAS','-',$nilai_uas_show.' <span class="kecil miring abu">x '.$rbobot['UAS'].'%</span>'];
+$div_row[8] = ['Remed UTS','-',$remed_uts_show.' <span class="kecil miring abu">x '.$rbobot['Remed UTS'].'%</span>'];
+$div_row[9] = ['Remed UAS','-',$remed_uas_show.' <span class="kecil miring abu">x '.$rbobot['Remed UAS'].'%</span>'];
 $div_row[10] = ['<span class=darkblue>Nilai Akhir</span>','-',"<span class=blue style=font-size:30px>$nilai_akhir</span>"];
 
 $rows='';

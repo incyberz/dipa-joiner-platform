@@ -28,6 +28,13 @@ if(!file_exists($konten)){
       }
     } 
   }
+
+  if($profil_ok==-1 || !$profil_ok){
+    if($is_login and $password and $id_room and $parameter!='login' and $parameter!='upload_profil'){
+      include 'pages/belum_punya_profil.php';
+    }
+  }
+
   if($username and !$kelas){
     include 'pages/join_kelas.php';
   }else{

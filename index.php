@@ -28,6 +28,7 @@ $sebagai = null;
 $my_points = null;
 $total_peserta = null;
 $total_peserta_kelas = null;
+$profil_ok = null;
 
 $tahun_ajar = 20232;
 $id_room_kelas = null;
@@ -99,7 +100,7 @@ $status_room = '';
 if($username){
   if($id_room){
     include 'room_vars.php';
-    include 'room_data.php';
+    // include 'room_data.php';
     include 'wars_data.php';
   }else{
     if($password){

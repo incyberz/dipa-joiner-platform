@@ -19,3 +19,4 @@ uploads/
 *.sql
 *_old.*
 *zzz.*
+*test*.php

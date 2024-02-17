@@ -10,6 +10,8 @@
 </div>
 
 <?php
+instruktur_only();
+
 $get_kelas = $_GET['kelas'] ?? die(erid('kelas'));
 if(!$tahun_ajar) die(erid('tahun_ajar'));
 echo "Untuk kelas <span id=get_kelas>$get_kelas</span>";

@@ -102,6 +102,10 @@ if(isset($_GET['id'])){
   echo "<hr>$s";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 
+  $s = "DELETE FROM tb_bukti_challenge WHERE id_peserta=$id";
+  echo "<hr>$s";
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+
   $s = "DELETE FROM tb_poin WHERE id_peserta=$id";
   echo "<hr>$s";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
@@ -121,6 +125,10 @@ if(isset($_GET['id'])){
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 
   $s = "DELETE FROM tb_war_summary WHERE id_peserta=$id";
+  echo "<hr>$s";
+  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+
+  $s = "DELETE FROM tb_presensi WHERE id_peserta=$id";
   echo "<hr>$s";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 

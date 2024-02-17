@@ -1,7 +1,6 @@
 <?php
 $div_wars = '';
 $div_kbm = '';
-$total_points =0;
 $unset = '<span class="consolas f12 abu miring">-</span>';
 
 # ==========================================================
@@ -20,7 +19,6 @@ $d = mysqli_fetch_assoc($q);
 if($d){
   $tr_war = '';
   $war_points = $d['war_points'];
-  $total_points += $war_points;
   foreach ($Field as $kolom) {
     if($kolom=='id' 
       || $kolom=='id_peserta'
@@ -39,7 +37,7 @@ if($d){
   $img = img_icon('detail');
 
   $div_wars = "
-    <h5 class='card-title'>War Points : $d[war_points] LP <span class=btn_aksi id=war_points__toggle>$img</span></h5>
+    <h3 class='mb2 mt2 darkblue f18'>War Points : $d[war_points] LP <span class=btn_aksi id=war_points__toggle>$img</span></h3>
     <div class='wadah gradasi-hijau hideit' id=war_points>
       <table class='table table-striped f12'>
         <div class=mb2>War Point Details</div>
@@ -65,7 +63,6 @@ $s = "SELECT * FROM tb_poin WHERE id_peserta=$id_peserta AND id_room=$id_room";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $d = mysqli_fetch_assoc($q);
 if($d){
-  $total_points += $d['akumulasi_poin'];
   $tr_kbm = '';
   foreach ($Field as $kolom) {
     if($kolom=='id' 
@@ -82,6 +79,9 @@ if($d){
     $kolom_show = ucwords(str_replace('_',' ',$kolom));
     if($kolom_show=='Uts'
       || $kolom_show=='Uas'
+      || $kolom_show=='Remed Uts'
+      || $kolom_show=='Remed Uas'
+      || $kolom_show=='Nilai Akhir'
     ) $kolom_show = strtoupper($kolom_show);
     $tr_kbm .= "
       <tr>
@@ -92,7 +92,6 @@ if($d){
   }
 
   $div_kbm = "
-    <h5 class='card-title'>Point KBM : $my_points LP</h5>
     <div class='wadah '>
       <table class='table table-striped f12'>
         <div class=mb2>Detail Nilai KBM</div>
@@ -113,10 +112,10 @@ if($d){
 
 
 ?>
-<div class="card mb2 p2">
-  <h5 class="card-title">My Points</h5>
-  <div class='my_points'><?=$total_points?> LP</div>
-  <p class="small fst-italic">Poin didapatkan dari seluruh aktifitas pembelajaran semisal latihan, challenge, bertanya, menjawab (chats), Ujian, dan Wars.</p>
+<div class="wadah mb2 p2">
+  <h2 class="f24 darkblue">My Points</h2>
+  <div class='my_points'><?=$my_points?> LP</div>
+  <p class="small fst-italic">Poin didapatkan dari seluruh aktifitas pembelajaran semisal latihan, challenge, bertanya, presensi, dan Wars.</p>
 
   <?=$div_wars?>
   <?=$div_kbm?>

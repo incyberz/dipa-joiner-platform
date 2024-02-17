@@ -1,4 +1,22 @@
 <?php
+// v.1.1 revision with function hm AND th
+function th($rank){
+  if($rank%10==1){return 'st';}
+  elseif($rank%10==2){return 'nd';}
+  elseif($rank%10==3){return 'rd';}
+  else{return 'th';}
+}
+
+function hm($nilai){
+  if($nilai>=85){ return 'A';}
+  elseif($nilai>=70){ return 'B';}
+  elseif($nilai>=60){ return 'C';}
+  elseif($nilai>=40){ return 'D';}
+  elseif($nilai>=1){ return 'E';}
+  elseif($nilai==0){ return 'TL';}
+  else{ return false; }
+}
+
 function eta($eta,$indo=1){
   $menit = '';
   $jam = '';

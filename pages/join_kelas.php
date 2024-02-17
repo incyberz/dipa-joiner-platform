@@ -4,7 +4,7 @@
   <p>Sepertinya kamu belum punya kelas pada tahun ajar <?=$tahun_ajar?>. Silahkan join class atau hubungi Instruktur jika ada kesulitan!</p>
 </div>
 <?php
-echo "<h1>zzz Enter Join Kelas</h1>";
+echo "<h1>Join Kelas</h1>";
 
 # ====================================================
 # PROCESSOR: JOIN KELAS
@@ -31,8 +31,9 @@ if(isset($_POST['btn_join_kelas'])){
   <form method=post>
     <ol>
       <?php
+      $and_inst = $id_role==2 ? "AND prodi='INST'" : '';
 
-      $s = "SELECT * FROM tb_kelas WHERE tahun_ajar=$tahun_ajar ORDER BY fakultas,prodi,shift";
+      $s = "SELECT * FROM tb_kelas WHERE tahun_ajar=$tahun_ajar $and_inst ORDER BY fakultas,prodi,shift";
       $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 
       while($d=mysqli_fetch_assoc($q)){

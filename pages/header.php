@@ -121,7 +121,7 @@ $target_kelas_header = $id_role==2 ? 'all' : $kelas;
                 <li><a href='?logout' onclick='return confirm(\"Yakin untuk Logout?\")' class=red>Logout</a></li>
               </ul>
             </li>
-            <li class='darkred kecil tengah' style='margin-left:10px'>$kelas</li>
+            <li class='darkred f10 tengah' style='margin-left:10px'>$kelas_show</li>
             $unlog_link
           ";
 

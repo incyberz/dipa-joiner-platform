@@ -311,7 +311,7 @@ while($d=mysqli_fetch_assoc($q)){
           $primary = 'warning';
         }else{ // boleh present dan di sesi ini tidak telat
           if($sudah_dibuka){
-            $saya_hadir = 'Saya Hadir';
+            $saya_hadir = 'Set Saya Hadir';
             $dikurangi = '';
             $primary = 'primary';
           }else{ // boleh present, tidak telat, tapi belum dibuka
@@ -332,7 +332,7 @@ while($d=mysqli_fetch_assoc($q)){
         ;
       }else{ // syarat kurang
         $btn_presensi = "
-          <button class='btn btn-secondary btn-sm btn-block' onclick='alert(\"Maaf, kamu belum memenuhi syarat presensi.\")'><span class=f12>Saya Hadir</span></button>
+          <button class='btn btn-secondary btn-sm btn-block' onclick='alert(\"Maaf, kamu belum memenuhi syarat presensi, periksalah yang bertanda merah.\")'><span class=f12>Set Saya Hadir</span></button>
         ";
       }
     }else{
