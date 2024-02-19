@@ -1,6 +1,7 @@
 <?php
 // login_only(); // boleh tidak login
 if(!$id_room) jsurl('?pilih_room');
+// $dm=1; // zzz debug
 
 $get_kelas = $_GET['kelas'] ?? '';
 if(($get_kelas=='all' and $id_role==1) || $get_kelas=='') die("<script>location.replace('?grades&kelas=$kelas')</script>");
@@ -59,40 +60,40 @@ if($selisih>=600 and $id_role!=3 and $is_login){
     (
       SELECT COUNT(1) FROM tb_pertanyaan  
       WHERE id_penanya=a.id 
-      AND id_room_kelas = $id_room_kelas  
+      AND id_room_kelas = d.id  
       ) as count_bertanya,
     (
       SELECT COUNT(1) FROM tb_pertanyaan_reply  
       WHERE id_penjawab=a.id 
-      AND id_room_kelas = $id_room_kelas  
+      AND id_room_kelas = d.id  
       ) as count_menjawab,
     (
       SELECT SUM(poin) FROM tb_pertanyaan  
       WHERE id_penanya=a.id 
-      AND id_room_kelas = $id_room_kelas  
+      AND id_room_kelas = d.id  
       AND verif_date is not null 
       ) as poin_bertanya,
     (
       SELECT SUM(poin) FROM tb_pertanyaan_reply  
       WHERE id_penjawab=a.id 
-      AND id_room_kelas = $id_room_kelas  
+      AND id_room_kelas = d.id  
       AND verif_date is not null 
       ) as poin_menjawab,
     (
       SELECT SUM(p.get_point) FROM tb_bukti_latihan p 
       JOIN tb_assign_latihan q ON p.id_assign_latihan=q.id 
       WHERE p.id_peserta=a.id 
-      AND q.id_room_kelas = $id_room_kelas  
+      AND q.id_room_kelas = d.id  
       AND p.tanggal_verifikasi is not null 
-      AND status=1
+      AND p.status=1
       ) as total_poin_latihan,
     (
       SELECT SUM(p.get_point) FROM tb_bukti_challenge p 
       JOIN tb_assign_challenge q ON p.id_assign_challenge=q.id 
       WHERE p.id_peserta=a.id 
-      AND q.id_room_kelas = $id_room_kelas  
+      AND q.id_room_kelas = d.id  
       AND p.tanggal_verifikasi is not null 
-      AND status=1
+      AND p.status=1
       ) as total_poin_challenge
     
 
@@ -106,7 +107,8 @@ if($selisih>=600 and $id_role!=3 and $is_login){
   AND a.nama NOT LIKE '%dummy%' 
   AND d.id_room=$id_room 
   ";
-  // echo "<pre>$s</pre>";
+
+  if($dm) echo "<pre>$s</pre>";
   $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
   while ($d=mysqli_fetch_assoc($q)) {
     // echo "<hr>$d[id] :: $d[total_poin_latihan]";
@@ -130,7 +132,7 @@ if($selisih>=600 and $id_role!=3 and $is_login){
                   +$total_poin_challenge;
 
 
-    if($dm and $d['id_peserta']==51) echo "<hr>
+    if($dm) echo "<hr>
     total_poin: $total_poin = 0
                   +poin_presensi: $poin_presensi
                   +war_points: $war_points 
@@ -155,11 +157,13 @@ if($selisih>=600 and $id_role!=3 and $is_login){
     last_update_point=CURRENT_TIMESTAMP 
     WHERE id_peserta=$d[id_peserta] 
     AND id_room=$id_room";
-    // if($id_role==2) echo "<div class='consolas f12 abu miring'>updating tb_poin success... $d[nama_peserta], total_poin: $total_poin</div>";
-    // echo '<pre>';
-    // var_dump($s2);
-    // echo '</pre>';
+    if($dm){
+      echo '<pre>';
+      var_dump($s2);
+      echo '</pre>';
+    }
     $q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));
+    if($dm) echo "<div class='consolas f12 abu miring'>updating tb_poin success... $d[nama_peserta], total_poin: $total_poin</div>";
   }
   
 }
@@ -187,7 +191,7 @@ AND d.status = 1
 AND e.id_room=$id_room 
 AND d.nama NOT LIKE '%dummy%'
 ORDER BY e.akumulasi_poin DESC $limit";
-// echo "<pre>$s</pre>";
+if($dm) "<pre>$s</pre>";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $tb = div_alert('danger', 'Belum ada data peserta.');
 if(mysqli_num_rows($q)){

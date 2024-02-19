@@ -5,6 +5,7 @@ include 'include/date_managements.php';
 $img_ontime = img_icon('check');
 $img_late = img_icon('check_brown');
 $img_reject = img_icon('reject');
+$img_mhs = img_icon('mhs');
 
 $target_kelas_info = $target_kelas ? "Target kelas : $target_kelas" : 'All kelas pada room ini.';
 
@@ -133,8 +134,11 @@ if(mysqli_num_rows($q)==0){
       <tr>
         <td>$i</td>
         <td>
-          $d[nama_peserta]
+          $nama <span class=btn_aksi id=profil_peserta$d[id_peserta]__toggle>$img_mhs</span>
           <div class='f12 abu'>$d[kelas]</div>
+          <div class='hideit ' id=profil_peserta$d[id_peserta]>
+            <img src='assets/img/peserta/wars/peserta-$d[id_peserta].jpg' class=foto_profil>
+          </div>
         </td>
         $td_presensi
       </tr>
