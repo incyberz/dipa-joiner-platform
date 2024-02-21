@@ -5,7 +5,8 @@ include 'include/date_managements.php';
 $img_ontime = img_icon('check');
 $img_late = img_icon('check_brown');
 $img_reject = img_icon('reject');
-$img_mhs = img_icon('mhs');
+$icon_mhs = img_icon('mhs');
+$icon_gray = '<span class="br50 pointer" style="display:inline-block;width:20px;height:20px;background:#ccc;">&nbsp;</span>';
 
 $target_kelas_info = $target_kelas ? "Target kelas : $target_kelas" : 'All kelas pada room ini.';
 
@@ -58,7 +59,8 @@ $s = "SELECT
 a.id as id_kelas_peserta, 
 b.id as id_peserta, 
 b.nama as nama_peserta ,
-c.kelas  
+c.kelas,
+(SELECT id FROM tb_sesi WHERE id_room=$id_room AND awal_presensi<='$today' AND akhir_presensi>'$today') id_sesi 
 FROM tb_kelas_peserta a 
 JOIN tb_peserta b ON a.id_peserta=b.id 
 JOIN tb_kelas c ON a.kelas=c.kelas  
@@ -129,15 +131,44 @@ if(mysqli_num_rows($q)==0){
       $i=0;
     }
 
+    $path = "assets/img/peserta/wars/peserta-$d[id_peserta].jpg";
+    $path_na = 'assets/img/no_profil.jpg';
+    if(file_exists($path)){
+      $src_profile = $path;
+      $icon = $icon_mhs;
+      $poin = 1000;
+    }else{
+      $src_profile = $path_na;
+      $icon = $icon_gray;
+      $poin = 200;
+    }
+
+    $id[-2] = "set_absen__$d[id_peserta]__$d[id_sesi]__0__-2";
+    $id[-1] = "set_absen__$d[id_peserta]__$d[id_sesi]__0__-1";
+    $id[0] = "set_absen__$d[id_peserta]__$d[id_sesi]__0__0";
+    $id[1] = "set_absen__$d[id_peserta]__$d[id_sesi]__1000__1";
+    $id[2] = "set_absen__$d[id_peserta]__$d[id_sesi]__1000__2";
+
+    $blok_sia = "
+      <div class=flexy style=gap:2px>
+        <button class='consolas btn btn-warning btn-sm set_absen' id=$id[-2]>I</button>
+        <button class='consolas btn btn-warning btn-sm set_absen' id=$id[-1]>S</button>
+        <button class='consolas btn btn-danger btn-sm set_absen' id=$id[0]>A</button>
+        <button class='consolas btn btn-success btn-sm set_absen' id=$id[1]>H</button>
+        <button class='consolas btn btn-info btn-sm set_absen' id=$id[2]>D</button>
+      </div>
+    ";
+
     $i++;
     $tr.= "
       <tr>
         <td>$i</td>
         <td>
-          $nama <span class=btn_aksi id=profil_peserta$d[id_peserta]__toggle>$img_mhs</span>
+          $nama <span class=btn_aksi id=profil_peserta$d[id_peserta]__toggle>$icon</span>
           <div class='f12 abu'>$d[kelas]</div>
           <div class='hideit ' id=profil_peserta$d[id_peserta]>
-            <img src='assets/img/peserta/wars/peserta-$d[id_peserta].jpg' class=foto_profil>
+            <img src='$src_profile' class=foto_profil>
+            $blok_sia
           </div>
         </td>
         $td_presensi
@@ -164,3 +195,29 @@ if(mysqli_num_rows($q)==0){
 
 
 ?>
+<script>
+  $(function(){
+    $('.set_absen').click(function(){
+      let tid = $(this).prop('id');
+      let rid = tid.split('__');
+      let aksi = rid[0];
+      let id_peserta = rid[1];
+      let id_sesi = rid[2];
+      let poin = rid[3];
+      let kode_absen = rid[4];
+      
+      let link_ajax = `ajax/ajax_set_presensi_offline.php?id_peserta=${id_peserta}&id_sesi=${id_sesi}&poin=${poin}&kode_absen=${kode_absen}`;
+      console.log(link_ajax);
+      $.ajax({
+        url:link_ajax,
+        success:function(a){
+          if(a.trim()=='sukses'){
+            alert('sukses');
+          }else{
+            alert(a);
+          }
+        }
+      })
+    })
+  })
+</script>

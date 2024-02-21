@@ -1,7 +1,11 @@
 <?php
 // login_only(); // boleh tidak login
 if(!$id_room) jsurl('?pilih_room');
-// $dm=1; // zzz debug
+$dm=0; // zzz debug
+if($dm) echo "
+<h1 class='red consolas'>Debugging Mode is ON</h1>
+<div class='abu consolas f12'>Kode ini sedang diperbaiki oleh : Abu Sholihin</div>
+";
 
 $get_kelas = $_GET['kelas'] ?? '';
 if(($get_kelas=='all' and $id_role==1) || $get_kelas=='') die("<script>location.replace('?grades&kelas=$kelas')</script>");
@@ -191,7 +195,7 @@ AND d.status = 1
 AND e.id_room=$id_room 
 AND d.nama NOT LIKE '%dummy%'
 ORDER BY e.akumulasi_poin DESC $limit";
-if($dm) "<pre>$s</pre>";
+if($dm) echo "<pre>$s</pre>";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 $tb = div_alert('danger', 'Belum ada data peserta.');
 if(mysqli_num_rows($q)){
