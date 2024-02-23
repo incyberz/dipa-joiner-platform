@@ -4,13 +4,13 @@ $judul2 = "Yang Belum Ngerjain";
 
 
 
-$s = "SELECT id_latihan FROM tb_assign_latihan WHERE id=$id_assign";
+$s = "SELECT id_$jenis FROM tb_assign_$jenis WHERE id=$id_assign";
 $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
 if(mysqli_num_rows($q)){
   $d = mysqli_fetch_assoc($q);
-  $id_latihan = $d['id_latihan'];
+  $id_jenis = $d["id_$jenis"];
 }else{
-  die(div_alert('danger','Data Assign latihan tidak ada.'));
+  die(div_alert('danger','Data Assign $jenis tidak ada.'));
 }
 
 $s = "SELECT 
@@ -21,13 +21,13 @@ d.nama as nama_peserta,
 d.folder_uploads,
 f.kelas
 
-FROM tb_bukti_latihan a 
-JOIN tb_assign_latihan b ON a.id_assign_latihan=b.id 
-JOIN tb_latihan c ON b.id_latihan=c.id 
+FROM tb_bukti_$jenis a 
+JOIN tb_assign_$jenis b ON a.id_assign_$jenis=b.id 
+JOIN tb_$jenis c ON b.id_$jenis=c.id 
 JOIN tb_peserta d ON a.id_peserta=d.id 
 JOIN tb_kelas_peserta e ON e.id_peserta=d.id 
 JOIN tb_kelas f ON e.kelas=f.kelas 
-WHERE c.id=$id_latihan 
+WHERE c.id=$id_jenis 
 AND f.tahun_ajar=$tahun_ajar 
 AND f.status=1 
 AND f.kelas = '$target_kelas'

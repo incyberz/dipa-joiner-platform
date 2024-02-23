@@ -220,7 +220,7 @@ if($id_bukti){
         </div>
       ";
 
-      $form_add_sublevel = $id_sublevel ? '' : "
+      $form_add_sublevel = "
         <form method=post>
           <div class=flexy>
             <div>+</div>
