@@ -12,8 +12,6 @@ echo "
     <br>tahun_ajar: <span id=tahun_ajar>$tahun_ajar</span>
     <br>sebagai: <span id=sebagai>$sebagai</span>
     <br>id_role: <span id=id_role>$id_role</span>
-    <br>total_peserta_kelas: <span id=total_peserta_kelas>$total_peserta_kelas</span>
-    <br>total_peserta pada TA $tahun_ajar: <span id=total_peserta>$total_peserta</span>
   </div>
 ";
 
@@ -29,5 +27,7 @@ echo "
     <br>id_room_kelas: <span id=id_room_kelas>$id_room_kelas</span>
     <br>room: <span id=room>$room</span>
     <br>nama_room: <span id=nama_room>$nama_room</span>
+    <br>total_peserta_kelas [$kelas]: <span id=total_peserta_kelas>$total_peserta_kelas</span>
+    <br>total_peserta [$room]: <span id=total_peserta>$total_peserta</span>
   </div>
 ";

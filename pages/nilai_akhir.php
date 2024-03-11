@@ -1,12 +1,55 @@
-<style>th{background: linear-gradient(#cfc,#afa)}</style>
+<style>
+  th {
+    background: linear-gradient(#cfc, #afa)
+  }
+</style>
 <?php
 login_only();
-include 'include/arr_kelas.php';
+
+function gradasi($nilai)
+{
+  if ($nilai) {
+    if ($nilai >= 85) {
+      return  'hijau';
+    } elseif ($nilai >= 70) {
+      return  'toska';
+    } elseif ($nilai >= 50) {
+      return  'kuning';
+    } else {
+      return  'merah';
+    }
+  } else {
+    if ($nilai === 0) {
+      return 'merah';
+    } else {
+      return '';
+    }
+  }
+}
+function konversikan($count, $total)
+{
+  if ($count == 0 || $total == 0) {
+    return 0;
+  } elseif ($count == 1 and $total == 1) {
+    return 100;
+  } elseif ($count == $total) {
+    return 100;
+  } else {
+    $hasil = round(50 + ($count - 1) * ((round($total * 8 / 10, 0) / $total) * (100 / $total)), 0);
+    return $hasil > 100 ? 100 : $hasil;
+  }
+}
+
+$judul = 'Nilai Akhir';
+set_title($judul);
+
+
+
 
 echo "
-<div class='section-title' data-zzz-aos='fade'>
-  <h2>Nilai Akhir</h2>
-  <p>Berikut adalah Rekap Nilai dan Nilai Akhir Anda</p>
+<div class='section-title' data-aos='fade'>
+  <h2>$judul</h2>
+  <p>Kalkulasi Poin Pembelajaran dan Nilai Akhir</p>
 </div>";
 
 
@@ -16,8 +59,79 @@ echo "
 # =======================================================
 # INITIAL VARIABLE
 # =======================================================
+$belum = '<span class="consolas darkred f12 miring">belum</span>';
 $img['delete'] = '<img class=zoom src="assets/img/icons/delete.png" height=25px />';
-foreach ($arr_kelas as $k => $jp) $data_csv[$k] = '';
+
+
+
+
+
+
+
+# =======================================================
+# PEMBOBOTAN DAN HEADER TABEL
+# =======================================================
+$rbobot['count_presensi_offline'] = 3;
+$rbobot['count_presensi_online'] = 15;
+$rbobot['count_ontime'] = 10;
+$rbobot['count_latihan'] = 5;
+$rbobot['count_latihan_wajib'] = 25;
+$rbobot['count_challenge'] = 5;
+$rbobot['count_challenge_wajib'] = 3;
+$rbobot['rank_global'] = 15;
+$rbobot['rank_kelas'] = 25;
+$rbobot['nilai_uts'] = 0;
+$rbobot['nilai_uas'] = 0;
+$rbobot['nilai_remed_uts'] = 0;
+$rbobot['nilai_remed_uas'] = 0;
+
+$td_bobot = '';
+$th_komponen = '';
+$total_bobot = 0;
+foreach ($rbobot as $komponen => $bobot) {
+  $rkonversi[$komponen] = 0;
+  $rvalue_of[$komponen] = 'of ' . $unset;
+  $rgradasi[$komponen] = '';
+  $komponen = str_replace('_', ' ', $komponen);
+  $total_bobot += $bobot;
+  $th_komponen .= "<th>$komponen</th>";
+  $td_bobot .= "<td>$bobot%</td>";
+}
+
+$tr = '';
+$thead = "
+  <thead class='f12'>
+    <th width=4%>No</th>
+    <th width=31%>Nama</th>
+    $th_komponen
+    <th>Nilai Akhir</th>
+  </thead>
+  <tr class='f12 abu miring'>
+    <td colspan=2>Bobot</td>
+    $td_bobot
+    <td>$total_bobot%</td>
+  </tr>
+";
+
+# =======================================================
+# PRE SELECT | TOTAL LATIHAN | CHALLENGE
+# =======================================================
+// $s = "";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -28,9 +142,9 @@ foreach ($arr_kelas as $k => $jp) $data_csv[$k] = '';
 
 
 # =======================================================
-# LIST PESERTA | HIMSELFT
+# MAIN SELECT | LIST PESERTA
 # =======================================================
-$sql_id_peserta = $id_role==1 ? "a.id=$id_peserta" : '1';
+$sql_id_peserta = $id_role == 1 ? "a.id=$id_peserta" : '1';
 $nama_paket_soal_uts = 'Soal UTS Semester 1 TA. 2023/2024';
 $nama_paket_soal_uas = 'Soal UAS 2023';
 $nama_paket_soal_remed_uts = 'Soal Pasca UTS';
@@ -49,22 +163,71 @@ a.nim,
 b.kelas,
 b.*,
 c.*,
-(SELECT jumlah_ontime FROM tb_presensi_summary WHERE id_peserta=a.id AND id_room=$id_room) jumlah_ontime,
+
+-- ========================================
+-- SELECT PRESENSI SUMMARY
+-- ========================================
+(
+  SELECT jumlah_presensi_offline 
+  FROM tb_presensi_summary 
+  WHERE id_peserta=a.id 
+  AND id_room=$id_room) count_presensi_offline,
+(
+  SELECT jumlah_presensi 
+  FROM tb_presensi_summary 
+  WHERE id_peserta=a.id 
+  AND id_room=$id_room) count_presensi_online,
+(
+  SELECT jumlah_ontime 
+  FROM tb_presensi_summary 
+  WHERE id_peserta=a.id 
+  AND id_room=$id_room) count_ontime,
+
+
+
+-- ========================================
+-- SELECT SESI AKTIF
+-- ========================================
 (
   SELECT COUNT(1) FROM tb_sesi p 
   JOIN tb_sesi_kelas q ON p.id=q.id_sesi 
   WHERE p.id_room=$id_room 
   AND p.awal_presensi <= '$now') count_sesi_aktif,
+
+
+
+-- ========================================
+-- SELECT LATIHAN AND CHALLENGE
+-- ========================================
 (
   SELECT COUNT(1) FROM tb_bukti_latihan p 
   JOIN tb_assign_latihan q ON p.id_assign_latihan=q.id  
   WHERE p.id_peserta=a.id 
   AND q.id_room_kelas=$id_room_kelas) count_latihan,
 (
+  SELECT COUNT(1) FROM tb_bukti_latihan p 
+  JOIN tb_assign_latihan q ON p.id_assign_latihan=q.id  
+  WHERE p.id_peserta=a.id 
+  AND q.id_room_kelas=$id_room_kelas
+  AND q.is_wajib is not null) count_latihan_wajib,
+(
   SELECT COUNT(1) FROM tb_bukti_challenge p 
   JOIN tb_assign_challenge q ON p.id_assign_challenge=q.id  
   WHERE p.id_peserta=a.id 
   AND q.id_room_kelas=$id_room_kelas) count_challenge,
+(
+  SELECT COUNT(1) FROM tb_bukti_challenge p 
+  JOIN tb_assign_challenge q ON p.id_assign_challenge=q.id  
+  WHERE p.id_peserta=a.id 
+  AND q.id_room_kelas=$id_room_kelas
+  AND q.is_wajib is not null) count_challenge_wajib,
+
+
+
+
+-- ========================================
+-- SELECT UTS | UAS 
+-- ========================================
 (
   SELECT p.nilai $from_tb_jawabans = '$nama_paket_soal_uts'
   ORDER BY p.nilai DESC LIMIT 1) nilai_uts, 
@@ -76,10 +239,7 @@ c.*,
   ORDER BY p.nilai DESC LIMIT 1) nilai_uas ,
 (
   SELECT p.tanggal_submit $from_tb_jawabans = '$nama_paket_soal_uas'
-  ORDER BY p.nilai DESC LIMIT 1) submit_uas ,
-(
-  SELECT p.tanggal_submit $from_tb_jawabans = '$nama_paket_soal_uas'
-  ORDER BY p.nilai DESC LIMIT 1) tanggal_submit_uas, 
+  ORDER BY p.nilai DESC LIMIT 1) tanggal_submit_uas ,
 (
   SELECT p.nilai $from_tb_jawabans = '$nama_paket_soal_remed_uts'
   ORDER BY p.nilai DESC LIMIT 1) nilai_remed_uts ,
@@ -92,11 +252,14 @@ c.*,
 (
   SELECT p.tanggal_submit $from_tb_jawabans = '$nama_paket_soal_remed_uas'
   ORDER BY p.nilai DESC LIMIT 1) tanggal_submit_remed_uas, 
-(
-  SELECT count(1) FROM tb_kelas_peserta p  
-  JOIN tb_kelas q ON p.kelas=q.kelas  
-  WHERE q.tahun_ajar=$tahun_ajar 
-  AND q.kelas=b.kelas) total_peserta_kelas,
+
+
+
+
+
+-- ========================================
+-- MY POIN DATA TEMPORER
+-- ========================================
 (
   SELECT rank_global FROM tb_poin   
   WHERE id_room=$id_room  
@@ -110,277 +273,360 @@ c.*,
 FROM tb_peserta a 
 JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
 JOIN tb_kelas c ON b.kelas=c.kelas 
-WHERE a.status=1 
-AND password is not null 
-AND a.id_role=1 
-AND $sql_id_peserta
+JOIN tb_room_kelas d ON c.kelas=d.kelas 
+WHERE a.status=1 -- peserta aktif only
+AND password is not null -- peserta aktif pasti sudah ganti pass
+AND a.id_role=1 -- peserta only tidak GM
+AND $sql_id_peserta -- SWITCH VIEW PESERTA | GM
+AND c.tahun_ajar = $tahun_ajar 
+AND d.id_room = $id_room 
+AND a.nama NOT LIKE '%dummy%' -- bukan peserta dummy 
+AND a.nama LIKE '%ah%' -- DEBUGGING 
+
+
 ORDER BY b.kelas, a.nama
 ";
-// echo "<pre>$s</pre>";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-if(mysqli_num_rows($q)>1 and $id_role==1) die('Duplicate result found at nilai_akhir');
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
-$rbobot['Count Ontime'] = 25;
-$rbobot['Count Latihan'] = 25;
-$rbobot['Count Challenge'] = 10;
-$rbobot['Rank Global'] = 15;
-$rbobot['Rank Kelas'] = 25;
-$rbobot['UTS'] = 0;
-$rbobot['UAS'] = 0;
-$rbobot['Remed UTS'] = 5;
-$rbobot['Remed UAS'] = 5;
+$jumlah_peserta = mysqli_num_rows($q);
+if ($jumlah_peserta > 1 and $id_role == 1) die('Duplicate result found at nilai_akhir');
 
-$tr='';
-$td_bobot = '';
-$th_komponen = '';
-foreach ($rbobot as $komponen => $bobot) {
-  $th_komponen.="<th>$komponen</th>";
-  $td_bobot.="<td>$bobot%</td>";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# =======================================================
+# ROOM KELAS UNTUK CSV
+# =======================================================
+$id_role = 1; //zzz debug
+if ($id_role == 2) {
+  $arr_kelas = [];
+  $s = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  while ($d = mysqli_fetch_assoc($q)) {
+    $arr_kelas[$d['kelas']] = $d['id'];
+  }
+  foreach ($arr_kelas as $k => $jp) $data_csv[$k] = '';
 }
-$tr = '';
-$thead = "
-  <thead>
-    <th width=4%>No</th>
-    <th width=31%>Nama</th>
-    $th_komponen
-    <th>Nilai Akhir</th>
-  </thead>
-  <tr class=' abu miring'>
-    <td colspan=2>Bobot</td>
-    $td_bobot
-    <td>100%</td>
-  </tr>
-";
-$tr_empty = '<tr><td colspan=5>&nbsp;</td></tr>';
-$no=0;
-$i=0;
+
+# =======================================================
+# LOOPING MAIN SELECT
+# =======================================================
+$tr_empty = '<tr><td colspan=100%>&nbsp;</td></tr>';
+
+
+
+$no = 0;
+$i = 0;
 $last_kelas = '';
-$nama_peserta = '';
-
-$count_latihan=0;
-$count_challenge=0;
-$rank_global=0;
-$rank_kelas=0;
-
-$konversi_latihan=0;
-$konversi_challenge=0;
-$konversi_rank_global=0;
-$konversi_rank_kelas=0;
-
-$nilai_akhir=0;
-$total_peserta_kelas=0;
-$nilai_uts=0;
-$nilai_uas=0;
-$submit_uas='';
-
-$nilai_remed_uts=0;
-$nilai_remed_uas=0;
-
-while ($d=mysqli_fetch_assoc($q)) {
+while ($d = mysqli_fetch_assoc($q)) {
   $i++;
   $no++;
-  $kelas_ini = $d['kelas'];
-  if($last_kelas!=$d['kelas'] and $i!=1) $tr.=$tr_empty;
-  if($last_kelas!=$d['kelas']){
-    $tr.=$thead;
-    $no=1;
-    
-    // HEADER CSV
-    $reguler = $d['shift']=='P' ? 'Reguler' : 'NR';
-    $data_csv[$kelas_ini].= "\n\nDAFTAR HADIR MAHASISWA DAN NILAI UTS TAHUN AKADEMIK 2023-2024 GANJIL\n\n";
-    $data_csv[$kelas_ini].= "Prodi,$d[jenjang] - $d[nama_prodi] - $reguler\n";
-    $data_csv[$kelas_ini].= "Mata Kuliah,Matematika Informatika\n";
-    $data_csv[$kelas_ini].= "Semester / Kelas,$d[semester] / $d[kode_kelas]\n";
-    $data_csv[$kelas_ini].= "Dosen,Iin S.T. M.Kom\n\n";
-    $data_csv[$kelas_ini].= "NO,NAMA,NIM,TIMESTAMP KEHADIRAN,NILAI TUGAS,NILAI UTS,KETERANGAN\n";
-  }
+
+  // extract row value
   $nama_peserta = strtoupper($d['nama_peserta']);
+  // $jumlah_ontime = $d['jumlah_ontime'];
+  $count_sesi_aktif = $d['count_sesi_aktif'];
+  if (!$count_sesi_aktif) die(div_alert('danger', "count_sesi_aktif : $count_sesi_aktif canot be null"));
 
-  $jumlah_ontime=$d['jumlah_ontime'];
-  $count_sesi_aktif=$d['count_sesi_aktif']; 
-  if(!$count_sesi_aktif) die(div_alert('danger',"count_sesi_aktif : $count_sesi_aktif canot be null"));
+  // handler blok tiap kelas
+  $kelas_ini = $d['kelas'];
+  if ($last_kelas != $kelas_ini and $i != 1) $tr .= $tr_empty;
+  if ($last_kelas != $kelas_ini) {
+    $tr .= $thead;
+    $no = 1;
 
-  $count_latihan=$d['count_latihan'];
-  $count_challenge=$d['count_challenge'];
-  $rank_global=$d['rank_global'];
-  $rank_kelas=$d['rank_kelas'];
-  $total_peserta_kelas=$d['total_peserta_kelas'];
-  $nilai_uts=$d['nilai_uts'];
-  $nilai_uas=$d['nilai_uas'];
-  $submit_uas=$d['submit_uas'];
-  $nilai_remed_uts=$d['nilai_remed_uts'];
-  $nilai_remed_uas=$d['nilai_remed_uas'];
-
-  $red = $count_latihan==0 ? 'gradasi-merah' : '';
-  $red = ($count_latihan>0 && $count_latihan<=3) ? 'gradasi-kuning' : $red;
-
-  $delete = $count_latihan>3 ? '' : "<span class='delete_peserta pointer' id=delete_peserta__$d[id_peserta] >$img[delete]</span>";
-
-
-  if($jumlah_ontime==0){
-    $jumlah_ontime=0;
-    $konversi_ontime=0;
-  }elseif($jumlah_ontime==1 and $count_sesi_aktif==1){
-    $konversi_ontime = 100;
-  }elseif($jumlah_ontime==$count_sesi_aktif){
-    $konversi_ontime = 100;
-  }else{
-    $konversi_ontime = number_format(50 + ($jumlah_ontime-1)*((round($count_sesi_aktif*8/10,0)/$count_sesi_aktif)*(100/$count_sesi_aktif)),0);
-    if($konversi_ontime>100) $konversi_ontime=100;
+    // HEADER CSV
+    if ($id_role == 2) {
+      $reguler = $d['shift'] == 'P' ? 'Reguler' : 'NR';
+      $data_csv[$kelas_ini] .= "\n\nDAFTAR HADIR MAHASISWA DAN NILAI UTS TAHUN AKADEMIK 2023-2024 GANJIL\n\n";
+      $data_csv[$kelas_ini] .= "Prodi,$d[jenjang] - $d[nama_prodi] - $reguler\n";
+      $data_csv[$kelas_ini] .= "Mata Kuliah,Matematika Informatika\n";
+      $data_csv[$kelas_ini] .= "Semester / Kelas,$d[semester] / $d[kode_kelas]\n";
+      $data_csv[$kelas_ini] .= "Dosen,Iin S.T. M.Kom\n\n";
+      $data_csv[$kelas_ini] .= "NO,NAMA,NIM,TIMESTAMP KEHADIRAN,NILAI TUGAS,NILAI UTS,KETERANGAN\n";
+    }
   }
 
-  if($count_latihan==0){
-    $konversi_latihan=0;
-  }elseif($count_latihan==1 and $total_latihan==1){
-    $konversi_latihan = 100;
-  }elseif($count_latihan==$total_latihan){
-    $konversi_latihan = 100;
-  }else{
-    $konversi_latihan = !$total_latihan ? 0 : number_format(50 + ($count_latihan-1)*((round($total_latihan*8/10,0)/$total_latihan)*(100/$total_latihan)),0);
-    if($konversi_latihan>100) $konversi_latihan=100;
+  $nilai_harian = 'zzz';
+
+
+
+
+
+
+
+
+
+
+
+
+
+  # ======================================================
+  # rvalue_of HANDLER
+  # ======================================================
+
+  // inject from room_vars
+  $d['total_count_presensi_offline'] = $count_sesi_aktif;
+  $d['total_count_presensi_online'] = $count_sesi_aktif;
+  $d['total_count_ontime'] = $count_sesi_aktif;
+  $d['total_count_latihan'] = $total_latihan;
+  $d['total_count_latihan_wajib'] = $total_latihan_wajib;
+  $d['total_count_challenge'] = $total_challenge;
+  $d['total_count_challenge_wajib'] = $total_challenge_wajib;
+  $d['total_rank_global'] = $total_peserta;
+  $d['total_rank_kelas'] = $total_peserta_kelas;
+  $d['total_nilai_uts'] = 100;
+  $d['total_nilai_uas'] = 100;
+  $d['total_nilai_remed_uts'] = 100;
+  $d['total_nilai_remed_uas'] = 100;
+
+  foreach ($rbobot as $key => $value) {
+    $my_value[$key] = $d[$key] ?? 0; // or zero
+    $rtotal_value[$key] = $d['total_' . $key];
+    if (strpos("salt$key", 'nilai_')) {
+      $rvalue_of[$key] = $my_value[$key];
+    } else {
+      $rvalue_of[$key] = "$my_value[$key] <span class=f12>of $rtotal_value[$key]</span>";
+    }
   }
 
-  // }else{
-  // }
+  # =======================================================
+  # KONVERSIKAN
+  # =======================================================
+  $rkonversi['count_presensi_offline'] = konversikan($d['count_presensi_offline'], $d['total_count_presensi_offline']);
+  $rkonversi['count_presensi_online'] = konversikan($d['count_presensi_online'], $d['total_count_presensi_online']);
+  $rkonversi['count_ontime'] = konversikan($d['count_ontime'], $d['total_count_ontime']);
+  $rkonversi['count_latihan'] = konversikan($d['count_latihan'], $d['total_count_latihan']);
+  $rkonversi['count_latihan_wajib'] = konversikan($d['count_latihan_wajib'], $d['total_count_latihan_wajib']);
+  $rkonversi['count_challenge'] = konversikan($d['count_challenge'], $d['total_count_challenge']);
+  $rkonversi['count_challenge_wajib'] = konversikan($d['count_challenge_wajib'], $d['total_count_challenge_wajib']);
 
-  if($count_challenge==0){
-    $konversi_challenge=0;
-  }elseif($count_challenge==1 and $total_challenge==1){
-    $konversi_challenge = 100;
-  }elseif($count_challenge==$total_challenge){
-    $konversi_challenge = 100;
-  }else{
-    $konversi_challenge = round(50 + ($count_challenge-1)*((round($total_challenge*8/10,0)/$total_challenge)*(100/$total_challenge)),0);
-    if($konversi_challenge>100) $konversi_challenge=100;
+  if ($d['rank_global']) {
+    $rkonversi['rank_global'] = round(110 - (($d['rank_global'] - 1) * ((round($total_peserta * 8 / 10, 0) / $total_peserta) * (100 / $total_peserta))), 0);
+    if ($rkonversi['rank_global'] > 100) $rkonversi['rank_global'] = 100;
+  } else {
+    $rkonversi['rank_global'] = 0;
   }
 
-  if($rank_global){
-    $konversi_rank_global = round(110-(($rank_global-1)*((round($total_peserta*8/10,0)/$total_peserta)*(100/$total_peserta))),0);
-    if($konversi_rank_global>100) $konversi_rank_global=100;
+  if ($d['rank_kelas']) {
+    $rkonversi['rank_kelas'] = round(110 - (($d['rank_kelas'] - 1) * ((round($total_peserta_kelas * 8 / 10, 0) / $total_peserta_kelas) * (100 / $total_peserta_kelas))), 0);
+    if ($rkonversi['rank_kelas'] > 100) $rkonversi['rank_kelas'] = 100;
+  } else {
+    $rkonversi['rank_kelas'] = 0;
+  }
+
+  $rkonversi['nilai_uts'] = $d['nilai_uts'];
+  $rkonversi['nilai_remed_uts'] = $d['nilai_remed_uts'];
+  $rkonversi['nilai_uas'] = $d['nilai_uas'];
+  $rkonversi['nilai_remed_uas'] = $d['nilai_remed_uas'];
+  # =======================================================
+  # NILAI AKHIR BY LOOP CALCULATIONS
+  # =======================================================
+  $nilai_akhir = 0;
+  foreach ($rbobot as $key => $value) $nilai_akhir += $rbobot[$key] * $rkonversi[$key];
+  $nilai_akhir = round($nilai_akhir, 0);
+  if ($nilai_akhir > 100) $nilai_akhir = 100;
+
+  $td = '';
+  $nilai_akhir = 0;
+  foreach ($rbobot as $key => $value) {
+    $kolom = str_replace('_', ' ', $key);
+    if (strpos("salt$key", 'nilai_')) {
+      $dikali_bobot = "$rbobot[$key]%";
+    } else {
+      $dikali_bobot = "$rkonversi[$key]x$rbobot[$key]%";
+    }
+
+    $sub_nilai_akhir = round(($rkonversi[$key] * $rbobot[$key]) / 100, 2);
+    $nilai_akhir += $sub_nilai_akhir;
+    $gradasi = $rbobot[$key] ?  gradasi($rkonversi[$key]) : '';
+
+    $td .= "
+      <td class='gradasi-$gradasi'>
+        <div class=hideit>$kolom:</div>
+        $rvalue_of[$key]
+        <div class='miring abu f10'>$dikali_bobot</div>
+        <div class='darkblue'>$sub_nilai_akhir</div>
+      </td>
+    ";
   }
 
 
-  if($rank_kelas){
-    $konversi_rank_kelas = round(110-(($rank_kelas-1)*((round($d['total_peserta_kelas']*8/10,0)/$d['total_peserta_kelas'])*(100/$d['total_peserta_kelas']))),0);
-    if($konversi_rank_kelas>100) $konversi_rank_kelas=100;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  # =======================================================
+  # FINAL TR
+  # =======================================================
+  if ($id_role == 2) {
+    $gradasi =   gradasi($nilai_akhir);
+
+    $tr .= "
+    <tr class='f14'>
+      <td>$no</td>
+      <td>
+        $nama_peserta
+        <div class='kecil miring abu'>$d[kelas]</div>
+      </td>
+      $td
+      <td class='gradasi-$gradasi'>$nilai_akhir</td>
+    </tr>";
   }
-
-  $nilai_harian = round((
-    $rbobot['Count Ontime'] * $konversi_ontime + 
-    $rbobot['Count Latihan'] * $konversi_latihan + 
-    $rbobot['Count Challenge'] * $konversi_challenge + 
-    $rbobot['Rank Global'] * $konversi_rank_global + 
-    $rbobot['Rank Kelas'] * $konversi_rank_kelas  
-    )/65,0);
-
-  $nilai_akhir = round((
-    $rbobot['Count Ontime'] * $konversi_ontime + 
-    $rbobot['Count Latihan'] * $konversi_latihan + 
-    $rbobot['Count Challenge'] * $konversi_challenge + 
-    $rbobot['Rank Global'] * $konversi_rank_global + 
-    $rbobot['Rank Kelas'] * $konversi_rank_kelas + 
-    $rbobot['UTS'] * $d['nilai_uts'] + 
-    $rbobot['Remed UTS'] * $d['nilai_remed_uts'] + 
-    $rbobot['Remed UAS'] * $d['nilai_remed_uas'] + 
-    $rbobot['UAS'] * $d['nilai_uas']
-    )/100,0);
-  if($nilai_akhir>100) $nilai_akhir=100;
-
-  $tr.= "
-  <tr class='$red'>
-    <td>$no</td>
-    <td>$nama_peserta<div class='kecil miring abu'>$d[kelas]</div></td>
-    <td>$d[jumlah_ontime]<div class='kecil miring abu'>$konversi_ontime</div></td>
-    <td>$d[count_latihan]<div class='kecil miring abu'>$konversi_latihan</div></td>
-    <td>$d[count_challenge]<div class='kecil miring abu'>$konversi_challenge</div></td>
-    <td>$d[rank_global] <span class='kecil miring abu'>of $total_peserta</span><div class='kecil miring abu'>$konversi_rank_global</div></td>
-    <td>$d[rank_kelas] <span class='kecil miring abu'>of $d[total_peserta_kelas]</span><div class='kecil miring abu'>$konversi_rank_kelas</div></td>
-    <td>$d[nilai_uts]</td>
-    <td>$d[nilai_uas]<div class='abu f12'>$submit_uas</div></td>
-    <td>$d[nilai_remed_uts]</td>
-    <td>$d[nilai_remed_uas]</td>
-    <td>$nilai_akhir $delete</td>
-  </tr>";
 
   //for repeat header
-  $last_kelas = $d['kelas'];
+  $last_kelas = $kelas_ini;
 
-  $belum = '<span class="consolas darkred f12 miring">belum</span>';
-  $nilai_uts_show = $nilai_uts ? $nilai_uts : $belum;
-  $remed_uts_show = $nilai_remed_uts ? $nilai_remed_uts : $belum;
-  $nilai_uas_show = $nilai_uas ? $nilai_uas : $belum;
-  $remed_uas_show = $nilai_remed_uas ? $nilai_remed_uas : $belum;
-  
-  //autosave nilai_akhir
-  if($nilai_uts=='') $nilai_uts='NULL';
-  if($nilai_uas=='') $nilai_uas='NULL';
-  if($nilai_remed_uts=='') $nilai_remed_uts='NULL';
-  if($nilai_remed_uas=='') $nilai_remed_uas='NULL';
-  $s2 = "UPDATE tb_poin SET 
-  uts=$nilai_uts,
-  uas=$nilai_uas,
-  remed_uts=$nilai_remed_uts,
-  remed_uas=$nilai_remed_uas,
-  nilai_akhir='$nilai_akhir' 
-  WHERE id_peserta=$d[id_peserta] 
-  AND id_room=$id_room 
-  ";
-  // echo '<pre>';
-  // var_dump($s2);
-  // echo '</pre>';
-  $q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));
-
-  $tanggal_submit_uts = $d['tanggal_submit_uts'] ?? '-'; // ZZZ tanggal submit only for UTS
+  $tanggal_submit_uts = $d['tanggal_submit_uts'] ?? '-'; // ZZZ tanggal submit only for nilai_uts
   $nim = $d['nim'] ?? '-';
-  $data_csv[$kelas_ini] .= "$no,$nama_peserta,$nim,$tanggal_submit_uts,$nilai_harian,$nilai_uts,-\n";
+  if ($id_role == 2)  $data_csv[$kelas_ini] .= "$no,$nama_peserta,$nim,$tanggal_submit_uts,$nilai_harian,$d[nilai_uts],-\n";
 }
 
-$link_download_csv = '';
-if($id_role!=1){
-  foreach ($arr_kelas as $k => $jp){
-    echo "<pre class=debug>$data_csv[$k]</pre>";
-    $fcsv = fopen("csv/$k.csv", "w+") or die("$path_csv cannot accesible.");
+$link_download_csv_uts = '';
+$link_download_csv_uas = '';
+$event_ujian = 'uts';
+if ($id_role != 1) {
+  foreach ($arr_kelas as $k => $jp) {
+    if (strpos("salt$k", 'DEBUGER')) continue;
+    if (strpos("salt$k", 'INSTRUKTUR')) continue;
+    // echo "<pre class=debug>$data_csv[$k]</pre>";
+    $path_csv = "csv/nilai-$event_ujian/$k.csv";
+    $fcsv = fopen($path_csv, "w+") or die("$path_csv cannot accesible.");
     fwrite($fcsv, $data_csv[$k]);
     fclose($fcsv);
-    $link_download_csv.= "<a href='csv/$k.csv' target=_blank class='btn btn-success btn-sm'>$k</a> ";
+    $link_download_csv_uts .= "<a href='$path_csv' target=_blank class='btn btn-success btn-sm w-100 mb2'>$k</a> ";
+    $link_download_csv_uas .= "<button class='btn btn-secondary btn-sm w-100 mb2'>$k</button> ";
   }
 }
 
-$div_row[1] = ['Count Ontime',"$jumlah_ontime <span class='kecil miring abu'>of $count_sesi_aktif</span>",$konversi_ontime.' <span class="kecil miring abu">x '.$rbobot['Count Ontime'].'%</span>'];
-$div_row[2] = ['Count Latihan',"$count_latihan <span class='kecil miring abu'>of $total_latihan</span>",$konversi_latihan.' <span class="kecil miring abu">x '.$rbobot['Count Latihan'].'%</span>'];
-$div_row[3] = ['Count Challenge',"$count_challenge <span class='kecil miring abu'>of $total_challenge</span>",$konversi_challenge.' <span class="kecil miring abu">x '.$rbobot['Count Challenge'].'%</span>'];
-$div_row[4] = ['Rank Global',"$rank_global <span class='kecil miring abu'>of $total_peserta</span>",$konversi_rank_global.' <span class="kecil miring abu">x '.$rbobot['Rank Global'].'%</span>'];
-$div_row[5] = ['Rank Kelas',"$rank_kelas <span class='kecil miring abu'>of $total_peserta_kelas</span>",$konversi_rank_kelas.' <span class="kecil miring abu">x '.$rbobot['Rank Kelas'].'%</span>'];
-$div_row[6] = ['UTS','-',$nilai_uts_show.' <span class="kecil miring abu">x '.$rbobot['UTS'].'%</span>'];
-$div_row[7] = ['UAS','-',$nilai_uas_show.' <span class="kecil miring abu">x '.$rbobot['UAS'].'%</span>'];
-$div_row[8] = ['Remed UTS','-',$remed_uts_show.' <span class="kecil miring abu">x '.$rbobot['Remed UTS'].'%</span>'];
-$div_row[9] = ['Remed UAS','-',$remed_uas_show.' <span class="kecil miring abu">x '.$rbobot['Remed UAS'].'%</span>'];
-$div_row[10] = ['<span class=darkblue>Nilai Akhir</span>','-',"<span class=blue style=font-size:30px>$nilai_akhir</span>"];
 
-$rows='';
-foreach ($div_row as $v) {
-  $rows.="
-    <div class='btop pt2 mb2'>
+if ($id_role == 2) {
+  $blok_kelas = "
+    <table class='table'>
+      $tr
+    </table>
+    <div class=wadah style='max-width:450px'>
       <div class=row>
-        <div class='col-md-4 miring abu'>
-          $v[0]
+        <div class=col-md-6>
+          <div class=mb1>Download Nilai UTS:</div>
+          $link_download_csv_uts
         </div>
-        <div class=col-md-4>
-          $v[1]
-        </div>
-        <div class=col-md-4>
-          $v[2]
+        <div class=col-md-6>
+          <div class=mb1>Download Nilai UAS:</div>
+          $link_download_csv_uas
         </div>
       </div>
     </div>
   ";
+} else {
+  $single_show = '';
+  $blok_kelas = '';
+  $nilai_akhir = 0;
+  foreach ($rbobot as $key => $value) {
+    $sub_nilai_akhir = round(($rkonversi[$key] * $rbobot[$key]) / 100, 2);
+    $nilai_akhir += $sub_nilai_akhir;
+    $abu = $rbobot[$key] ? '' : 'abu f10 miring';
+    $kolom = str_replace('_', ' ', $key);
+    $kolom = str_replace('uts', 'UTS', $kolom);
+    $kolom = str_replace('uas', 'UAS', $kolom);
+
+    $sub_nilai_akhir_sty = ($rbobot[$key] and !$sub_nilai_akhir) ? 'red' : 'darkblue';
+    $gradasi = $rbobot[$key] ?  gradasi($rkonversi[$key]) : '';
+
+    $single_show .= "
+      <div class='p2 $abu gradasi-$gradasi'>
+        <div class=row>
+          <div class='col-md-4 miring darkblue proper'>
+            $kolom
+          </div>
+          <div class='col-md-3'>
+            $rvalue_of[$key]
+          </div>
+          <div class='col-md-3'>
+            $rkonversi[$key] <span class='kecil miring abu'>x $rbobot[$key]%</span>
+          </div>
+          <div class='col-md-2 kanan $sub_nilai_akhir_sty'>
+            $sub_nilai_akhir
+          </div>
+        </div>
+      </div>
+    ";
+  }
+
+  $blok_kelas .= "
+    <div class=wadah>
+      <h3 class='darkblue mt3 mb3'>$nama_peserta <span class='miring abu kecil'>$kelas</span></h3>
+      $single_show
+      <div class='btop p2 gradasi-toska'>
+        <div class=row>
+          <div class='col-md-10 darkblue'>
+            Nilai Akhir
+          </div>
+          <div class='col-md-2 f30 blue kanan'>
+            $nilai_akhir
+          </div>
+        </div>
+      </div>
+    </div>
+  ";
+
+  // auto-save for self
+  $s = "UPDATE tb_poin SET nilai_akhir=$nilai_akhir WHERE id_peserta=$id_peserta AND id_room=$id_room";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 }
 
-echo $id_role==2 ? "<table class='table'>$tr</table><div class=wadah><div class=mb1>Download CSV:</div>$link_download_csv</div>" : "
-<div class=wadah data-aos=fade-up >
-  <h3 class='darkblue mt3 mb3'>$nama_peserta <span class='miring abu kecil'>$kelas</span></h3>
-  $rows
-</div>";
 
 
 
@@ -389,9 +635,13 @@ echo $id_role==2 ? "<table class='table'>$tr</table><div class=wadah><div class=
 
 
 
-
-
-echo "</div></section>";
+$jumlah_peserta_show = $id_role == 1 ? '' : "<div class=mb2>Jumlah Peserta: $jumlah_peserta peserta</div>";
+echo "
+  <div data-aos=fade>
+    $jumlah_peserta_show
+    $blok_kelas
+  </div>
+";
 ?>
 
 
@@ -415,19 +665,19 @@ echo "</div></section>";
 
 
 <script>
-  $(function(){
-    $('.delete_peserta').click(function(){
+  $(function() {
+    $('.delete_peserta').click(function() {
       let tid = $(this).prop('id');
       let rid = tid.split('__');
       let id_peserta = rid[1];
 
-      let link_ajax = "ajax/ajax_delete_peserta.php?id_peserta="+id_peserta;
+      let link_ajax = "ajax/ajax_delete_peserta.php?id_peserta=" + id_peserta;
       $.ajax({
-        url:link_ajax,
-        success:function(a){
-          if(a.trim()=='sukses'){
+        url: link_ajax,
+        success: function(a) {
+          if (a.trim() == 'sukses') {
             console.log(a);
-          }else{
+          } else {
             alert(a);
           }
         }

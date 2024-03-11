@@ -179,6 +179,7 @@ if($username){
       </div>
     </section>
   </main>
+  <?php include 'update_points.php'; ?>
   <?php include 'debug.php'; ?>
   <?php include 'pages/footer.php'; ?>
   

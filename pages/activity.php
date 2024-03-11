@@ -1,15 +1,15 @@
 <?php
-if(!$username) jsurl('?');
-if(!$status_room) die("<section><div class=container>$div_alert_closed</div></section>");
+if (!$username) jsurl('?');
+if (!$status_room) die("<section><div class=container>$div_alert_closed</div></section>");
 $jenis = $_GET['jenis'] ?? '';
 $id_assign = $_GET['id_assign'] ?? '';
 
 // bukti latihan
 $target_bukti = "uploads/$folder_uploads/$jenis-$id_assign.jpg";
 
-if($jenis==''){
-  $rjenis = ['latihan','challenge'];
-  $j='';
+if ($jenis == '') {
+  $rjenis = ['latihan', 'challenge'];
+  $j = '';
   foreach ($rjenis as $key => $value) $j .= "<a href='?activity&jenis=$value data-aos='fade-up'' class='proper btn btn-info mb2'>$value</a> ";
   echo "<section><div class=container><div data-aos='fade-up'><p>Silahkan pilih jenis aktivitas:</p>$j</div></div></section>";
   exit;
@@ -25,7 +25,7 @@ $pesan_upload = null;
 # ============================================
 # NORMAL FLOW
 # ============================================
-if(!$id_assign){
+if (!$id_assign) {
 
   $s = "SELECT a.nama,
   (
@@ -34,17 +34,18 @@ if(!$id_assign){
     AND id_room_kelas=$id_room_kelas) assigned 
   FROM tb_$jenis a 
   WHERE a.id_room=$id_room";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $count_jenis = mysqli_num_rows($q);
 
   $list = '';
-  while($d=mysqli_fetch_assoc($q)){
-    if($d['assigned']) continue;
-    $list.="<li>$d[nama]</li>";
+  while ($d = mysqli_fetch_assoc($q)) {
+    if ($d['assigned']) continue;
+    $list .= "<li>$d[nama]</li>";
   }
   echo $list ? "<div class='wadah gradasi-kuning'>List $jenis yang belum bisa dikerjakan: <ol>$list</ol><div class='f12 biru miring'>Hubungi instruktur agar $jenis ini di-assign ke kelas kamu.</div></div>" : '';
 
   $s = "SELECT a.id as id_assign, 
+  a.is_wajib,
   b.nama,
   (b.basic_point + b.ontime_point) as sum_point,
   c.no, 
@@ -64,20 +65,20 @@ if(!$id_assign){
   AND id_room_kelas='$id_room_kelas'
   order by c.no, sum_point";
   // echo "<pre>$s</pre>";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-  if(!mysqli_num_rows($q)){
-    if($count_jenis){
-      echo div_alert('danger',"Terdapat $count_jenis $jenis yang belum di-assign oleh instruktur untuk kelas $kelas");
-    }else{
-      echo div_alert('danger',"Maaf, belum ada satupun $jenis pada room $room. Beritahukan hal ini kepada instruktur!");
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  if (!mysqli_num_rows($q)) {
+    if ($count_jenis) {
+      echo div_alert('danger', "Terdapat $count_jenis $jenis yang belum di-assign oleh instruktur untuk kelas $kelas");
+    } else {
+      echo div_alert('danger', "Maaf, belum ada satupun $jenis pada room $room. Beritahukan hal ini kepada instruktur!");
     }
-
-  }else{
+  } else {
     $rno = '';
-    while ($d=mysqli_fetch_assoc($q)) {
+    while ($d = mysqli_fetch_assoc($q)) {
       $primary = $d['sudah_mengerjakan'] ? 'warning' : 'primary';
       $primary = $d['status_mengerjakan'] ? 'success' : $primary;
-      $sum_point = number_format($d['sum_point'],0);
+      $sum_point = number_format($d['sum_point'], 0);
+      $is_wajib_icon = $d['is_wajib'] ? '<b class="consolas f12 gradasi-kuning red bordered br10" style="padding: 5px 10px">Wajib</b>' : '';
       $rno .= "
         <div>
           <a class='btn btn-$primary btn-sm mb2' href='?activity&jenis=$jenis&id_assign=$d[id_assign]'>
@@ -86,7 +87,7 @@ if(!$id_assign){
             $d[nama]
             ~ 
             $sum_point
-          </a>
+          </a> $is_wajib_icon
         </div>
       ";
     }
@@ -100,16 +101,15 @@ if(!$id_assign){
       </div>
     ";
   }
-
-}else{
+} else {
   include 'activity_show.php';
 }
 
 
-if($id_role==2){
-  if(!$id_assign){
+if ($id_role == 2) {
+  if (!$id_assign) {
     include 'activity_assign.php';
-  } 
+  }
 }
 
 echo "<div class=debug>

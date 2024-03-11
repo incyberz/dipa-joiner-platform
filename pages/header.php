@@ -1,27 +1,27 @@
 <?php
 $jumlah_verif = 0;
-$rjenis = ['latihan','challenge'];
-if($id_room){
+$rjenis = ['latihan', 'challenge'];
+if ($id_room) {
   foreach ($rjenis as $key => $jenis) {
     $s = "SELECT 1 FROM tb_bukti_$jenis a 
     JOIN tb_assign_$jenis b ON a.id_assign_$jenis=b.id 
     JOIN tb_sesi c ON b.id_sesi=c.id
     WHERE a.verified_by is null 
     AND c.id_room = $id_room 
-    "; 
-    $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+    ";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     $jumlah_verif += mysqli_num_rows($q);
   }
 }
 $jumlah_ask = 0;
-$s = "SELECT 1 FROM tb_pertanyaan WHERE verif_status is null"; 
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$s = "SELECT 1 FROM tb_pertanyaan WHERE verif_status is null";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $jumlah_ask = mysqli_num_rows($q);
 
 $red = $available_questions ? 'red' : 'green';
-$available_question_show = "<span class='count_badge badge_$red' id='available_questions'>$available_questions</span>" ;
+$available_question_show = "<span class='count_badge badge_$red' id='available_questions'>$available_questions</span>";
 
-$target_kelas_header = $id_role==2 ? 'all' : $kelas;
+$target_kelas_header = $id_role == 2 ? 'all' : $kelas;
 ?>
 <header id="header" class="fixed-top d-flex align-items-center">
   <div class="container d-flex align-items-center justify-content-between">
@@ -39,7 +39,7 @@ $target_kelas_header = $id_role==2 ? 'all' : $kelas;
         <li><a class="nav-link scrollto" href="?pengajar">Pengajar</a></li>
         <li><a class="nav-link scrollto" href="?teams">Teams</a></li>
         <!-- <li><a class="nav-link scrollto" href="?peserta">Peserta</a></li> -->
-        <li><a class="nav-link scrollto" href="?grades&kelas=<?=$target_kelas_header?>">Grades</a></li>
+        <li><a class="nav-link scrollto" href="?grades&kelas=<?= $target_kelas_header ?>">Grades</a></li>
         <!-- <li><a class="nav-link scrollto" href="#services">Services</a></li>
         <li><a class="nav-link scrollto " href="#portfolio">Portfolio</a></li>
         <li><a class="nav-link scrollto" href="#team">Team</a></li>
@@ -63,12 +63,12 @@ $target_kelas_header = $id_role==2 ? 'all' : $kelas;
         </li>
         <li><a class="nav-link scrollto" href="#contact">Contact</a></li> -->
         <?php
-        $nickname_show = isset($_SESSION['dipa_master_username']) ? "Login As $username | $my_points LP" : "$username | $my_points LP";        
+        $nickname_show = isset($_SESSION['dipa_master_username']) ? "Login As $username | $my_points LP" : "$username | $my_points LP";
         $unlog_link = isset($_SESSION['dipa_master_username']) ? "<li><a href='?login_as&unlog'>Unlog</a></li>" : '';
-        if($is_login){
-          $li_verif = ($id_role==1 || !$jumlah_verif) ? '' : "<li><a href='?verif' class='proper'><span class='biru tebal'>Verif</span> <span class='count_badge badge_red' id='jumlah_verif'>$jumlah_verif</span></a></li>";
-          $li_ask = ($id_role==1 || $jumlah_ask==0) ? '' : "<li class='hideit suspend zzz'><a href='?chats' class='proper'><span class='biru tebal'>Chats</span> <span class='count_badge badge_red' id='jumlah_ask'>$jumlah_ask</span></a></li>";
-          $li_verif_war = ($id_role==1 || $jumlah_verif_war==0) ? '' : "<li><a href='?verifikasi_war_profil' class='proper'><span class='biru tebal'>WarProfil</span> <span class='count_badge badge_red' id='jumlah_verif_war'>$jumlah_verif_war</span></a></li>";
+        if ($is_login) {
+          $li_verif = ($id_role == 1 || !$jumlah_verif) ? '' : "<li><a href='?verif' class='proper'><span class='biru tebal'>Verif</span> <span class='count_badge badge_red' id='jumlah_verif'>$jumlah_verif</span></a></li>";
+          $li_ask = ($id_role == 1 || $jumlah_ask == 0) ? '' : "<li class='hideit suspend zzz'><a href='?chats' class='proper'><span class='biru tebal'>Chats</span> <span class='count_badge badge_red' id='jumlah_ask'>$jumlah_ask</span></a></li>";
+          $li_verif_war = ($id_role == 1 || $jumlah_verif_war == 0) ? '' : "<li><a href='?verifikasi_war_profil' class='proper'><span class='biru tebal'>WarProfil</span> <span class='count_badge badge_red' id='jumlah_verif_war'>$jumlah_verif_war</span></a></li>";
 
 
           echo "
@@ -95,6 +95,7 @@ $target_kelas_header = $id_role==2 ? 'all' : $kelas;
               <ul>
                 <li><a href='?pilih_room'>Pilih Room</a></li>
                 <li><a href='?list_sesi'>Learning Path</a></li>
+                <li><a href='?peserta_kelas'>Peserta Kelas</a></li>
                 <li><a href='?activity&jenis=latihan'>Latihan</a></li>
                 <li><a href='?activity&jenis=challenge'>Challenges</a></li>
                 <li class='hideit'><a href='?bertanya'>Bertanya</a></li>
@@ -128,7 +129,7 @@ $target_kelas_header = $id_role==2 ? 'all' : $kelas;
           # ==================================================================
           # ADMIN ONLY
           # ==================================================================
-          if($id_role==2) echo "
+          if ($id_role == 2) echo "
             <li class='dropdown'><a  href='#'><span class='tebal darkblue'>$room ADMIN</span> <i class='bi bi-chevron-down'></i></a>
               <ul>
                 <li><a href='?target_kelas'>Set Target Kelas</a></li>
@@ -138,8 +139,7 @@ $target_kelas_header = $id_role==2 ? 'all' : $kelas;
               </ul>
             </li>
           ";
-
-        }else{
+        } else {
           echo "<li><a class='getstarted scrollto' href='?login'>Login</a></li>";
         }
         ?>
