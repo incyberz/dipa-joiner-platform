@@ -23,5 +23,6 @@ function img_icon($nama, $w = 20, $h = 20)
 
 $img_edit = img_icon('edit');
 $img_add = img_icon('add', 22, 20);
+$img_detail = img_icon('detail');
 $img_delete = img_icon('delete');
 $img_hapus = img_icon('delete');
