@@ -26,3 +26,4 @@ $img_add = img_icon('add', 22, 20);
 $img_detail = img_icon('detail');
 $img_delete = img_icon('delete');
 $img_hapus = img_icon('delete');
+$img_login_as = img_icon('login_as');

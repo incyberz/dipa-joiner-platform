@@ -5,6 +5,9 @@
 </style>
 <?php
 login_only();
+include 'include/date_managements.php';
+$get_save = $_GET['save'] ?? '';
+$get_show_img = $_GET['show_img'] ?? '';
 
 function gradasi($nilai)
 {
@@ -44,12 +47,18 @@ $judul = 'Nilai Akhir';
 set_title($judul);
 
 
-
+$show_profile_peserta = '';
+if ($id_role == 2) {
+  $show_img = $get_show_img ? 0 : 1;
+  $Show = $get_show_img ? 'Hide' : 'Show';
+  $show_profile_peserta = "<a href='?nilai_akhir&show_img=$show_img'>$Show Profil Peserta</a>";
+}
 
 echo "
 <div class='section-title' data-aos='fade'>
   <h2>$judul</h2>
   <p>Kalkulasi Poin Pembelajaran dan Nilai Akhir</p>
+  $show_profile_peserta
 </div>";
 
 
@@ -84,6 +93,20 @@ $rbobot['nilai_uts'] = 0;
 $rbobot['nilai_uas'] = 0;
 $rbobot['nilai_remed_uts'] = 0;
 $rbobot['nilai_remed_uas'] = 0;
+
+$rlink['count_presensi_offline'] = '?presensi';
+$rlink['count_presensi_online'] = '?presensi';
+$rlink['count_ontime'] = '?presensi';
+$rlink['count_latihan'] = '?activity&jenis=latihan';
+$rlink['count_latihan_wajib'] = '?activity&jenis=latihan';
+$rlink['count_challenge'] = '?activity&jenis=challenge';
+$rlink['count_challenge_wajib'] = '?activity&jenis=challenge';
+$rlink['rank_global'] = '?grades';
+$rlink['rank_kelas'] = '?grades';
+$rlink['nilai_uts'] = '?ujian';
+$rlink['nilai_uas'] = '?ujian';
+$rlink['nilai_remed_uts'] = '?ujian';
+$rlink['nilai_remed_uas'] = '?ujian';
 
 $td_bobot = '';
 $th_komponen = '';
@@ -160,6 +183,7 @@ $s = "SELECT
 a.id as id_peserta,
 a.nama as nama_peserta,
 a.nim,
+a.username,
 b.kelas,
 b.*,
 c.*,
@@ -192,9 +216,32 @@ c.*,
   SELECT COUNT(1) FROM tb_sesi p 
   JOIN tb_sesi_kelas q ON p.id=q.id_sesi 
   WHERE p.id_room=$id_room 
-  AND p.awal_presensi <= '$now') count_sesi_aktif,
+  AND p.awal_presensi <= '$now' 
+  AND p.awal_presensi < '$ahad_depan'
+  AND q.kelas=c.kelas) count_sesi_aktif,
 
-
+-- ========================================
+-- SELECT TOTAL PESERTA
+-- ========================================
+(
+  SELECT count(1) FROM tb_room_kelas p  
+  JOIN tb_kelas q ON p.kelas=q.kelas  
+  JOIN tb_kelas_peserta r ON q.kelas=r.kelas
+  JOIN tb_peserta s ON r.id_peserta=s.id 
+  WHERE q.tahun_ajar=$tahun_ajar 
+  AND s.id_role = 1 
+  AND s.status = 1 
+  AND s.nama NOT LIKE '%dummy%' 
+  AND p.id_room=$id_room) total_peserta,
+(
+  SELECT count(1) FROM tb_kelas_peserta p  
+  JOIN tb_kelas q ON p.kelas=q.kelas  
+  JOIN tb_peserta r ON p.id_peserta=r.id 
+  WHERE q.tahun_ajar=$tahun_ajar 
+  AND r.id_role = 1 
+  AND r.status = 1 
+  AND r.nama NOT LIKE '%dummy%' 
+  AND q.kelas=c.kelas) total_peserta_kelas,
 
 -- ========================================
 -- SELECT LATIHAN AND CHALLENGE
@@ -203,23 +250,23 @@ c.*,
   SELECT COUNT(1) FROM tb_bukti_latihan p 
   JOIN tb_assign_latihan q ON p.id_assign_latihan=q.id  
   WHERE p.id_peserta=a.id 
-  AND q.id_room_kelas=$id_room_kelas) count_latihan,
+  AND q.id_room_kelas=d.id) count_latihan,
 (
   SELECT COUNT(1) FROM tb_bukti_latihan p 
   JOIN tb_assign_latihan q ON p.id_assign_latihan=q.id  
   WHERE p.id_peserta=a.id 
-  AND q.id_room_kelas=$id_room_kelas
+  AND q.id_room_kelas=d.id
   AND q.is_wajib is not null) count_latihan_wajib,
 (
   SELECT COUNT(1) FROM tb_bukti_challenge p 
   JOIN tb_assign_challenge q ON p.id_assign_challenge=q.id  
   WHERE p.id_peserta=a.id 
-  AND q.id_room_kelas=$id_room_kelas) count_challenge,
+  AND q.id_room_kelas=d.id) count_challenge,
 (
   SELECT COUNT(1) FROM tb_bukti_challenge p 
   JOIN tb_assign_challenge q ON p.id_assign_challenge=q.id  
   WHERE p.id_peserta=a.id 
-  AND q.id_room_kelas=$id_room_kelas
+  AND q.id_room_kelas=d.id
   AND q.is_wajib is not null) count_challenge_wajib,
 
 
@@ -281,16 +328,13 @@ AND $sql_id_peserta -- SWITCH VIEW PESERTA | GM
 AND c.tahun_ajar = $tahun_ajar 
 AND d.id_room = $id_room 
 AND a.nama NOT LIKE '%dummy%' -- bukan peserta dummy 
-AND a.nama LIKE '%ah%' -- DEBUGGING 
 
 
 ORDER BY b.kelas, a.nama
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-
-$jumlah_peserta = mysqli_num_rows($q);
-if ($jumlah_peserta > 1 and $id_role == 1) die('Duplicate result found at nilai_akhir');
-
+$total_data = mysqli_num_rows($q);
+if (mysqli_num_rows($q) > 1 and $id_role == 1) die('Duplicate result ditemukan untuk setiap peserta');
 
 
 
@@ -334,13 +378,12 @@ if ($jumlah_peserta > 1 and $id_role == 1) die('Duplicate result found at nilai_
 # =======================================================
 # ROOM KELAS UNTUK CSV
 # =======================================================
-$id_role = 1; //zzz debug
 if ($id_role == 2) {
   $arr_kelas = [];
-  $s = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room";
-  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  while ($d = mysqli_fetch_assoc($q)) {
-    $arr_kelas[$d['kelas']] = $d['id'];
+  $s2 = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room";
+  $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+  while ($d2 = mysqli_fetch_assoc($q2)) {
+    $arr_kelas[$d2['kelas']] = $d2['id'];
   }
   foreach ($arr_kelas as $k => $jp) $data_csv[$k] = '';
 }
@@ -349,13 +392,13 @@ if ($id_role == 2) {
 # LOOPING MAIN SELECT
 # =======================================================
 $tr_empty = '<tr><td colspan=100%>&nbsp;</td></tr>';
-
-
-
 $no = 0;
 $i = 0;
 $last_kelas = '';
 while ($d = mysqli_fetch_assoc($q)) {
+  if (!$d['total_peserta_kelas']) {
+    die("Peserta kelas tidak boleh 0. Kelas: $d[kelas]");
+  }
   $i++;
   $no++;
 
@@ -363,7 +406,11 @@ while ($d = mysqli_fetch_assoc($q)) {
   $nama_peserta = strtoupper($d['nama_peserta']);
   // $jumlah_ontime = $d['jumlah_ontime'];
   $count_sesi_aktif = $d['count_sesi_aktif'];
-  if (!$count_sesi_aktif) die(div_alert('danger', "count_sesi_aktif : $count_sesi_aktif canot be null"));
+  if (!$count_sesi_aktif) {
+    // terdapat kelas yang belum di set jadwal
+    $_SESSION['target_kelas'] = $d['kelas'];
+    die(div_alert('danger', "count_sesi_aktif : $count_sesi_aktif canot be null. Jadwal kuliah belum disetting untuk kelas: $d[kelas]<hr><a href='?presensi' class='btn btn-primary'>Set Jadwal Presensi untuk $d[kelas]</a>"));
+  }
 
   // handler blok tiap kelas
   $kelas_ini = $d['kelas'];
@@ -410,8 +457,8 @@ while ($d = mysqli_fetch_assoc($q)) {
   $d['total_count_latihan_wajib'] = $total_latihan_wajib;
   $d['total_count_challenge'] = $total_challenge;
   $d['total_count_challenge_wajib'] = $total_challenge_wajib;
-  $d['total_rank_global'] = $total_peserta;
-  $d['total_rank_kelas'] = $total_peserta_kelas;
+  $d['total_rank_global'] = $d['total_peserta'];
+  $d['total_rank_kelas'] = $d['total_peserta_kelas'];
   $d['total_nilai_uts'] = 100;
   $d['total_nilai_uas'] = 100;
   $d['total_nilai_remed_uts'] = 100;
@@ -439,14 +486,14 @@ while ($d = mysqli_fetch_assoc($q)) {
   $rkonversi['count_challenge_wajib'] = konversikan($d['count_challenge_wajib'], $d['total_count_challenge_wajib']);
 
   if ($d['rank_global']) {
-    $rkonversi['rank_global'] = round(110 - (($d['rank_global'] - 1) * ((round($total_peserta * 8 / 10, 0) / $total_peserta) * (100 / $total_peserta))), 0);
+    $rkonversi['rank_global'] = round(110 - (($d['rank_global'] - 1) * ((round($d['total_peserta'] * 8 / 10, 0) / $d['total_peserta']) * (100 / $d['total_peserta']))), 0);
     if ($rkonversi['rank_global'] > 100) $rkonversi['rank_global'] = 100;
   } else {
     $rkonversi['rank_global'] = 0;
   }
 
   if ($d['rank_kelas']) {
-    $rkonversi['rank_kelas'] = round(110 - (($d['rank_kelas'] - 1) * ((round($total_peserta_kelas * 8 / 10, 0) / $total_peserta_kelas) * (100 / $total_peserta_kelas))), 0);
+    $rkonversi['rank_kelas'] = round(110 - (($d['rank_kelas'] - 1) * ((round($d['total_peserta_kelas'] * 8 / 10, 0) / $d['total_peserta_kelas']) * (100 / $d['total_peserta_kelas']))), 0);
     if ($rkonversi['rank_kelas'] > 100) $rkonversi['rank_kelas'] = 100;
   } else {
     $rkonversi['rank_kelas'] = 0;
@@ -514,16 +561,37 @@ while ($d = mysqli_fetch_assoc($q)) {
   if ($id_role == 2) {
     $gradasi =   gradasi($nilai_akhir);
 
-    $tr .= "
-    <tr class='f14'>
-      <td>$no</td>
-      <td>
-        $nama_peserta
-        <div class='kecil miring abu'>$d[kelas]</div>
-      </td>
-      $td
-      <td class='gradasi-$gradasi'>$nilai_akhir</td>
-    </tr>";
+
+    if ($get_save) {
+      // auto-save for everyone
+      $s2 = "UPDATE tb_poin SET nilai_akhir=$nilai_akhir WHERE id_peserta=$d[id_peserta] AND id_room=$id_room";
+      $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+    } else {
+      if ($get_show_img) {
+        $src = "assets/img/peserta/wars/peserta-$d[id_peserta].jpg";
+        if (file_exists($src)) {
+          $img = "<img src='$src' class='foto_profil'>";
+        } else {
+          $img = '<span class="f12 abu consolas">belum ada profil</span>';
+        }
+      } else {
+        $img = '';
+      }
+
+      // preview to table
+      $tr .= "
+      <tr class='f14'>
+        <td>$no</td>
+        <td>
+          $nama_peserta 
+          <a href='?login_as&username=$d[username]'>$img_login_as</a>
+          <div class='kecil miring abu'>$d[kelas]</div>
+          $img
+        </td>
+        $td
+        <td class='gradasi-$gradasi'>$nilai_akhir</td>
+      </tr>";
+    }
   }
 
   //for repeat header
@@ -541,7 +609,6 @@ if ($id_role != 1) {
   foreach ($arr_kelas as $k => $jp) {
     if (strpos("salt$k", 'DEBUGER')) continue;
     if (strpos("salt$k", 'INSTRUKTUR')) continue;
-    // echo "<pre class=debug>$data_csv[$k]</pre>";
     $path_csv = "csv/nilai-$event_ujian/$k.csv";
     $fcsv = fopen($path_csv, "w+") or die("$path_csv cannot accesible.");
     fwrite($fcsv, $data_csv[$k]);
@@ -551,12 +618,21 @@ if ($id_role != 1) {
   }
 }
 
+// return to normal view
+if ($get_save) {
+  echo div_alert('success', "Data Nilai Akhir untuk $d[total_peserta] peserta sudah tersimpan.<hr><a class='btn btn-primary' href='?nilai_akhir'>Kembali ke Mode View Nilai Akhir</a>");
+  exit;
+}
+
 
 if ($id_role == 2) {
   $blok_kelas = "
     <table class='table'>
       $tr
     </table>
+    <div class=mb4>
+      <a href='?nilai_akhir&save=1' class='btn btn-primary ' onclick='alert(\"Setelah Anda menyimpan data Nilai Akhir sebaiknya Anda mengumumkan kepada para peserta.\")'>Simpan Data Nilai Akhir untuk $total_data Peserta</a>
+    </div>
     <div class=wadah style='max-width:450px'>
       <div class=row>
         <div class=col-md-6>
@@ -589,7 +665,7 @@ if ($id_role == 2) {
       <div class='p2 $abu gradasi-$gradasi'>
         <div class=row>
           <div class='col-md-4 miring darkblue proper'>
-            $kolom
+            <a href='$rlink[$key]'>$kolom</a>
           </div>
           <div class='col-md-3'>
             $rvalue_of[$key]
@@ -635,7 +711,7 @@ if ($id_role == 2) {
 
 
 
-$jumlah_peserta_show = $id_role == 1 ? '' : "<div class=mb2>Jumlah Peserta: $jumlah_peserta peserta</div>";
+$jumlah_peserta_show = $id_role == 1 ? '' : "<div class=mb2>Jumlah Peserta: $total_data peserta</div>";
 echo "
   <div data-aos=fade>
     $jumlah_peserta_show

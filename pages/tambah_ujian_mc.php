@@ -1,1 +1,1 @@
-<h2>Tambah Ujian Multi Check</h2>
+<h2>Manage Soal Multi Check</h2>

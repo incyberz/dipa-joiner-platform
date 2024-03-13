@@ -1,1 +1,1 @@
-<h2>Tambah Ujian Essay</h2>
+<h2>Manage Soal Essay</h2>

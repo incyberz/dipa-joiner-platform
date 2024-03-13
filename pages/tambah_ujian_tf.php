@@ -1,1 +1,1 @@
-<h2>Tambah Ujian True/False</h2>
+<h2>Manage Soal True/False</h2>
