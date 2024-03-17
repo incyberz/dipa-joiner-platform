@@ -5,19 +5,21 @@
 $online_version = $_SERVER['SERVER_NAME'] == 'localhost' ? 0 : 1;
 
 if ($online_version) {
-  $db_server = "localhost";
-  $db_user = "pesc7881_insho";
+  $db_server = 'localhost';
+  $db_user = 'pesc7881_insho';
   $db_pass = "hq'qC3D}+Hzj@TT";
-  $db_name = "pesc7881_dipa";
+  $db_name = 'pesc7881_dipa';
 
-  $db_user = "iotikain_insho";
+  $db_user = 'iotikain_insho';
   $db_pass = "hq'qC3D}+Hzj@TT";
-  $db_name = "iotikain_dipa";
+  $db_name = 'iotikain_dipa';
 } else {
-  $db_server = "localhost";
-  $db_user = "root";
+  $db_server = 'localhost';
+  $db_user = 'root';
   $db_pass = '';
-  $db_name = "db_dipa";
+  $db_name = 'db_dipa';
+
+  if ($dm_db) $db_name = 'db_online_dipa';
 }
 
 $cn = new mysqli($db_server, $db_user, $db_pass, $db_name);

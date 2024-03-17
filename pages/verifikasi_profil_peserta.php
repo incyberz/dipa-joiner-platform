@@ -1,26 +1,33 @@
-<style>.flexy-item{border:solid 1px #ccc; border-radius: 5px; width: 160px; padding: 10px}</style>
-<section>
-  <div class=container>
-    <div class="section-title" data-aos="fade">
-      <h2>Profil Peserta</h2>
-      <p><?php if($id_role==2) echo "Berikut adalah profil peserta yang harus diverifikasi. | 
+<style>
+  .flexy-item {
+    border: solid 1px #ccc;
+    border-radius: 5px;
+    width: 160px;
+    padding: 10px
+  }
+</style>
+<div class="section-title" data-aos="fade">
+  <h2>Profil Peserta</h2>
+  <p><?php if ($id_role == 2) echo "Berikut adalah profil peserta yang harus diverifikasi. | 
         <a href='?verifikasi_profil_peserta'>Unverified</a> | 
         <a href='?verifikasi_profil_peserta&profil_ok=1'>Accepted</a> | 
         <a href='?verifikasi_profil_peserta&profil_ok=2'>Formal</a> |
         <a href='?verifikasi_profil_peserta&profil_ok=-1'>Rejected</a>";
-        if($id_role==1) echo 'Berikut adalah status verifikasi untuk Profil kamu'; ?>
-      </p>
-    </div>        
+      if ($id_role == 1) echo 'Berikut adalah status verifikasi untuk Profil kamu'; ?>
+  </p>
+</div>
 <!-- ============================================================== -->
 <?php
 login_only();
 $get_profil_ok = $_GET['profil_ok'] ?? null;
 
 
-$sql_id_peserta = $id_role==1 ? "a.id=$id_peserta" : '1';
-if($id_role==2){
+$sql_id_peserta = $id_role == 1 ? "a.id=$id_peserta" : '1';
+if ($id_role == 2) {
   $sql_profil_ok = $get_profil_ok ? "a.profil_ok=$get_profil_ok" : 'a.profil_ok is null';
-}else{ $sql_profil_ok = '1';} 
+} else {
+  $sql_profil_ok = '1';
+}
 $s = "SELECT a.id as id_peserta,
 a.nama as nama_peserta,
 b.kelas,
@@ -35,22 +42,22 @@ AND c.tahun_ajar = $tahun_ajar
 AND d.id_room=$id_room 
 AND $sql_id_peserta  
 AND $sql_profil_ok   
+AND c.kelas != 'INSTRUKTUR' 
 ";
-// echo "<pre>$s</pre>";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-if(mysqli_num_rows($q)==0){
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+if (mysqli_num_rows($q) == 0) {
   $divs = ('<span class=red>Data tidak ditemukan</span>');
-}else{
-  $divs='';
-  $batas=20;
-  while($d=mysqli_fetch_assoc($q)){
+} else {
+  $divs = '';
+  $batas = 20;
+  while ($d = mysqli_fetch_assoc($q)) {
     $id = $d['id_peserta'];
     $path = "assets/img/peserta/peserta-$id.jpg";
-    if(file_exists($path)){
+    if (file_exists($path)) {
       $batas--;
-      if($batas>=0){
-        if($id_role==2){
-          $divs.="
+      if ($batas >= 0) {
+        if ($id_role == 2) {
+          $divs .= "
             <div class='flexy-item tengah bg-white' id=box__$id>
               <div>
                 <img src='$path' class='foto_profil' />
@@ -77,7 +84,7 @@ if(mysqli_num_rows($q)==0){
               </div>
             </div>
           ";
-        }else{
+        } else {
           $status = [
             -1 => '<span class=red>Profil kurang layak.</span> Silahkan ganti dengan foto profil close-up (setengah badan) atau pas-foto ijazah. Kemungkinan ditolak antara lain: memakai avatar, foto terlalu jauh, foto landscape, dll',
             0 => '<span class=red>Unverified.</span> Profil kamu belum diverifikasi, masih terdapat fitur yang dibatasi yang mengharuskan verified profile',
@@ -93,15 +100,14 @@ if(mysqli_num_rows($q)==0){
             </div>
           ";
         }
-
       }
     }
   }
 }
 
 
-echo $id_role==2 ? "<div class='wadah gradasi-hijau flexy'>$divs</div>" : "<div class='wadah tengah'>$divs</div>";
-if($id_role==2) include 'verifikasi_war_profil.php';
+echo $id_role == 2 ? "<div class='wadah gradasi-hijau flexy'>$divs</div>" : "<div class='wadah tengah'>$divs</div>";
+if ($id_role == 2) include 'verifikasi_war_profil.php';
 
 
 
@@ -118,8 +124,8 @@ if($id_role==2) include 'verifikasi_war_profil.php';
 
 
 ?><script>
-  $(function(){
-    $('.btn_verif').click(function(){
+  $(function() {
+    $('.btn_verif').click(function() {
       let tid = $(this).prop('id');
       let rid = tid.split('__');
       let aksi = rid[0];
@@ -128,11 +134,11 @@ if($id_role==2) include 'verifikasi_war_profil.php';
       let link_ajax = `ajax/set_profil_ok.php?id_peserta=${id_peserta}&aksi=${aksi}`;
 
       $.ajax({
-        url:link_ajax,
-        success:function(a){
-          if(a.trim()=='sukses'){
-            $('#box__'+id_peserta).fadeOut();
-          }else{
+        url: link_ajax,
+        success: function(a) {
+          if (a.trim() == 'sukses') {
+            $('#box__' + id_peserta).fadeOut();
+          } else {
             alert(a)
           }
         }

@@ -1,12 +1,13 @@
-<?php 
+<?php
 $list_soal = '';
-$s= "SELECT 
+$s = "SELECT 
 a.id as id_assign_soal,
 b.soal,
 b.opsies,
 b.kjs,
 b.id as id_soal,
 b.tipe_soal,
+b.gambar_soal,
 c.nama as paket_soal 
 FROM tb_assign_soal a 
 JOIN tb_soal b ON a.id_soal=b.id 
@@ -19,25 +20,25 @@ ORDER BY rand()
 
 
 $div = '';
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $jumlah_soal = mysqli_num_rows($q);
 $debug .= "<br>jumlah_soal:<span id=jumlah_soal>$jumlah_soal</span>";
 
-$i=0;
+$i = 0;
 $new_tmp_jawabans = '';
-while ($d=mysqli_fetch_assoc($q)) {
+while ($d = mysqli_fetch_assoc($q)) {
   $id_assign_soal = $d['id_assign_soal'];
-  $new_tmp_jawabans.= $id_assign_soal."__$d[kjs]|";
+  $new_tmp_jawabans .= $id_assign_soal . "__$d[kjs]|";
 
   $tipe_soal = $d['tipe_soal'];
-  if(strtoupper($tipe_soal)=='PG'){
+  if (strtoupper($tipe_soal) == 'PG') {
     echo '<style>.btn-success{border: solid 3px blue; box-shadow: 0 0 9px yellow; font-weight: bold}</style>';
 
-    $arr = explode('~~~',$d['opsies']);
+    $arr = explode('~~~', $d['opsies']);
     $div_opsi = '';
     foreach ($arr as $key => $value) {
-      $dual_id = "btn_pg__$id_assign_soal"."__$key";
-      $div_opsi.= "<div class='mb1 col-lg-3 col-md-6'><span class='btn btn-secondary btn-sm btn-block btn_jawab btn_pg__$id_assign_soal' id=$dual_id>$value</span></div>";
+      $dual_id = "btn_pg__$id_assign_soal" . "__$key";
+      $div_opsi .= "<div class='mb1 col-lg-3 col-md-6'><span class='btn btn-secondary btn-sm btn-block btn_jawab btn_pg__$id_assign_soal' id=$dual_id>$value</span></div>";
     }
 
     $div_opsies = "
@@ -47,8 +48,7 @@ while ($d=mysqli_fetch_assoc($q)) {
         </div>
       </div>
     ";
-
-  }elseif($tipe_soal=='TF'){
+  } elseif ($tipe_soal == 'TF') {
     $div_opsies = "
       <div class=col-md-4>
         <div class='row'>
@@ -57,8 +57,19 @@ while ($d=mysqli_fetch_assoc($q)) {
         </div>
       </div>
     ";
-  }else{
+  } else {
     die(div_alert('danger', "Belum ada handler untuk tipe soal: $tipe_soal"));
+  }
+
+  // gambar soal (jika ada)
+  $gambar_soal = '';
+  if ($d['gambar_soal']) {
+    $src = "assets/img/gambar_soal/$d[gambar_soal].jpg";
+    if (!file_exists($src)) {
+      die("Terdapat gambar soal yang hilang. Segera hubungi Instruktur!<hr>id_soal: $id_soal");
+    } else {
+      $gambar_soal = "<img src='$src' class='img-fluid'>";
+    }
   }
 
 
@@ -71,6 +82,7 @@ while ($d=mysqli_fetch_assoc($q)) {
           <div>$i.</div>
           <div>
             $d[soal] 
+            $gambar_soal
             <span class=debug>
               id_assign_soal:<span id=id_assign_soal__$id_assign_soal>$id_assign_soal</span> | 
               jawaban:<span id=jawaban__$id_assign_soal class=jawaban></span> | 
@@ -87,9 +99,9 @@ while ($d=mysqli_fetch_assoc($q)) {
 
 // autosave tmp_jawabans if null
 $debug .= "<br>tmp_jawabans1: $tmp_jawabans <br>tmp_jawabans2: $new_tmp_jawabans";
-if(strlen($new_tmp_jawabans) != strlen($tmp_jawabans)){
+if (strlen($new_tmp_jawabans) != strlen($tmp_jawabans)) {
   $s = "UPDATE tb_paket_soal SET tmp_jawabans='$new_tmp_jawabans',tmp_jumlah_soal=$jumlah_soal WHERE id=$id_paket_soal";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 }
 
 $list_soal = "<div data-aos='fade-up' data-aos-delay=300>$div</div>";

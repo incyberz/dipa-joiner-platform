@@ -4,17 +4,17 @@
   $img_detail = img_icon('detail');
 
   $s = "SELECT * FROM tb_assign_$jenis WHERE id=$id_assign";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-  if(mysqli_num_rows($q)){
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  if (mysqli_num_rows($q)) {
     $d = mysqli_fetch_assoc($q);
-    
+
     # ====================================
     # MANAGE ASSIGNED JENIS
     # ====================================
-    $tr='';
-    foreach ($d as $key => $value){
-      if(substr($key,0,2)=='id') continue;
-      $tr.= "
+    $tr = '';
+    foreach ($d as $key => $value) {
+      if (substr($key, 0, 2) == 'id') continue;
+      $tr .= "
         <tr>
           <td>$key</td>
           <td>
@@ -28,8 +28,13 @@
     <form method=post id=form_assign class=hideit>
       <table class=table>
         $tr
-      </table>
-      <button class='btn btn-primary w-100' name=btn_update_assign value=$id_assign>Update Assign $jenis :: $kelas</button>
+        <tr>
+          <td>Untuk Kelas</td>
+          <td>
+            <input class='form-control' name=untuk_kelas value='$target_kelas' />
+          </td>
+        </tr>      </table>
+      <button class='btn btn-primary w-100 proper' name=btn_update_assign value=$id_assign>Update Rule Assign $jenis</button>
     </form>
     ";
 
@@ -39,19 +44,19 @@
     # ====================================
     # MANAGE LATIHAN/CHALLENGE
     # ====================================
-    $id = $d['id_'.$jenis];
+    $id = $d['id_' . $jenis];
     $s = "SELECT * FROM tb_$jenis WHERE id=$id";
-    $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
     $d = mysqli_fetch_assoc($q);
-    $tr='';
-    foreach ($d as $key => $value){
-      if($key=='id'||$key=='id_room') continue;
-      $rows = 2 + intval(strlen($value)/30);
-      $input = strlen($value)>30 
-      ? "<textarea class='form-control' name=$key rows=$rows>$value</textarea>" 
-      : "<input class='form-control' name=$key value='$value' />";
-      $tr.= "
+    $tr = '';
+    foreach ($d as $key => $value) {
+      if ($key == 'id' || $key == 'id_room') continue;
+      $rows = 2 + intval(strlen($value) / 30);
+      $input = strlen($value) > 30
+        ? "<textarea class='form-control' name=$key rows=$rows>$value</textarea>"
+        : "<input class='form-control' name=$key value='$value' />";
+      $tr .= "
         <tr>
           <td>$key</td>
           <td>
@@ -69,9 +74,8 @@
       <button class='btn btn-primary w-100' name=btn_update_jenis value=$id>Update $jenis</button>
     </form>
     ";
-
-  }else{
-    echo div_alert('danger',"Data Assign $jenis tidak ditemukan.");
+  } else {
+    echo div_alert('danger', "Data Assign $jenis tidak ditemukan.");
   }
 
 

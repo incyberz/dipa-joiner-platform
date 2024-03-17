@@ -1,4 +1,3 @@
-
 <?php
 # =================================================================
 login_only();
@@ -13,16 +12,16 @@ $limit = $all_wars ? '100' : '20';
 
 
 $nav_kelas = '';
-if($id_role!=1){
+if ($id_role != 1) {
   //dosen only
   foreach ($arr_kelas as $kelas => $jml) {
-    if($kelas=='BOCIL') continue;
-    $nav_kelas.= "<a href='?war_history&all_wars&kelas=$kelas'>$kelas</a> | ";
+    if ($kelas == 'INSTRUKTUR') continue;
+    $nav_kelas .= "<a href='?war_history&all_wars&kelas=$kelas'>$kelas</a> | ";
   }
   $nav_kelas = "<div class=kecil>$nav_kelas</div>";
-  $sql_kelas = $get_kelas=='' ? 1 : "d.kelas = '$get_kelas'";
+  $sql_kelas = $get_kelas == '' ? 1 : "d.kelas = '$get_kelas'";
   $sql_my_wars = $all_wars ? '1' : "a.id_penjawab=$id_peserta";
-}else{
+} else {
   $sql_my_wars = $all_wars ? "d.kelas='$kelas'" : "a.id_penjawab=$id_peserta";
   $sql_kelas = '1';
   $nav_kelas = "<div class='kecil mt2 abu'>Jejak perang yang tak terlupakan.</div> ";
@@ -72,64 +71,64 @@ ORDER BY a.tanggal DESC
 LIMIT $limit
 ";
 // echo "<pre>$s</pre>";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-if(mysqli_num_rows($q)==0){
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+if (mysqli_num_rows($q) == 0) {
   $meme = meme('dont-have');
   echo div_alert('danger tengah', "<div class=mb2>Lo ga pernah ikut perang jehh!!</div>$meme");
-}else{
+} else {
   $div = '';
   $profil = "assets/img/peserta/wars/peserta-$id_peserta.jpg";
-  if(file_exists($profil)){
+  if (file_exists($profil)) {
     $profil = "<img class=profil_penjawab src='$profil' />";
-  }else{
+  } else {
     $profil = "<img class=profil_penjawab src='assets/img/no_war_profil.jpg' />";
   }
 
-  while($d=mysqli_fetch_assoc($q)){
-    $id_perang=$d['id_perang'];
-    $id_pembuat=$d['id_pembuat'];
-    $is_benar=$d['is_benar'];
-    $penjawab=$d['penjawab'];
-    $r = rand(1,12);
+  while ($d = mysqli_fetch_assoc($q)) {
+    $id_perang = $d['id_perang'];
+    $id_pembuat = $d['id_pembuat'];
+    $is_benar = $d['is_benar'];
+    $penjawab = $d['penjawab'];
+    $r = rand(1, 12);
     $cermin = '';
 
 
-    if($is_benar==1){
+    if ($is_benar == 1) {
       $gradasi = 'hijau';
-    }elseif($is_benar==-1){
+    } elseif ($is_benar == -1) {
       $gradasi = 'kuning';
       $r = 0;
-    }else{
+    } else {
       $gradasi = 'merah';
       $cermin = 'cermin';
     }
 
     $profil2 = "assets/img/peserta/wars/peserta-$id_pembuat.jpg";
-    if(file_exists($profil2)){
+    if (file_exists($profil2)) {
       $profil2 = "<img class=profil_penjawab src='$profil2' />";
-    }else{
+    } else {
       $profil2 = $no_war_profil;
     }
 
     $tanggal = date('M d, Y, H:i:s', strtotime($d['tanggal']));
-    $eta_show = eta(-strtotime('now')+strtotime($d['tanggal']));
+    $eta_show = eta(-strtotime('now') + strtotime($d['tanggal']));
 
     $img_guns = "<img src='assets/img/guns/wp$r.png' style='max-width:70px' class='$cermin pt4'  />";
 
     $src_profil_penjawab = "assets/img/peserta/wars/peserta-$d[id_penjawab].jpg";
     $profil_penjawab = "<img class=profil_penjawab src='$src_profil_penjawab' />";
-    if(!file_exists($src_profil_penjawab)) $profil_penjawab = $no_war_profil;
+    if (!file_exists($src_profil_penjawab)) $profil_penjawab = $no_war_profil;
 
-    if($all_wars){
-      if($id_role==1) $profil2 = '';
-      $profil = $id_role==1 ? '' : $profil_penjawab;
+    if ($all_wars) {
+      if ($id_role == 1) $profil2 = '';
+      $profil = $id_role == 1 ? '' : $profil_penjawab;
       $you = $penjawab;
-      $guns = $d['poin_pembuat']=='' ? '<span class=red>tidak menjawab</span>' : '<span class=abu>menjawab salah</span>';
-      $guns = $d['is_benar']==1 ? '<span class=blue>menjawab benar</span>' : $guns;
-      $guns = $d['is_benar']==-1 ? '<span class=red>rejecting</span>' : $guns;
-      $guns = $id_role==1 ? $guns : "$img_guns<div class=mt3>$guns</div>";
+      $guns = $d['poin_pembuat'] == '' ? '<span class=red>tidak menjawab</span>' : '<span class=abu>menjawab salah</span>';
+      $guns = $d['is_benar'] == 1 ? '<span class=blue>menjawab benar</span>' : $guns;
+      $guns = $d['is_benar'] == -1 ? '<span class=red>rejecting</span>' : $guns;
+      $guns = $id_role == 1 ? $guns : "$img_guns<div class=mt3>$guns</div>";
       $poin_penjawab_show = "$d[kelas_penjawab] | $d[poin_penjawab] LP";
-    }else{
+    } else {
       $you = 'You';
       $guns = $img_guns;
       $poin_penjawab_show = "$d[poin_penjawab] LP";
@@ -158,7 +157,6 @@ if(mysqli_num_rows($q)==0){
   }
 
   echo "<div style='max-width:500px; margin:auto'>$div</div>";
-
 }
 
 
@@ -181,7 +179,7 @@ if(mysqli_num_rows($q)==0){
 
 ?>
 <script>
-  $(function(){
+  $(function() {
 
   })
 </script>

@@ -1,6 +1,8 @@
 <?php
 if (!$id_room) die(erid('id_room'));
-if (!$kelas) die(erid('$kelas'));
+if (!$kelas) {
+  die("<b style=color:red>Username Anda belum dimasukan ke kelas manapun atau tidak dijadikan sebagai Grup INSTRUKTUR</b><hr>Silahkan hubungi Developer (Iin, M.Kom) untuk Verifikasi akun Anda!");
+}
 
 # ========================================================
 # GET DATA ROOM
@@ -193,7 +195,6 @@ if (!$id_peserta) die(erid('$id_peserta'));
 # =========================================
 # MY DATA POIN TEMPORER
 # =========================================
-$harus_update_poin = 0;
 $jeda_update_poin = 600; // boleh update setiap 10 menit
 $s = "SELECT * FROM tb_poin WHERE id_room=$id_room AND id_peserta=$id_peserta";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));

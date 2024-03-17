@@ -399,6 +399,9 @@ while ($d = mysqli_fetch_assoc($q)) {
   if (!$d['total_peserta_kelas']) {
     die("Peserta kelas tidak boleh 0. Kelas: $d[kelas]");
   }
+  // exception for temporer rank at tb_poin
+  if ($d['rank_global'] > $d['total_peserta']) $d['rank_global'] = $d['total_peserta'];
+
   $i++;
   $no++;
 
@@ -485,6 +488,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   $rkonversi['count_challenge'] = konversikan($d['count_challenge'], $d['total_count_challenge']);
   $rkonversi['count_challenge_wajib'] = konversikan($d['count_challenge_wajib'], $d['total_count_challenge_wajib']);
 
+
   if ($d['rank_global']) {
     $rkonversi['rank_global'] = round(110 - (($d['rank_global'] - 1) * ((round($d['total_peserta'] * 8 / 10, 0) / $d['total_peserta']) * (100 / $d['total_peserta']))), 0);
     if ($rkonversi['rank_global'] > 100) $rkonversi['rank_global'] = 100;
@@ -534,6 +538,7 @@ while ($d = mysqli_fetch_assoc($q)) {
       </td>
     ";
   }
+  if ($nilai_akhir > 100) $nilai_akhir = 100;
 
 
 

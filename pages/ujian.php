@@ -28,11 +28,21 @@ $id_paket_soal = $_GET['id_paket_soal'] ?? '';
 # PAKET SOAL YANG TERSEDIA
 # =======================================================
 if ($id_paket_soal == '') {
-  $s = "SELECT a.*,
-  (
-    SELECT COUNT(1) FROM tb_jawabans WHERE id_peserta=$id_peserta AND id_paket_soal=a.id) jumlah_attemp  
-  FROM tb_paket_soal a 
-  WHERE a.kelas='$kelas'";
+  if ($id_role == 2) {
+    // tampilan untuk dosen, tampilkan seluruh paket soal untuk setiap kelas
+    $s = "SELECT a.*,
+    (
+      SELECT COUNT(1) FROM tb_jawabans WHERE id_peserta=$id_peserta AND id_paket_soal=a.id) jumlah_attemp  
+    FROM tb_paket_soal a 
+    WHERE a.id_room='$id_room'";
+  } else {
+    $s = "SELECT a.*,
+    (
+      SELECT COUNT(1) FROM tb_jawabans WHERE id_peserta=$id_peserta AND id_paket_soal=a.id) jumlah_attemp  
+    FROM tb_paket_soal a 
+    WHERE a.kelas='$kelas'";
+  }
+
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $list_paket = div_alert('danger', "Maaf, belum ada Paket Soal untuk kelas $kelas.");
   if (mysqli_num_rows($q)) {
@@ -108,6 +118,7 @@ if ($id_paket_soal == '') {
         # ===================================================
         $list_paket .= "
           <a class='mb2 btn btn-info btn-block ' href='?ujian&id_paket_soal=$d[id]'>
+            <div class='darkblue tebal'>Untuk kelas $d[kelas]</div>
             $nama_paket_show <span class='kecil miring'> ~ $eta_info</span>
             <br>$attemp_info
           </a>

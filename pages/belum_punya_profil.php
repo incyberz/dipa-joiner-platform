@@ -9,6 +9,12 @@ if ($profil_ok == 1) {
   if ($punya_profil) {
     $ket = '';
     echo div_alert('info', 'Profil status :: Sedang menunggu verifikasi profil dari instruktur');
+    if ($id_role == 2) {
+      // auto-self verification
+      $s = "UPDATE tb_peserta SET profil_ok=1 WHERE id=$id_peserta";
+      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+      jsurl();
+    }
   } else {
     $ket = "Hai! Kamu belum punya profil. Silahkan <a href='?upload_profil'>Upload Profile</a> terlebih dahulu untuk proses dokumentasi, cetak nilai KHS, dan keperluan dokumen lainnya.";
   }

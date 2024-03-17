@@ -42,7 +42,8 @@ if ($get_mode != 'fast') include 'include/date_managements.php';
 $s = "SELECT a.kelas, a.id as id_room_kelas 
 FROM tb_room_kelas a 
 WHERE a.id_room=$id_room 
-AND $sql_kelas
+AND $sql_kelas 
+AND a.kelas != 'INSTRUKTUR' 
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
@@ -60,7 +61,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
   AND b.status=1 
   AND d.status=1 
   AND d.nama NOT LIKE '%dummy%'
-  ORDER BY b.shift, b.prodi";
+  ORDER BY b.shift, b.prodi,d.nama";
 
   $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
 
@@ -71,9 +72,21 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
     $jumlah_peserta++;
 
     if ($get_mode == 'fast') {
+      $src2 = "assets/img/peserta/peserta-$d2[id_peserta].jpg";
+      $src = "assets/img/peserta/wars/peserta-$d2[id_peserta].jpg";
+      $sty = '';
+      if (file_exists($src)) {
+        // do nothing
+      } elseif (file_exists($src2) and !file_exists($src)) {
+        // profil ada tapi belum jadi profil wars
+        $sty = 'border:solid 3px blue';
+        $src = $src2;
+      } else {
+        $src = 'assets/img/img_na.jpg';
+      }
       $list_mhs .= "
       <div class='kecil tengah abu'>
-        <img src='assets/img/peserta/wars/peserta-$d2[id_peserta].jpg' class='foto_profil'>
+        <img src='$src' class='foto_profil' style='$sty'>
         <div>$nama</div>
       </div>";
     } elseif ($get_mode == 'detail') {
@@ -251,13 +264,11 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
     }
   }
 
-  $link_assign_peserta = $id_role != 2 ? '' : "| <a href='?assign_peserta&id_room_kelas=$d[id_room_kelas]'>Assign Peserta</a>";
-
   if ($get_mode == 'fast') {
     $blok_kelas .= "
-      <div class='wadah' zzzdata-aos='fade-up' data-aos-delay='150'>
-        Peserta Kelas $d[kelas] $link_assign_peserta
-        <div class='wadah flexy mt1'>
+      <div class='wadah gradasi-hijau' zzzdata-aos='fade-up' data-aos-delay='150'>
+        Peserta Kelas $d[kelas]
+        <div class='wadah bg-white flexy mt1'>
           $list_mhs
         </div>      
       </div>
@@ -266,7 +277,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
     $blok_kelas .= "
       <div class='wadah' zzzdata-aos='fade-up' data-aos-delay='150'>
         <div class=sub_form>Detail Mode</div>
-        Peserta Kelas $d[kelas] $link_assign_peserta
+        Peserta Kelas $d[kelas]
         <table class='table mt1'>
           <thead>
             <th>No</th>
