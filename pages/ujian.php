@@ -126,12 +126,17 @@ if ($id_paket_soal == '') {
       }
     }
   }
-  $manage_soal = $id_role == 1 ? '' : "<div class=kanan><a class='btn btn-success' href='?manage_soal'>Manage Soal</a></div>";
+  $manage_soal = $id_role == 1 ? '' : "<a class='btn btn-success' href='?manage_soal'>Manage Soal</a> ";
+  $manage_paket = $id_role == 1 ? '' : "<a class='btn btn-success' href='?manage_paket_soal'>Manage Paket Soal</a> ";
   $meme = meme('funny');
   echo "
   <section>
     <div class=container>
-      $manage_soal
+      <div class='wadah gradasi-kuning'>
+        <div class=sub_form>Fitur Instruktur</div>
+        $manage_soal
+        $manage_paket
+      </div>
       <div class='mb2 darkblue bold'>Silahkan pilih Paket Soal yang tersedia:</div> 
       $list_paket
       <hr>

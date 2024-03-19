@@ -28,7 +28,7 @@ $abjad = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
 $path_gambar_soal = 'assets/img/gambar_soal';
 echo "
   <h1>$judul</h1>
-  <div class=mb2><a href='?manage_paket_soal'>Manage Paket Soal</a></div>
+  <div class=mb2><a href='?ujian'>Ujian Home</a> | <a href='?manage_paket_soal'>Manage Paket Soal</a></div>
 ";
 
 

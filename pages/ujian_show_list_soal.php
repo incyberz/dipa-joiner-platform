@@ -81,7 +81,7 @@ while ($d = mysqli_fetch_assoc($q)) {
         <div class=no_dan_soal>
           <div>$i.</div>
           <div>
-            $d[soal] 
+            <div class=mb1>$d[soal]</div> 
             $gambar_soal
             <span class=debug>
               id_assign_soal:<span id=id_assign_soal__$id_assign_soal>$id_assign_soal</span> | 

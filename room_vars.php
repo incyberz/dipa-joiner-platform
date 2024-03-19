@@ -216,6 +216,8 @@ if (mysqli_num_rows($q)) {
   $my_points = number_format($akumulasi_poin, 0);
 
   $nilai_akhir = $d['nilai_akhir'];
+  $nilai_akhir = $nilai_akhir > 100 ? 100 : $nilai_akhir;
+
   if ($nilai_akhir > 100) die('Invalid nilai akhir at room_vars');
   $hm = $nilai_akhir ? hm($nilai_akhir) : 'B';
 

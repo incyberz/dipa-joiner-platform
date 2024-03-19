@@ -4,6 +4,9 @@
 # ============================================================
 $online_version = $_SERVER['SERVER_NAME'] == 'localhost' ? 0 : 1;
 
+// dipa@iotikaindonesia.com
+// ftpDIP@2024
+
 if ($online_version) {
   $db_server = 'localhost';
   $db_user = 'pesc7881_insho';

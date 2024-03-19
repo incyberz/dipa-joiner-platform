@@ -9,16 +9,16 @@ if (0) {
   <div style='padding:15px'>
     <h1 style='color:yellow'>DIPA Joiner sedang maintenance.</h1>
     <hr>
-    <p>Mohon maaf, saat ini sedang restrukturisasi database dan penambahan fitur Kelas Peserta untuk tiap ranks, grades, dan points</p>
+    <p>Mohon maaf, saat ini sedang update Fitur Ujian dan Polling System</p>
     <hr>
-    <p>Jika maintenance melebihi pukul 10.00 harap hubungi Pihak Developer. Terimakasih.</p>
+    <p>Jika maintenance melebihi pukul 11.00 harap hubungi Pihak Developer. Terimakasih.</p>
   </div>");
 }
 session_start();
 // session_destroy(); exit;
 // echo '<pre style="margin-top: 170px">'; var_dump($_SESSION); echo '</pre>';
 $dm = 0;
-$dm_db = 1;
+$dm_db = 0;
 $is_login = null;
 $id_role = null;
 $status = null;

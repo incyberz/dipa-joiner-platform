@@ -80,13 +80,13 @@ $img['delete'] = '<img class=zoom src="assets/img/icons/delete.png" height=25px 
 # =======================================================
 # PEMBOBOTAN DAN HEADER TABEL
 # =======================================================
-$rbobot['count_presensi_offline'] = 3;
+$rbobot['count_presensi_offline'] = 0;
 $rbobot['count_presensi_online'] = 15;
 $rbobot['count_ontime'] = 10;
 $rbobot['count_latihan'] = 5;
-$rbobot['count_latihan_wajib'] = 25;
+$rbobot['count_latihan_wajib'] = 15;
 $rbobot['count_challenge'] = 5;
-$rbobot['count_challenge_wajib'] = 3;
+$rbobot['count_challenge_wajib'] = 15;
 $rbobot['rank_global'] = 15;
 $rbobot['rank_kelas'] = 25;
 $rbobot['nilai_uts'] = 0;
@@ -685,6 +685,8 @@ if ($id_role == 2) {
       </div>
     ";
   }
+
+  $nilai_akhir = $nilai_akhir > 100 ? 100 : $nilai_akhir;
 
   $blok_kelas .= "
     <div class=wadah>

@@ -6,7 +6,9 @@ $judul = 'Manage Paket Soal';
 set_title($judul);
 // $abjad = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
 // $path_gambar_paket_soal = 'assets/img/gambar_paket_soal';
-echo "<h1>$judul</h1>";
+echo "<h1>$judul</h1>
+  <div class=mb2><a href='?ujian'>Ujian Home</a> | <a href='?manage_soal'>Manage Soal</a></div>
+";
 
 
 
@@ -398,6 +400,15 @@ $tr_tambah = "<tr><td colspan=100%>
           <option value=3>3 kali mencoba</option>
           <option value=4>4 kali mencoba</option>
           <option value=5>5 kali mencoba</option>
+        </select>
+      </div>
+
+      <div class=wadah>
+        <div class=sub_form>Polling System</div>
+        <select class='form-control' name=wajib_polling>
+          <option value=0>Tidak wajib polling untuk melihat Hasil Ujian</option>
+          <option value=uts>Wajib Poling UTS</option>
+          <option value=uas>Wajib Poling UAS</option>
         </select>
       </div>
 
