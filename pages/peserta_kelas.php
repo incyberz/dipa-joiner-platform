@@ -75,6 +75,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
       $src2 = "assets/img/peserta/peserta-$d2[id_peserta].jpg";
       $src = "assets/img/peserta/wars/peserta-$d2[id_peserta].jpg";
       $sty = '';
+      $link_super_delete = '';
       if (file_exists($src)) {
         // do nothing
       } elseif (file_exists($src2) and !file_exists($src)) {
@@ -83,11 +84,12 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
         $src = $src2;
       } else {
         $src = 'assets/img/img_na.jpg';
+        $link_super_delete = "<a href='?super_delete_peserta&id=$d2[id_peserta]'>$img_delete</a>";
       }
       $list_mhs .= "
       <div class='kecil tengah abu'>
         <img src='$src' class='foto_profil' style='$sty'>
-        <div>$nama</div>
+        <div>$nama $link_super_delete</div>
       </div>";
     } elseif ($get_mode == 'detail') {
       $no++;

@@ -1,4 +1,8 @@
 <?php
+$judul = "Ujian Pre Show";
+set_title($judul);
+
+
 $list_soal = '';
 $form_submit = '';
 $countdown = '';
@@ -222,53 +226,60 @@ if ($selisih > 0) { //belum mulai
   # ==================================================
   $nilai_max = 0;
   if ($jumlah_attemp and !$start) { // jika SUDAH ATTEMP
-    $s = "SELECT a.*, b.tmp_jumlah_soal,b.tanggal_pembahasan,
-    (
-      SELECT MAX(nilai) FROM tb_jawabans WHERE id_paket_soal=$id_paket_soal AND id_peserta=$id_peserta ) nilai_max  
-    FROM tb_jawabans a 
-    JOIN tb_paket_soal b ON a.id_paket_soal=b.id 
-    WHERE a.id_paket_soal=$id_paket_soal 
-    AND a.id_peserta=$id_peserta 
-    ORDER BY a.tanggal_submit DESC
-    ";
-    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-    if (mysqli_num_rows($q) == 0) {
-      $list_jawabans = div_alert('danger', 'Kamu belum sempat mengisi Ujian dengan benar');
-    } else {
-      $list_jawabans = '';
-      $i = 0;
-      $max_sign = '';
-      while ($d = mysqli_fetch_assoc($q)) {
-        $i++;
-        $max_sign = ($d['nilai'] == $d['nilai_max'] and $max_sign == '') ? '| MAX' : '';
-        $class = $max_sign == '| MAX' ? 'biru tebal' : '';
-        if ($nilai_max < $d['nilai']) $nilai_max = $d['nilai'];
-        // $tanggal_submit = date('d-M H:i',strtotime($d['tanggal_submit']));
-        $durasi = ceil((strtotime($d['tanggal_submit']) - strtotime($d['tanggal_start'])) / 60);
-        $list_jawabans .= "<hr><span class='$class'>$i. Nilai: $d[nilai] | Benar: $d[jumlah_benar] of $d[tmp_jumlah_soal]  <span class='miring'>in $durasi minutes</span>  $max_sign</span>";
-      }
-    }
+
 
     $info_pembahasan = '';
-    if ((strtotime($tanggal_pembahasan) - strtotime('now')) >= 0) {
-      $info_pembahasan = "<hr><div class='miring darkred'>Pembahasan soal akan muncul pada tanggal $tanggal_pembahasan_show</div>";
-    }
-    $dari = urlencode("?ujian&id_paket_soal=$id_paket_soal");
-    $info_pembahasan .= "<hr><a class='btn btn-primary btn-block' href='?pembahasan_soal&id_paket_soal=$id_paket_soal&dari=$dari'>Lihat Pembahasan</a>";
-
     // if (!$nik) {
     //   $list_jawabans = div_alert('danger', "Sepertinya kamu belum mengisi Biodata Peserta. <a class='btn btn-primary mt2 w-100' href='?biodata'>Isi Biodata Peserta</a><hr><span class='abu kecil'>Silahkan isi dahulu agar dapat melihat hasil ujian.</span>");
     //   $info_pembahasan = '';
     // }
 
     if ($untuk = 'uas' && !$sudah_polling_uas) {
-      $list_jawabans = div_alert('danger', "Sepertinya kamu belum Polling. <a class='btn btn-primary mt2 w-100' href='?polling&u=uas'>Isi Polling</a>. <hr><span class='abu kecil'>Silahkan isi dahulu agar dapat melihat hasil ujian.</span>");
+      // STOP, belum polling
+      $list_jawabans = div_alert('danger', "Sepertinya kamu belum Polling.<hr><p class='biru tebal'>Silahkan isi dahulu polling agar kamu dapat melihat hasil ujian barusan.</p><hr> <a class='btn btn-primary mt2 w-100' href='?polling&u=uas'>Isi Polling</a>. <hr><span class='abu kecil'>Silahkan isi dahulu agar dapat melihat hasil ujian.</span>");
+      echo "<br>untuk:<span id=untuk>$untuk</span>";
+      echo "<br>sudah_polling_uas:<span id=sudah_polling_uas>$sudah_polling_uas</span>";
+    } elseif (!$profil_ok) {
+      $list_jawabans = div_alert('danger', "Sepertinya kamu belum Upload Foto Profil, atau mungkin profil kamu tidak terbaca oleh instruktur (corrupt).<hr><p class='biru tebal'>Silahkan upload dahulu foto profilnya agar instruktur mengetahui bahwa itu adalah kamu.</p><hr> <a class='btn btn-primary mt2 w-100' href='?upload_profil'>Upload/Reupload Profil</a>. <hr><span class='abu kecil'>Silahkan upload profil dahulu agar kamu dapat melihat hasil ujian.</span>");
+    } else { // boleh lihat hasil ujian
+      $s = "SELECT a.*, b.tmp_jumlah_soal,b.tanggal_pembahasan,
+      (
+        SELECT MAX(nilai) FROM tb_jawabans WHERE id_paket_soal=$id_paket_soal AND id_peserta=$id_peserta ) nilai_max  
+      FROM tb_jawabans a 
+      JOIN tb_paket_soal b ON a.id_paket_soal=b.id 
+      WHERE a.id_paket_soal=$id_paket_soal 
+      AND a.id_peserta=$id_peserta 
+      ORDER BY a.tanggal_submit DESC
+      ";
+      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+      if (mysqli_num_rows($q) == 0) {
+        $list_jawabans = div_alert('danger', 'Kamu belum sempat mengisi Ujian dengan benar');
+      } else {
+        $list_jawabans = '';
+        $i = 0;
+        $max_sign = '';
+        while ($d = mysqli_fetch_assoc($q)) {
+          $i++;
+          $max_sign = ($d['nilai'] == $d['nilai_max'] and $max_sign == '') ? '| MAX' : '';
+          $class = $max_sign == '| MAX' ? 'biru tebal' : '';
+          if ($nilai_max < $d['nilai']) $nilai_max = $d['nilai'];
+          // $tanggal_submit = date('d-M H:i',strtotime($d['tanggal_submit']));
+          $durasi = ceil((strtotime($d['tanggal_submit']) - strtotime($d['tanggal_start'])) / 60);
+          $list_jawabans .= "<hr><span class='$class'>$i. Nilai: $d[nilai] | Benar: $d[jumlah_benar] of $d[tmp_jumlah_soal]  <span class='miring'>in $durasi minutes</span>  $max_sign</span>";
+        }
+      }
+
       $info_pembahasan = '';
+      if ((strtotime($tanggal_pembahasan) - strtotime('now')) >= 0) {
+        $info_pembahasan = "<hr><div class='miring darkred'>Pembahasan soal akan muncul pada tanggal $tanggal_pembahasan_show</div>";
+      }
+      $dari = urlencode("?ujian&id_paket_soal=$id_paket_soal");
+      $info_pembahasan .= "<hr><a class='btn btn-primary btn-block' href='?pembahasan_soal&id_paket_soal=$id_paket_soal&dari=$dari'>Lihat Pembahasan</a>";
     }
 
     $blok_timer .= "
       <div class='wadah kiri bg-white'>
-        Jawaban kamu:
+        Nilai Ujian kamu:
         $list_jawabans
         $info_pembahasan
       </div>
@@ -296,7 +307,7 @@ if ($selisih <= 0 && $selisih_akhir > 0 && $jumlah_attemp < $max_attemp && !$sta
       ";
     } else {
       $blok_timer .= "
-      <div class='mb2 mt4'>Kamu sudah mencoba $jumlah_attemp of $max_attemp attemp. Coba lagi!</div>
+      <div class='mb2 mt4'>Kamu sudah mencoba $jumlah_attemp of $max_attemp attemp. Silahkan coba lagi! System akan mengambil nilai terbesar untuk rekap ujian.</div>
       <a href='?ujian&id_paket_soal=$id_paket_soal&start=1' class='btn btn-success btn-block'>Start Ujian</a>
       ";
     }

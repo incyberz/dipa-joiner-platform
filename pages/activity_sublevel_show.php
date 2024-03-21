@@ -1,9 +1,9 @@
 <?php
 $form_bukti = '';
-if(!$id_jenis) die('id_jenis at activity sub level show is missing.');
+if (!$id_jenis) die('id_jenis at activity sub level show is missing.');
 include 'activity_sublevel_process.php';
 
-$arr = explode('?',$_SERVER['REQUEST_URI']);
+$arr = explode('?', $_SERVER['REQUEST_URI']);
 $params = "?$arr[1]";
 
 $id_challenge = $id_jenis;
@@ -21,29 +21,33 @@ JOIN tb_challenge b ON a.id_challenge=b.id
 WHERE a.id_challenge=$id_challenge 
 ORDER BY no
 ";
-$q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));
+$q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
 $tr = '';
 $max_poin = 0;
-if(mysqli_num_rows($q2)==0){
+if (mysqli_num_rows($q2) == 0) {
   echo div_alert('danger', "Belum ada data sublevel.");
-}else{
-  while($d2=mysqli_fetch_assoc($q2)){
-    $id_sublevel=$d2['id_sublevel'];
-    $no_sublevel=$d2['no_sublevel'];
+} else {
+  while ($d2 = mysqli_fetch_assoc($q2)) {
+    $id_sublevel = $d2['id_sublevel'];
+    $no_sublevel = $d2['no_sublevel'];
     $max_poin += $d2['poin'];
-    $poin_show = $d2['poin'] ? number_format($d2['poin'],0) : $unset;
+    $poin_show = $d2['poin'] ? number_format($d2['poin'], 0) : $unset;
     $objective_show = $d2['objective'] ?? "Objective: $unset";
     $nama_sublevel = $d2['nama_sublevel'];
     $poin = $d2['poin'];
     $nama_challenge = $d2['nama_challenge'];
     $objective = $d2['objective'];
 
-    $hubungi_instruktur = $id_role==2 ? '' : '<div class="darkred mt1 f12 miring">Silahkan hubungi instruktur agar segera melengkapi data sublevel.</div>';
-    $btn_submit = ($d2['objective'] && $d2['poin']) ? "<a href='$params&id_sublevel=$id_sublevel&no_sublevel=$no_sublevel' class='btn btn-primary btn-sm' name=btn_submit_sublevel value=$id_sublevel>Submit</a>" 
-    : "<button disabled class='btn btn-secondary btn-sm'>Can`t Submit</button>$hubungi_instruktur";
+    $hubungi_instruktur = $id_role == 2 ? '' : '<div class="darkred mt1 f12 miring">Silahkan hubungi instruktur agar segera melengkapi data sublevel.</div>';
+    if ($closed) {
+      $btn_submit = "<span class='btn btn-secondary btn-sm' onclick='alert(\"Challenge ini sudah closed.\")'>Closed</span>";
+    } else {
+      $btn_submit = ($d2['objective'] && $d2['poin']) ? "<a href='$params&id_sublevel=$id_sublevel&no_sublevel=$no_sublevel' class='btn btn-primary btn-sm' name=btn_submit_sublevel value=$id_sublevel>Submit</a>"
+        : "<button disabled class='btn btn-secondary btn-sm'>Can`t Submit</button>$hubungi_instruktur";
+    }
 
-    if($id_role==2){
-      $edit_sublevel_toggle = "<span class=btn_aksi id=sublevel$id_sublevel"."__toggle>$img_edit</span>";
+    if ($id_role == 2) {
+      $edit_sublevel_toggle = "<span class=btn_aksi id=sublevel$id_sublevel" . "__toggle>$img_edit</span>";
       $blok_edit_sublevel = "
         <div class='hideit wadah gradasi-kuning mt2 f14' id=sublevel$id_sublevel>
           <form method=post>
@@ -59,7 +63,7 @@ if(mysqli_num_rows($q2)==0){
           </form>
         </div>
       ";
-    }else{
+    } else {
       $edit_sublevel_toggle = '';
       $blok_edit_sublevel = '';
     }
@@ -86,7 +90,7 @@ if(mysqli_num_rows($q2)==0){
   }
 }
 
-$max_poin_show = number_format($max_poin,0);
+$max_poin_show = number_format($max_poin, 0);
 
 $form_bukti = "
   <div class=wadah>

@@ -15,6 +15,9 @@
   }
 </style>
 <?php
+$judul = "Ujian";
+set_title($judul);
+
 $debug = '';
 if (!$is_login) die('<script>location.replace("?")</script>');
 $id_paket_soal = $_GET['id_paket_soal'] ?? '';
@@ -66,34 +69,41 @@ if ($id_paket_soal == '') {
       $akhir_ujian_show = date($format, strtotime($d['akhir_ujian']));
 
       $nama_paket_show = "
-      $d[nama]
-      <br>$awal_ujian_show s.d $akhir_ujian_show 
+        <div class='f20 miring consolas mb2'><u>$d[nama]</u></div>
+        <div>$awal_ujian_show s.d $akhir_ujian_show</div> 
       ";
 
+      $info_paket = '';
+      $btn = '';
       if ($selisih_akhir < 0) {
         // sudah berakhir
+        $btn = 'secondary';
         if ($jumlah_attemp == 0) {
-          $list_paket .= "<div class=mb2><span class='btn btn-secondary btn-block' onclick='alert(\"Maaf, Paket Soal ini sudah berakhir.\")'>$nama_paket_show<br>Sudah berakhir dan kamu tidak bisa mengikutinya kembali</span></div>";
+          $info = 'kamu tidak mengikutinya';
+        } elseif (
+          $jumlah_attemp >= $max_attemp
+        ) {
+          $info = 'kamu sudah berusaha secara maksimal';
         } else {
-          $list_paket .= "<a href='?ujian&id_paket_soal=$d[id]' class='mb2 btn btn-secondary btn-block' >$nama_paket_show<br>Sudah berakhir dan kamu boleh melihat hasilnya</a>";
+          $info = "kamu sudah mencoba $jumlah_attemp kali dari $max_attemp kesempatan";
         }
+
+        $info_paket = "Ujian sudah berakhir dan $info";
       } elseif ($selisih_akhir >= 0 and $selisih <= 0) {
         // sedang berlangsung
+        $btn = 'primary';
         if ($jumlah_attemp == 0) {
-          $info = 'Kamu belum mencobanya';
+          $info = 'kamu belum mencobanya';
         } elseif ($jumlah_attemp >= $max_attemp) {
-          $info = 'Kamu sudah mencapai max_attemp';
+          $info = 'kamu sudah mencapai max_attemp';
         } else {
-          $info = "Kamu sudah $jumlah_attemp kali mencoba. Coba lagi!";
+          $info = "kamu sudah $jumlah_attemp kali mencoba. Coba lagi!";
         }
-        $list_paket .= "
-          <a class='mb2 btn btn-primary btn-block' href='?ujian&id_paket_soal=$d[id]'>$nama_paket_show
-            <br>Sedang berlangsung
-            <br>$info
-          </a>
+        $info_paket = "Sedang berlangsung dan $info
         ";
       } else {
         // belum berlangsung
+        $btn = 'info';
         if ($selisih_hari > 0) {
           $eta_info = "$selisih_hari hari lagi";
         } else {
@@ -102,30 +112,23 @@ if ($id_paket_soal == '') {
           if ($selisih > 60 * 60) $eta_info = number_format($selisih / (60 * 60), 0) . ' jam lagi';
         }
 
-
-        if ($jumlah_attemp == 0) {
-          $attemp_info = 'Kamu belum pernah mencoba Ujian ini';
-        } else {
-          if ($jumlah_attemp < $max_attemp) {
-            $attemp_info = "Kamu sudah $jumlah_attemp kali mencoba dan boleh mencobanya kembali";
-          } else {
-            $attemp_info = "Kamu telah mencapai max_attemp (batasan mencoba ujian)";
-          }
-        }
-
-        # ===================================================
-        # FINAL OUTPUT LIST PAKET
-        # ===================================================
-        $list_paket .= "
-          <a class='mb2 btn btn-info btn-block ' href='?ujian&id_paket_soal=$d[id]'>
-            <div class='darkblue tebal'>Untuk kelas $d[kelas]</div>
-            $nama_paket_show <span class='kecil miring'> ~ $eta_info</span>
-            <br>$attemp_info
-          </a>
+        $info_paket = "
+        <u class='consolas f20'> $eta_info</u>
+        <br>Kamu boleh melihat info kisi-kisinya.
         ";
-      }
-    }
-  }
+      } // end belum berlangsung
+
+      # ===================================================
+      # FINAL OUTPUT LIST PAKET
+      # ===================================================
+      $list_paket .= "<a class='mb2 btn btn-$btn btn-block' href='?ujian&id_paket_soal=$d[id]'>
+        <div class='f14'>Untuk kelas $d[kelas]</div>
+        $nama_paket_show
+        <div>$info_paket</div>
+      </a>
+      ";
+    } // end while
+  } // num_rows
   $manage_soal = $id_role == 1 ? '' : "<a class='btn btn-success' href='?manage_soal'>Manage Soal</a> ";
   $manage_paket = $id_role == 1 ? '' : "<a class='btn btn-success' href='?manage_paket_soal'>Manage Paket Soal</a> ";
   $meme = meme('funny');

@@ -28,9 +28,9 @@ $my_question_promoted = 0;
 $available_questions = 0;
 
 $s = "SELECT * FROM tb_war_summary WHERE id_peserta=$id_peserta AND id_room=$id_room";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-if(mysqli_num_rows($q)){
-  $d=mysqli_fetch_assoc($q);
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+if (mysqli_num_rows($q)) {
+  $d = mysqli_fetch_assoc($q);
 
   $war_rank = $d['war_rank'];
   $war_points = $d['war_points'];
@@ -53,24 +53,23 @@ if(mysqli_num_rows($q)){
   $poin_membuat_soal = $d['poin_membuat_soal'];
   $poin_tumbuh_soal = $d['poin_tumbuh_soal'];
   $last_update = $d['last_update'];
-  
-  $selisih_war = strtotime('now')-strtotime($d['last_update']);
-  // if($selisih_war>3600){
-  if($selisih_war>3600){
-    $must_update = 1; // if > 1 jam must update
-  }
 
-}else{
+  $selisih_war = strtotime('now') - strtotime($d['last_update']);
+  // if($selisih_war>3600){
+  if ($selisih_war > 600) {
+    $must_update = 1; // if > 10 menit must update
+  }
+} else {
   // jika belum punya data war summary
   $must_update = 1;
   $s = "INSERT INTO tb_war_summary (id_peserta,id_room,last_update) VALUES ($id_peserta,$id_room,'2020-1-1')";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 }
 
 # =========================================================
 # GET REALTIME WAR DATA
 # =========================================================
-if($must_update){
+if ($must_update) {
 
   $from_perang = "FROM tb_war p WHERE p.id_penjawab=$id_peserta and p.id_room=$id_room";
   $from_soal = "FROM tb_soal_pg p 
@@ -111,14 +110,14 @@ if($must_update){
     AND c.id_room=$id_room) as available_questions
 
   ";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $d = mysqli_fetch_assoc($q);
 
   $war_point_quiz = $d['war_point_quiz'];
   $war_point_reject = $d['war_point_reject'];
   $poin_tumbuh_soal = $d['poin_tumbuh_soal'];
   $poin_membuat_soal = $d['poin_membuat_soal'];
-  
+
   $war_point_passive = $poin_membuat_soal + $poin_tumbuh_soal;
 
   $count_answer_right = $d['count_answer_right'];
@@ -163,7 +162,7 @@ if($must_update){
     AND id_room=$id_room 
   ";
   // die($s);
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
 
 
@@ -177,11 +176,11 @@ if($must_update){
   AND b.status=1 
   AND b.id_role = $id_role 
   ORDER BY a.war_points DESC";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-  $i=1;
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  $i = 1;
   $war_rank = 1;
-  while($d=mysqli_fetch_assoc($q)){
-    if($d['id_peserta']==$id_peserta){
+  while ($d = mysqli_fetch_assoc($q)) {
+    if ($d['id_peserta'] == $id_peserta) {
       $war_rank = $i;
       break;
     }
@@ -191,19 +190,19 @@ if($must_update){
 
   // reupdate rank
   $s = "UPDATE tb_war_summary SET war_rank=$war_rank WHERE id_peserta=$id_peserta AND id_room=$id_room";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));  
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
   die('<script>location.reload()</script>');
 }
 
 
-if($available_questions>99) $available_questions = 99;
+if ($available_questions > 99) $available_questions = 99;
 
 $last_update_available_question = $last_update;
 # ============================================================
 # AUTO-SELF UPDATE EVERY HOUR | AVAILABLE SOAL
 # ============================================================
-$selisih = $id_role==1 ? (strtotime('now') - strtotime($last_update_available_question)) : 0;
-if($selisih>3600){
+$selisih = $id_role == 1 ? (strtotime('now') - strtotime($last_update_available_question)) : 0;
+if ($selisih > 3600) {
   include 'include/update_available_question.php';
 }

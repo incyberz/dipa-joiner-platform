@@ -6,6 +6,7 @@
 <?php
 instruktur_only();
 
+
 $id_paket_soal = $_GET['id_paket_soal'] ?? die('<script>location.replace("?ujian")</script>');
 $show_nilai = $_GET['show_nilai'] ?? '';
 $show_profil = $_GET['show_profil'] ?? '';
@@ -18,9 +19,11 @@ $Show = $show_profil ? 'Hide' : 'Show';
 $not_show_profil = $show_profil ? '' : 1;
 $link_show_profil = "<a href='?monitoring_ujian&id_paket_soal=$id_paket_soal&show_nilai=$show_nilai&show_profil=$not_show_profil'>$Show Profil</a>";
 
+$judul = "Monitoring Ujian";
+set_title($judul);
 echo "
 <div class='section-title' data-aos='fade'>
-  <h2>Monitoring Ujian</h2>
+  <h2>$judul</h2>
   <p>Yang sudah Ujian | $link_show_nilai | $link_show_profil</p>
 </div>";
 
@@ -35,7 +38,8 @@ $img_check = '<img src=assets/img/icons/check.png height=25px />';
 # =======================================================
 $s = "SELECT 
 a.*,
-b.nama as pembuat,
+a.nama as nama_paket_soal,
+b.nama as pengawas_ujian,
 c.nama as nama_sesi,
 (SELECT COUNT(1) FROM tb_assign_soal WHERE id_paket_soal=a.id)  jumlah_soal  
 FROM tb_paket_soal a 
@@ -51,7 +55,9 @@ $d_paket = mysqli_fetch_assoc($q);
 # =======================================================
 # GET SIMILAR PAKET BY NAMA PAKET
 # =======================================================
-$s = "SELECT a.id as id_paket_soal, a.kelas 
+$s = "SELECT 
+a.id as id_paket_soal, 
+a.kelas 
 FROM tb_paket_soal a 
 JOIN tb_kelas b ON a.kelas=b.kelas 
 WHERE a.nama='$d_paket[nama]' 
@@ -76,7 +82,12 @@ while ($d = mysqli_fetch_assoc($q)) {
     SELECT nilai FROM tb_jawabans 
     WHERE id_peserta=a.id AND id_paket_soal=$d[id_paket_soal] 
     ORDER BY nilai DESC 
-    LIMIT 1) nilai_max 
+    LIMIT 1) nilai_max,
+  (
+    SELECT tanggal_submit FROM tb_jawabans 
+    WHERE id_peserta=a.id AND id_paket_soal=$d[id_paket_soal] 
+    ORDER BY tanggal_submit DESC 
+    LIMIT 1) tanggal_submit 
   
   FROM tb_peserta a 
   JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
@@ -98,17 +109,45 @@ while ($d = mysqli_fetch_assoc($q)) {
   $tr = '';
   $thead = "<thead>
     <th width=5%>No</th>
-    <th width=45%>Nama</th>
-    <th width=20%>Kelas</th>
+    <th width=40%>Nama</th>
+    <th width=15%>Kelas</th>
     <th width=15%>Attemp</th>
-    <th width=15% class=$hideit>Nilai</th>
+    <th width=10%>Last Submit</th>
+    <th width=10% class=$hideit>Nilai</th>
   </thead>";
+
+  # =======================================================
+  # CSV HANDLER
+  # =======================================================
+  $sudah_berakhir = strtotime($d_paket['akhir_ujian']) > strtotime('now') ? 0 : 1;
+  if ($sudah_berakhir) {
+    $arr_header = ['NO', 'PESERTA UJIAN', 'KELAS', 'ATTEMP',  'NILAI', 'LAST SUBMIT'];
+    $src_csv = "csv/hasil_ujian-$d_paket[nama_paket_soal]-$d[kelas].csv";
+    $file = fopen($src_csv, "w+");
+    fputcsv($file, ['HASIL UJIAN ' . strtoupper($d_paket['nama_paket_soal'])]);
+    fputcsv($file, ['KELAS ' . strtoupper($d['kelas'])]);
+    fputcsv($file, [' ']);
+    fputcsv($file, $arr_header);
+
+    $download_hasil_ujian = "<a href='$src_csv' class='btn btn-success btn-sm' target=_blank>Download Hasil Ujian</a> ";
+  } else {
+    $download_hasil_ujian = '<span class="btn btn-secondary btn-sm" onclick="alert(\'Ujian belum berakhir.\')">Download Hasil Ujian</span>';
+  }
+
   $no = 0;
+  $jumlah_hadir = 0;
+  $jumlah_peserta = mysqli_num_rows($q2);
   while ($d2 = mysqli_fetch_assoc($q2)) {
     $no++;
     $nama = strtoupper($d2['nama']);
-    $check = $d2['jumlah_attemp'] == 1 ? $img_check : '-';
-    $check = $d2['jumlah_attemp'] >= 2 ? "$img_check $img_check" : $check;
+    $check = '-';
+    if ($d2['jumlah_attemp']) {
+      $jumlah_hadir++;
+      $check = '';
+      for ($i = 0; $i < $d2['jumlah_attemp']; $i++) {
+        $check .= "$img_check ";
+      }
+    }
     $merah = $d2['jumlah_attemp'] ? '' : 'merah';
 
     $src2 = "assets/img/peserta/peserta-$d2[id_peserta].jpg";
@@ -126,20 +165,61 @@ while ($d = mysqli_fetch_assoc($q)) {
 
     $img_profil = !$show_profil ? '' : "<img src='$src' class='foto_profil' style='$sty'>";
 
+    $eta = !$d2['tanggal_submit'] ? '-' : eta(strtotime($d2['tanggal_submit']) - strtotime('now'));
+
+    $super_delete = '';
+    // if ujian telah berakhir dan tidak ada nilai maka bisa hapus
+    $super_delete = $d2['nilai_max'] ? '' : "
+      <form method='post' action='?super_delete_peserta' style='display:inline'>
+        <input type=hidden name=keyword value='$nama'>
+        <button name=btn_search  style='border:none; padding:0'>$img_delete</button>
+      </form>
+    ";
+
+
     $tr .= "
     <tr class='gradasi-$merah'>
       <td>$no</td>
       <td>
-        $nama
+        $nama $super_delete
         <div>$img_profil</div>
       </td>
-      <td>$d2[kelas]</td>
+      <td class=f14>$d2[kelas]</td>
       <td>$check</td>
+      <td class='f12'>$eta</td>
       <td class=$hideit>$d2[nilai_max]</td>
     </tr>";
 
+    if ($sudah_berakhir) {
+      $d2['id_peserta'] = $no; // untuk numbering csv
+      fputcsv($file, $d2);
+    }
+
+    // for sub judul kelas
     $last_kelas = $d2['kelas'];
   }
 
-  echo "<h2 class='f20 darkblue mt4'>Kelas $last_kelas</h2><table class='table '>$thead$tr</table>";
+  if ($sudah_berakhir) {
+    fputcsv($file, [' ']);
+    fputcsv($file, ['', '', 'JUMLAH HADIR: ', $jumlah_hadir]);
+    fputcsv($file, ['', '', 'TIDAK HADIR: ', $jumlah_peserta - $jumlah_hadir]);
+    fputcsv($file, ['', '', 'TOTAL PESERTA: ', $jumlah_peserta]);
+    fputcsv($file, [' ']);
+    fputcsv($file, ['', '', 'PENGAWAS UJIAN: ', $d_paket['pengawas_ujian']]);
+    fputcsv($file, ['', '', 'DATA FROM:', 'Gamified Learning DIPA Joiner ']);
+    fputcsv($file, ['', '', '', 'http://iotikaindonesia.com/dipa']);
+    fputcsv($file, ['', '', 'PRINTED AT:', date('F d, Y, H:i:s')]);
+    fclose($file);
+  }
+
+  echo "
+    <h2 class='f20 darkblue mt4'>Kelas $last_kelas</h2>
+    <table class='table '>
+      $thead
+      $tr
+    </table>
+    $download_hasil_ujian
+
+    <hr>
+  ";
 }

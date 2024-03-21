@@ -21,12 +21,14 @@
 <?php
 login_only();
 $u = $_GET['u'] ?? 'uts';
-$fitur_dosen = $id_role == 1 ? '' : "<div class='wadah mt2 gradasi-merah'>Fitur Dosen: <a href='?polling_hasil'>Hasil Polling</a></div>";
+$fitur_dosen = $id_role == 1 ? '' : "<div class='wadah mt2 gradasi-merah'>Fitur Dosen: <a href='?polling_hasil&u=$u'>Hasil Polling</a></div>";
 
+$judul = "Polling $u";
+set_title($judul);
 echo "
 <div class='section-title' data-aos='fade'>
-  <h2>Polling $u</h2>
-  <p>Assalamu'alaikum! Halo semuanya! Agar DIPA Joiner semakin baik, kami membutuhkan feedback dari kamu. Silahkan polling dengan sejujur-jujurnya. Terimakasih!</p>
+  <h2>$judul</h2>
+  <p>Assalamu'alaikum! Halo semuanya! Agar DIPA Joiner semakin baik, saya <span id=nama_instruktur class=darkblue>$nama_instruktur</span> ingin meminta feedback dari kamu. Silahkan polling dengan sejujur-jujurnya. Terimakasih!</p>
   $fitur_dosen
 </div>
 ";
@@ -35,13 +37,21 @@ $dari = urldecode($get_dari);
 
 
 if (isset($_POST['btn_submit'])) {
-  $s = "INSERT INTO tb_polling_answer (id_room,id_untuk, jawabans,nama_responden) 
-  VALUES ($id_room,'$id_peserta-$u' ,'$_POST[jawabans]','$_POST[nama_responden]') 
-  ON DUPLICATE KEY UPDATE 
-  jawabans='$_POST[jawabans]', 
-  nama_responden='$_POST[nama_responden]',
-  tanggal=current_timestamp
-  ";
+  $s = "SELECT * FROM tb_polling_answer WHERE id_untuk like '$id_peserta-$u' AND id_room='$id_room'";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  if (mysqli_num_rows($q)) {
+    $s = "UPDATE tb_polling_answer SET 
+    jawabans='$_POST[jawabans]', 
+    nama_responden='$_POST[nama_responden]',
+    tanggal=current_timestamp 
+    WHERE id_untuk like '$id_peserta-$u' AND id_room='$id_room'
+    ";
+  } else {
+    $s = "INSERT INTO tb_polling_answer (id_room,id_untuk, jawabans,nama_responden) 
+    VALUES ($id_room,'$id_peserta-$u' ,'$_POST[jawabans]','$_POST[nama_responden]') 
+    ";
+  }
+  // echo $s;
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   echo div_alert('success', "Terima kasih <span class='tebal darkblue'>$_POST[nama_responden]</span> atas Polling dan Saran Anda. | <a href='$dari'>Back</a>");
   exit;
@@ -52,7 +62,7 @@ if (isset($_POST['btn_submit'])) {
 # =========================================================
 # CEK JIKA SUDAH POLLING
 # =========================================================
-$s = "SELECT * FROM tb_polling_answer WHERE  id_untuk like '$id_peserta-$u'";
+$s = "SELECT * FROM tb_polling_answer WHERE  id_untuk like '$id_peserta-$u' AND id_room='$id_room'";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $arr_jawaban = [];
 $arr_isian = [];
@@ -185,9 +195,47 @@ foreach ($rpolling as $no => $rtanya) {
 </div>
 
 
-<!-- ========================================================== -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <script>
   $(function() {
+
+    // auto rename instruktur dengan nama instruktur
+    $('.nama_instruktur').text('Bapak ' + $('#nama_instruktur').text());
+    $('.nama_instruktur').addClass('darkblue');
+
+
     let isian_set = new Set();
     let pilihan_set = new Set();
     let jumlah_jawabans = parseInt($('#jumlah_jawabans').text());

@@ -1,13 +1,13 @@
 <hr>
 <?php
-if(isset($_POST['btn_add_activity'])){
+if (isset($_POST['btn_add_activity'])) {
   $s = "SELECT 1 FROM tb_$jenis WHERE nama='$_POST[nama]' and id_room=$id_room";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-  if(mysqli_num_rows($q)){
-    echo div_alert('danger',"Nama Challenge sudah ada pada room ini.");
-  }else{
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  if (mysqli_num_rows($q)) {
+    echo div_alert('danger', "Nama Challenge sudah ada pada room ini.");
+  } else {
     $s = "INSERT INTO tb_$jenis (nama,id_room) VALUES ('$_POST[nama]',$id_room)";
-    $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     jsurl();
   }
 }
@@ -18,24 +18,24 @@ if(isset($_POST['btn_add_activity'])){
   <p>Room ini diikuti oleh kelas</p>
   <?php
   $s = "SELECT id,no,nama FROM tb_sesi WHERE id_room=$id_room";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $arr_id_sesi = [];
   $arr_sesi = [];
-  while($d=mysqli_fetch_assoc($q)){
-    array_push($arr_id_sesi,$d['id']);
-    array_push($arr_sesi,"P$d[no] $d[nama]");
+  while ($d = mysqli_fetch_assoc($q)) {
+    array_push($arr_id_sesi, $d['id']);
+    array_push($arr_sesi, "P$d[no] $d[nama]");
   }
 
   $s = "SELECT a.kelas,a.id as id_room_kelas FROM tb_room_kelas a 
   JOIN tb_kelas b ON a.kelas=b.kelas  
   WHERE a.id_room=$id_room AND b.status=1
   ";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-  $li='';
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  $li = '';
   $arr_id_room_kelas = [];
-  while($d=mysqli_fetch_assoc($q)){
-    array_push($arr_id_room_kelas,$d['id_room_kelas']);
-    $li.="<li>$d[kelas]</li>";
+  while ($d = mysqli_fetch_assoc($q)) {
+    array_push($arr_id_room_kelas, $d['id_room_kelas']);
+    $li .= "<li>$d[kelas]</li>";
   }
   echo "
     <ol>$li</ol>
@@ -48,26 +48,26 @@ if(isset($_POST['btn_add_activity'])){
   # ======================================================
   # PROCESSOR :: ASSIGN
   # ======================================================
-  if(isset($_POST['btn_assign_sesi'])){
-    $arr = explode('__',$_POST['btn_assign_sesi']);
+  if (isset($_POST['btn_assign_sesi'])) {
+    $arr = explode('__', $_POST['btn_assign_sesi']);
     $id_jenis = $arr[0];
     $id_sesi = $arr[1];
 
-    
-    
-    $pesan='';
+
+
+    $pesan = '';
     foreach ($arr_id_room_kelas as $id_rk) {
       $s = "SELECT 1 FROM tb_assign_$jenis WHERE id_$jenis=$id_jenis AND id_room_kelas='$id_rk'";
       // die($s);
-      $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-      if(mysqli_num_rows($q)){
+      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+      if (mysqli_num_rows($q)) {
         $s = "UPDATE tb_assign_$jenis SET id_sesi=$id_sesi  WHERE id_$jenis=$id_jenis AND id_room_kelas='$id_rk'";
-      }else{
+      } else {
         $s = "INSERT INTO tb_assign_$jenis (id_$jenis,id_sesi,id_room_kelas) VALUES ($id_jenis,$id_sesi,'$id_rk')";
       }
-      $pesan.= "<br>executing $s ...";
-      $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-      $pesan.= "success";
+      $pesan .= "<br>executing $s ...";
+      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+      $pesan .= "success";
     }
     echo "<div class='wadah gradasi-hijau'>$pesan</div>";
     jsurl();
@@ -76,11 +76,24 @@ if(isset($_POST['btn_add_activity'])){
   # ======================================================
   # PROCESSOR :: DROP
   # ======================================================
-  if(isset($_POST["btn_drop_$jenis"])){
+  if (isset($_POST["btn_drop_$jenis"])) {
     $id_jenis = $_POST["btn_drop_$jenis"];
     $s = "DELETE FROM tb_assign_$jenis WHERE id_$jenis=$id_jenis";
-    $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     echo "<div class='wadah gradasi-hijau'>Drop $jenis from all kelas ... OK</div>";
+    jsurl();
+  }
+
+
+  # ======================================================
+  # PROCESSOR :: CLOSE / OPEN
+  # ======================================================
+  if (isset($_POST["btn_close_$jenis"]) || isset($_POST["btn_open_$jenis"])) {
+    $status = isset($_POST["btn_close_$jenis"]) ? -1 : 1;
+    $id_jenis = $_POST["btn_close_$jenis"] ??  $_POST["btn_open_$jenis"];
+    $s = "UPDATE tb_$jenis SET status=$status WHERE id=$id_jenis";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    echo "<div class='wadah gradasi-hijau'>close $jenis from all kelas ... OK</div>";
     jsurl();
   }
 
@@ -90,35 +103,39 @@ if(isset($_POST['btn_add_activity'])){
   # LIST LATIHAN
   # ======================================================
   $s = "SELECT a.*,
+  a.status as status_jenis,
   (
     SELECT id_sesi FROM tb_assign_$jenis 
     WHERE id_$jenis=a.id LIMIT 1) id_sesi_assigned  
   FROM tb_$jenis a 
-  WHERE a.id_room=$id_room";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  WHERE a.id_room=$id_room 
+  ORDER BY a.nama 
+  ";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
-  $tr='';
-  $i=0;
-  while($d=mysqli_fetch_assoc($q)){
+  $tr = '';
+  $i = 0;
+  while ($d = mysqli_fetch_assoc($q)) {
     $i++;
 
-    
+
     $td_sesi = '';
     $assigned_sesi = $unset;
     foreach ($arr_sesi as $key => $sesi) {
-      if($arr_id_sesi[$key]==$d['id_sesi_assigned']){
+      if ($arr_id_sesi[$key] == $d['id_sesi_assigned']) {
         $assigned_sesi = $sesi;
         $primary = 'primary';
-      }else{
+      } else {
         $primary = 'secondary';
       }
-      $dual_id = $d['id']."__$arr_id_sesi[$key]";
-      $td_sesi.= "<div><button class='btn btn-$primary btn-sm' name=btn_assign_sesi value='$dual_id'>$sesi</button></div>";
+      $dual_id = $d['id'] . "__$arr_id_sesi[$key]";
+      $td_sesi .= "<div><button class='btn btn-$primary btn-sm' name=btn_assign_sesi value='$dual_id'>$sesi</button></div>";
     }
 
 
     $img_detail = img_icon('detail');
 
+    // wrapping td_sesi
     $td_sesi = "
       <td>
         <div class=mb2>
@@ -131,13 +148,20 @@ if(isset($_POST['btn_add_activity'])){
       </td>
     ";
 
-    $tr.= "
+    if ($d['status_jenis'] == -1) {
+      $btn_close = "<button class='btn btn-success btn-sm' name=btn_open_$jenis value=$d[id] >Open</button>";
+    } else {
+      $btn_close = "<button class='btn btn-danger btn-sm' name=btn_close_$jenis value=$d[id] >Close</button>";
+    }
+
+    $tr .= "
       <tr>
         <td>$i</td>
         <td>$d[nama]</td>
         $td_sesi
         <td>
-          <button class='btn btn-danger btn-sm' name=btn_drop_$jenis value=$d[id] >Drop</button>
+          <button class='btn btn-danger btn-sm' name=btn_drop_$jenis value=$d[id] >Drop</button> 
+          $btn_close 
         </td>
       </tr>
     ";
@@ -153,7 +177,7 @@ if(isset($_POST['btn_add_activity'])){
           <th>No</th>
           <th class=proper>$jenis</th>
           <th>Assigned to</th>
-          <th>Drop</th>
+          <th>Aksi</th>
         </thead>
         $tr
       </table>

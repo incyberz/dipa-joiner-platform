@@ -18,6 +18,9 @@
 </div>
 <!-- ============================================================== -->
 <?php
+$judul = "Profil Peserta";
+set_title($judul);
+
 login_only();
 $get_profil_ok = $_GET['profil_ok'] ?? null;
 

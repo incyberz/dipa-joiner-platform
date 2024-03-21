@@ -1,7 +1,22 @@
 <style>
-  .blok-bar{border: solid 1px #ccc; border-radius: 6px; padding: 5px; display:grid; grid-template-columns: 120px 80px auto;margin: 5px 0}
-  .bar-batang{border: solid 1px #eee; border-radius: 6px; font-size: 8px}
-  .bar-stars{border: solid 1px #eee}
+  .blok-bar {
+    border: solid 1px #ccc;
+    border-radius: 6px;
+    padding: 5px;
+    display: grid;
+    grid-template-columns: 120px 80px auto;
+    margin: 5px 0
+  }
+
+  .bar-batang {
+    border: solid 1px #eee;
+    border-radius: 6px;
+    font-size: 8px
+  }
+
+  .bar-stars {
+    border: solid 1px #eee
+  }
 </style>
 <?php
 $u = $_GET['u'] ?? 'uts';
@@ -11,6 +26,7 @@ $u = $_GET['u'] ?? 'uts';
 echo "
 <div class='section-title' data-aos='fade'>
   <h2>Hasil Polling</h2>
+  <p>Berikut adalah hasil polling untuk <span id=nama_instruktur class=darkblue>$nama_instruktur</span> pada room <span class=darkblue>$room</span></p>
 </div>
 ";
 
@@ -18,54 +34,52 @@ echo "
 # GET POLLING DATA
 # =========================================================
 $s = "SELECT * FROM tb_polling WHERE untuk='$u' ORDER BY no,id";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $rpolling = [];
 $poll_isian = [];
-while ($d=mysqli_fetch_assoc($q)) {
+while ($d = mysqli_fetch_assoc($q)) {
   $rpolling[$d['no']] = [$d['pertanyaan'], $d['respon']];
-  if($d['respon']=='isian' || $d['respon']=='uraian'){
+  if ($d['respon'] == 'isian' || $d['respon'] == 'uraian') {
     $poll_isian[$d['no']] = [];
     $jawaban_isian[$d['no']] = '';
-  }else{
+  } else {
     $poll[$d['no']][1] = 0;
     $poll[$d['no']][2] = 0;
     $poll[$d['no']][3] = 0;
     $poll[$d['no']][4] = 0;
     $poll[$d['no']][5] = 0;
-
   }
 }
 
 # =========================================================
 # GET POLLING ANSWER
 # =========================================================
-$s = "SELECT a.id as id_peserta, a.* FROM tb_polling_answer a WHERE a.id_untuk like '%-$u'";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$s = "SELECT a.id as id_peserta, a.* FROM tb_polling_answer a WHERE a.id_untuk like '%-$u' AND id_room='$id_room'";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $jumlah_responden = mysqli_num_rows($q);
 $ranswers = [];
-while ($d=mysqli_fetch_assoc($q)){
+while ($d = mysqli_fetch_assoc($q)) {
 
   // $ranswers[$d['id_peserta']] = $d['jawabans'];
   // $ran[$d['id_peserta']] = explode('|',$d['jawabans']);
-  $ran = explode('|||',$d['jawabans']);
+  $ran = explode('|||', $d['jawabans']);
   foreach ($ran as $no_an) { //loop in 7x 
-    if(strlen($no_an)>2){
-      $rno_an = explode('~~',$no_an);
+    if (strlen($no_an) > 2) {
+      $rno_an = explode('~~', $no_an);
       $no = $rno_an[0];
       $an = $rno_an[1];
 
-      if($an>=1 and $an <=10){
+      if ($an >= 1 and $an <= 10) {
         // hanya pilihan yang di increment
         $poll[$no][$an]++;
-      }else{
+      } else {
         // echo 'ini isian';
         // echo "poll_isian[$no], [$d[id_peserta], $d[nama_responden],an:$an]";
         // echo '<pre>';
         // var_dump($poll_isian);
         // echo '</pre>';
-        array_push($poll_isian[$no], [$d['id_untuk'], $d['nama_responden'],$an]);
+        array_push($poll_isian[$no], [$d['id_untuk'], $d['nama_responden'], $an]);
       }
-
     }
   }
 }
@@ -82,11 +96,11 @@ while ($d=mysqli_fetch_assoc($q)){
 // $jawaban_isian = [];
 foreach ($poll_isian as $no => $arr_isians) {
   // echo "<br>Nomor $no zzz";
-  
+
   foreach ($arr_isians as $key => $arr_isian) {
     $responden = ucwords(strtolower($arr_isian[1]));
     $id_untuk = $arr_isian[0];
-    $isian = ($arr_isian[2]=="NULL" || $arr_isian[2]=='') ? '-' : $arr_isian[2];
+    $isian = ($arr_isian[2] == "NULL" || $arr_isian[2] == '') ? '-' : $arr_isian[2];
     $jawaban_isian[$no] .= "<tr><td class='abu kecil miring'>$responden</td><td>$isian</td></tr>";
   }
   $jawaban_isian[$no] = "<table class=table>$jawaban_isian[$no]</table>";
@@ -100,34 +114,32 @@ foreach ($poll_isian as $no => $arr_isians) {
 $count_rpolling = count($rpolling);
 $polls = "<span class=debug><span id=jumlah_jawabans>$count_rpolling</span></span>";
 
-    // echo '<pre>';
-    // var_dump($poll_isian);
-    // echo '</pre>';
+// echo '<pre>';
+// var_dump($poll_isian);
+// echo '</pre>';
 
 foreach ($rpolling as $no => $rtanya) {
-  $polls.="<span class=debug><span class=jawabans id=jawabans__$no></span></span>";
+  $polls .= "<span class=debug><span class=jawabans id=jawabans__$no></span></span>";
 
-  if($rtanya[1]=='isian' || $rtanya[1]=='uraian' ){
-    $opsi = '<div class=wadah>'.$jawaban_isian[$no].'</div>';
-
-
-  }else{
+  if ($rtanya[1] == 'isian' || $rtanya[1] == 'uraian') {
+    $opsi = '<div class=wadah>' . $jawaban_isian[$no] . '</div>';
+  } else {
     $count[1] = $poll[$no][1];
     $count[2] = $poll[$no][2];
     $count[3] = $poll[$no][3];
     $count[4] = $poll[$no][4];
     $count[5] = $poll[$no][5];
-  
-    if($rtanya[1]=='rate'){
+
+    if ($rtanya[1] == 'rate') {
       //rate
       $opsi = '';
       $opsies = '';
-      for ($i=1; $i <=5 ; $i++) { 
-        $persen = $jumlah_responden ? round(100*$count[$i]/$jumlah_responden,0) : 0;
-        $green = $i*50;
-        $red = (5-$i)*50;
+      for ($i = 1; $i <= 5; $i++) {
+        $persen = $jumlah_responden ? round(100 * $count[$i] / $jumlah_responden, 0) : 0;
+        $green = $i * 50;
+        $red = (5 - $i) * 50;
         $bg = "rgb($red,$green,100)";
-        $no_counter = $no."__$i";
+        $no_counter = $no . "__$i";
         $opsi .= "<img src=assets/img/icons/stars.png height=20px>";
         $opsies .= "
         <div class=kecil style='display:grid;grid-template-columns: 120px 80px auto'>
@@ -139,23 +151,21 @@ foreach ($rpolling as $no => $rtanya) {
       }
       $opsi = "<div class='tengah mt2 mb4'>$opsi</div>";
       $opsi = $opsies;
-    }else{
-  
+    } else {
+
       // setuju / tdk setuju
-      if($jumlah_responden){
-        $width[1] = round(($count[1]/$jumlah_responden)*100,0);
-        $width[2] = round(($count[2]/$jumlah_responden)*100,0);
-        $width[3] = round(($count[3]/$jumlah_responden)*100,0);
-        $width[4] = round(($count[4]/$jumlah_responden)*100,0);
-        
-      }else{
+      if ($jumlah_responden) {
+        $width[1] = round(($count[1] / $jumlah_responden) * 100, 0);
+        $width[2] = round(($count[2] / $jumlah_responden) * 100, 0);
+        $width[3] = round(($count[3] / $jumlah_responden) * 100, 0);
+        $width[4] = round(($count[4] / $jumlah_responden) * 100, 0);
+      } else {
         $width[1] = 0;
         $width[2] = 0;
         $width[3] = 0;
         $width[4] = 0;
-  
       }
-  
+
       $red1 = 250;
       $red2 = 200;
       $red3 = 150;
@@ -168,22 +178,23 @@ foreach ($rpolling as $no => $rtanya) {
       $start2 = 'ffc';
       $start3 = 'afa';
       $start4 = 'afa';
-      if($no==3 || $no==4){
-        $red4 = 250;
-        $red3 = 200;
-        $red2 = 150;
-        $red1 = 100;
-        $green4 = 100;
-        $green3 = 150;
-        $green2 = 200;
-        $green1 = 255;
-        $start4 = 'fcc';
-        $start3 = 'ffc';
-        $start2 = 'afa';
-        $start1 = 'afa';      
-      }
-  
-  
+      // if ($no == 3 || $no == 4) {
+      // if ( $no == 4) { // untuk Polling UAS tidak terbalik
+      //   $red4 = 250;
+      //   $red3 = 200;
+      //   $red2 = 150;
+      //   $red1 = 100;
+      //   $green4 = 100;
+      //   $green3 = 150;
+      //   $green2 = 200;
+      //   $green1 = 255;
+      //   $start4 = 'fcc';
+      //   $start3 = 'ffc';
+      //   $start2 = 'afa';
+      //   $start1 = 'afa';
+      // }
+
+
       $opsi = "
         <div class='mt2 mb4 kecil'>
           <div class='mb2 blok-bar'>
@@ -208,14 +219,11 @@ foreach ($rpolling as $no => $rtanya) {
           </div>
         </div>
       ";
-  
-  
     }
-
   } //end bukan polling isian
 
   // show pertanyaan
-  $polls.= "
+  $polls .= "
     <div class='btop pt2 mb4' id=polls__$no>
       <div class='miring abu'>$no</div>
       <div class=mb2>$rtanya[0]</div>
@@ -241,5 +249,11 @@ echo "
 
 
 
-# ====================================================================
 ?>
+<script>
+  $(function() {
+    $('.nama_instruktur').text('Bapak ' + $('#nama_instruktur').text());
+    $('.nama_instruktur').addClass('darkblue');
+
+  })
+</script>

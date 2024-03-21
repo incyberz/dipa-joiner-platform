@@ -21,6 +21,7 @@ $ryaitu = [
 ];
 $yaitu = $ryaitu[$jenis];
 $pesan_upload = null;
+$closed = 0;
 
 # ============================================
 # NORMAL FLOW
@@ -47,6 +48,7 @@ if (!$id_assign) {
   $s = "SELECT a.id as id_assign, 
   a.is_wajib,
   b.nama,
+  b.status as status_jenis,
   (b.basic_point + b.ontime_point) as sum_point,
   c.no, 
   (
@@ -73,13 +75,20 @@ if (!$id_assign) {
       echo div_alert('danger', "Maaf, belum ada satupun $jenis pada room $room. Beritahukan hal ini kepada instruktur!");
     }
   } else {
-    $rno = '';
+    $list_jenis = '';
     while ($d = mysqli_fetch_assoc($q)) {
-      $primary = $d['sudah_mengerjakan'] ? 'warning' : 'primary';
-      $primary = $d['status_mengerjakan'] ? 'success' : $primary;
       $sum_point = number_format($d['sum_point'], 0);
-      $is_wajib_icon = $d['is_wajib'] ? '<b class="consolas f12 gradasi-kuning red bordered br10" style="padding: 5px 10px">Wajib</b>' : '';
-      $rno .= "
+      if ($d['status_jenis'] == -1) {
+        $closed = 1;
+        $primary = 'secondary';
+        $is_wajib_icon = "<span class='f12 red'>Closed</span>";
+      } else {
+        $primary = $d['sudah_mengerjakan'] ? 'warning' : 'primary';
+        $primary = $d['status_mengerjakan'] ? 'success' : $primary;
+        $is_wajib_icon = $d['is_wajib'] ? '<b class="consolas f12 gradasi-kuning red bordered br10" style="padding: 5px 10px">Wajib</b>' : '';
+      }
+
+      $list_jenis .= "
         <div>
           <a class='btn btn-$primary btn-sm mb2' href='?activity&jenis=$jenis&id_assign=$d[id_assign]'>
             P$d[no] 
@@ -94,7 +103,7 @@ if (!$id_assign) {
     echo "
       Silahkan pilih $jenis yang dapat kamu kerjakan:
       <div class=wadah>
-        $rno
+        $list_jenis
       </div>
       <div class='kecil miring'>
         <span class=hijau>hijau: sudah dikerjakan</span>; <span class=kuning>kuning: belum diverifikasi</span>; <span class=biru>biru: belum kamu kerjakan</span>
