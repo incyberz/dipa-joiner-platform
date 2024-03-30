@@ -120,19 +120,21 @@ while ($d = mysqli_fetch_assoc($q)) {
   # CSV HANDLER
   # =======================================================
   $sudah_berakhir = strtotime($d_paket['akhir_ujian']) > strtotime('now') ? 0 : 1;
+  $arr_header = ['NO', 'PESERTA UJIAN', 'KELAS', 'ATTEMP',  'NILAI', 'LAST SUBMIT'];
+  $src_csv = "csv/hasil_ujian-$d_paket[nama_paket_soal]-$d[kelas].csv";
+  $file = fopen($src_csv, "w+");
+  fputcsv($file, ['HASIL UJIAN ' . strtoupper($d_paket['nama_paket_soal'])]);
+  fputcsv($file, ['KELAS ' . strtoupper($d['kelas'])]);
+  fputcsv($file, [' ']);
+  fputcsv($file, $arr_header);
   if ($sudah_berakhir) {
-    $arr_header = ['NO', 'PESERTA UJIAN', 'KELAS', 'ATTEMP',  'NILAI', 'LAST SUBMIT'];
-    $src_csv = "csv/hasil_ujian-$d_paket[nama_paket_soal]-$d[kelas].csv";
-    $file = fopen($src_csv, "w+");
-    fputcsv($file, ['HASIL UJIAN ' . strtoupper($d_paket['nama_paket_soal'])]);
-    fputcsv($file, ['KELAS ' . strtoupper($d['kelas'])]);
-    fputcsv($file, [' ']);
-    fputcsv($file, $arr_header);
-
-    $download_hasil_ujian = "<a href='$src_csv' class='btn btn-success btn-sm' target=_blank>Download Hasil Ujian</a> ";
+    $btn = 'primary';
+    $onclick = '';
   } else {
-    $download_hasil_ujian = '<span class="btn btn-secondary btn-sm" onclick="alert(\'Ujian belum berakhir.\')">Download Hasil Ujian</span>';
+    $onclick = 'onclick="return confirm(\'Ujian belum berakhir. Yakin untuk Download Hasil Ujian?\')"';
+    $btn = 'warning';
   }
+  $download_hasil_ujian = "<a href='$src_csv' class='btn btn-$btn btn-sm' target=_blank $onclick>Download Hasil Ujian</a> ";
 
   $no = 0;
   $jumlah_hadir = 0;
@@ -190,27 +192,23 @@ while ($d = mysqli_fetch_assoc($q)) {
       <td class=$hideit>$d2[nilai_max]</td>
     </tr>";
 
-    if ($sudah_berakhir) {
-      $d2['id_peserta'] = $no; // untuk numbering csv
-      fputcsv($file, $d2);
-    }
+    $d2['id_peserta'] = $no; // untuk numbering csv
+    fputcsv($file, $d2);
 
     // for sub judul kelas
     $last_kelas = $d2['kelas'];
   }
 
-  if ($sudah_berakhir) {
-    fputcsv($file, [' ']);
-    fputcsv($file, ['', '', 'JUMLAH HADIR: ', $jumlah_hadir]);
-    fputcsv($file, ['', '', 'TIDAK HADIR: ', $jumlah_peserta - $jumlah_hadir]);
-    fputcsv($file, ['', '', 'TOTAL PESERTA: ', $jumlah_peserta]);
-    fputcsv($file, [' ']);
-    fputcsv($file, ['', '', 'PENGAWAS UJIAN: ', $d_paket['pengawas_ujian']]);
-    fputcsv($file, ['', '', 'DATA FROM:', 'Gamified Learning DIPA Joiner ']);
-    fputcsv($file, ['', '', '', 'http://iotikaindonesia.com/dipa']);
-    fputcsv($file, ['', '', 'PRINTED AT:', date('F d, Y, H:i:s')]);
-    fclose($file);
-  }
+  fputcsv($file, [' ']);
+  fputcsv($file, ['', '', 'JUMLAH HADIR: ', $jumlah_hadir]);
+  fputcsv($file, ['', '', 'TIDAK HADIR: ', $jumlah_peserta - $jumlah_hadir]);
+  fputcsv($file, ['', '', 'TOTAL PESERTA: ', $jumlah_peserta]);
+  fputcsv($file, [' ']);
+  fputcsv($file, ['', '', 'PENGAWAS UJIAN: ', $d_paket['pengawas_ujian']]);
+  fputcsv($file, ['', '', 'DATA FROM:', 'Gamified Learning DIPA Joiner ']);
+  fputcsv($file, ['', '', '', 'http://iotikaindonesia.com/dipa']);
+  fputcsv($file, ['', '', 'PRINTED AT:', date('F d, Y, H:i:s')]);
+  fclose($file);
 
   echo "
     <h2 class='f20 darkblue mt4'>Kelas $last_kelas</h2>
