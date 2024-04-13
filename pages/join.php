@@ -1,44 +1,106 @@
+<div class="section-title" data-aos="fade-up">
+  <h2>Join</h2>
+</div>
 <?php
 $as = $_GET['as'] ?? '';
-if (!$as) {
-  $arr_as = ['peserta', 'instruktur', 'praktisi', 'industri'];
-  $arr_gradasi = ['hijau', 'hijau', 'biru', 'kuning'];
-  $arr_ket = [
-    'Saya ingin belajar dengan target di dunia nyata',
-    'Koordinator mahasiswa, praktisi, dan industri',
-    'Saya bersedia mentoring dengan senang hati',
-    'Saya membutuhkan jasa dari mahasiswa'
-  ];
+$as = strtolower($as);
 
-  $blok_joins = '';
-  foreach ($arr_as as $key => $value) {
-    $time_anim = ($key + 1) * 150;
-    $blok_joins .= "
-      <div class='col-lg-3' data-aos='fade-up' data-aos-delay='$time_anim'>
-        <div class='wadah gradasi-$arr_gradasi[$key]'>
-          <div class='text-center p-4'>
-            <img src='assets/img/icons/$value.png' alt='as $value' class='foto-ilustrasi'>
-          </div>
-          <a href='?join&as=$value' class='btn btn-primary btn-block proper'>Sebagai $value</a>
-          <div class='tengah kecil abu mt1'>$arr_ket[$key]</div>
-        </div>
-      </div>
-    ";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ===========================================================
+# PROCESSORS
+# ===========================================================
+$pesan_join = '';
+$nama = '';
+$username = '';
+$select_kelas = '';
+if (isset($_POST['btn_join'])) {
+
+  function clean($a)
+  {
+    return str_replace('"', '', str_replace('\'', '', $a));
   }
 
-?>
+  $nama = clean($_POST['nama']);
+  $username = clean($_POST['username']);
+  $select_kelas = clean($_POST['select_kelas']);
 
-  <div class="section-title" data-aos="fade-up">
-    <h2>Join</h2>
-  </div>
+  $s = "SELECT 1 FROM tb_peserta WHERE username='$username'";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  if (mysqli_num_rows($q)) {
+    $pesan_join = "<div class='alert alert-danger' data-aos='fade-left'>Nickname <b><u>$username</u></b> sudah diambil. Silahkan tambahkan nickname Anda dengan angka, nama tengah, atau nama belakang (tanpa spasi atau karakter khusus).</div>";
+  } else { // input username sudah unik
 
-  <div class="row content">
-    <?= $blok_joins ?>
-  </div>
+    // default status peserta baru = aktif
+    $status = 1;
+    $id_role = 1; // default as peserta
+    if ($as != 'peserta') {
+      $status = 0; // perlu verifikasi untuk instruktur, pro, mitra baru
+      if ($as == 'instruktur') {
+        $id_role = 2;
+      } elseif ($as == 'praktisi') {
+        $id_role = 3;
+      } elseif ($as == 'industri') {
+        $id_role = 4;
+      } else {
+        die('Undefined role at processors.');
+      }
+    }
 
-  <div class="tengah mt3" data-aos="fade-up" data-aos-delay="800">Sudah punya akun? Silahkan <a href="?login"><b>Login</b></a></div>
+    // add peserta
+    $s = "INSERT INTO tb_peserta 
+      (username,nama,status,id_role) VALUES 
+      ('$username','$nama','$status',$id_role) 
+      ON DUPLICATE KEY UPDATE date_created=CURRENT_TIMESTAMP 
+      ";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    echo div_alert('success', "Insert $as baru sukses...");
 
-<?php
+    // get id_peserta
+    $s = "SELECT id FROM tb_peserta where username='$username'";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    $d = mysqli_fetch_assoc($q);
+    $id_peserta = $d['id'];
+    echo div_alert('info', 'Getting new id_peserta sukses...');
+
+    // assign kelas peserta
+    $s = "INSERT INTO tb_kelas_peserta 
+      (id_peserta,kelas) VALUES 
+      ('$id_peserta','$select_kelas')";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    echo div_alert('success', "Assign peserta baru ke kelas <u>$select_kelas</u> sukses...");
+
+
+
+
+
+    echo div_alert('success', "Semua proses join selesai.<hr><span class='tebal darkred'>Mohon tunggu! redirecting...</span>");
+
+    $pesan = div_alert('success', "Join sebagai $as dengan nickname: <b>$username</b> berhasil.<hr><span class='darkblue'>Silahkan Anda login dengan username yang barusan Anda buat.
+      <ul>
+        <li><b class=abu>Username:</b> $username</li>
+        <li><b class=abu>Password:</b> $username</li>
+      </ul>
+      <a class='btn btn-primary btn-sm btn-block' href='?login&username=$username'>Menuju Login Page</a>
+      ");
+
+    $pesan = urlencode($pesan);
+
+    echo "<script>setTimeout(()=>location.replace('?pesan_show&pesan=$pesan'),1000)</script>";
+    exit;
+  }
 }
 
 
@@ -56,152 +118,141 @@ if (!$as) {
 
 
 
+# ===========================================================
+# NORMAL FLOW :: SELECT AS
+# ===========================================================
+if (!$as) {
+  $arr_as = ['peserta', 'instruktur', 'praktisi', 'industri'];
+  $arr_gradasi = ['hijau', 'hijau', 'biru', 'kuning'];
+  $arr_ket = [
+    'Saya ingin belajar dengan target di dunia nyata. Saya akan mengerjakan Challenges baik dari instruktur maupun dari mitra.',
+    'Koordinator mahasiswa, praktisi, dan industri. Saya mempertemukan para mahasiswa, pihak industri, dan juga para professional.',
+    'Saya bersedia mentoring dengan senang hati. Saya akan membagikan pengalaman saya di dunia kerja bagi adik-adik mahasiswa.',
+    'Saya membutuhkan jasa dari mahasiswa. Dimulai dari yang simple saja!'
+  ];
 
-
-
-
-
-
-
-if ($as == 'peserta') {
-
-  $pesan_join = '';
-  $nama = '';
-  $username = '';
-  $select_kelas = '';
-  $kelas_new = '';
-  if (isset($_POST['btn_join'])) {
-
-    // echo '<pre>';
-    // var_dump($_POST);
-    // echo '</pre>';
-
-    function clean($a)
-    {
-      return str_replace('"', '', str_replace('\'', '', $a));
-    }
-
-    $nama = clean($_POST['nama']);
-    $username = clean($_POST['username']);
-    $select_kelas = clean($_POST['select_kelas']);
-    $kelas_new = clean($_POST['kelas_new']);
-
-    $kelas = $select_kelas == 'new' ? $kelas_new : $select_kelas;
-
-    if ($_POST['kelas_new'] != 'null') { // insert new class
-      $s = "INSERT INTO tb_kelas (kelas) VALUES ('$kelas_new') ON DUPLICATE KEY UPDATE status=1";
-      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-    }
-
-    $s = "SELECT 1 FROM tb_peserta WHERE username='$username'";
-    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-    if (mysqli_num_rows($q)) {
-      $pesan_join = "<div class='alert alert-danger' data-aos='fade-left'>Nickname <b><u>$username</u></b> sudah ada. Silahkan tambahkan nickname Anda dengan angka, nama tengah, atau nama belakang kamu (tanpa spasi) agar tetap mudah diingat.</div>";
-    } else { // input username sudah unik
-
-      // default status peserta baru = aktif
-      $status = 1;
-
-      // add peserta
-      $s = "INSERT INTO tb_peserta 
-    (username,nama,status) VALUES 
-    ('$username','$nama','$status') 
-    ON DUPLICATE KEY UPDATE date_created=CURRENT_TIMESTAMP 
-    ";
-      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-      echo div_alert('success', 'Insert peserta baru sukses...');
-
-      // get id_peserta
-      $s = "SELECT id FROM tb_peserta where username='$username'";
-      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-      $d = mysqli_fetch_assoc($q);
-      $id_peserta = $d['id'];
-      echo div_alert('info', 'Getting new id_peserta sukses...');
-
-      // assign kelas peserta
-      $s = "INSERT INTO tb_kelas_peserta 
-    (id_peserta,kelas) VALUES 
-    ('$id_peserta','$kelas')";
-      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-      echo div_alert('success', "Assign peserta baru ke kelas <u>$kelas</u> sukses...");
-
-
-
-
-
-      echo div_alert('success', "Semua proses join selesai.<hr><span class='tebal darkred'>Mohon tunggu! redirecting...</span>");
-
-      $pesan = div_alert('success', "Join sebagai $as dengan nickname: <b>$username</b> berhasil.<hr><span class='darkblue'>Silahkan Anda login dengan username yang barusan Anda buat.
-    <ul>
-      <li><b class=abu>Username:</b> $username</li>
-      <li><b class=abu>Password:</b> $username</li>
-    </ul>
-    <a class='btn btn-primary btn-sm btn-block' href='?login&username=$username'>Menuju Login Page</a>
-    ");
-
-      $pesan = urlencode($pesan);
-
-      echo "<script>setTimeout(()=>location.replace('?pesan_show&pesan=$pesan'),1000)</script>";
-      exit;
-    }
+  $blok_joins = '';
+  foreach ($arr_as as $key => $value) {
+    $time_anim = ($key + 1) * 150;
+    $blok_joins .= "
+    <div class='col-lg-3' data-aos='fade-up' data-aos-delay='$time_anim'>
+      <div class='wadah gradasi-$arr_gradasi[$key]'>
+        <div class='text-center p-4'>
+          <img src='assets/img/icons/$value.png' alt='as $value' class='foto-ilustrasi'>
+        </div>
+        <a href='?join&as=$value' class='btn btn-primary btn-block proper'>Sebagai $value</a>
+        <div class='tengah kecil abu mt1'>$arr_ket[$key]</div>
+      </div>
+    </div>
+  ";
   }
 
+  echo "
+    <div class='row content'>
+      $blok_joins
+    </div>
+
+    <div class='tengah mt3' data-aos='fade-up' data-aos-delay='800'>
+      Sudah punya akun? Silahkan 
+      <a href='?login'><b>Login</b></a>
+    </div>
+  ";
+} else {
 
 
 
 
 
-  $s = "SELECT kelas FROM tb_kelas WHERE tahun_ajar=$tahun_ajar AND status=1  ";
-  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  $option_kelas = '';
-  while ($d = mysqli_fetch_assoc($q)) {
-    $selected = $d['kelas'] == $select_kelas ? 'selected' : '';
-    $option_kelas .= "<option $selected>$d[kelas]</option>";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  # ===========================================================
+  # SELECTED AS
+  # ===========================================================
+  if ($as == 'peserta') {
+    $s = "SELECT kelas FROM tb_kelas WHERE tahun_ajar=$tahun_ajar AND status=1  ";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    $option_kelas = '';
+    while ($d = mysqli_fetch_assoc($q)) {
+      $selected = $d['kelas'] == $select_kelas ? 'selected' : '';
+      $option_kelas .= "<option $selected>$d[kelas]</option>";
+    }
+  } elseif ($as == 'instruktur') {
+    $option_kelas = '<option value="INSTRUKTUR">KELAS INSTRUKTUR</option>';
+  } elseif ($as == 'praktisi') {
+    $option_kelas = '<option value="PRAKTISI">KELAS PRAKTISI</option>';
+  } elseif ($as == 'industri') {
+    $option_kelas = '<option>MITRA INDUSTRI</option>';
+  } else {
+    die('Undefined role.');
   }
 
   $hideit_btn_join = ($nama != '' and $username != '' and $select_kelas != '0') ? '' : 'hideit';
 
-?>
-  <div class="section-title" data-aos="fade-up">
-    <h2>Join</h2>
-    <p>Silahkan Anda Join sebagai Peserta</p>
-    <div class="mt3 mb4">
-      <img src='assets/img/icons/<?= $as ?>.png' alt='img as' class='foto-ilustrasi'>
+  echo "
+  <div class='section-title' data-aos='fade-up'>
+    <p><a href='?join'>Back</a> | Silahkan Anda Join sebagai <span class=proper>$as</span></p>
+    <div class='mt3 mb4'>
+      <img src='assets/img/icons/$as.png' alt='img-as-$as' class='foto-ilustrasi'>
     </div>
-    <?= $pesan_join ?>
+    $pesan_join
   </div>
+  
+  ";
 
-  <div class="wadah gradasi-hijau" data-aos="fade-up" data-aos-delay="150" style='max-width:500px; margin:auto'>
-    <form method=post>
-      <div class="form-group">
-        <label for="nama">Nama Lengkap</label>
-        <input class='form-control input_isian mt1' type="text" id='nama' name='nama' required maxlength=50 minlength=3 value='<?= $nama ?>'>
-      </div>
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input class='form-control input_isian mt1' type="text" id='username' name='username' required maxlength=20 minlength=3 value='<?= $username ?>'>
-        <div class='kecil miring mt1'>Untuk mahasiswa, username harus nama depan atau nama panggilan kamu.</div>
-      </div>
-      <div class="form-group">
-        <label for="select_kelas">Kelas <span class="f12 abu">pada TA <?= $tahun_ajar ?></span></label>
-        <select name="select_kelas" id="select_kelas" class="form-control">
-          <option value="0">--Pilih--</option>
-          <?= $option_kelas ?>
-          <!-- <option value="new" class='kecil miring abu'>buat kelas baru...</option> -->
-        </select>
-        <div class="wadah hideit mt2" id="blok_new_kelas">
-          <label for="kelas_new">Silahkan masukan kelas baru Anda:</label>
-          <input class='form-control input_isian mt1' type="text" id='kelas_new' name='kelas_new' placeholder='kelas baru' value='null' required maxlength=20 minlength=4>
-          <small class=miring>Max 20 karakter tanpa spasi</small>
+  echo "
+    <div class='wadah gradasi-hijau' data-aos='fade-up' data-aos-delay='150' style='max-width:500px; margin:auto'>
+      <form method=post>
+        <div class='form-group'>
+          <label for='nama'>Nama Lengkap</label>
+          <input class='form-control input_isian mt1' type='text' id='nama' name='nama' required maxlength=50 minlength=3 value='$nama'>
+        </div>
+        <div class='form-group'>
+          <label for='username'>Username</label>
+          <input class='form-control input_isian mt1' type='text' id='username' name='username' required maxlength=20 minlength=3 value='$username'>
+          <div class='f12 miring mt1'>Usahakan agar username adalah nama depan atau nama panggilan!</div>
+        </div>
+        <div class='form-group'>
+          <label for='select_kelas'>Kelas Aktif <span class='f12 abu'>pada TA $tahun_ajar</span></label>
+          <select name='select_kelas' id='select_kelas' class='form-control'>
+            <option value='0'>--Pilih--</option>
+            $option_kelas
+          </select>
+          <div class='f12 miring mt1 mb2'>Jika Kelas Aktif belum ada silahkan hubungi intruktur!</div>
         </div>
 
-      </div>
+        <div class='form-group $hideit_btn_join' id='blok_btn_join'>
+          <button class='btn btn-primary btn-block' name=btn_join>Join</button>
+        </div>
+      </form>
+    </div>  
+  ";
+?>
 
-      <div class="form-group <?= $hideit_btn_join ?>" id="blok_btn_join">
-        <button class="btn btn-primary btn-block" name=btn_join>Join</button>
-      </div>
-    </form>
-  </div>
+
 
   <!-- <div class="tengah kecil mt3" data-aos="fade-up" data-aos-delay="300">Punya akun? Silahkan <a href="?login">Login</a></div> -->
 
@@ -261,4 +312,5 @@ if ($as == 'peserta') {
       })
     })
   </script>
+
 <?php } ?>

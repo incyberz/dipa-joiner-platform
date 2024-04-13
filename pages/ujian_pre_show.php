@@ -12,12 +12,12 @@ $start = $_GET['start'] ?? '';
 
 
 # =======================================================
-# FITUR DOSEN
+# FITUR INSTRUKTUR
 # =======================================================
 if ($id_role == 2) {
   $fitur_dosen = "
   <div class='wadah gradasi-merah mt2'>
-    Fitur Dosen: <a href='?monitoring_ujian&id_paket_soal=$id_paket_soal'>Monitoring Ujian</a>
+    Fitur Instruktur: <a href='?monitoring_ujian&id_paket_soal=$id_paket_soal'>Monitoring Ujian</a>
   </div>
   ";
 }
@@ -26,7 +26,7 @@ if ($id_role == 2) {
 # =======================================================
 # GET PROPERTIES PAKET UJIAN
 # =======================================================
-// untuk dosen tampilkan walaupun berbeda kelas
+// untuk instruktur tampilkan walaupun berbeda kelas
 $sql_kelas = $id_role == 2 ? '1' : "a.kelas='$kelas'";
 $s = "SELECT 
 a.*,

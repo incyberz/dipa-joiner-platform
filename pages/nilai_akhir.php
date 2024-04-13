@@ -182,6 +182,7 @@ $from_tb_jawabans = "FROM tb_jawabans p
 $s = "SELECT  
 a.id as id_peserta,
 a.nama as nama_peserta,
+a.status as status_peserta,
 a.nim,
 a.username,
 b.kelas,
@@ -321,7 +322,8 @@ FROM tb_peserta a
 JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
 JOIN tb_kelas c ON b.kelas=c.kelas 
 JOIN tb_room_kelas d ON c.kelas=d.kelas 
-WHERE a.status=1 -- peserta aktif only
+-- WHERE a.status=1 -- peserta aktif only
+WHERE 1 -- peserta aktif/nonaktif
 AND password is not null -- peserta aktif pasti sudah ganti pass
 AND a.id_role=1 -- peserta only tidak GM
 AND $sql_id_peserta -- SWITCH VIEW PESERTA | GM
@@ -429,7 +431,7 @@ while ($d = mysqli_fetch_assoc($q)) {
       $data_csv[$kelas_ini] .= "Prodi,$d[jenjang] - $d[nama_prodi] - $reguler\n";
       $data_csv[$kelas_ini] .= "Mata Kuliah,Matematika Informatika\n";
       $data_csv[$kelas_ini] .= "Semester / Kelas,$d[semester] / $d[kode_kelas]\n";
-      $data_csv[$kelas_ini] .= "Dosen,Iin S.T. M.Kom\n\n";
+      $data_csv[$kelas_ini] .= "Instruktur,Iin S.T. M.Kom\n\n";
       $data_csv[$kelas_ini] .= "NO,NAMA,NIM,TIMESTAMP KEHADIRAN,NILAI TUGAS,NILAI UTS,KETERANGAN\n";
     }
   }
@@ -583,6 +585,8 @@ while ($d = mysqli_fetch_assoc($q)) {
         $img = '';
       }
 
+      $status_show = $d['status_peserta'] ? '' : '<div class="pt2"><span class="f12 p1 bg-red white br5">non-aktif</span></div>';
+
       // preview to table
       $tr .= "
       <tr class='f14'>
@@ -591,6 +595,7 @@ while ($d = mysqli_fetch_assoc($q)) {
           $nama_peserta 
           <a href='?login_as&username=$d[username]'>$img_login_as</a>
           <div class='kecil miring abu'>$d[kelas]</div>
+          $status_show 
           $img
         </td>
         $td

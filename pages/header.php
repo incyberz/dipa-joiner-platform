@@ -69,6 +69,7 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
           $li_verif = ($id_role == 1 || !$jumlah_verif) ? '' : "<li><a href='?verif' class='proper'><span class='biru tebal'>Verif</span> <span class='count_badge badge_red' id='jumlah_verif'>$jumlah_verif</span></a></li>";
           $li_ask = ($id_role == 1 || $jumlah_ask == 0) ? '' : "<li class='hideit suspend zzz'><a href='?chats' class='proper'><span class='biru tebal'>Chats</span> <span class='count_badge badge_red' id='jumlah_ask'>$jumlah_ask</span></a></li>";
           $li_verif_war = ($id_role == 1 || $jumlah_verif_war == 0) ? '' : "<li><a href='?verifikasi_war_profil' class='proper'><span class='biru tebal'>WarProfil</span> <span class='count_badge badge_red' id='jumlah_verif_war'>$jumlah_verif_war</span></a></li>";
+          $li_manage_room = $id_role == 2 ? "<li><a href='?manage_room'>Manage Room</a></li>" : '';
 
 
           echo "
@@ -94,6 +95,7 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
             <li class='dropdown'><a  href='#'><span class='tebal darkblue'>$room</span> <i class='bi bi-chevron-down'></i></a>
               <ul>
                 <li><a href='?pilih_room'>Pilih Room</a></li>
+                $li_manage_room
                 <li><a href='?list_sesi'>Learning Path</a></li>
                 <li><a href='?peserta_kelas'>Peserta Kelas</a></li>
                 <li><a href='?activity&jenis=latihan'>Latihan</a></li>

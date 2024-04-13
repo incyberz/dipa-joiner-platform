@@ -32,7 +32,7 @@ $id_paket_soal = $_GET['id_paket_soal'] ?? '';
 # =======================================================
 if ($id_paket_soal == '') {
   if ($id_role == 2) {
-    // tampilan untuk dosen, tampilkan seluruh paket soal untuk setiap kelas
+    // tampilan untuk instruktur, tampilkan seluruh paket soal untuk setiap kelas
     $s = "SELECT a.*,
     (
       SELECT COUNT(1) FROM tb_jawabans WHERE id_peserta=$id_peserta AND id_paket_soal=a.id) jumlah_attemp  

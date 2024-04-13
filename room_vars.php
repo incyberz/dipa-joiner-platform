@@ -130,7 +130,7 @@ $total_challenge_wajib = $d['total_challenge_wajib'];
 
 
 # ============================================================
-# VERIF COUNTS FOR DOSEN
+# VERIF COUNTS FOR INSTRUKTUR
 # ============================================================
 $jumlah_verif_war = 0;
 $jumlah_verif_profil = 0;

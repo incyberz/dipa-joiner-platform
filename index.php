@@ -104,17 +104,15 @@ if ($username) {
     include 'room_vars.php';
     // include 'room_data.php';
     include 'wars_data.php';
-  } else {
-    if ($password) {
-      $parameter = 'pilih_room';
+  } else { // belum pilih room
+    if ($password) { // jika password OK
+      if ($parameter != 'buat_room' and $parameter != 'verifikasi_wa') {
+        // wajib pilih room dahulu        
+        $parameter = 'pilih_room';
+      }
     }
   }
 }
-// $id_room = 1; //zzz
-// $nama_room = 'Matematika Informatika'; //zzz
-// $room = 'MAFI'; //zzz
-// $status_room = 0; //closed zzz
-// $div_alert_closed = div_alert('danger',meme('closed',6)."<hr>Maaf, room ini udah ditutup. Sampai jumpa di room selanjutnya!");
 ?>
 
 <!DOCTYPE html>

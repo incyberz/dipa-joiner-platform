@@ -3,7 +3,21 @@ if ($parameter == 'login' and $is_login) die('<script>location.replace("?")</scr
 // echo "<span class=debug>id_peserta:<span id=id_peserta>$id_peserta</span> | nama_peserta:<span id=nama_peserta>$nama_peserta</span> | </span>";
 
 if (!$status and $parameter != 'verifikasi_wa' and $is_login) {
-  echo "<section><div class='container red small miring gradasi-merah'>Kamu belum verifikasi whatsapp sehingga banyak fitur yang dibatasi. | <a href='?verifikasi_wa'>Verifikasi</a></div></section>";
+  echo "
+    <section>
+      <div class='wadah  small miring  p4'>
+        <div class=sub_form>Routing Exceptions - Unverified Status as Instruktur</div>
+        <p>Halo $nama_peserta!</p>
+        <p>Kamu sudah tercatat sebagai <u>$sebagai</u> pada kelas <u>$kelas</u>.</p>
+        <hr>
+        <div class='alert alert-danger'>
+          Status akun kamu belum terverifikasi. | 
+          <a href='?verifikasi_wa'>Verifikasi</a>
+        </div>
+      </div>
+    </section>
+  ";
+  exit;
 }
 
 
@@ -32,11 +46,6 @@ if (!file_exists($konten)) {
     }
   }
 
-  // if($profil_ok==-1 || !$profil_ok){
-  //   if($is_login and $password and $id_room and $parameter!='login' and $parameter!='upload_profil'){
-  //     include 'pages/belum_punya_profil.php';
-  //   }
-  // }
 
   if ($username and !$kelas) {
     include 'pages/join_kelas.php';

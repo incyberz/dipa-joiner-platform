@@ -3,20 +3,42 @@
 
     <div class="section-title" data-aos="fade-up">
       <h2>TEAMS</h2>
-        <div class="alert alert-danger">
-          Maaf, page ini masih dalam tahap pengembangan.
-        </div>
+      <div class="alert alert-danger">
+        Maaf, page ini masih dalam tahap pengembangan.
+      </div>
 
-      <p>Berikut adalah DIPA Teams on-progress. | <a href="?mhs">Peserta Mhs</a> </p>
+      <p>Berikut adalah DIPA Teams on-progress. | <a href="?peserta">Daftar Peserta</a> </p>
     </div>
 
     <style>
-      .nama-tim{color:darkblue; font-size: 12px}
-      .sebagai{color:gray; font-size: 10px}
-      .blok-tim{padding: 10px; border: solid 1px #eee; border-radius: 5px; height:100%;}
-      .tim-di{background:linear-gradient(#ffa,#fee)}
-      .tim-p{background:linear-gradient(#aaf,#fee)}
-      .tim-a{background:linear-gradient(#afa,#fee)}
+      .nama-tim {
+        color: darkblue;
+        font-size: 12px
+      }
+
+      .sebagai {
+        color: gray;
+        font-size: 10px
+      }
+
+      .blok-tim {
+        padding: 10px;
+        border: solid 1px #eee;
+        border-radius: 5px;
+        height: 100%;
+      }
+
+      .tim-di {
+        background: linear-gradient(#ffa, #fee)
+      }
+
+      .tim-p {
+        background: linear-gradient(#aaf, #fee)
+      }
+
+      .tim-a {
+        background: linear-gradient(#afa, #fee)
+      }
     </style>
 
     <div class="wadah content" data-aos="fade-up" data-aos-delay="150">
@@ -38,7 +60,8 @@
                 </div>
 
               </div>
-            </div>            <div class="col-lg-4">
+            </div>
+            <div class="col-lg-4">
               <div class="blok-tim tim-di">
                 <div class="text-center">
                   <img src="assets/img/industri/1.jpeg" alt="" class='foto_profil'>

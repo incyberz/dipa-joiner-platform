@@ -12,7 +12,7 @@ $get_kelas = $_GET['kelas'] ?? '';
 $get_keyword = $_GET['keyword'] ?? '';
 $get_mode = $_GET['mode'] ?? 'fast';
 $jumlah_peserta = 0;
-// mode untuk dosen: detail || full
+// mode untuk instruktur: detail || full
 
 // peserta hanya bisa melihat kelas nya saja
 $sql_kelas = ($id_role == 1 and $get_kelas == '') ? "a.kelas = '$kelas'" : '1';
@@ -65,7 +65,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
 
   $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
 
-  $list_mhs = '';
+  $list_peserta = '';
   $no = 0;
   while ($d2 = mysqli_fetch_assoc($q2)) {
     $nama = ucwords(strtolower($d2['nama']));
@@ -86,7 +86,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
         $src = 'assets/img/img_na.jpg';
         $link_super_delete = "<a href='?super_delete_peserta&id=$d2[id_peserta]'>$img_delete</a>";
       }
-      $list_mhs .= "
+      $list_peserta .= "
       <div class='kecil tengah abu'>
         <img src='$src' class='foto_profil' style='$sty'>
         <div>$nama $link_super_delete</div>
@@ -133,7 +133,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
         $q3 = mysqli_query($cn, $s3) or die(mysqli_error($cn));
         $presenters_kelas_last_active_sesi = 0;
         $sesi_aktif = 0;
-        $count_presensi = 0; // jumlah_presensi tiap mhs
+        $count_presensi = 0; // jumlah_presensi tiap peserta
         $count_presensi_ontime = 0; // yang ontime saja
         while ($d3 = mysqli_fetch_assoc($q3)) {
           $sudah_presensi = $d3['sudah_presensi'];
@@ -241,7 +241,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
         }
       }
 
-      $list_mhs .= "
+      $list_peserta .= "
         <tr>
           <td>$no</td>
           <td class='kecil tengah abu'>
@@ -262,7 +262,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
         </tr>
       ";
     } else {
-      die("Belum ada handler untuk list-mhs pada mode: $get_mode");
+      die("Belum ada handler untuk list-peserta pada mode: $get_mode");
     }
   }
 
@@ -271,7 +271,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
       <div class='wadah gradasi-hijau' zzzdata-aos='fade-up' data-aos-delay='150'>
         Peserta Kelas $d[kelas]
         <div class='wadah bg-white flexy mt1'>
-          $list_mhs
+          $list_peserta
         </div>      
       </div>
     ";
@@ -290,7 +290,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
             <th>Challenge</th>
             <th>Ujian</th>
           </thead>
-          $list_mhs
+          $list_peserta
         </table>      
       </div>
     ";
