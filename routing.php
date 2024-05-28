@@ -5,14 +5,14 @@ if ($parameter == 'login' and $is_login) die('<script>location.replace("?")</scr
 if (!$status and $parameter != 'verifikasi_wa' and $is_login) {
   echo "
     <section>
-      <div class='wadah  small miring  p4'>
+      <div class='wadah gradasi-kuning small miring  p4'>
         <div class=sub_form>Routing Exceptions - Unverified Status as Instruktur</div>
         <p>Halo $nama_peserta!</p>
-        <p>Kamu sudah tercatat sebagai <u>$sebagai</u> pada kelas <u>$kelas</u>.</p>
+        <p>Kamu sudah tercatat sebagai <u>$sebagai</u> pada kelas <u>$kelas</u>. Untuk instruktur baru wajib diverifikasi oleh Master Instruktur yaitu Dev-Team (Bapak Iin Sholihin, dan tim)</p>
         <hr>
         <div class='alert alert-danger'>
-          Status akun kamu belum terverifikasi. | 
-          <a href='?verifikasi_wa'>Verifikasi</a>
+          Status <i class=darkblue>Akun INSTRUKTUR</i> Anda belum terverifikasi. | 
+          <a href='?verifikasi_wa&dari=routing_verifikasi_wa_instruktur'>Verifikasi Whatsapp Instruktur</a>
         </div>
       </div>
     </section>

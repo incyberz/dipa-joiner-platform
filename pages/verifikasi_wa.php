@@ -3,13 +3,19 @@ $debug = '';
 $hide_form = 0;
 $hide_section = 0;
 $form = '';
-$dari = '';
+$dari = $_GET['dari'] ?? '';
 $no_wa = '';
 $untuk = $_GET['untuk'] ?? '';
 if (!$is_login and $untuk == '') die('<script>location.replace("?")</script>');
 $pesan = 'Untuk mengakses semua fitur kamu harus update dengan nomor whatsapp yang aktif.';
 
+
 $caption = 'Verifikasi';
+
+// echo '<pre>';
+// var_dump($_GET);
+// echo '</pre>';
+
 if ($id_peserta == '') { // belum login
   $debug .= "
   <span class=debug><span id=is_login>is_login:$is_login</span></span>
@@ -50,25 +56,44 @@ if ($id_peserta == '') { // belum login
         $pesan .= div_alert('info', "Data whatsapp sudah ada, silahkan klik Verifikasi/Reset. Jika nomor aktif saat ini berbeda maka silahkan input kembali.");
       }
     }
-  } elseif (isset($_POST['btn_submit'])) {
-    $dari = $_POST['dari'];
+  }
+}
 
-    if ($_POST['dari'] == 'reset_password') {
+if ($dari == 'routing_verifikasi_wa_instruktur') {
+  $pesan = 'Agar dapat lanjut sebagai INSTRUKTUR nomor whatsapp Anda harus terverifikasi oleh Master Instruktur. Pesan dan link verifikasi akan diteruskan ke Developer Team (Bapak Iin Sholihin)';
 
-      $username = $_POST['username_reset'];
-      $kelas = $_POST['kelas'];
-      $no_wa = $_POST['no_wa'];
-      $nama = $_POST['nama'];
-      include 'reset_password_confirm.php';
-      $hide_section = 1;
-    } else {
-      // verifikasi normal
-      echo "VERIFIKASI NORMAL";
-    }
+  // $hide_form = 0;
+  // $hide_section = 0;
+}
+
+if (isset($_POST['btn_submit_wa'])) {
+  // echo '<pre>';
+  // var_dump($_POST);
+  // echo '</pre>';
+  // exit;
+
+  $dari = $_POST['dari'];
+
+  $username = $_POST['username_reset'];
+  $kelas = $_POST['kelas'];
+  $no_wa = $_POST['no_wa'];
+  $nama = $_POST['nama'];
+  if ($_POST['dari'] == 'reset_password') {
+
+    include 'reset_password_confirm.php';
+    $hide_section = 1;
+  } elseif ($_POST['dari'] == 'routing_verifikasi_wa_instruktur') {
+    include 'verifikasi_wa_instruktur_baru.php';
+    echo 'VERIFIKASI WHATSAPP INSTRUKTUR';
+    exit;
   } else {
-    $pesan .= div_alert('danger', 'No POST request detected.');
+    // verifikasi normal
+    echo "VERIFIKASI NORMAL - Unhandler Code.";
     exit;
   }
+} else {
+  // $pesan .= div_alert('danger', 'No POST request detected.');
+  // exit;
 }
 
 if (!$hide_form) {
@@ -84,7 +109,7 @@ if (!$hide_form) {
       <div class='tengah consolas' style='font-size:30px' id=no_wa2>628X-XXX-XXX-XXX</div>
       <div class='tengah consolas red' style='font-size:10px' id=no_wa_invalid>awali dg '08...' atau '62...'</div>
       <div>
-        <button class='btn btn-primary btn-block' id=btn_verifikasi name=btn_submit>$caption</button>
+        <button class='btn btn-primary btn-block' id=btn_verifikasi name=btn_submit_wa>$caption</button>
       </div>
     </div>
   </form>

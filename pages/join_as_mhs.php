@@ -176,9 +176,14 @@ $hideit_btn_join = ($nama != '' and $username != '' and $select_kelas != '0') ? 
     $('#nama').keyup(function() {
       $(this).val(
         $(this).val()
-        .toUpperCase()
         .replace(/  /g, ' ')
         .replace(/[!@#$%^&*()+\-_=\[\]{}.,;:'`"\\|<>\/?~0-9]/gim, '')
+        .replace(
+          /\w\S*/g,
+          function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+          }
+        )
       );
 
     });

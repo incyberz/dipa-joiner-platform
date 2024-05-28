@@ -293,11 +293,24 @@ if (!$as) {
       $('#nama').keyup(function() {
         $(this).val(
           $(this).val()
-          .toUpperCase()
+          .replace(/['"]/g, '`')
+          .replace(/[!@#$%^&*()+\-_=\[\]{}.,;:\\|<>\/?~0-9]/gim, '')
           .replace(/  /g, ' ')
-          .replace(/[!@#$%^&*()+\-_=\[\]{}.,;:'`"\\|<>\/?~0-9]/gim, '')
+          .replace(
+            /\w\S*/g,
+            function(txt) {
+              return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            }
+          )
         );
 
+      });
+
+      $('#nama').focusout(function() {
+        $(this).val(
+          $(this).val()
+          .trim()
+        );
       });
 
       $('.input_isian').keyup(function() {

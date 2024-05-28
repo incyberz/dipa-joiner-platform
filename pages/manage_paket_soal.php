@@ -7,6 +7,17 @@ set_title($judul);
 // $abjad = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
 // $path_gambar_paket_soal = 'assets/img/gambar_paket_soal';
 echo "<h1>$judul</h1>
+  <div class='wadah red bold gradasi-kuning'>
+    Maaf, page ini masih dalam tahap pengembangan. <hr>Untuk import Soal PG, silahkan kirim ke developer soal + kunci jawab dalam bentuk Excel/Word disertai dengan:
+    <ul>
+      <li>Untuk Kelas... (bisa > 1 kelas)</li>
+      <li>Tanggal ujian</li>
+      <li>Mulai ujian (pukul)</li>
+      <li>Akhir ujian (pukul)</li>
+      <li>Tanggal dan jam pembahasan (opsional, mhs bisa lihat kunci jawab pada jam tersebut)</li>
+      <li>Max attemp (jumlah maksimal mengulang ujian, default 2 kali)</li>
+    </ul>
+  </div>
   <div class=mb2><a href='?ujian'>Ujian Home</a> | <a href='?manage_soal'>Manage Soal</a></div>
 ";
 
@@ -64,8 +75,7 @@ if (isset($_POST['btn_simpan_paket_soal'])) {
       soal='$soal',
       opsies='$opsies',
       kjs='$kjs',
-      pembahasan=$pembahasan_or_null,
-      $sql_update_gambar_paket_soal
+      pembahasan=$pembahasan_or_null 
     WHERE id=$id_paket_for_update
     ";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));

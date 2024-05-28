@@ -6,11 +6,11 @@ $text_wa = "*REQUEST RESET PASSWORD*%0a%0aYt. Instruktur DIPA Joiner,%0aSaya $na
 $text_wa_show = str_replace('%0a', ' ', $text_wa);
 ?>
 
-<div class="section-title" data-aos="fade-up">
+<div class="section-title" data-aos-zzz="fade-up">
   <h2>Reset</h2>
   <p>Setelah Reset Password maka password akan sama dengan username</p>
 </div>
-<div class="wadah gradasi-hijau" data-aos="fade-up" data-aos-delay="150">
+<div class="wadah gradasi-hijau" data-aos-zzz="fade-up" data-aos-delay="150">
   <div class="form-group">
     <textarea class="form-control" rows="10" disabled><?= $text_wa_show ?></textarea>
   </div>
