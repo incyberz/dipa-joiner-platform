@@ -261,7 +261,7 @@ JOIN tb_role b ON a.id_role=b.id
 WHERE a.id='$id_peserta'";
 // echo "<pre>$s</pre>";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-if (mysqli_num_rows($q) == 0) die("mhs_var :: Mahasiswa dengan id: $id_peserta tidak ditemukan.");
+if (!mysqli_num_rows($q)) die("mhs_var :: Mahasiswa dengan id: $id_peserta tidak ditemukan.");
 $d = mysqli_fetch_assoc($q);
 $sudah_polling_uts = $d['sudah_polling_uts'];
 $sudah_polling_uas = $d['sudah_polling_uas'];

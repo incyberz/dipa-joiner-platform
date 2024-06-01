@@ -17,7 +17,7 @@ $start = $_GET['start'] ?? '';
 if ($id_role == 2) {
   $fitur_dosen = "
   <div class='wadah gradasi-merah mt2'>
-    Fitur Instruktur: <a href='?monitoring_ujian&id_paket_soal=$id_paket_soal'>Monitoring Ujian</a>
+    Fitur Instruktur: <a href='?monitoring_ujian&id_paket=$id_paket'>Monitoring Ujian</a>
   </div>
   ";
 }
@@ -27,25 +27,28 @@ if ($id_role == 2) {
 # GET PROPERTIES PAKET UJIAN
 # =======================================================
 // untuk instruktur tampilkan walaupun berbeda kelas
-$sql_kelas = $id_role == 2 ? '1' : "a.kelas='$kelas'";
+$sql_kelas = $id_role == 2 ? '1' : "d.kelas='$kelas'";
 $s = "SELECT 
 a.*,
 b.nama as pembuat,
 c.nama as nama_sesi,
+d.awal_ujian,
 (
-  SELECT COUNT(1) FROM tb_jawabans WHERE id_paket_soal=a.id AND id_peserta=$id_peserta)  jumlah_attemp,  
+  SELECT COUNT(1) FROM tb_jawabans WHERE id_paket=a.id AND id_peserta=$id_peserta)  jumlah_attemp,  
 (
-  SELECT COUNT(1) FROM tb_assign_soal WHERE id_paket_soal=a.id)  jumlah_soal  
-FROM tb_paket_soal a 
+  SELECT COUNT(1) FROM tb_assign_soal WHERE id_paket=a.id)  jumlah_soal  
+FROM tb_paket a 
 JOIN tb_peserta b ON a.id_pembuat=b.id  
-JOIN tb_kode_sesi c ON a.kode_sesi=c.kode_sesi  
-WHERE a.id=$id_paket_soal AND $sql_kelas";
+JOIN tb_kode_sesi c ON a.kode_sesi=c.kode_sesi 
+JOIN tb_paket_kelas d ON a.id=d.id_paket   
+WHERE a.id=$id_paket 
+AND $sql_kelas";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-if (mysqli_num_rows($q) == 0) die("Data Paket Soal tidak ditemukan.");
+if (!mysqli_num_rows($q)) die("Data Paket Soal tidak ditemukan.");
 $d = mysqli_fetch_assoc($q);
 $nama_paket_soal = $d['nama'];
 $awal_ujian = $d['awal_ujian'];
-$akhir_ujian = $d['akhir_ujian'];
+$akhir_ujian = date('Y-m-d H:i:s', strtotime($d['awal_ujian']) + 60 * $d['durasi_ujian']);
 $tanggal_pembahasan = $d['tanggal_pembahasan'];
 $is_locked = $d['is_locked'];
 $tmp_jawabans = $d['tmp_jawabans'];
@@ -56,7 +59,7 @@ $sifat_ujian = $d['sifat_ujian'] ?? 'Close Book';
 $pembuat = $d['pembuat'] ?? '-';
 $kisi_kisi = $d['kisi_kisi'] ?? '-';
 $jumlah_soal = $d['jumlah_soal'];
-if ($jumlah_soal == 0) die('<section>' . div_alert('danger', "Maaf, belum ada soal untuk Paket Soal ini. | id: $id_paket_soal"));
+if ($jumlah_soal == 0) die('<section>' . div_alert('danger', "Maaf, belum ada soal untuk Paket Soal ini. | id: $id_paket"));
 $max_attemp = $d['max_attemp'];
 $jumlah_attemp = $d['jumlah_attemp'];
 
@@ -90,8 +93,8 @@ if (isset($_POST['btn_submit_jawaban_ujian'])) {
   $nilai = round($jumlah_benar / $tmp_jumlah_soal * 100, 0);
 
   $s = "INSERT INTO tb_jawabans 
-  (id_room,id_peserta,id_paket_soal,nilai,jawabans,jumlah_benar,tanggal_start) VALUES 
-  ($id_room,$id_peserta,$id_paket_soal,$nilai,'$jawabans',$jumlah_benar,'$_POST[tanggal_start]')";
+  (id_room,id_peserta,id_paket,nilai,jawabans,jumlah_benar,tanggal_start) VALUES 
+  ($id_room,$id_peserta,$id_paket,$nilai,'$jawabans',$jumlah_benar,'$_POST[tanggal_start]')";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
   echo div_alert('success', 'Submit Jawaban sukses');
@@ -102,7 +105,7 @@ if (isset($_POST['btn_submit_jawaban_ujian'])) {
     var_dump($arr_kj);
     echo '</pre>';
   } else {
-    echo "<script>location.replace('?ujian&id_paket_soal=$_GET[id_paket_soal]#blok_hasil_ujian')</script>"; //redirect
+    echo "<script>location.replace('?ujian&id_paket=$_GET[id_paket]#blok_hasil_ujian')</script>"; //redirect
   }
 
   exit;
@@ -234,25 +237,29 @@ if ($selisih > 0) { //belum mulai
     //   $info_pembahasan = '';
     // }
 
-    if ($untuk = 'uas' && !$sudah_polling_uas) {
+    if ($untuk = 'uas' && !$sudah_polling_uas and false) {
       // STOP, belum polling
       $list_jawabans = div_alert('danger', "Sepertinya kamu belum Polling.<hr><p class='biru tebal'>Silahkan isi dahulu polling agar kamu dapat melihat hasil ujian barusan.</p><hr> <a class='btn btn-primary mt2 w-100' href='?polling&u=uas'>Isi Polling</a>. <hr><span class='abu kecil'>Silahkan isi dahulu agar dapat melihat hasil ujian.</span>");
       echo "<br>untuk:<span id=untuk>$untuk</span>";
       echo "<br>sudah_polling_uas:<span id=sudah_polling_uas>$sudah_polling_uas</span>";
-    } elseif (!$profil_ok) {
+    } elseif (!$profil_ok and false) {
       $list_jawabans = div_alert('danger', "Sepertinya kamu belum Upload Foto Profil, atau mungkin profil kamu tidak terbaca oleh instruktur (corrupt).<hr><p class='biru tebal'>Silahkan upload dahulu foto profilnya agar instruktur mengetahui bahwa itu adalah kamu.</p><hr> <a class='btn btn-primary mt2 w-100' href='?upload_profil'>Upload/Reupload Profil</a>. <hr><span class='abu kecil'>Silahkan upload profil dahulu agar kamu dapat melihat hasil ujian.</span>");
     } else { // boleh lihat hasil ujian
       $s = "SELECT a.*, b.tmp_jumlah_soal,b.tanggal_pembahasan,
       (
-        SELECT MAX(nilai) FROM tb_jawabans WHERE id_paket_soal=$id_paket_soal AND id_peserta=$id_peserta ) nilai_max  
+        SELECT MAX(nilai) FROM tb_jawabans p 
+        JOIN tb_paket_kelas q ON p.id_paket_kelas=q.paket_kelas  
+        WHERE q.id_paket=$id_paket 
+        AND p.id_peserta=$id_peserta ) nilai_max  
       FROM tb_jawabans a 
-      JOIN tb_paket_soal b ON a.id_paket_soal=b.id 
-      WHERE a.id_paket_soal=$id_paket_soal 
+      JOIN tb_paket_kelas c ON a.id_paket_kelas=c.paket_kelas 
+      JOIN tb_paket b ON c.id_paket=b.id  
+      WHERE c.id_paket=$id_paket 
       AND a.id_peserta=$id_peserta 
       ORDER BY a.tanggal_submit DESC
       ";
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-      if (mysqli_num_rows($q) == 0) {
+      if (!mysqli_num_rows($q)) {
         $list_jawabans = div_alert('danger', 'Kamu belum sempat mengisi Ujian dengan benar');
       } else {
         $list_jawabans = '';
@@ -273,8 +280,8 @@ if ($selisih > 0) { //belum mulai
       if ((strtotime($tanggal_pembahasan) - strtotime('now')) >= 0) {
         $info_pembahasan = "<hr><div class='miring darkred'>Pembahasan soal akan muncul pada tanggal $tanggal_pembahasan_show</div>";
       }
-      $dari = urlencode("?ujian&id_paket_soal=$id_paket_soal");
-      $info_pembahasan .= "<hr><a class='btn btn-primary btn-block' href='?pembahasan_soal&id_paket_soal=$id_paket_soal&dari=$dari'>Lihat Pembahasan</a>";
+      $dari = urlencode("?ujian&id_paket=$id_paket");
+      $info_pembahasan .= "<hr><a class='btn btn-primary btn-block' href='?pembahasan_soal&id_paket=$id_paket&dari=$dari'>Lihat Pembahasan</a>";
     }
 
     $blok_timer .= "
@@ -303,19 +310,19 @@ if ($selisih <= 0 && $selisih_akhir > 0 && $jumlah_attemp < $max_attemp && !$sta
     if ($nilai_max == 100) {
       $blok_timer .= "
       <div class='mb2 mt4 blue bold'>Selamat!! Kamu sudah mendapat Nilai Sempurna (100)</div>
-      <a href='?ujian&id_paket_soal=$id_paket_soal&start=1' class='btn btn-success btn-block'>Start Ujian</a>
+      <a href='?ujian&id_paket=$id_paket&start=1' class='btn btn-success btn-block'>Start Ujian</a>
       ";
     } else {
       $blok_timer .= "
       <div class='mb2 mt4'>Kamu sudah mencoba $jumlah_attemp of $max_attemp attemp. Silahkan coba lagi! System akan mengambil nilai terbesar untuk rekap ujian.</div>
-      <a href='?ujian&id_paket_soal=$id_paket_soal&start=1' class='btn btn-success btn-block'>Start Ujian</a>
+      <a href='?ujian&id_paket=$id_paket&start=1' class='btn btn-success btn-block'>Start Ujian</a>
       ";
     }
   } else {
     $blok_timer .= "
     <div class='tengah' style='max-width: 300px; margin: auto'><img  class='img-fluid img-thumbnail' src='assets/img/meme/funny-$rand.jpg'></div>
     <div class='mb2 mt4'>Kamu belum pernah mencoba. Coba donk!</div>
-    <a href='?ujian&id_paket_soal=$id_paket_soal&start=1' class='btn btn-success btn-block'>Start Ujian</a>
+    <a href='?ujian&id_paket=$id_paket&start=1' class='btn btn-success btn-block'>Start Ujian</a>
     ";
   }
 } else {

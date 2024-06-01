@@ -16,7 +16,7 @@ AND c.status=1 -- kelas aktif
 AND d.id_room=$id_room 
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-if (mysqli_num_rows($q) == 0) {
+if (!mysqli_num_rows($q)) {
   echo div_alert('danger', "Belum ada data peserta.");
 } else {
   while ($d = mysqli_fetch_assoc($q)) {

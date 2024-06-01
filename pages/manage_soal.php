@@ -271,7 +271,7 @@ WHERE a.id_room=$id_room
 AND tipe_soal='PG' 
 ORDER BY date_created";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-if (mysqli_num_rows($q) == 0) {
+if (!mysqli_num_rows($q)) {
   $tr = div_alert('danger', "Belum ada data soal untuk room ini.");
 } else {
   $tr = '';
@@ -293,7 +293,7 @@ if (mysqli_num_rows($q) == 0) {
     if ($count_assign) {
       $s2 = "SELECT b.nama as nama_paket_soal 
       FROM tb_assign_soal a 
-      JOIN tb_paket_soal b ON a.id_paket_soal=b.id 
+      JOIN tb_paket b ON a.id_paket=b.id 
       WHERE a.id_soal=$id_soal";
       $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
       $li = '';

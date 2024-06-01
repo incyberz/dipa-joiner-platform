@@ -44,6 +44,7 @@ FROM tb_room_kelas a
 WHERE a.id_room=$id_room 
 AND $sql_kelas 
 AND a.kelas != 'INSTRUKTUR' 
+AND a.kelas NOT LIKE 'DEBUGER%' 
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 while ($d = mysqli_fetch_assoc($q)) { // loop room kelas

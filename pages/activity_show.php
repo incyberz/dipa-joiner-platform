@@ -37,7 +37,7 @@ WHERE a.id=$id_assign
 ";
 // echo "<pre>$s</pre>";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-if (mysqli_num_rows($q) == 0) die(section(div_alert('danger', "Maaf, data $jenis tidak ditemukan.<hr><a class=proper href='?activity&jenis=$jenis'>Pilih $jenis</a>")));
+if (!mysqli_num_rows($q)) die(section(div_alert('danger', "Maaf, data $jenis tidak ditemukan.<hr><a class=proper href='?activity&jenis=$jenis'>Pilih $jenis</a>")));
 $d = mysqli_fetch_assoc($q);
 
 $closed = $d['status_jenis'] == -1 ? 1 : 0;

@@ -48,7 +48,7 @@ AND $sql_profil_ok
 AND c.kelas != 'INSTRUKTUR' 
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-if (mysqli_num_rows($q) == 0) {
+if (!mysqli_num_rows($q)) {
   $divs = ('<span class=red>Data tidak ditemukan</span>');
 } else {
   $divs = '';

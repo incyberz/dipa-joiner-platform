@@ -34,17 +34,17 @@ $s = "SELECT a.*,
 a.id as id_sesi, 
 a.nama as nama_sesi,
 (
-  SELECT 1 FROM tb_sesi WHERE id=a.id 
+  SELECT count(1) FROM tb_sesi WHERE id=a.id 
   AND '$today' > awal_presensi) is_presensi_aktif 
 FROM tb_sesi a 
 WHERE a.id_room=$id_room";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-if(mysqli_num_rows($q)==0){
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+if (!mysqli_num_rows($q)) {
   echo div_alert('danger', "Belum ada sesi pada room $room.");
-}else{
-  while($d=mysqli_fetch_assoc($q)){
-    $rid_sesi[$d['no']]=$d['id_sesi'];
-    $ris_presensi_aktif[$d['id_sesi']]=$d['is_presensi_aktif'];
+} else {
+  while ($d = mysqli_fetch_assoc($q)) {
+    $rid_sesi[$d['no']] = $d['id_sesi'];
+    $ris_presensi_aktif[$d['id_sesi']] = $d['is_presensi_aktif'];
   }
 }
 
@@ -53,14 +53,19 @@ if(mysqli_num_rows($q)==0){
 # GET LIST PESERTA
 # ====================================================
 $sql_kelas = $target_kelas ? "c.kelas='$target_kelas'" : '1';
-if($get_kelas) $sql_kelas = "c.kelas = '$get_kelas'";
+if ($get_kelas) $sql_kelas = "c.kelas = '$get_kelas'";
 
 $s = "SELECT 
 a.id as id_kelas_peserta, 
 b.id as id_peserta, 
 b.nama as nama_peserta ,
 c.kelas,
-(SELECT id FROM tb_sesi WHERE id_room=$id_room AND awal_presensi<='$today' AND akhir_presensi>'$today') id_sesi 
+(
+  SELECT id FROM tb_sesi 
+  WHERE id_room=$id_room 
+  AND awal_presensi<='$today' 
+  AND akhir_presensi>'$today'
+  LIMIT 1) id_sesi 
 FROM tb_kelas_peserta a 
 JOIN tb_peserta b ON a.id_peserta=b.id 
 JOIN tb_kelas c ON a.kelas=c.kelas  
@@ -72,15 +77,15 @@ AND b.nama NOT LIKE '%DUMMY%'
 ORDER BY c.shift, c.kelas, b.nama 
 ";
 // echo "<pre>$s</pre>";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
 $tr = '';
-if(mysqli_num_rows($q)==0){
+if (!mysqli_num_rows($q)) {
   echo div_alert('danger', "Belum ada data peserta pada room ini.");
-}else{
+} else {
 
   $table_tag = "<table class='table mt4'>";
-  
+
   $th_sesi = '';
   foreach ($rid_sesi as $no => $id_sesi) $th_sesi .= "<th>P$no</th>";
   $thead = "
@@ -94,8 +99,8 @@ if(mysqli_num_rows($q)==0){
   $tr = '';
   $i = 0;
   $last_kelas = '';
-  while($d=mysqli_fetch_assoc($q)){
-    $id_kelas_peserta=$d['id_kelas_peserta'];
+  while ($d = mysqli_fetch_assoc($q)) {
+    $id_kelas_peserta = $d['id_kelas_peserta'];
     $nama = ucwords(strtolower($d['nama_peserta']));
 
     $s2 = "SELECT id as id_sesi,
@@ -104,18 +109,18 @@ if(mysqli_num_rows($q)==0){
       WHERE id_peserta=$d[id_peserta] 
       AND id_sesi=a.id) is_ontime   
     FROM tb_sesi a WHERE a.id_room=$id_room";
-    $q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));
+    $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
     $td_presensi = '';
-    while($d2=mysqli_fetch_assoc($q2)){
+    while ($d2 = mysqli_fetch_assoc($q2)) {
       $icon_hadir = '';
-      if($d2['is_ontime']==='1'){
+      if ($d2['is_ontime'] === '1') {
         $icon_hadir = $img_ontime;
-      }elseif($d2['is_ontime']==='0'){
+      } elseif ($d2['is_ontime'] === '0') {
         $icon_hadir = $img_late;
-      }else{
-        if($ris_presensi_aktif[$d2['id_sesi']]){
+      } else {
+        if ($ris_presensi_aktif[$d2['id_sesi']]) {
           $icon_hadir = $img_reject;
-        }else{
+        } else {
           $icon_hadir = '-';
         }
       }
@@ -126,18 +131,18 @@ if(mysqli_num_rows($q)==0){
     # ==============================================================
     # FINAL OUTPUT :: SHOW IMAGE OR COMPACT
     # ==============================================================
-    if($last_kelas!=$d['kelas']){
-      $tr.= "</table>$table_tag$thead";
-      $i=0;
+    if ($last_kelas != $d['kelas']) {
+      $tr .= "</table>$table_tag$thead";
+      $i = 0;
     }
 
     $path = "assets/img/peserta/wars/peserta-$d[id_peserta].jpg";
     $path_na = 'assets/img/no_profil.jpg';
-    if(file_exists($path)){
+    if (file_exists($path)) {
       $src_profile = $path;
       $icon = $icon_mhs;
       $poin = 1000;
-    }else{
+    } else {
       $src_profile = $path_na;
       $icon = $icon_gray;
       $poin = 200;
@@ -160,7 +165,7 @@ if(mysqli_num_rows($q)==0){
     ";
 
     $i++;
-    $tr.= "
+    $tr .= "
       <tr>
         <td>$i</td>
         <td>
@@ -177,7 +182,6 @@ if(mysqli_num_rows($q)==0){
 
 
     $last_kelas = $d['kelas'];
-
   } // end while list peserta
 
   echo "
@@ -196,8 +200,8 @@ if(mysqli_num_rows($q)==0){
 
 ?>
 <script>
-  $(function(){
-    $('.set_absen').click(function(){
+  $(function() {
+    $('.set_absen').click(function() {
       let tid = $(this).prop('id');
       let rid = tid.split('__');
       let aksi = rid[0];
@@ -205,15 +209,15 @@ if(mysqli_num_rows($q)==0){
       let id_sesi = rid[2];
       let poin = rid[3];
       let kode_absen = rid[4];
-      
+
       let link_ajax = `ajax/ajax_set_presensi_offline.php?id_peserta=${id_peserta}&id_sesi=${id_sesi}&poin=${poin}&kode_absen=${kode_absen}`;
       console.log(link_ajax);
       $.ajax({
-        url:link_ajax,
-        success:function(a){
-          if(a.trim()=='sukses'){
+        url: link_ajax,
+        success: function(a) {
+          if (a.trim() == 'sukses') {
             alert('sukses');
-          }else{
+          } else {
             alert(a);
           }
         }

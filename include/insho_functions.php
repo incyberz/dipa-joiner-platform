@@ -1,9 +1,33 @@
 <?php
+// v.1.3.8 autoset title when set_judul
+// v.1.3.7 set_h2 id, set_judul, set_sub_judul
+// v.1.3.6 function gender
+// v.1.3.5 eta2 updated
+// v.1.3.4 seth2 dan key2kolom
 // v.1.3.3 tr_col colspan=100%
 // v.1.3.2 baca_csv update
 // v.1.3.1 echolog update
 // v.1.3.0 revision with echolog
 // v.1.2.0 revision with function baca_csv
+
+function set_h2($judul, $sub_judul = '', $href_back = '')
+{
+  set_title($judul);
+  $link = !$href_back ? '' : "<div class='mt2'><a href='$href_back'><img src='assets/img/icons/prev.png' class=img_icon></a></div>";
+  echo "
+    <div class='section-title'>
+      <h2 id=judul>$judul</h2>
+      <p id=sub_judul>$sub_judul$link</p>
+    </div>
+  ";
+}
+
+function key2kolom($key)
+{
+  return ucwords(str_replace('_', ' ', $key));
+}
+
+
 function tr_col($pesan, $td_class = '', $tr_class = '', $jumlah_col = 100)
 {
   $colspan = $jumlah_col < 10 ? $jumlah_col : "$jumlah_col%";
@@ -14,7 +38,8 @@ function echolog($pesan, $break = true)
 {
   $br = ($break and $pesan != 'sukses') ? '<br>' : '';
   $dots = ($break and $pesan != 'sukses') ? '... ' : '';
-  echo "$br<span class='log'>syslog: $pesan$dots</span>";
+  $dots = '... ';
+  echo "<span class='log'>$pesan$dots</span>$br";
 }
 
 function baca_csv($file, $separator = ',')
@@ -65,6 +90,11 @@ function hm($nilai)
   } else {
     return false;
   }
+}
+
+function eta2($eta, $indo = 1)
+{
+  return eta(strtotime($eta) - strtotime('now'));
 }
 
 function eta($eta, $indo = 1)
@@ -192,11 +222,50 @@ function jsreload()
 //   return $hasil;
 // }
 
-function set_title($a)
+function set_title($text)
 {
-  echo '<script>$(function(){$("title").text("' . $a . '");})</script>';
+  echo '<script>$(function(){$("title").text("' . $text . '");})</script>';
 }
 
+function set_judul($text, $sub_judul = '')
+{
+  $set_sub_judul = !$sub_judul ? '' : "$('#sub_judul').text('$sub_judul');";
+  echo "
+    <script>
+      $(function(){
+        $('#judul').text('$text');
+        $set_sub_judul
+      })
+    </script>
+  ";
+}
+
+
+function gender($lp)
+{
+  if ((strtolower($lp) == 'l')) {
+    return 'laki-laki';
+  } elseif (strtolower($lp) == 'p') {
+    return 'perempuan';
+  } elseif (strtolower($lp) == '') {
+    return '<i>null</i>';
+  } else {
+    return "<i style=color:red>gender $lp undefined</i>";
+  }
+}
+
+function tanggal($date, $format = 'd-M-Y')
+{
+  if (strtotime($date) > 0) {
+    return date($format, strtotime($date));
+  } else {
+    if ($date == '') {
+      return '<i>null</i>';
+    } else {
+      return '<i style=color:red>tanggal invalid</i>';
+    }
+  }
+}
 
 ?>
 <script>

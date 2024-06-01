@@ -20,7 +20,7 @@ set_title($judul);
 
 $debug = '';
 if (!$is_login) die('<script>location.replace("?")</script>');
-$id_paket_soal = $_GET['id_paket_soal'] ?? '';
+$id_paket = $_GET['id_paket'] ?? '';
 
 
 
@@ -30,20 +30,31 @@ $id_paket_soal = $_GET['id_paket_soal'] ?? '';
 # =======================================================
 # PAKET SOAL YANG TERSEDIA
 # =======================================================
-if ($id_paket_soal == '') {
+if ($id_paket == '') {
   if ($id_role == 2) {
     // tampilan untuk instruktur, tampilkan seluruh paket soal untuk setiap kelas
     $s = "SELECT a.*,
+    b.awal_ujian,
+    b.kelas,
     (
-      SELECT COUNT(1) FROM tb_jawabans WHERE id_peserta=$id_peserta AND id_paket_soal=a.id) jumlah_attemp  
-    FROM tb_paket_soal a 
+      SELECT COUNT(1) FROM tb_jawabans p 
+      JOIN tb_paket_kelas q ON p.id_paket_kelas = q.paket_kelas  
+      WHERE p.id_peserta=$id_peserta 
+      AND q.id_paket=a.id) jumlah_attemp  
+    FROM tb_paket a 
+    JOIN tb_paket_kelas b ON a.id=b.id_paket 
     WHERE a.id_room='$id_room'";
   } else {
     $s = "SELECT a.*,
+    b.awal_ujian,
+    b.kelas,
     (
-      SELECT COUNT(1) FROM tb_jawabans WHERE id_peserta=$id_peserta AND id_paket_soal=a.id) jumlah_attemp  
-    FROM tb_paket_soal a 
-    WHERE a.kelas='$kelas'";
+      SELECT COUNT(1) FROM tb_jawabans 
+      WHERE id_peserta=$id_peserta 
+      AND id_paket=a.id) jumlah_attemp  
+    FROM tb_paket a 
+    JOIN tb_paket_kelas b ON a.id=b.id_paket 
+    WHERE b.kelas='$kelas'";
   }
 
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -59,14 +70,15 @@ if ($id_paket_soal == '') {
       // $d['akhir_ujian'] = '2023-10-29 10:00'; //debug
 
       $selisih = strtotime($d['awal_ujian']) - strtotime('now');
-      $selisih_akhir = strtotime($d['akhir_ujian']) - strtotime('now');
+      $akhir_ujian = date('Y-m-d H:i:s', strtotime($d['awal_ujian']) + $d['durasi_ujian'] * 60);
+      $selisih_akhir = strtotime($akhir_ujian) - strtotime('now');
       $selisih_hari = (strtotime(date('Y-m-d', strtotime($d['awal_ujian']))) - strtotime('today')) / (3600 * 24);
 
 
       $awal_ujian_show = $nama_hari[date('w', strtotime($d['awal_ujian']))] . ', ' . date('d-M  H:i', strtotime($d['awal_ujian']));
       // $format = $selisih_hari==0 ? 'H:i' : 'd-M  H:i';
       $format =  'd-M  H:i';
-      $akhir_ujian_show = date($format, strtotime($d['akhir_ujian']));
+      $akhir_ujian_show = date($format, strtotime($akhir_ujian));
 
       $nama_paket_show = "
         <div class='f20 miring consolas mb2'><u>$d[nama]</u></div>
@@ -121,7 +133,7 @@ if ($id_paket_soal == '') {
       # ===================================================
       # FINAL OUTPUT LIST PAKET
       # ===================================================
-      $list_paket .= "<a class='mb2 btn btn-$btn btn-block' href='?ujian&id_paket_soal=$d[id]'>
+      $list_paket .= "<a class='mb2 btn btn-$btn btn-block' href='?ujian&id_paket=$d[id]'>
         <div class='f14'>Untuk kelas $d[kelas]</div>
         $nama_paket_show
         <div>$info_paket</div>

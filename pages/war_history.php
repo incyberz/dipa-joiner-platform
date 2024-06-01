@@ -72,7 +72,7 @@ LIMIT $limit
 ";
 // echo "<pre>$s</pre>";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-if (mysqli_num_rows($q) == 0) {
+if (!mysqli_num_rows($q)) {
   $meme = meme('dont-have');
   echo div_alert('danger tengah', "<div class=mb2>Lo ga pernah ikut perang jehh!!</div>$meme");
 } else {

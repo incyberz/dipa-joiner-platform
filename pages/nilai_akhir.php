@@ -174,7 +174,7 @@ $nama_paket_soal_remed_uts = 'Soal Pasca UTS';
 $nama_paket_soal_remed_uas = 'Soal Remed UAS';
 
 $from_tb_jawabans = "FROM tb_jawabans p 
-  JOIN tb_paket_soal q ON p.id_paket_soal=q.id 
+  JOIN tb_paket q ON p.id_paket=q.id 
   WHERE p.id_peserta=a.id 
   AND p.id_room=$id_room 
   AND q.nama ";

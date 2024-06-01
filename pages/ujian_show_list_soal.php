@@ -11,10 +11,10 @@ b.gambar_soal,
 c.nama as paket_soal 
 FROM tb_assign_soal a 
 JOIN tb_soal b ON a.id_soal=b.id 
-JOIN tb_paket_soal c ON a.id_paket_soal=c.id 
+JOIN tb_paket c ON a.id_paket=c.id 
 JOIN tb_tipe_soal d ON b.tipe_soal=d.tipe_soal 
 WHERE c.kelas = '$kelas' 
-AND c.id=$id_paket_soal 
+AND c.id=$id_paket 
 ORDER BY rand()
 ";
 
@@ -100,7 +100,7 @@ while ($d = mysqli_fetch_assoc($q)) {
 // autosave tmp_jawabans if null
 $debug .= "<br>tmp_jawabans1: $tmp_jawabans <br>tmp_jawabans2: $new_tmp_jawabans";
 if (strlen($new_tmp_jawabans) != strlen($tmp_jawabans)) {
-  $s = "UPDATE tb_paket_soal SET tmp_jawabans='$new_tmp_jawabans',tmp_jumlah_soal=$jumlah_soal WHERE id=$id_paket_soal";
+  $s = "UPDATE tb_paket SET tmp_jawabans='$new_tmp_jawabans',tmp_jumlah_soal=$jumlah_soal WHERE id=$id_paket";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 }
 

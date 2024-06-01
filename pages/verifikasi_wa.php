@@ -41,7 +41,7 @@ if ($id_peserta == '') { // belum login
     AND c.status=1 
     ";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-    if (mysqli_num_rows($q) == 0) {
+    if (!mysqli_num_rows($q)) {
       $link_back = $dari == '' ? '' : " | <a href='?$dari'>Kembali</a>";
       $pesan .= div_alert('danger', "Maaf, data untuk username $username kelas $kelas tidak ditemukan. $link_back");
       $hide_form = 1;

@@ -163,7 +163,7 @@ if ($id_sesi == '') {
 } else {
   $s = "SELECT * FROM tb_sesi WHERE id=$id_sesi ";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  if (mysqli_num_rows($q) == 0) die(erid('id_sesi (not found)'));
+  if (!mysqli_num_rows($q)) die(erid('id_sesi (not found)'));
   $d = mysqli_fetch_assoc($q);
   $tags = $d['tags'];
   $nama_sesi = $d['nama'];

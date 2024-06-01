@@ -25,5 +25,7 @@ $img_edit = img_icon('edit');
 $img_add = img_icon('add', 22, 20);
 $img_detail = img_icon('detail');
 $img_delete = img_icon('delete');
+$img_delete_disabled = img_icon('delete_disabled');
 $img_hapus = img_icon('delete');
 $img_login_as = img_icon('login_as');
+$img_prev = img_icon('prev');

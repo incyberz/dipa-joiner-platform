@@ -18,7 +18,7 @@ session_start();
 // session_destroy(); exit;
 // echo '<pre style="margin-top: 170px">'; var_dump($_SESSION); echo '</pre>';
 $dm = 0;
-$dm_db = 0;
+$dm_db = 1;
 $is_login = null;
 $id_role = null;
 $status = null;
@@ -88,6 +88,7 @@ include $insho_styles;
 include 'jwd_styles.php';
 include 'include/meme.php';
 include 'include/insho_functions.php';
+include 'include/dipa_functions.php';
 include 'include/img_icon.php';
 
 # ========================================================

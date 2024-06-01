@@ -7,17 +7,17 @@
 instruktur_only();
 
 
-$id_paket_soal = $_GET['id_paket_soal'] ?? die('<script>location.replace("?ujian")</script>');
+$id_paket = $_GET['id_paket'] ?? die('<script>location.replace("?ujian")</script>');
 $show_nilai = $_GET['show_nilai'] ?? '';
 $show_profil = $_GET['show_profil'] ?? '';
 
 $Show = $show_nilai ? 'Hide' : 'Show';
 $not_show_nilai = $show_nilai ? '' : 1;
-$link_show_nilai = "<a href='?monitoring_ujian&id_paket_soal=$id_paket_soal&show_nilai=$not_show_nilai&show_profil=$show_profil'>$Show Nilai</a>";
+$link_show_nilai = "<a href='?monitoring_ujian&id_paket=$id_paket&show_nilai=$not_show_nilai&show_profil=$show_profil'>$Show Nilai</a>";
 
 $Show = $show_profil ? 'Hide' : 'Show';
 $not_show_profil = $show_profil ? '' : 1;
-$link_show_profil = "<a href='?monitoring_ujian&id_paket_soal=$id_paket_soal&show_nilai=$show_nilai&show_profil=$not_show_profil'>$Show Profil</a>";
+$link_show_profil = "<a href='?monitoring_ujian&id_paket=$id_paket&show_nilai=$show_nilai&show_profil=$not_show_profil'>$Show Profil</a>";
 
 $judul = "Monitoring Ujian";
 set_title($judul);
@@ -41,30 +41,31 @@ a.*,
 a.nama as nama_paket_soal,
 b.nama as pengawas_ujian,
 c.nama as nama_sesi,
-(SELECT COUNT(1) FROM tb_assign_soal WHERE id_paket_soal=a.id)  jumlah_soal  
-FROM tb_paket_soal a 
+(SELECT COUNT(1) FROM tb_assign_soal WHERE id_paket=a.id)  jumlah_soal  
+FROM tb_paket a 
 JOIN tb_peserta b ON a.id_pembuat=b.id  
 JOIN tb_kode_sesi c ON a.kode_sesi=c.kode_sesi  
-WHERE a.id=$id_paket_soal";
+WHERE a.id=$id_paket";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-if (mysqli_num_rows($q) == 0) die("Data Paket Soal tidak ditemukan.");
+if (!mysqli_num_rows($q)) die("Data Paket Soal tidak ditemukan.");
 $d_paket = mysqli_fetch_assoc($q);
 
 
 
 # =======================================================
-# GET SIMILAR PAKET BY NAMA PAKET
+# GET PAKET KELAS
 # =======================================================
 $s = "SELECT 
-a.id as id_paket_soal, 
-a.kelas 
-FROM tb_paket_soal a 
-JOIN tb_kelas b ON a.kelas=b.kelas 
-WHERE a.nama='$d_paket[nama]' 
-AND a.kelas!='INSTRUKTUR' 
-ORDER BY b.shift, a.kelas";
+a.id as id_paket,
+b.kelas,
+b.awal_ujian 
+
+FROM tb_paket a 
+JOIN tb_paket_kelas b ON a.id=b.id_paket 
+WHERE a.id = $id_paket 
+";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-if (mysqli_num_rows($q) == 0) die("Similar Paket Soal tidak ditemukan.");
+if (!mysqli_num_rows($q)) die("Paket Soal tidak ditemukan atau tidak ada kelas yang diassign.");
 while ($d = mysqli_fetch_assoc($q)) {
 
   # =======================================================
@@ -76,17 +77,23 @@ while ($d = mysqli_fetch_assoc($q)) {
   b.kelas,
 
   (
-    SELECT COUNT(1) FROM tb_jawabans 
-    WHERE id_peserta=a.id AND id_paket_soal=$d[id_paket_soal]) jumlah_attemp, 
+    SELECT COUNT(1) FROM tb_jawabans p 
+    JOIN tb_paket_kelas q ON p.id_paket_kelas=q.paket_kelas  
+    WHERE p.id_peserta=a.id 
+    AND q.id_paket=$d[id_paket]) jumlah_attemp, 
   (
-    SELECT nilai FROM tb_jawabans 
-    WHERE id_peserta=a.id AND id_paket_soal=$d[id_paket_soal] 
-    ORDER BY nilai DESC 
+    SELECT COUNT(1) FROM tb_jawabans p 
+    JOIN tb_paket_kelas q ON p.id_paket_kelas=q.paket_kelas  
+    WHERE p.id_peserta=a.id 
+    AND q.id_paket=$d[id_paket] 
+    ORDER BY p.nilai DESC 
     LIMIT 1) nilai_max,
   (
-    SELECT tanggal_submit FROM tb_jawabans 
-    WHERE id_peserta=a.id AND id_paket_soal=$d[id_paket_soal] 
-    ORDER BY tanggal_submit DESC 
+    SELECT tanggal_submit FROM tb_jawabans p
+    JOIN tb_paket_kelas q ON p.id_paket_kelas=q.paket_kelas  
+    WHERE p.id_peserta=a.id 
+    AND q.id_paket=$d[id_paket] 
+    ORDER BY p.tanggal_submit DESC 
     LIMIT 1) tanggal_submit 
   
   FROM tb_peserta a 
@@ -119,7 +126,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   # =======================================================
   # CSV HANDLER
   # =======================================================
-  $sudah_berakhir = strtotime($d_paket['akhir_ujian']) > strtotime('now') ? 0 : 1;
+  $sudah_berakhir = (strtotime($d['awal_ujian']) + strtotime($d_paket['durasi_ujian'])) > strtotime('now') ? 0 : 1;
   $arr_header = ['NO', 'PESERTA UJIAN', 'KELAS', 'ATTEMP',  'NILAI', 'LAST SUBMIT'];
   $src_csv = "csv/hasil_ujian-$d_paket[nama_paket_soal]-$d[kelas].csv";
   $file = fopen($src_csv, "w+");
@@ -183,7 +190,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     <tr class='gradasi-$merah'>
       <td>$no</td>
       <td>
-        $nama $super_delete
+        $nama $super_delete <a target=_blank href='?login_as&id_peserta=$d2[id_peserta]'>$img_login_as</a>
         <div>$img_profil</div>
       </td>
       <td class=f14>$d2[kelas]</td>
