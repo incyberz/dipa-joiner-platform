@@ -130,6 +130,8 @@ if ($id_paket == '') {
         ";
       } // end belum berlangsung
 
+      $btn = $d['kelas'] == 'INSTRUKTUR' ? 'primary' : $btn;
+
       # ===================================================
       # FINAL OUTPUT LIST PAKET
       # ===================================================

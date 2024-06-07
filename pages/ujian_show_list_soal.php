@@ -13,7 +13,8 @@ FROM tb_assign_soal a
 JOIN tb_soal b ON a.id_soal=b.id 
 JOIN tb_paket c ON a.id_paket=c.id 
 JOIN tb_tipe_soal d ON b.tipe_soal=d.tipe_soal 
-WHERE c.kelas = '$kelas' 
+JOIN tb_paket_kelas e ON c.id=e.id_paket 
+WHERE e.kelas = '$kelas' 
 AND c.id=$id_paket 
 ORDER BY rand()
 ";

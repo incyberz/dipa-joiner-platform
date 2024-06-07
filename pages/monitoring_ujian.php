@@ -68,12 +68,15 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) die("Paket Soal tidak ditemukan atau tidak ada kelas yang diassign.");
 while ($d = mysqli_fetch_assoc($q)) {
 
+  // if ($d['kelas'] == 'INSTRUKTUR') continue;
+
   # =======================================================
   # LIST PESERTA
   # =======================================================
   $s2 = "SELECT 
   a.id as id_peserta,
   a.nama,
+  a.id_role,
   b.kelas,
 
   (
@@ -82,7 +85,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     WHERE p.id_peserta=a.id 
     AND q.id_paket=$d[id_paket]) jumlah_attemp, 
   (
-    SELECT COUNT(1) FROM tb_jawabans p 
+    SELECT MAX(nilai) FROM tb_jawabans p 
     JOIN tb_paket_kelas q ON p.id_paket_kelas=q.paket_kelas  
     WHERE p.id_peserta=a.id 
     AND q.id_paket=$d[id_paket] 
@@ -103,7 +106,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   WHERE a.status=1  -- peserta aktif
   AND a.password is not null 
   AND a.nama not like '%dummy%' 
-  AND a.id_role=1 
+  -- AND a.id_role=1 
   AND b.kelas='$d[kelas]' 
   AND c.status = 1 -- kelas aktif
   AND d.id_room=$id_room  
@@ -147,6 +150,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   $jumlah_hadir = 0;
   $jumlah_peserta = mysqli_num_rows($q2);
   while ($d2 = mysqli_fetch_assoc($q2)) {
+    if ($d2['id_role'] == 2 and !$d2['jumlah_attemp']) continue; // skip jika instruktur dan belum submit
     $no++;
     $nama = strtoupper($d2['nama']);
     $check = '-';
@@ -190,7 +194,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     <tr class='gradasi-$merah'>
       <td>$no</td>
       <td>
-        $nama $super_delete <a target=_blank href='?login_as&id_peserta=$d2[id_peserta]'>$img_login_as</a>
+        $nama $super_delete <a target=_blank22 href='?login_as&id_peserta=$d2[id_peserta]'>$img_login_as</a>
         <div>$img_profil</div>
       </td>
       <td class=f14>$d2[kelas]</td>
@@ -204,7 +208,7 @@ while ($d = mysqli_fetch_assoc($q)) {
 
     // for sub judul kelas
     $last_kelas = $d2['kelas'];
-  }
+  } // end while list peserta
 
   fputcsv($file, [' ']);
   fputcsv($file, ['', '', 'JUMLAH HADIR: ', $jumlah_hadir]);
@@ -227,4 +231,4 @@ while ($d = mysqli_fetch_assoc($q)) {
 
     <hr>
   ";
-}
+} // end while paket kelas

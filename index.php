@@ -85,7 +85,7 @@ if ($parameter == 'logout') {
 # ========================================================
 $insho_styles = $online_version ? 'insho_styles.php' : '../insho_styles.php';
 include $insho_styles;
-include 'jwd_styles.php';
+include 'dipa_styles.php';
 include 'include/meme.php';
 include 'include/insho_functions.php';
 include 'include/dipa_functions.php';

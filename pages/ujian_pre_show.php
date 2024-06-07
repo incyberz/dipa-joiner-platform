@@ -34,7 +34,10 @@ b.nama as pembuat,
 c.nama as nama_sesi,
 d.awal_ujian,
 (
-  SELECT COUNT(1) FROM tb_jawabans WHERE id_paket=a.id AND id_peserta=$id_peserta)  jumlah_attemp,  
+  SELECT COUNT(1) FROM tb_jawabans p 
+  JOIN tb_paket_kelas q ON p.id_paket_kelas=q.paket_kelas 
+  WHERE q.id_paket=a.id 
+  AND p.id_peserta=$id_peserta)  jumlah_attemp,  
 (
   SELECT COUNT(1) FROM tb_assign_soal WHERE id_paket=a.id)  jumlah_soal  
 FROM tb_paket a 
@@ -92,9 +95,25 @@ if (isset($_POST['btn_submit_jawaban_ujian'])) {
 
   $nilai = round($jumlah_benar / $tmp_jumlah_soal * 100, 0);
 
+  $paket_kelas = $id_paket . "__$kelas";
   $s = "INSERT INTO tb_jawabans 
-  (id_room,id_peserta,id_paket,nilai,jawabans,jumlah_benar,tanggal_start) VALUES 
-  ($id_room,$id_peserta,$id_paket,$nilai,'$jawabans',$jumlah_benar,'$_POST[tanggal_start]')";
+  (
+    id_room,
+    id_peserta,
+    id_paket_kelas,
+    nilai,
+    jawabans,
+    jumlah_benar,
+    tanggal_start
+  ) VALUES (
+    $id_room,
+    $id_peserta,
+    '$paket_kelas',
+    $nilai,
+    '$jawabans',
+    $jumlah_benar,
+    '$_POST[tanggal_start]'
+  )";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
   echo div_alert('success', 'Submit Jawaban sukses');
@@ -128,7 +147,12 @@ $durasi = number_format((strtotime($akhir_ujian) - strtotime($awal_ujian)) / 60,
 $durasi_show = "<span class='kecil miring abu'>($durasi menit)</span>";
 $awal_ujian_show = $nama_hari[date('w', strtotime($awal_ujian))] . ', ' . date('d-M H:i', strtotime($awal_ujian));
 $akhir_ujian_show = date('H:i', strtotime($akhir_ujian));
-$tanggal_pembahasan_show = date('d-M H:i', strtotime($tanggal_pembahasan));
+if ($tanggal_pembahasan) {
+  $tanggal_pembahasan_show = date('d-M H:i', strtotime($tanggal_pembahasan));
+  $tanggal_pembahasan_show .= "<br><span class='kecil miring abu'>Pembahasan kunci jawab akan tampil pada tanggal dan jam ini</span>";
+} else {
+  $tanggal_pembahasan_show = 'Tidak ada pembahasan Kunci Jawab untuk ujian ini.';
+}
 $kode_sesi_show = "$kode_sesi | $nama_sesi";
 $max_attemp_show = $max_attemp ?? '<span class="kecil miring consolas">unlimitted</span>';
 
@@ -141,7 +165,7 @@ $rkolom['Jumlah Soal'] = $jumlah_soal;
 $rkolom['Max Attemp'] = $max_attemp_show;
 $rkolom['Pembuat'] = $pembuat;
 $rkolom['Kisi-kisi'] = $kisi_kisi;
-$rkolom['Tanggal Pembahasan'] = "$tanggal_pembahasan_show<br><span class='kecil miring abu'>Pembahasan tiap soal akan tampil pada tanggal dan jam ini</span>";
+$rkolom['Tanggal Pembahasan'] = $tanggal_pembahasan_show;
 
 $koloms = '';
 foreach ($rkolom as $kolom => $isi) $koloms .= "
@@ -258,6 +282,9 @@ if ($selisih > 0) { //belum mulai
       AND a.id_peserta=$id_peserta 
       ORDER BY a.tanggal_submit DESC
       ";
+      // echo '<pre>';
+      // var_dump($s);
+      // echo '</pre>';
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       if (!mysqli_num_rows($q)) {
         $list_jawabans = div_alert('danger', 'Kamu belum sempat mengisi Ujian dengan benar');
@@ -301,7 +328,9 @@ if ($selisih > 0) { //belum mulai
 # =======================================================
 # SHOW START
 # =======================================================
-if ($selisih <= 0 && $selisih_akhir > 0 && $jumlah_attemp < $max_attemp && !$start) {
+if (($selisih <= 0 && $selisih_akhir > 0 && $jumlah_attemp < $max_attemp && !$start) || ($id_role == 2 && !$start)) {
+  $by_pass_notif = $id_role != 2 ? '' : div_alert('danger', "By pass UI dengan Login Instruktur");
+  $blok_timer .= $by_pass_notif;
   $rand = rand(1, 9);
   if ($jumlah_attemp) {
     $blok_timer .= "
@@ -337,7 +366,12 @@ if ($selisih <= 0 && $selisih_akhir > 0 && $jumlah_attemp < $max_attemp && !$sta
 # =======================================================
 # SHOW LIST SOAL
 # =======================================================
-if ($selisih <= 0 and $selisih_akhir >= 0 and $jumlah_attemp < $max_attemp and $start) {
+if (
+  ($selisih <= 0 and $selisih_akhir >= 0 and $jumlah_attemp < $max_attemp and $start)
+  || ($id_role == 2 && $start)
+) {
+  $by_pass_notif = $id_role != 2 ? '' : div_alert('danger', "By Pass UI - Ujian Show List Soal by Login Instruktur");
+  echo $by_pass_notif;
   include 'ujian_show_list_soal.php';
 }
 

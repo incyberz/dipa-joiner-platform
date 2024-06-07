@@ -25,6 +25,9 @@ set_h2($judul, "Paket Soal adalah wadah untuk soal-soal yang akan diujikan ke ti
 if (isset($_POST['btn_delete_paket_soal'])) {
   $id = $_POST['btn_delete_paket_soal'];
   if ($id) {
+    $s = "DELETE FROM tb_paket_kelas WHERE id_paket=$id AND kelas='INSTRUKTUR'";
+    $s = "DELETE FROM tb_paket_kelas WHERE id_paket=$id ";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     $s = "DELETE FROM tb_paket WHERE id=$id";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     echo div_alert('success', 'Delete paket berhasil.');
@@ -86,7 +89,8 @@ b.nama as untuk_event,
   WHERE id_paket=a.id) count_soal,
 (
   SELECT COUNT(1) FROM tb_paket_kelas 
-  WHERE id_paket=a.id) count_kelas,
+  WHERE id_paket=a.id
+  AND kelas != 'INSTRUKTUR') count_kelas,
 (
   SELECT COUNT(1) FROM tb_jawabans p 
   JOIN tb_paket_kelas q ON p.id_paket_kelas=q.paket_kelas  
@@ -119,7 +123,7 @@ if (!mysqli_num_rows($q)) {
     $tanggal_pembahasan = $d['tanggal_pembahasan'];
     $tanggal_pembahasan_show = date('d-M-Y H:i', strtotime($tanggal_pembahasan));
 
-    $btn_delete = ($count_soal || $count_kelas || $count_submit) ? "<span onclick='alert(`Tidak bisa menghapus Paket Soal jika pada paket tersebut sudah ada kelas, soal, atau jumlah submit.`)'>$img_delete_disabled</span>" : "
+    $btn_delete = ($count_soal  || $count_submit) ? "<span onclick='alert(`Tidak bisa menghapus Paket Soal jika pada paket tersebut sudah ada soal atau jumlah submit.`)'>$img_delete_disabled</span>" : "
       <form method=post style='display:inline'>
         <button class='p0 m0' name=btn_delete_paket_soal style='display:inline; background:none; border:none' onclick='return confirm(\"Yakin untuk hapus paket ini?\")' value=$id_paket>$img_delete</button>
       </form>
@@ -151,6 +155,12 @@ if (!mysqli_num_rows($q)) {
 
     $id_paket_show = $dp ? "<div class='f12 abu'>id: $id_paket</div>" : '';
 
+    $eta = eta2($tanggal_pembahasan);
+    $pembahasan_show = !$tanggal_pembahasan ? "
+      Tidak ada pembahasan kunci jawaban.
+    " : "
+      Tampil Pembahasan: $tanggal_pembahasan_show | $eta
+    ";
 
     # =============================================
     # FINAL TR
@@ -162,10 +172,10 @@ if (!mysqli_num_rows($q)) {
           <div class='f14 miring'>$untuk_event</div>
           <div class='f16 darkblue tebal'>
             $nama_paket 
-            <a href='?add_paket_soal&id_paket=$id_paket'>$img_detail</a>
+            <a href='?add_paket_soal&id_paket=$id_paket'>$img_edit</a>
           </div>
           <div class='f12 abu'>Durasi: $durasi_ujian menit</div>
-          <div class='f12 abu'>Tampil Pembahasan: $tanggal_pembahasan_show</div>
+          <div class='f12 abu'>$pembahasan_show</div>
           <div class='f12 abu'>Max Attemp: $max_attemp kali</div>
           $id_paket_show
         </td>

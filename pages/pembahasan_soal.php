@@ -35,7 +35,6 @@
       die("Tanggal pembahasan invalid ($tanggal_pembahasan) untuk id: $id_paket");
     } else {
       $time = strtotime($tanggal_pembahasan);
-      echo "<h1>tanggal_pembahasan: $tanggal_pembahasan | $time, id:$id_paket</h1>";
     }
     $akhir_ujian_show = date('d M Y H:i', strtotime($akhir_ujian));
     $tanggal_pembahasan_show = date('d M Y H:i', strtotime($tanggal_pembahasan));
