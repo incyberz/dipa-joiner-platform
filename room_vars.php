@@ -30,14 +30,14 @@ if (!mysqli_num_rows($q)) {
   die(div_alert('danger', "Room tidak ditemukan. id_room: $id_room"));
 }
 
-$d = mysqli_fetch_assoc($q);
-$room = $d['singkatan'];
-$nama_room = $d['nama'];
-$status_room = $d['status'];
-$id_room_kelas = $d['id_room_kelas'];
-$id_instruktur = $d['id_instruktur'];
-$nama_instruktur = $d['nama_instruktur'];
-$last_update_room = $d['last_update_room'];
+$d_room = mysqli_fetch_assoc($q);
+$room = $d_room['singkatan'];
+$nama_room = $d_room['nama'];
+$status_room = $d_room['status'];
+$id_room_kelas = $d_room['id_room_kelas'];
+$id_instruktur = $d_room['id_instruktur'];
+$nama_instruktur = $d_room['nama_instruktur'];
+$last_update_room = $d_room['last_update_room'];
 
 # ========================================================
 # PROFILE INSTRUKTUR
@@ -57,6 +57,11 @@ if (!$id_room_kelas) {
       if ($id_instruktur == $id_peserta) {
         $assign_room_kelas = "<a href='?assign_room_kelas'>Assign Room Kelas</a>";
         $pesan = "Anda adalah pemilik room ini. Silahkan Assign kelas ini ke Room Anda.";
+
+        // auto-assign kelas sendiri ke room ini
+        $s = "INSERT INTO tb_room_kelas (id_room,kelas) VALUES ($id_room,'$kelas')";
+        $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+        jsurl();
       } else {
         unset($_SESSION['dipa_id_room']);
         $pesan = "Silahkan hubungi beliau jika Kelas <u>$kelas</u> adalah benar anggota room tersebut.";

@@ -33,6 +33,57 @@ $img_check = '<img src=assets/img/icons/check.png height=25px />';
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ============================================================
+# PROCESSORS
+# ============================================================
+if (isset($_POST['btn_hapus_jawaban_instruktur'])) {
+  $paket_kelas = $id_paket . '__INSTRUKTUR';
+  $s = "DELETE FROM tb_jawabans WHERE id_paket_kelas='$paket_kelas' AND id_peserta=$_POST[btn_hapus_jawaban_instruktur]";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  echolog('Hapus jawaban instruktur sukses.');
+  jsurl();
+
+
+  exit;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # =======================================================
 # GET PROPERTIES PAKET UJIAN
 # =======================================================
@@ -149,8 +200,22 @@ while ($d = mysqli_fetch_assoc($q)) {
   $no = 0;
   $jumlah_hadir = 0;
   $jumlah_peserta = mysqli_num_rows($q2);
+  $last_kelas = '';
   while ($d2 = mysqli_fetch_assoc($q2)) {
+
+    // jika INSTRUKTUR (trial)
     if ($d2['id_role'] == 2 and !$d2['jumlah_attemp']) continue; // skip jika instruktur dan belum submit
+    $delete_jawaban = '';
+    if ($d2['id_role'] == 2) {
+      // jawaban trial dari INSTRUKTUR boleh dihapus
+      $delete_jawaban = "
+        <form method=post class='mt2'>
+          <button class='btn btn-danger btn-sm' name=btn_hapus_jawaban_instruktur value=$d2[id_peserta]>Hapus Jawaban INSTRUKTUR</button>
+        </form>
+      ";
+    }
+
+
     $no++;
     $nama = strtoupper($d2['nama']);
     $check = '-';
@@ -194,8 +259,11 @@ while ($d = mysqli_fetch_assoc($q)) {
     <tr class='gradasi-$merah'>
       <td>$no</td>
       <td>
-        $nama $super_delete <a target=_blank22 href='?login_as&id_peserta=$d2[id_peserta]'>$img_login_as</a>
+        $nama 
+        $super_delete 
+        <a target=_blank22 href='?login_as&id_peserta=$d2[id_peserta]'>$img_login_as</a>
         <div>$img_profil</div>
+        $delete_jawaban
       </td>
       <td class=f14>$d2[kelas]</td>
       <td>$check</td>
@@ -221,14 +289,18 @@ while ($d = mysqli_fetch_assoc($q)) {
   fputcsv($file, ['', '', 'PRINTED AT:', date('F d, Y, H:i:s')]);
   fclose($file);
 
-  echo "
-    <h2 class='f20 darkblue mt4'>Kelas $last_kelas</h2>
-    <table class='table '>
-      $thead
-      $tr
-    </table>
-    $download_hasil_ujian
-
-    <hr>
-  ";
+  if ($d['kelas'] == 'INSTRUKTUR' and !$jumlah_hadir) {
+    // skip UI jika tidak ada instruktur yang menjawab
+  } else {
+    echo "
+      <h2 class='f20 darkblue mt4'>Kelas $last_kelas</h2>
+      <table class='table '>
+        $thead
+        $tr
+      </table>
+      $download_hasil_ujian
+  
+      <hr>
+    ";
+  }
 } // end while paket kelas

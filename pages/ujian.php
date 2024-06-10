@@ -80,14 +80,21 @@ if ($id_paket == '') {
       $format =  'd-M  H:i';
       $akhir_ujian_show = date($format, strtotime($akhir_ujian));
 
-      $nama_paket_show = "
+      $nama_paket_show = $d['kelas'] == 'INSTRUKTUR' ? "Trial Ujian $d[nama]" : "
         <div class='f20 miring consolas mb2'><u>$d[nama]</u></div>
         <div>$awal_ujian_show s.d $akhir_ujian_show</div> 
       ";
 
       $info_paket = '';
       $btn = '';
-      if ($selisih_akhir < 0) {
+      if ($d['kelas'] == 'INSTRUKTUR') {
+        $btn = 'primary';
+        if (!$jumlah_attemp) {
+          $info_paket = 'Instruktur belum mencoba trial.';
+        } else {
+          $info_paket = 'Sudah dicoba oleh instruktur.';
+        }
+      } elseif ($selisih_akhir < 0) {
         // sudah berakhir
         $btn = 'secondary';
         if ($jumlah_attemp == 0) {

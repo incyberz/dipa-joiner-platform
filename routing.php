@@ -20,6 +20,13 @@ if (!$status and $parameter != 'verifikasi_wa' and $is_login) {
   exit;
 }
 
+# ============================================================
+# WAJIB AKTIVASI SETELAH MEMBUAT ROOM DI TAHAP AWAL
+# ============================================================
+if ($id_room and $status_room === null and $id_role == 2 and $parameter != 'aktivasi_room') {
+  jsurl('?aktivasi_room');
+}
+
 
 switch ($parameter) {
   case '':

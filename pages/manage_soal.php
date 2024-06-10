@@ -1,24 +1,4 @@
 <?php
-# =================================================================
-// instruktur_only();
-// $mode = $_GET['mode'] ?? '';
-// $rmode = ['pg', 'tf', 'mc', 'essay'];
-// $li_mode = '';
-// $a_mode = '';
-// foreach ($rmode as $m) {
-//   $li_mode .= "<a class='btn btn-success w-100 mb2 upper' href='?manage_soal&mode=$m'>$m</a>";
-//   $a_mode .= "<a href='?manage_soal&mode=$m'>$m</a> | ";
-// }
-// if ($mode == '') {
-//   echo "<ul>$li_mode</ul>";
-// } else {
-//   $mode_lowercase = strtolower($mode);
-//   echo $a_mode;
-//   include "tambah_soal_$mode_lowercase.php";
-// }
-
-
-
 instruktur_only();
 $null = '<span class="abu f12 miring consolas">null</span>';
 
@@ -289,7 +269,7 @@ if (!mysqli_num_rows($q)) {
     $pembahasan_show = $d['pembahasan'] ? "<div class='miring abu f14' id=pembahasan__$id_soal>$d[pembahasan]</div>" : $null;
 
     $count_assign = $d['count_assign'];
-    $list_paket = $null;
+    $list_paket = "<div class='f12 miring abu'>belum assign <br>ke paket soal</div>";
     if ($count_assign) {
       $s2 = "SELECT b.nama as nama_paket_soal 
       FROM tb_assign_soal a 
@@ -335,7 +315,7 @@ if (!mysqli_num_rows($q)) {
         <td width=20%>$opsies</td>
         <td width=20%>$pembahasan_show</td>
         <td>$list_paket</td>
-        <td width=50px class=tengah>
+        <td width=80px class=tengah>
           <span class=edit_soal id=edit_soal__$id_soal>$img_edit</span> 
           <form method=post style='display:inline'>
             <button class='p0 m0' name=btn_delete_soal style='display:inline; background:none; border:none' onclick='return confirm(\"Yakin untuk hapus soal ini?\")' value=$id_soal>$img_delete</button>
@@ -523,7 +503,7 @@ echo "
       <th class=proper>Opsi-opsi</th>
       <th class=proper>pembahasan</th>
       <th class=proper>paket soal</th>
-      <th class=proper>aksi</th>
+      <th class='proper tengah'>aksi</th>
     </thead>
     $tr
     $tr_tambah

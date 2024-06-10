@@ -6,7 +6,7 @@ $id_paket = $_GET['id_paket'] ?? '';
 if (intval($id_paket) < 1 and $id_paket !== '') die('Invalid nilai id_paket');
 $judul = $id_paket ? 'Edit Paket Soal' : 'Add Paket Soal';
 $mode = $id_paket ? 'update' : 'add';
-$pesan = $id_paket ? 'Mengubah Data Paket akan mempengaruhi informasi untuk seluruh peserta ujian' : 'Anda sedang melakukan Penambahan Paket Soal untuk ujian baru';
+$pesan = $id_paket ? 'Mengubah Data Paket akan mempengaruhi informasi untuk seluruh peserta ujian' : 'Anda sedang melakukan Penambahan Paket Soal untuk ujian baru' . $sebagai;
 set_h2($judul, "$pesan<div class=mt2><a href='?manage_paket_soal' >$img_prev</a></div>");
 
 $global_akhir_ujian = date('Y-m-d H:i', strtotime('now') + 60 * 60);

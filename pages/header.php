@@ -36,8 +36,8 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
     <nav id="navbar" class="navbar">
       <ul>
         <li><a class="nav-link scrollto active" href="?">Home</a></li>
-        <li><a class="nav-link scrollto" href="?pengajar">Pengajar</a></li>
-        <li><a class="nav-link scrollto" href="?teams">Teams</a></li>
+        <!-- <li><a class="nav-link scrollto" href="?pengajar">Pengajar</a></li> -->
+        <!-- <li><a class="nav-link scrollto" href="?teams">Teams</a></li> -->
         <!-- <li><a class="nav-link scrollto" href="?peserta">Peserta</a></li> -->
         <li><a class="nav-link scrollto" href="?grades&kelas=<?= $target_kelas_header ?>">Grades</a></li>
         <!-- <li><a class="nav-link scrollto" href="#services">Services</a></li>
