@@ -174,10 +174,11 @@ $nama_paket_soal_remed_uts = 'Soal Pasca UTS';
 $nama_paket_soal_remed_uas = 'Soal Remed UAS';
 
 $from_tb_jawabans = "FROM tb_jawabans p 
-  JOIN tb_paket q ON p.id_paket=q.id 
+  JOIN tb_paket_kelas q ON p.id_paket_kelas=q.paket_kelas 
+  JOIN tb_paket r ON q.id_paket=r.id 
   WHERE p.id_peserta=a.id 
   AND p.id_room=$id_room 
-  AND q.nama ";
+  AND r.nama ";
 
 $s = "SELECT  
 a.id as id_peserta,
@@ -430,7 +431,7 @@ while ($d = mysqli_fetch_assoc($q)) {
       $data_csv[$kelas_ini] .= "\n\nDAFTAR HADIR MAHASISWA DAN NILAI UTS TAHUN AKADEMIK 2023-2024 GANJIL\n\n";
       $data_csv[$kelas_ini] .= "Prodi,$d[jenjang] - $d[nama_prodi] - $reguler\n";
       $data_csv[$kelas_ini] .= "Mata Kuliah,Matematika Informatika\n";
-      $data_csv[$kelas_ini] .= "Semester / Kelas,$d[semester] / $d[kode_kelas]\n";
+      $data_csv[$kelas_ini] .= "Semester / Kelas,$d[semester] / $d[sub_kelas]\n";
       $data_csv[$kelas_ini] .= "Instruktur,Iin S.T. M.Kom\n\n";
       $data_csv[$kelas_ini] .= "NO,NAMA,NIM,TIMESTAMP KEHADIRAN,NILAI TUGAS,NILAI UTS,KETERANGAN\n";
     }

@@ -1,38 +1,24 @@
 <?php
 
+function tanggal_sesi_show($no_minggu, $awal_sesi, $jeda_sesi = 7, $jenis_sesi = 1)
+{
+  if ($no_minggu < 1) return false;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  $selisih = $jeda_sesi * ($no_minggu - 1);
+  $tanggal_sesi = date('Y-m-d H:i',  strtotime("+$selisih day", strtotime($awal_sesi)));
+  $input_awal_sesi = "<input type=hiddena name=awal_presensi[$no_minggu] value='$tanggal_sesi--$jenis_sesi'>";
+  return date('d-M-Y, H:i', strtotime($tanggal_sesi)) . $input_awal_sesi;
+}
 
 # ============================================================
-# AKTIVASI JADWAL SESI
+# PRE FORM
 # ============================================================
-if (!$d_room['awal_sesi']) {
-  die(div_alert('danger', "Data Room awal sesi belum ada."));
-} else {
-  $awal_sesi = $d_room['awal_sesi'];
-  $awal_sesi_show = '<span class="tebal biru">' . $nama_hari[date('w', strtotime($awal_sesi))] . ', ' . date('F-d, Y, H:i', strtotime($awal_sesi)) . '</span> | ' . eta2($d_room['awal_sesi']);
-  $inputs = "
-    <div class='wadah bg-white flexy'>
+$awal_sesi = $d_room['awal_sesi'];
+$awal_sesi_show = '<span class="tebal biru">' . $nama_hari[date('w', strtotime($awal_sesi))] . ', ' . date('F-d, Y, H:i', strtotime($awal_sesi)) . '</span> | ' . eta2($d_room['awal_sesi']);
+$mingguan = $Minggu . 'an';
+$pre_form = "
+  <form method=post class='wadah bg-white'>
+    <div class=' flexy'>
       <div>
         Awal Sesi : $awal_sesi_show 
       </div>
@@ -40,111 +26,95 @@ if (!$d_room['awal_sesi']) {
         <button name=reset_awal_sesi class='btn btn-danger btn-sm' onclick='return confirm(`Yakin untuk Reset Awal Sesi?`)'>Reset Awal Sesi</button>
       </div>
     </div>
-  ";
+    <div class=mt2>Sesi dilakukan secara <u class='tebal darkblue'>$mingguan</u>, next sesi adalah +$jeda_sesi hari dari sesi sebelumnya.</div>
+  </form>
+";
+
+# ============================================================
+# AKTIVASI JADWAL SESI
+# ============================================================
+if (!$d_room['awal_sesi']) {
+  die(div_alert('danger', "Data Room awal sesi belum ada."));
+} else {
+  $inputs = '';
   $no_sesi_harian = 0;
   $no_minggu = 0;
   $tr = '';
-  if ($d_room['jumlah_sesi_uts']) {
-    for ($i = 1; $i <= $d_room['jumlah_sesi_uts']; $i++) {
-      $selisih = 7 * $no_minggu;
-      $tanggal_sesi = date('Y-m-d H:i',  strtotime("+$selisih day", strtotime($awal_sesi)));
-      $tanggal_sesi_show = date('d-M-Y, H:i', strtotime($tanggal_sesi));
-      $no_minggu++;
-      $UTS = '';
-      if ($i == $d_room['jumlah_sesi_uts']) {
-        // tambah row minggu tenang jika ada
-        if ($d_room['minggu_tenang_uts']) {
-          for ($j = 1; $j <= $d_room['minggu_tenang_uts']; $j++) {
-            $tr .= "
-            <tr class='tengah gradasi-abu abu f14 miring'>
-              <td colspan=100%>minggu tenang  | $tanggal_sesi_show</td>
-            </tr>
-          ";
-          }
-        }
+  $arr = [
+    'uts' => [
+      'caption' => 'UTS',
+      'jumlah_sesi' => $d_room['minggu_normal_uts'],
+      'minggu_tenang' => $d_room['minggu_tenang_uts'],
+      'durasi_ujian' => $d_room['durasi_uts'],
+    ],
+    'uas' => [
+      'caption' => 'UAS',
+      'jumlah_sesi' => $d_room['minggu_normal_uas'],
+      'minggu_tenang' => $d_room['minggu_tenang_uas'],
+      'durasi_ujian' => $d_room['durasi_uas'],
+    ],
+  ];
 
-        // penanda UTS
-        $UTS = '<span class="tebal biru miring">UTS</span>';
+  foreach ($arr as $musim => $arr_musim) {
+    $nama_musim = $arr_musim['caption'];
+    $jumlah_sesi = $arr_musim['jumlah_sesi'];
+    if ($jumlah_sesi) {
+      for ($i = 1; $i <= $jumlah_sesi; $i++) {
+        $no_minggu++;
+        $tanggal_sesi_show = tanggal_sesi_show($no_minggu, $awal_sesi, $jeda_sesi, 1);
 
-        // tambah row UTS
-        if ($d_room['durasi_uts']) {
-          for ($j = 1; $j <= $d_room['durasi_uts']; $j++) {
-            $tr .= "
-            <tr class='tengah gradasi-kuning biru miring'>
-              <td colspan=100%>UTS Minggu ke-$j | $tanggal_sesi_show</td>
-            </tr>
-          ";
-          }
-        }
-      } else {
-        // pertemuan biasa UTS
+        // sesi normal
         $no_sesi_harian++;
         $tr .= "
-        <tr>
-          <td>Pertemuan $no_sesi_harian $UTS</td>
-          <td>$tanggal_sesi_show</td>
-        </tr>
-      ";
-      }
-    } // end for sesi UTS
-  } else {
-    // tidak ada pra-UTS
-    die(div_alert('danger', 'Tidak sesi untuk UTS'));
-  }
+          <tr>
+            <td class=tengah>$no_minggu</td>
+            <td>$Minggu normal sesi $no_sesi_harian</td>
+            <td>$tanggal_sesi_show</td>
+          </tr>
+        ";
+      } // end for sesi normal
 
-  if ($d_room['jumlah_sesi_uas']) {
-    for ($i = 1; $i <= $d_room['jumlah_sesi_uas']; $i++) {
-      $selisih = 7 * $no_minggu;
-      $tanggal_sesi = date('Y-m-d H:i',  strtotime("+$selisih day", strtotime($awal_sesi)));
-      $tanggal_sesi_show = date('d-M-Y, H:i', strtotime($tanggal_sesi));
-      $no_minggu++;
-      $UAS = '';
-      if ($i == $d_room['jumlah_sesi_uas']) {
-        // tambah row minggu tenang jika ada
-        if ($d_room['minggu_tenang_uas']) {
-          for ($j = 1; $j <= $d_room['minggu_tenang_uas']; $j++) {
-            $tr .= "
-            <tr class='tengah gradasi-abu abu f14 miring'>
-              <td colspan=100%>minggu tenang | $tanggal_sesi_show</td>
-            </tr>
-          ";
-          }
+      // tambah row sesi tenang jika ada
+      $minggu_tenang = $arr_musim['minggu_tenang'];
+      if ($minggu_tenang) {
+        for ($j = 1; $j <= $minggu_tenang; $j++) {
+          $no_minggu++;
+          $tanggal_sesi_show = tanggal_sesi_show($no_minggu, $awal_sesi, $jeda_sesi, 0);
+          $tr .= "
+          <tr class='tengah gradasi-abu abu f14 miring'>
+            <td class=tengah>$no_minggu</td>
+            <td colspan=100%>$Minggu tenang  | $tanggal_sesi_show</td>
+          </tr>
+        ";
         }
+      }
 
-        // penanda UAS
-        $UAS = '<span class="tebal biru miring">UAS</span>';
-
-        // tambah row UAS
-        if ($d_room['durasi_uas']) {
-          for ($j = 1; $j <= $d_room['durasi_uas']; $j++) {
-            $tr .= "
+      // tambah row ujian
+      $durasi_ujian = $arr_musim['durasi_ujian'];
+      if ($durasi_ujian) {
+        $jenis_sesi = $musim == 'uts' ? 2 : 3;
+        for ($j = 1; $j <= $durasi_ujian; $j++) {
+          $no_minggu++;
+          $tanggal_sesi_show = tanggal_sesi_show($no_minggu, $awal_sesi, $jeda_sesi, $jenis_sesi);
+          $tr .= "
             <tr class='tengah gradasi-kuning biru miring'>
-              <td colspan=100%>UAS Minggu ke-$j | $tanggal_sesi_show</td>
+              <td>$no_minggu</td>
+              <td colspan=100%>$nama_musim $Minggu ke-$j | $tanggal_sesi_show</td>
             </tr>
           ";
-          }
         }
-      } else {
-        // pertemuan biasa UAS
-        $no_sesi_harian++;
-        $tr .= "
-        <tr>
-          <td>Pertemuan $no_sesi_harian $UAS</td>
-          <td>$tanggal_sesi_show</td>
-        </tr>
-      ";
       }
-    } // end for sesi UAS
-
-  } else {
-    // tidak ada pra-UAS
-    die(div_alert('danger', 'Tidak sesi untuk UAS'));
+    } else {
+      // tidak ada pra-$nama_musim
+      die(div_alert('danger', "Tidak sesi untuk $nama_musim"));
+    }
   }
 
 
 
 
-  // minggu tenang
+
+
 
   $inputs = "
     $inputs
@@ -153,8 +123,9 @@ if (!$d_room['awal_sesi']) {
     <div class=wadah>
       <table class=table>
         <thead>
+          <th class=tengah>No</th>
           <th>Sesi / Pertemuan</th>
-          <th>Tanggal Estimasi (auto)</th>
+          <th>Estimasi Awal Sesi (auto)</th>
         </thead>
         $tr
       </table>
@@ -163,19 +134,18 @@ if (!$d_room['awal_sesi']) {
 
   // Closing Room
   $jam_sesi = date('H:i', strtotime($awal_sesi));
-  $no_minggu++;
-  $no_minggu++;
-  $selisih = 7 * $no_minggu;
+  $no_minggu_closed = $no_minggu + 2;
+  $selisih = $jeda_sesi * ($no_minggu_closed - 1);
   $tanggal_close = date('Y-m-d H:i',  strtotime("+$selisih day", strtotime($awal_sesi)));
   $tgl_close = date('Y-m-d',  strtotime($tanggal_close));
   $tanggal_close_show = date('d-M-Y, H:i', strtotime($tanggal_close));
 
-  $total_sesi = $d_room['jumlah_sesi_uts'] + $d_room['jumlah_sesi_uas'];
+  $total_sesi = $d_room['minggu_normal_uts'] + $d_room['minggu_normal_uas'];
 
   $inputs .= "
-    )* default Close Room adalah seminggu setelah UAS.
+    )* default Close Room adalah dua $Minggu setelah UAS.
     <hr>
-    <input class='bg-yellow' type='hiddena' name=tanggal_close id=tanggal_close value='$tanggal_close' required />
+    <input class='bg-yellow' type='hidden' name=tanggal_close id=tanggal_close value='$tanggal_close' required />
     <div class='mb1'>Tanggal Close Room:</div>
     <div class='flexy'>
       <div>
@@ -187,7 +157,7 @@ if (!$d_room['awal_sesi']) {
     </div>
     
     <div class='mt2'>
-      )* Sistem otomatis akan membuatkan sebanyak $total_sesi sesi untuk room ini.
+      )* Sistem otomatis akan membuatkan sebanyak $no_minggu sesi untuk room ini.
     </div>
     
     <div class='mt2'>

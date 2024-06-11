@@ -75,11 +75,11 @@ while ($d = mysqli_fetch_assoc($q)) {
 
 $s = "SELECT a.*,
 (
-  SELECT p.jadwal_kuliah FROM tb_sesi_kelas p 
+  SELECT p.jadwal_kelas FROM tb_sesi_kelas p 
   WHERE p.id_sesi=a.id 
   AND p.kelas='$kelas' 
   AND p.is_terlaksana=1 
-  ) jadwal_kuliah 
+  ) jadwal_kelas 
 FROM tb_sesi a 
 WHERE a.id_room=$id_room ORDER BY a.no";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -128,7 +128,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     $fitur_sesi = "$latihans $challenges $asks";
   }
 
-  $pelaksanaan = $d['jadwal_kuliah'] ? $d['jadwal_kuliah'] : '<span class="f12 miring abu">belum dilaksanakan</span>';
+  $pelaksanaan = $d['jadwal_kelas'] ? $d['jadwal_kelas'] : '<span class="f12 miring abu">belum dilaksanakan</span>';
 
   $tr .= "
     <div class='wadah gradasi-hijau' data-aos='fade-up' style='display:grid;grid-template-columns: 100px auto;grid-gap:10px'>

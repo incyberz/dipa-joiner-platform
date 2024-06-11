@@ -1,12 +1,12 @@
 <?php
 
-if (!$d_room['jumlah_sesi_uts']) {
-  die(div_alert('danger', "Data Room jumlah_sesi_uts belum lengkap."));
+if (!$d_room['minggu_normal_uts']) {
+  die(div_alert('danger', "Data Room minggu_normal_uts belum lengkap."));
 } else {
   $inputs = '';
   $inputs .= "
     <input class='bg-yellow' type='hidden' name=awal_sesi id=awal_sesi required />
-    <div class='mb1'>Pertemuan Pertama tanggal:</div>
+    <div class='mb1'>Senin pada Minggu Pertama tanggal:</div>
     <div class='flexy'>
       <div>
         <input class='form-control awal_sesi_trigger' type='date' id=tgl_awal_sesi />
@@ -22,7 +22,9 @@ if (!$d_room['jumlah_sesi_uts']) {
       </div>
     </div>
     
-    <div class='f12 abu miring mb3'>)* default durasi tatap muka adalah 90 menit (2 SKS)</div>
+    <div class='f14 abu miring mb1'>)* usahakan awal minggu adalah hari Senin</div>
+    <div class='f14 abu miring mb1'>)* default awal pembelajaran adalah pukul 08:00</div>
+    <div class='f14 abu miring mb3'>)* default durasi tatap muka adalah 90 menit (2 SKS)</div>
 
     <div class='mt2 mb4'>
       <label>

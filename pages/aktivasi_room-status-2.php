@@ -8,7 +8,7 @@ $inputs = "
       <div class=wadah>
       <div class='mb1'>Sesi untuk UTS</div>
       
-      <select name='jumlah_sesi_uts' class='form-control mb2'>
+      <select name='minggu_normal_uts' class='form-control mb2'>
         <option value='2'>Jumlah sesi UTS adalah 2 sesi (tanpa UTS)</option>
         <option value='3'>Jumlah sesi UTS adalah 3 sesi (tanpa UTS)</option>
         <option value='4'>Jumlah sesi UTS adalah 4 sesi (tanpa UTS)</option>
@@ -41,7 +41,7 @@ $inputs = "
       <div class=wadah>
       <div class='mb1'>Sesi untuk UAS</div>
       
-      <select name='jumlah_sesi_uas' class='form-control mb2'>
+      <select name='minggu_normal_uas' class='form-control mb2'>
         <option value='2'>Jumlah sesi UAS adalah 2 sesi (tanpa UAS)</option>
         <option value='3'>Jumlah sesi UAS adalah 3 sesi (tanpa UAS)</option>
         <option value='4'>Jumlah sesi UAS adalah 4 sesi (tanpa UAS)</option>

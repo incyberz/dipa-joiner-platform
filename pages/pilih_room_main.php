@@ -56,11 +56,11 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $my_room = '';
 $other_room = '';
 while ($d = mysqli_fetch_assoc($q)) {
-  if ($d['status_room'] == 1) {
+  if ($d['status_room'] == 100) {
     $status = 'Aktif';
     $gradasi = 'hijau';
     $btn = "<button class='btn btn-success mt2 w-100' name=btn_pilih value=$d[id_room]>Pilih Room</button>";
-  } elseif ($d['status_room'] == -1) {
+  } elseif ($d['status_room'] < 0) {
     $status = 'Closed';
     $gradasi = 'kuning';
     $btn = "<button class='btn btn-warning mt2 w-100' name=btn_pilih value=$d[id_room] onclick='return confirm(\"Pilih Closed Room untuk melihat history?\")'>Closed</button>";

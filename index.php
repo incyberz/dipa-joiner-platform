@@ -42,6 +42,8 @@ $harus_update_poin = 0;
 $unset = '<span class="consolas f12 red miring">unset</span>';
 $null = '<span class="consolas f12 red miring">null</span>';
 
+$lokasi_pages = 'pages';
+
 include 'config.php';
 
 # ========================================================
