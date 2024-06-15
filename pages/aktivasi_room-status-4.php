@@ -6,7 +6,7 @@ function tanggal_sesi_show($no_minggu, $awal_sesi, $jeda_sesi = 7, $jenis_sesi =
 
   $selisih = $jeda_sesi * ($no_minggu - 1);
   $tanggal_sesi = date('Y-m-d H:i',  strtotime("+$selisih day", strtotime($awal_sesi)));
-  $input_awal_sesi = "<input type=hiddena name=awal_presensi[$no_minggu] value='$tanggal_sesi--$jenis_sesi'>";
+  $input_awal_sesi = "<input type=hidden name=awal_presensi[$no_minggu] value='$tanggal_sesi--$jenis_sesi'>";
   return date('d-M-Y, H:i', strtotime($tanggal_sesi)) . $input_awal_sesi;
 }
 

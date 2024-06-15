@@ -25,7 +25,7 @@ if ($ket) {
     <div class='alert alert-danger tengah' data-aos='fade' data-aos-delay='200' id=belum_punya_profil>
       <div class='tengah'>
         <a href='?upload_profil'>
-          <img class='foto_profil' src='$path_profil_na' alt='ga punya profil'>
+          <img class='foto_profil' src='$src_profil_na' alt='ga punya profil'>
         </a>
       </div>
       $ket

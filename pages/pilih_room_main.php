@@ -122,6 +122,8 @@ echo "
 
 <hr>
 <div class="tengah">
-  <a href="?buat_room" onclick='return confirm("Buat Room Baru?")'>Buat Room Baru</a> |
+  <div class="mb2">
+    <a class="btn btn-success" href="?buat_room" onclick='return confirm("Buat Room Baru?")'>Buat Room Baru</a>
+  </div>
   <a href="?logout" onclick='return confirm("Logout?")'>Logout</a>
 </div>

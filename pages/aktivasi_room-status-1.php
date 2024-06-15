@@ -6,7 +6,7 @@ $selected[1] = $gg == 1 ? 'selected' : '';
 $selected[2] = $gg == 2 ? 'selected' : '';
 
 $inputs = "
-  <input class='bg-yellow' required type=hiddena name=tahun_ajar min=20231 max=20282 value='$thn_ajar$gg'>
+  <input class='bg-yellow' required type=hidden name=tahun_ajar min=20231 max=20282 value='$thn_ajar$gg'>
   <div class='mb1'>Tahun Ajar</div>
   <div class='flexy'>
     <div>

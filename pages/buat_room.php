@@ -10,10 +10,10 @@ include 'include/date_managements.php';
 
 
 // variabel awal
-$nama_room = 'ZZZ Pemrograman Web II (Laravel) 2024';
-$singkatan_room = 'ZZZ-24';
+$nama_room = '';
+$singkatan_room = '';
 $tahun_ajar = date('Y');
-$prodi = 'LEMBAGAZZZ';
+$prodi = '';
 $jumlah_sesi = 16;
 $pukul = '08:00:00';
 
@@ -52,15 +52,11 @@ if (isset($_POST['btn_buat_room'])) {
         id,
         nama,
         singkatan,
-        lembaga,
-        tahun_ajar,
         created_by
       ) VALUES (
         $new_id,
         '$_POST[nama_room]',
         '$_POST[singkatan_room]',
-        '$_POST[lembaga]',
-        $_POST[tahun_ajar]$_POST[gg],
         $id_peserta
       )";
       // echo '<pre>';
@@ -101,32 +97,18 @@ echo "
 <form method='post' class='wadah gradasi-hijau'>
   <div class='sub_form'>Form Buat Room Baru</div>
   <div>Nama Room</div>
-  <input class='form-control mt1' required minlength='10' maxlength='30' name=nama_room value='$nama_room'>
+  <input class='form-control mt1' required minlength='10' maxlength='30' name=nama_room value='$nama_room' placeholder='Nama Room...'>
   <div class='mt1 mb2 f12 abu'>Contoh: Pemrograman Web II (Laravel) 2024. 10 s.d 30 karakter</div>
 
   <div>Singkatan Room</div>
-  <input class='form-control mt1' required minlength='3' maxlength='10' name=singkatan_room value='$singkatan_room' >
+  <input class='form-control mt1' required minlength='3' maxlength='10' name=singkatan_room value='$singkatan_room' placeholder='Singkatan...'>
   <div class='mt1 mb2 f12 abu'>Contoh: PWeb2-24, tanpa spasi, 3 s.d 10 karakter</div>
 
-  <div class='mb1'>Tahun Ajar</div>
-  <div class='flexy'>
-    <div>
-      <input class='form-control' required type=number name=tahun_ajar min=2024 max=2025 value=$tahun_ajar>
-    </div>
-    <div>
-      <select name='gg' class='form-control'>
-        <option value='1'>Ganjil</option>
-        <option value='2'>Genap</option>
-      </select>
-    </div>
-    <div>
-      <input required class='form-control' required name=lembaga minlength='3' maxlength='30' placeholder='Prodi/Jurusan/Lembaga...' value='$prodi'>
-    </div>
-
-  </div>
-  <div class='mt1 mb2 f12 abu'>Contoh: Tahun ajar 2023 Genap, Prodi MBS, Fakultas FEBI</div>
 
 
   <button class='btn btn-primary w-100' name=btn_buat_room>Buat Room </button>
 </form>
 ";
+
+/// ZZZ HERE zzz here
+// make upercase singkatan room

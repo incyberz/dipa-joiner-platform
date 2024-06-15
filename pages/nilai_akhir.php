@@ -618,7 +618,6 @@ $link_download_csv_uas = '';
 $event_ujian = 'uts';
 if ($id_role != 1) {
   foreach ($arr_kelas as $k => $jp) {
-    if (strpos("salt$k", 'DEBUGER')) continue;
     if (strpos("salt$k", 'INSTRUKTUR')) continue;
     $path_csv = "csv/nilai-$event_ujian/$k.csv";
     $fcsv = fopen($path_csv, "w+") or die("$path_csv cannot accesible.");

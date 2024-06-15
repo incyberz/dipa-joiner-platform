@@ -19,7 +19,6 @@ FROM tb_kelas a
 WHERE a.status=1 
 AND a.tahun_ajar = $tahun_ajar  
 AND kelas != 'INSTRUKTUR'
-AND kelas NOT LIKE 'DEBUGER%'
 ORDER BY a.fakultas,a.prodi,a.kelas";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $tr = '';

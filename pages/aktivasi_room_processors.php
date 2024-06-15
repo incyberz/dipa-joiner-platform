@@ -5,7 +5,7 @@
 $aksi = $_GET['aksi'] ?? '';
 if ($aksi == 'reset_room_kelas') {
   echolog('dropping classes');
-  $s = "DELETE FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR' AND kelas NOT LIKE 'DEBUGER%'";
+  $s = "DELETE FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR'";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   echolog('updating room status');
   $s = "UPDATE tb_room set status=5 WHERE id=$id_room";
@@ -200,7 +200,7 @@ if (isset($_POST['btn_aktivasi'])) {
       }
 
       // drop not checked kelas
-      $s = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR' AND kelas NOT LIKE 'DEBUGER%'";
+      $s = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR'";
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       while ($d = mysqli_fetch_assoc($q)) {
         // $id=$d['id'];
@@ -359,9 +359,9 @@ if (isset($_POST['btn_aktivasi'])) {
     $pairs = str_replace('__,', '', $pairs);
 
     $s = "UPDATE tb_room SET $pairs WHERE id=$id_room";
-    echo '<pre>';
-    var_dump($s);
-    echo '</pre>';
+    // echo '<pre>';
+    // var_dump($s);
+    // echo '</pre>';
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     echo div_alert('success', 'Update sukses.');
     jsurl('', 1000);

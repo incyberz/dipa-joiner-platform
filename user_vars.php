@@ -1,8 +1,8 @@
-<?php 
-if(!$tahun_ajar) die(erid('tahun_ajar at user_vars'));
-if($dm) echo "<div style='height:50px'>.</div>DEBUG MODE ON<hr>";  
+<?php
+if (!$tahun_ajar) die(erid('tahun_ajar at user_vars'));
+if ($dm) echo "<div style='height:50px'>.</div>DEBUG MODE ON<hr>";
 
-$today=date('Y-m-d');
+$today = date('Y-m-d');
 $undef = '<span class="red kecil miring">undefined</span>';
 
 # ========================================================
@@ -24,76 +24,81 @@ FROM tb_peserta a
 JOIN tb_role b ON a.id_role=b.id 
 WHERE a.username='$username' 
 ";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-if(!mysqli_num_rows($q)) die('Username tidak ditemukan.');
-$d=mysqli_fetch_assoc($q);
-$id_peserta = $d['id_peserta'];
-$nama_peserta = ucwords(strtolower($d['nama']));
-$no_wa = $d['no_wa'] ?? '';
-$no_wa_show = !$no_wa?$undef:substr($no_wa,0,4).'***'.substr($no_wa,strlen($no_wa)-3,3);
-$password = $d['password'];
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+if (!mysqli_num_rows($q)) die('Username tidak ditemukan.');
+$d_peserta = mysqli_fetch_assoc($q);
+$id_peserta = $d_peserta['id_peserta'];
+$nama_peserta = ucwords(strtolower($d_peserta['nama']));
+$no_wa = $d_peserta['no_wa'] ?? '';
+$no_wa_show = !$no_wa ? $undef : substr($no_wa, 0, 4) . '***' . substr($no_wa, strlen($no_wa) - 3, 3);
+$password = $d_peserta['password'];
 $is_depas = !$password ? 1 : 0;
-$status = $d['status'];
-$profil_ok = $d['profil_ok'];
-$kelas = $d['kelas'];
-$sebagai = $d['sebagai'];
-$punya_biodata = $d['punya_biodata'];
-$nik = $d['nik'];
-$kelas_show = str_replace("~$tahun_ajar",'',$kelas);
+$status = $d_peserta['status'];
+$profil_ok = $d_peserta['profil_ok'];
+$kelas = $d_peserta['kelas'];
+$sebagai = $d_peserta['sebagai'];
+$punya_biodata = $d_peserta['punya_biodata'];
+$nik = $d_peserta['nik'];
+$kelas_show = str_replace("~$tahun_ajar", '', $kelas);
 
 # =========================================
 # AUTO INSERT BLANKO BIODATA
 # =========================================
-if(!$punya_biodata){
+if (!$punya_biodata) {
   $s = "INSERT INTO tb_biodata (id) VALUES ($id_peserta)";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 }
 
 # ========================================================
 # FOLDER UPLOADS HANDLER
 # ========================================================
-$folder_uploads = $d['folder_uploads'];
-$id_role = $d['id_role'];
-if(!$folder_uploads){
+$folder_uploads = $d_peserta['folder_uploads'];
+$id_role = $d_peserta['id_role'];
+if (!$folder_uploads) {
   # ========================================================
   # AUTO-CREATE FOLDER UPLOADS
   # ========================================================
-  $a = '_'.strtolower($d['nama']);
-  $a = str_replace(' ','',$a);
-  $a = str_replace('.','',$a);
-  $a = str_replace(',','',$a);
-  $a = str_replace('\'','',$a);
-  $a = str_replace('`','',$a);
-  $a = substr($a,0,6).date('ymdHis');
+  $a = '_' . strtolower($d_peserta['nama']);
+  $a = str_replace(' ', '', $a);
+  $a = str_replace('.', '', $a);
+  $a = str_replace(',', '', $a);
+  $a = str_replace('\'', '', $a);
+  $a = str_replace('`', '', $a);
+  $a = substr($a, 0, 6) . date('ymdHis');
 
   $folder_uploads = $a;
   $ss = "UPDATE tb_peserta set folder_uploads='$a' where username='$username'";
-  $qq = mysqli_query($cn,$ss)or die("Update folder_uploads error. ".mysqli_error($cn));
+  $qq = mysqli_query($cn, $ss) or die("Update folder_uploads error. " . mysqli_error($cn));
 }
-if(!file_exists("uploads/$folder_uploads")) mkdir("uploads/$folder_uploads");
+if (!file_exists("uploads/$folder_uploads")) mkdir("uploads/$folder_uploads");
 
 # ========================================================
 # PROFILE FOTO
 # ========================================================
-$path_profil = "assets/img/peserta/peserta-$id_peserta.jpg";
-$rand = rand(1,5);
-$path_profil_na = "assets/img/no_profile$rand.jpg";
-if(file_exists($path_profil)){
-  $punya_profil = true;
-}else{
-  $punya_profil = false;
-  $path_profil = $path_profil_na;
+$rand = rand(1, 5);
+$src_profil_na = "assets/img/no_profile$rand.jpg";
+$punya_profil = false;
+$src_profil = $src_profil_na;
+
+if ($d_peserta['image']) {
+  $src = "assets/img/peserta/$d_peserta[image]";
+  if (file_exists($src)) {
+    $src_profil = $src;
+    $punya_profil = true;
+  }
 }
+
 
 
 # ========================================================
 # PROFIL PERANG
 # ========================================================
-$path_profil_perang = "assets/img/peserta/wars/peserta-$id_peserta.jpg";
-$path_profil_perang_na = $path_profil_na;
-if(file_exists($path_profil_perang)){
-  $punya_profil_perang = true;
-}else{
-  $punya_profil_perang = false;
-  $path_profil_perang = $path_profil_perang_na;
+$punya_profil_perang = false;
+$src_profil_perang = $src_profil_perang_na;
+if ($d_peserta['war_image']) {
+  $src = "assets/img/peserta/$d_peserta[war_image]";
+  if (file_exists($src)) {
+    $src_profil_perang = $src;
+    $punya_profil_perang = true;
+  }
 }

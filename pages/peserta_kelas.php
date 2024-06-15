@@ -44,7 +44,6 @@ FROM tb_room_kelas a
 WHERE a.id_room=$id_room 
 AND $sql_kelas 
 AND a.kelas != 'INSTRUKTUR' 
-AND a.kelas NOT LIKE 'DEBUGER%' 
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
@@ -233,14 +232,19 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
           }
 
           $data_jenis[$jenis] .= "
-            <div class=mb1><span class=proper>$jenis :</span> $count_sudah_mengerjakan of $count_latihan</div>
-            <div class=mb1><span class=proper>wajib :</span> $count_latihan_wajib</div>
-            <div class=wadah>
+            <div class=><span class='proper f12 abu miring'>$jenis :</span> $count_sudah_mengerjakan of $count_latihan</div>
+            <div class=' hideit'><span class='proper f12 abu miring'>wajib :</span> $count_latihan_wajib</div>
+            <div class='wadah hideit'>
               $rno
             </div>
           ";
         }
       }
+
+      $uts_manual = '-';
+      $uas_manual = '-';
+      $uts_pg = '-';
+      $uas_pg = '-';
 
       $list_peserta .= "
         <tr>
@@ -256,10 +260,19 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
               $d_poin_show
             </div>
           </td>
-          <td>$presensi_show</td>
-          <td>$data_jenis[latihan]</td>
-          <td>$data_jenis[challenge]</td>
-          <td>UJIAN</td>
+          <td>
+            <div>$presensi_show</div>
+            <div>$data_jenis[latihan]</div>
+            <div>$data_jenis[challenge]</div>
+          <td>
+            <div><span class='abu miring f12'>UTS Manual:</span> $uts_manual</div>
+            <div><span class='abu miring f12'>UAS Manual:</span> $uas_manual</div>
+            <div><span class='abu miring f12'>UTS PG:</span> $uts_pg</div>
+            <div><span class='abu miring f12'>UAS PG:</span> $uas_pg</div>
+          </td>
+          <td>
+            <div><a href='#'>$img_delete Delete</a></div>
+          </td>
         </tr>
       ";
     } else {
@@ -286,10 +299,9 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
             <th>No</th>
             <th>Profil Peserta</th>
             <th>Detail Info</th>
-            <th>Presensi</th>
-            <th>Latihan</th>
-            <th>Challenge</th>
+            <th>Aktifitas</th>
             <th>Ujian</th>
+            <th>Aksi</th>
           </thead>
           $list_peserta
         </table>      
