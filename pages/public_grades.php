@@ -33,7 +33,7 @@ if (mysqli_num_rows($q)) {
     # ==================================
     $link_nama_show = "$nama_show";
 
-    $td_profil = ($id_role == 2 and $show_img) ? "<td><img src='assets/img/peserta/wars/peserta-$d[id_peserta].jpg' class=foto_profil></td>" : '';
+    $td_profil = ($id_role == 2 and $show_img) ? "<td><img src='$lokasi_profil/wars/peserta-$d[id_peserta].jpg' class=foto_profil></td>" : '';
 
     $tr .= "
       <tr>

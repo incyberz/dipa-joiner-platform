@@ -91,7 +91,7 @@ while ($d = mysqli_fetch_assoc($q)) {
       <div class='wadah $wadah_active gradasi-$gradasi tengah' style='border: $border;'>
         <div class='darkblue f18'>$d[room]</div>
         <div class=f12>Status: $status</div>
-        <img src='assets/img/peserta/peserta-$d[id_creator].jpg' alt='pengajar' class='foto_profil'>
+        <img src='$lokasi_profil/peserta-$d[id_creator].jpg' alt='pengajar' class='foto_profil'>
         <div>By: $d[creator]</div>
         $btn
       </div>

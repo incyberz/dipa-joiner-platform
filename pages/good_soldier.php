@@ -1,13 +1,34 @@
+<style>
+  .text-zoom {
+    cursor: pointer;
+    transition: .2s
+  }
 
-  <style>
-  .text-zoom{cursor: pointer; transition: .2s}
-  .text-zoom:hover{letter-spacing: .5px; font-weight: bold}
-  .rank_number{display:inline-block; color:blue;}
-  .rank_th{display:inline-block; vertical-align:top;}
-  
-  #blok_summary {max-width: 500px; margin:auto}
-  #blok_accuracy {max-width: 360px; margin:auto}
-  </style>
+  .text-zoom:hover {
+    letter-spacing: .5px;
+    font-weight: bold
+  }
+
+  .rank_number {
+    display: inline-block;
+    color: blue;
+  }
+
+  .rank_th {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  #blok_summary {
+    max-width: 500px;
+    margin: auto
+  }
+
+  #blok_accuracy {
+    max-width: 360px;
+    margin: auto
+  }
+</style>
 <?php
 # =================================================================
 login_only();
@@ -32,7 +53,7 @@ echo "
 # =========================================================
 # MAIN SELECT
 # =========================================================
-$sql_kelas = $id_role ==1 ? "a.kelas = '$kelas' " : '1';
+$sql_kelas = $id_role == 1 ? "a.kelas = '$kelas' " : '1';
 
 $s = "SELECT 
 a.id as id_peserta,
@@ -50,24 +71,24 @@ AND c.tahun_ajar=$tahun_ajar
 AND c.status = 1 
 AND $sql_kelas
 ORDER BY c.shift, b.kelas, a.nama";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $jumlah_row = mysqli_num_rows($q);
 
 $goods = '<div class="darkblue tengah f22">War Participant:</div>';
-$i=0;
-$no=0;
+$i = 0;
+$no = 0;
 $last_kelas = '';
-while($d=mysqli_fetch_assoc($q)){
-  if($d['play_count']==0 && $d['soal_count']==0) continue;
+while ($d = mysqli_fetch_assoc($q)) {
+  if ($d['play_count'] == 0 && $d['soal_count'] == 0) continue;
   $i++;
   $no++;
   $nama = ucwords(strtolower($d['nama_peserta']));
   $login_as = $id_role == 1 ? '' : "<a href='?login_as&username=$d[username]'><img src='assets/img/icons/login_as.png' height=25px></a>";
 
   $div_header = '';
-  if($last_kelas!=$d['kelas']){
+  if ($last_kelas != $d['kelas']) {
     $no = 1;
-    $margin_top = $i==1 ? '10px' : '45px';
+    $margin_top = $i == 1 ? '10px' : '45px';
 
     $div_header = "
       <div class='flexy gradasi-kuning p2' style='margin: $margin_top -12px 0 -12px'>
@@ -80,9 +101,9 @@ while($d=mysqli_fetch_assoc($q)){
 
   $warcounts = $d['play_count'] + $d['soal_count'];
 
-  $img = $id_role==1 ? '' : "<img src='assets/img/peserta/wars/peserta-$d[id_peserta].jpg' class='profil_pembuat' style='display:inline-block;margin-right:10px'> ";
+  $img = $id_role == 1 ? '' : "<img src='$lokasi_profil/wars/peserta-$d[id_peserta].jpg' class='profil_pembuat' style='display:inline-block;margin-right:10px'> ";
 
-  $goods.= "
+  $goods .= "
     $div_header
     <div class='flexy btop pt1 pb1'>
       <div style='flex:1' class='tengah'>$no</div>
@@ -123,7 +144,7 @@ echo "
 
 ?>
 <script>
-  $(function(){
+  $(function() {
 
   })
 </script>

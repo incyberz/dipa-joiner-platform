@@ -43,6 +43,8 @@ $unset = '<span class="consolas f12 red miring">unset</span>';
 $null = '<span class="consolas f12 red miring">null</span>';
 
 $lokasi_pages = 'pages';
+$lokasi_profil = 'assets/img/peserta';
+$lokasi_img = 'assets/img';
 
 include 'config.php';
 

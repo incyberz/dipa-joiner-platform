@@ -5,8 +5,15 @@ $gg = $d_room['tahun_ajar'] ? substr($d_room['tahun_ajar'], 4, 1) : $gg_year;
 $selected[1] = $gg == 1 ? 'selected' : '';
 $selected[2] = $gg == 2 ? 'selected' : '';
 
+$room_tahun_ajar = $d_room['tahun_ajar'] ?? "$thn_ajar$gg";
+
+$ket_ta = '';
+if ($d_room['tahun_ajar']) {
+  $ket_ta = "<div class='green bold wadah'>Tahun Ajar Room sudah di set ke TA. $d_room[tahun_ajar]</div>";
+}
+
 $inputs = "
-  <input class='bg-yellow' required type=hidden name=tahun_ajar min=20231 max=20282 value='$thn_ajar$gg'>
+  <input class='bg-yellow' required type=hidden name=tahun_ajar min=20231 max=20282 value='$room_tahun_ajar'>
   <div class='mb1'>Tahun Ajar</div>
   <div class='flexy'>
     <div>
@@ -24,4 +31,5 @@ $inputs = "
 
   </div>
   <div class='mt1 mb2 f12 abu'>Contoh: Tahun ajar 2023 Genap, Lembaga: Prodi MBS Fakultas FEBI Masoem University</div>  
+  $ket_ta
 ";

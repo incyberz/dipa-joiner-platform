@@ -228,8 +228,8 @@ while ($d = mysqli_fetch_assoc($q)) {
     }
     $merah = $d2['jumlah_attemp'] ? '' : 'merah';
 
-    $src2 = "assets/img/peserta/peserta-$d2[id_peserta].jpg";
-    $src = "assets/img/peserta/wars/peserta-$d2[id_peserta].jpg";
+    $src2 = "$lokasi_profil/peserta-$d2[id_peserta].jpg";
+    $src = "$lokasi_profil/wars/peserta-$d2[id_peserta].jpg";
     $sty = '';
     if (file_exists($src)) {
       // do nothing

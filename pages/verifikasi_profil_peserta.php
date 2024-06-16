@@ -55,7 +55,7 @@ if (!mysqli_num_rows($q)) {
   $batas = 20;
   while ($d = mysqli_fetch_assoc($q)) {
     $id = $d['id_peserta'];
-    $path = "assets/img/peserta/peserta-$id.jpg";
+    $path = "$lokasi_profil/peserta-$id.jpg";
     if (file_exists($path)) {
       $batas--;
       if ($batas >= 0) {

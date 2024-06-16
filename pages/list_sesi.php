@@ -30,7 +30,7 @@ if (!$username) jsurl('?'); // zzz new code untested
 $s = "SELECT 1 FROM tb_sesi WHERE id_room=$id_room";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $count_sesi = mysqli_num_rows($q);
-
+$count_sesi_normal = 0;
 if (isset($_POST['btn_tambah_sesi'])) {
   $new_count_sesi = $count_sesi + 1;
   $s = "INSERT INTO tb_sesi (id_room,no,nama) VALUES ($id_room,$new_count_sesi,'NEW SESI $new_count_sesi')";
@@ -73,6 +73,9 @@ while ($d = mysqli_fetch_assoc($q)) {
   }
 }
 
+# ============================================================
+# MAIN SELECT SESI
+# ============================================================
 $s = "SELECT a.*,
 (
   SELECT p.jadwal_kelas FROM tb_sesi_kelas p 
@@ -86,65 +89,77 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $tr = '';
 $i = 0;
 while ($d = mysqli_fetch_assoc($q)) {
-  $i++;
-  $id = $d['id'];
+  if ($d['jenis'] === '0') {
+    $tr .= div_alert('info', 'Minggu tenang');
+  } elseif ($d['jenis'] == 2) {
+    $tr .= div_alert('info', 'Pekan UTS');
+  } elseif ($d['jenis'] == 3) {
+    $tr .= div_alert('info', 'Pekan UAS');
+  } elseif ($d['jenis'] == 1) {
 
-  $latihans = '';
-  if (isset($rlats[$i])) {
-    foreach ($rlats[$i] as $key => $value) {
-      $latihans .= "<a href='?activity&jenis=latihan&no=$value' class='btn btn-success btn-sm' onclick='return confirm(\"Menuju laman Latihan?\")'>L$value</a> ";
+    $i++;
+    $id = $d['id'];
+    $count_sesi_normal++;
+
+    $latihans = '';
+    if (isset($rlats[$i])) {
+      foreach ($rlats[$i] as $key => $value) {
+        $latihans .= "<a href='?activity&jenis=latihan&no=$value' class='btn btn-success btn-sm' onclick='return confirm(\"Menuju laman Latihan?\")'>L$value</a> ";
+      }
     }
-  }
 
-  $challenges = '';
-  if (isset($rchallenge[$i])) {
-    foreach ($rchallenge[$i] as $key => $value) {
-      $challenges .= "<a href='?activity&jenis=challenge&no=$value' class='btn btn-danger btn-sm' onclick='return confirm(\"Menuju laman Challenge?\")'>C$value</a> ";
+    $challenges = '';
+    if (isset($rchallenge[$i])) {
+      foreach ($rchallenge[$i] as $key => $value) {
+        $challenges .= "<a href='?activity&jenis=challenge&no=$value' class='btn btn-danger btn-sm' onclick='return confirm(\"Menuju laman Challenge?\")'>C$value</a> ";
+      }
     }
-  }
 
-  if ($d['tags'] != '') {
-    $r = explode(', ', $d['tags']);
-    sort($r);
-    $tags_show = '<span class="darkblue kecil miring">' . implode(', ', $r) . '</span>';
-    $asks = "<a href='?bertanya&id_sesi=$id' style='display:inline-block;margin-left:10px' onclick='return confirm(\"Ingin mengajukan pertanyaan pada sesi ini?\")'><img src='assets/img/icons/ask.png' class=zoom height=30px></a>";
-  } else {
-    $tags_show = '<span class="red kecil miring">belum ada tags</span>';
-    $asks = '';
-  }
+    if ($d['tags'] != '') {
+      $r = explode(', ', $d['tags']);
+      sort($r);
+      $tags_show = '<span class="darkblue kecil miring">' . implode(', ', $r) . '</span>';
+      $asks = "<a href='?bertanya&id_sesi=$id' style='display:inline-block;margin-left:10px' onclick='return confirm(\"Ingin mengajukan pertanyaan pada sesi ini?\")'><img src='assets/img/icons/ask.png' class=zoom height=30px></a>";
+    } else {
+      $tags_show = '<span class="red kecil miring">belum ada tags</span>';
+      $asks = '';
+    }
 
-  if ($id_role == 2 and $edit_mode) {
-    $r = explode(', ', $d['tags']);
-    sort($r);
-    $tags_sort = implode(', ', $r);
-    $nama_show = "<input class='form-control input_editable mb1' name=nama id=nama__$id value='$d[nama]'>";
-    $ket_show = "<textarea class='form-control input_editable mb1' name=ket id=ket__$id>$d[ket]</textarea>";
-    $tags_show = "<input class='form-control input_editable mb1' name=tags id=tags__$id value='$tags_sort'>";
-    $fitur_sesi = '';
-  } else {
-    $nama_show = $d['nama'];
-    $ket_show = $d['ket'];
-    $tags_show = $tags_show;
-    $fitur_sesi = "$latihans $challenges $asks";
-  }
+    if ($id_role == 2 and $edit_mode) {
+      $r = explode(', ', $d['tags']);
+      sort($r);
+      $tags_sort = implode(', ', $r);
+      $nama_show = "<input class='form-control input_editable mb1' name=nama id=nama__$id value='$d[nama]'>";
+      $ket_show = "<textarea class='form-control input_editable mb1' name=ket id=ket__$id placeholder='keterangan sesi...'>$d[ket]</textarea>";
+      $tags_show = "<input class='form-control input_editable mb1' name=tags id=tags__$id placeholder='tag-tag materi...' value='$tags_sort'>";
+      $fitur_sesi = '';
+    } else {
+      $nama_show = $d['nama'];
+      $ket_show = $d['ket'];
+      $tags_show = $tags_show;
+      $fitur_sesi = "$latihans $challenges $asks";
+    }
 
-  $pelaksanaan = $d['jadwal_kelas'] ? $d['jadwal_kelas'] : '<span class="f12 miring abu">belum dilaksanakan</span>';
+    $pelaksanaan = $d['jadwal_kelas'] ? $d['jadwal_kelas'] : '<span class="f12 miring abu">belum dilaksanakan</span>';
 
-  $tr .= "
-    <div class='wadah gradasi-hijau' data-aos='fade-up' style='display:grid;grid-template-columns: 100px auto;grid-gap:10px'>
-      <div class='text-center wadah bg-white'>
-        sesi 
-        <div class='no_sesi'>$i</div>
+    $tr .= "
+      <div class='wadah gradasi-hijau' data-aos='fade-up' style='display:grid;grid-template-columns: 100px auto;grid-gap:10px'>
+        <div class='text-center wadah bg-white'>
+          sesi 
+          <div class='no_sesi'>$i</div>
+        </div>
+        <div>
+          <div class=nama_sesi>$nama_show</div>
+          <div class='kecil miring abu'>$ket_show</div>
+          <div class='kecil miring abu'>tags : $tags_show</div>
+          <div class='mt1'>$fitur_sesi</div>
+          <div class='mt1'>$pelaksanaan</div>
+        </div>
       </div>
-      <div>
-        <div class=nama_sesi>$nama_show</div>
-        <div class='kecil miring abu'>$ket_show</div>
-        <div class='kecil miring abu'>tags : $tags_show</div>
-        <div class='mt1'>$fitur_sesi</div>
-        <div class='mt1'>$pelaksanaan</div>
-      </div>
-    </div>
-  ";
+    ";
+  } else {
+    die(div_alert('danger', "Jenis sesi: $d[jenis], belum terdefinisi."));
+  }
 }
 $list = "<div>$toggle_edit$tr</div>";
 
@@ -173,7 +188,7 @@ $form_tambah_sesi = $id_role != 2 ? '' : "
 
 <div class="section-title" data-aos="fade-up">
   <h2><?= $judul ?></h2>
-  <p>Berikut adalah Sesi-sesi Perkuliahan <?= $nama_room ?> (<?= $count_sesi ?> sesi)</p>
+  <p>List Sesi <?= $nama_room ?> (<?= $count_sesi_normal ?> sesi)</p>
 </div>
 
 <?= $form_tambah_sesi ?>

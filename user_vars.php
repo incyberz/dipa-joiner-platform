@@ -81,7 +81,7 @@ $punya_profil = false;
 $src_profil = $src_profil_na;
 
 if ($d_peserta['image']) {
-  $src = "assets/img/peserta/$d_peserta[image]";
+  $src = "$lokasi_profil/$d_peserta[image]";
   if (file_exists($src)) {
     $src_profil = $src;
     $punya_profil = true;
@@ -94,9 +94,10 @@ if ($d_peserta['image']) {
 # PROFIL PERANG
 # ========================================================
 $punya_profil_perang = false;
+$src_profil_perang_na = "assets/img/no_war_profil.jpg";
 $src_profil_perang = $src_profil_perang_na;
 if ($d_peserta['war_image']) {
-  $src = "assets/img/peserta/$d_peserta[war_image]";
+  $src = "$lokasi_profil/$d_peserta[war_image]";
   if (file_exists($src)) {
     $src_profil_perang = $src;
     $punya_profil_perang = true;

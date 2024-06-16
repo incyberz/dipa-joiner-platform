@@ -5,12 +5,12 @@ $judul2 = "Yang Belum Ngerjain";
 
 
 $s = "SELECT id_$jenis FROM tb_assign_$jenis WHERE id=$id_assign";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-if(mysqli_num_rows($q)){
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+if (mysqli_num_rows($q)) {
   $d = mysqli_fetch_assoc($q);
   $id_jenis = $d["id_$jenis"];
-}else{
-  die(div_alert('danger','Data Assign $jenis tidak ada.'));
+} else {
+  die(div_alert('danger', 'Data Assign $jenis tidak ada.'));
 }
 
 $s = "SELECT 
@@ -33,26 +33,26 @@ AND f.status=1
 AND f.kelas = '$target_kelas'
 ORDER BY f.kelas, d.nama 
 ";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
 $arr_yg_sudah = [];
 $divs = '';
-while($d=mysqli_fetch_assoc($q)){
-  array_push($arr_yg_sudah,$d['id_peserta']);
+while ($d = mysqli_fetch_assoc($q)) {
+  array_push($arr_yg_sudah, $d['id_peserta']);
   $nama_peserta = ucwords(strtolower($d['nama_peserta']));
-  $kelas_show = str_replace("~$tahun_ajar",'',$d['kelas']);
+  $kelas_show = str_replace("~$tahun_ajar", '', $d['kelas']);
 
-  if($d['status']==1){
+  if ($d['status'] == 1) {
     $gradasi = 'hijau';
-  }elseif($d['status']==-1){
+  } elseif ($d['status'] == -1) {
     $gradasi = 'merah';
-  }else{
+  } else {
     $gradasi = 'kuning';
   }
 
-  $divs.= "
+  $divs .= "
     <div class='wadah gradasi-$gradasi tengah'>
-      <img src='assets/img/peserta/wars/peserta-$d[id_peserta].jpg' class=foto_profil>
+      <img src='$lokasi_profil/wars/peserta-$d[id_peserta].jpg' class=foto_profil>
       <div class='f14 darkblue'>$nama_peserta</div> 
       <div class='f12 abu'>$kelas_show</div> 
     </div>
@@ -81,17 +81,17 @@ AND b.kelas = '$target_kelas'
 ORDER BY b.kelas, c.nama 
 ";
 
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
 $divs_belum = '';
-while($d=mysqli_fetch_assoc($q)){
-  if(in_array($d['id_peserta'],$arr_yg_sudah)) continue;
+while ($d = mysqli_fetch_assoc($q)) {
+  if (in_array($d['id_peserta'], $arr_yg_sudah)) continue;
   $nama_peserta = ucwords(strtolower($d['nama_peserta']));
-  $kelas_show = str_replace("~$tahun_ajar",'',$d['kelas']);
+  $kelas_show = str_replace("~$tahun_ajar", '', $d['kelas']);
 
-  $divs_belum.= "
+  $divs_belum .= "
     <div class='wadah gradasi-hijau tengah'>
-      <img src='assets/img/peserta/wars/peserta-$d[id_peserta].jpg' class=foto_profil>
+      <img src='$lokasi_profil/wars/peserta-$d[id_peserta].jpg' class=foto_profil>
       <div class='f14 darkblue'>$nama_peserta</div> 
       <div class='f12 abu'>$kelas_show</div> 
     </div>

@@ -1,5 +1,9 @@
 <?php
 instruktur_only();
+set_h2(
+  'SUPER DELETE PESERTA',
+  "<span class='tebal red'>Perhatian! Super Delete digunakan untuk menghapus peserta dan seluruh kegiatan aktifitas belajarnya. <br>Aktifitas Presensi, Latihan, Challenge, Create Soal, Play Kuis, dan aktifitas lainnya juga akan terhapus.</span>"
+);
 
 $tb = 'Silahkan search!';
 $keyword = '';
@@ -14,24 +18,24 @@ if (isset($_POST['btn_reset_password'])) {
 }
 
 if (isset($_POST['btn_search'])) {
+
   unset($_POST['btn_search']);
   $keyword = $_POST['keyword'];
 
   $s = "SELECT a.id,
   a.nama,
-  b.akumulasi_poin,
+  -- b.akumulasi_poin,
   d.kelas,
   (SELECT COUNT(1) FROM tb_war WHERE id_penjawab=a.id) count_wars,  
   (SELECT COUNT(1) FROM tb_jawabans WHERE id_peserta=a.id) count_ujian  
   FROM tb_peserta a 
-  JOIN tb_poin b ON a.id=b.id_peserta 
   JOIN tb_kelas_peserta c ON a.id=c.id_peserta 
   JOIN tb_kelas d ON c.kelas=d.kelas 
   JOIN tb_room_kelas e ON d.kelas=e.kelas 
   WHERE a.nama like '%$keyword%'
   AND d.status=1 
   AND d.tahun_ajar = $tahun_ajar 
-  AND b.id_room = $id_room 
+  -- AND b.id_room = $id_room 
   AND e.id_room = $id_room 
   ";
   // echo "<hr>$s";
@@ -59,14 +63,9 @@ if (isset($_POST['btn_search'])) {
     ";
   }
 
-  $tb = "<div class=wadah><table class=table>$tr</table></div>";
+  $tb = "<div class='wadah gradasi-kuning'><table class=table>$tr</table></div>";
 }
-?>
-<div class="section-title">
-  <h2 class=proper>SUPER DELETE PESERTA</h2>
-</div>
 
-<?php
 if (isset($_GET['id'])) {
   $id = $_GET['id'];
 
@@ -160,7 +159,7 @@ if (isset($_GET['id'])) {
 } else { ?>
 
   <form method=post>
-    <div class="flexy wadah">
+    <div class="flexy wadah gradasi-kuning">
       <input type="text" class="form-control" placeholder='keyword' name=keyword value='<?= $keyword ?>'>
       <button class="btn btn-primary" name=btn_search>Search</button>
 

@@ -338,8 +338,11 @@ ORDER BY b.kelas, a.nama
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $total_data = mysqli_num_rows($q);
 if (mysqli_num_rows($q) > 1 and $id_role == 1) die('Duplicate result ditemukan untuk setiap peserta');
-
-
+if ($id_role == 2 and !$total_data) {
+  echo div_alert('danger', "Belum ada peserta pada room ini. | <a href='?peserta_kelas'>Peserta Kelas</a>");
+  jsurl('?peserta_kelas', 5000);
+  exit;
+}
 
 
 
@@ -576,7 +579,7 @@ while ($d = mysqli_fetch_assoc($q)) {
       $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
     } else {
       if ($get_show_img) {
-        $src = "assets/img/peserta/wars/peserta-$d[id_peserta].jpg";
+        $src = "$lokasi_profil/wars/peserta-$d[id_peserta].jpg";
         if (file_exists($src)) {
           $img = "<img src='$src' class='foto_profil'>";
         } else {

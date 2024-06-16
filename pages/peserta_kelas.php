@@ -51,6 +51,8 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
   $s2 = "SELECT 
   d.id as id_peserta,
   d.nama,
+  d.image,
+  d.war_image,
   b.kelas
 
   FROM tb_kelas_peserta a 
@@ -65,15 +67,20 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
 
   $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
 
-  $list_peserta = '';
+  if (mysqli_num_rows($q2)) {
+    $list_peserta = '';
+  } else {
+    $list_peserta = div_alert('danger', "Tidak ada peserta pada kelas $d[kelas]. | <a href='?assign_peserta_kelas&kelas=$d[kelas]'>$img_add Assign</a>");
+  }
+
   $no = 0;
   while ($d2 = mysqli_fetch_assoc($q2)) {
     $nama = ucwords(strtolower($d2['nama']));
     $jumlah_peserta++;
 
     if ($get_mode == 'fast') {
-      $src2 = "assets/img/peserta/peserta-$d2[id_peserta].jpg";
-      $src = "assets/img/peserta/wars/peserta-$d2[id_peserta].jpg";
+      $src2 = "$lokasi_profil/peserta-$d2[id_peserta].jpg";
+      $src = "$lokasi_profil/wars/peserta-$d2[id_peserta].jpg";
       $sty = '';
       $link_super_delete = '';
       if (file_exists($src)) {
@@ -208,7 +215,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
         $count_latihan_wajib = 0;
         $count_sudah_mengerjakan = 0;
         if (!$count_latihan) {
-          $data_jenis[$jenis] .= div_alert('danger', "Maaf, belum ada satupun $jenis pada room $room. Beritahukan hal ini kepada instruktur!");
+          $data_jenis[$jenis] .= div_alert('danger', "Belum ada $jenis pada room ini. ~ <a href='?activity&jenis=$jenis'>$img_add </a>");
         } else {
           $rno = '';
           while ($d3 = mysqli_fetch_assoc($q3)) {
@@ -246,16 +253,24 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
       $uts_pg = '-';
       $uas_pg = '-';
 
+      $akumulasi_poin = $d_poin['akumulasi_poin'] ?? 0;
+      $src = "$lokasi_profil/wars/$d2[war_image]";
+      $src_na = "$lokasi_img/img_na.jpg";
+      $src = file_exists($src) ? $src : $src_na;
+
+      $boleh_delete = 0;
+      $btn_delete = $boleh_delete ? "<a href='#'>$img_delete</a>" : "<span onclick='alert(`Tidak bisa menghapus peserta ini karena sudah pernah melaksanakan aktifitas belajar.`)'>$img_delete_disabled</span>";
+
       $list_peserta .= "
         <tr>
           <td>$no</td>
           <td class='kecil tengah abu'>
-            <img src='assets/img/peserta/wars/peserta-$d2[id_peserta].jpg' class='foto_profil'>
+            <img src='$src' class='foto_profil'>
           </td>
           <td>
             <div>$nama</div>
             <div class='f12 abu'>$d2[kelas]</div>
-            <div class='f12 abu'>Points: $d_poin[akumulasi_poin] <span class=btn_aksi id=detail_poin$d2[id_peserta]__toggle>$img_detail</span></div>
+            <div class='f12 abu'>Points: $akumulasi_poin <span class=btn_aksi id=detail_poin$d2[id_peserta]__toggle>$img_detail</span></div>
             <div id=detail_poin$d2[id_peserta] class='wadah hideit f12'>
               $d_poin_show
             </div>
@@ -271,7 +286,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
             <div><span class='abu miring f12'>UAS PG:</span> $uas_pg</div>
           </td>
           <td>
-            <div><a href='#'>$img_delete Delete</a></div>
+            <div>$btn_delete</div>
           </td>
         </tr>
       ";
@@ -280,13 +295,23 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
     }
   }
 
+  $link_assign = "
+    <a href='?assign_peserta_kelas&kelas=$d[kelas]'>
+      $img_add 
+      <span class='green f14'>
+        Assign Peserta Kelas
+      </span>
+    </a>
+  ";
+
   if ($get_mode == 'fast') {
     $blok_kelas .= "
       <div class='wadah gradasi-hijau' zzzdata-aos='fade-up' data-aos-delay='150'>
         Peserta Kelas $d[kelas]
         <div class='wadah bg-white flexy mt1'>
           $list_peserta
-        </div>      
+        </div>
+        $link_assign
       </div>
     ";
   } elseif ($get_mode == 'detail') {
@@ -305,6 +330,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
           </thead>
           $list_peserta
         </table>      
+        $link_assign
       </div>
     ";
   } else {

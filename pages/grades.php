@@ -231,7 +231,7 @@ if (mysqli_num_rows($q)) {
     }
 
     $login_as = $id_role == 2 ? "<a href='?login_as&username=$d[username]' target=_blank>$img_login_as</a>" : '';
-    $td_profil = ($id_role == 2 and $show_img) ? "<td><img src='assets/img/peserta/wars/peserta-$d[id_peserta].jpg' class=foto_profil></td>" : '';
+    $td_profil = ($id_role == 2 and $show_img) ? "<td><img src='$lokasi_profil/wars/peserta-$d[id_peserta].jpg' class=foto_profil></td>" : '';
 
     $toggle_profil = $id_role == 2 ? "<a href='?grades&kelas=$get_kelas&show_img=1'>Show Profile</a> | <a href='?update_wars_data' target=_blank>Update Wars Data</a>" : '';
     $toggle_profil = ($id_role == 2 and $show_img) ? "<a href='?grades&kelas=$get_kelas'>Hide Profile</a>" : $toggle_profil;

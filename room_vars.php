@@ -16,7 +16,10 @@ b.nama as nama_instruktur,
   AND id_room='$id_room') id_room_kelas,
 (
   SELECT last_update FROM tb_room_stats  
-  WHERE id_room='$id_room') last_update_room
+  WHERE id_room='$id_room') last_update_room,
+(
+  SELECT COUNT(1) FROM tb_sesi  
+  WHERE id_room='$id_room') count_sesi
 
 
 FROM tb_room a 
@@ -38,11 +41,13 @@ $id_room_kelas = $d_room['id_room_kelas'];
 $id_instruktur = $d_room['id_instruktur'];
 $nama_instruktur = $d_room['nama_instruktur'];
 $last_update_room = $d_room['last_update_room'];
+$jumlah_sesi = $d_room['count_sesi'];
+$count_sesi = $d_room['count_sesi'];
 
 # ========================================================
 # PROFILE INSTRUKTUR
 # ========================================================
-$path_profil_instruktur = "assets/img/peserta/peserta-$id_instruktur.jpg";
+$path_profil_instruktur = "$lokasi_profil/peserta-$id_instruktur.jpg";
 $profil_instruktur = "<img src='$path_profil_instruktur' class='foto_profil' alt='profil_instruktur' />";
 
 # ========================================================
@@ -140,7 +145,7 @@ $total_challenge_wajib = $d['total_challenge_wajib'];
 $jumlah_verif_war = 0;
 $jumlah_verif_profil = 0;
 if ($id_role == 2) {
-  $rfiles = scandir('assets/img/peserta/');
+  $rfiles = scandir($lokasi_profil);
   foreach ($rfiles as $file) {
     if (strpos("salt$file", 'peserta-')) {
       $jumlah_verif_profil++;
