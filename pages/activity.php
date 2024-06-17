@@ -22,6 +22,24 @@ $ryaitu = [
 $yaitu = $ryaitu[$jenis];
 $pesan_upload = null;
 $closed = 0;
+$Jenis = ucwords($jenis);
+
+set_h2(
+  $Jenis,
+  "
+    $yaitu
+    <div class=mt2>
+      <a href='?activity&jenis=$jenis'>$img_prev</a>
+    </div>
+  "
+);
+
+include 'activity_manage_processor.php';
+
+$cara_pengumpulan_default = $jenis == 'latihan'
+  ? "Kerjakan latihan di Buku Catatan kalian atau di komputer/HP, kemudian foto/screenshot, lalu upload di latihan ini"
+  : "Kerjakan Challenge sesuai dengan Sub Level Challenge yang kalian pilih, khusus untuk MK Pemrograman Web maka wajib dihostingkan, untuk Challenge Video maka wajib diupload ke Youtube, dan untuk Room lainnya upload ke GDrive semua hasil pekerjaan. Dapatkan link-nya dan paste-kan link-nya di Challenge ini agar instruktur dapat memeriksanya via online";
+
 
 # ============================================
 # NORMAL FLOW
@@ -111,7 +129,7 @@ if (!$id_assign) {
     ";
   }
 } else {
-  include 'activity_show.php';
+  include 'activity_detail.php';
 }
 
 

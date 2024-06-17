@@ -161,7 +161,7 @@ foreach ($rjenis as $key => $jenis) {
           <div class='hideit wadah gradasi-hijau' id=form_approve$id_bukti>
             <form method=post>
               <div class='consolas f10 abu mb2'>Form Approve</div>
-              <input name=poin_tambahan class='form-control form-control-sm mb2' placeholder='Nilai tambahan dari instruktur'>
+              <input name=poin_apresiasi class='form-control form-control-sm mb2' placeholder='Nilai apresiasi dari instruktur'>
               <input name=apresiasi class='form-control form-control-sm mb2' placeholder='Apresiasi Selamat! Anda berhasil...'>
               <button class='btn btn-success btn-sm w-100' name=btn_approve value='$value_btn_approve'>Approve</button>
             </form>

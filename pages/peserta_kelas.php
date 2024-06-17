@@ -91,7 +91,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
         $src = $src2;
       } else {
         $src = 'assets/img/img_na.jpg';
-        $link_super_delete = "<a href='?super_delete_peserta&id=$d2[id_peserta]'>$img_delete</a>";
+        $link_super_delete = "<a href='?super_delete_peserta&keyword=$d2[nama]'>$img_delete</a>";
       }
       $list_peserta .= "
       <div class='kecil tengah abu'>

@@ -104,8 +104,9 @@ $s = "SELECT
   JOIN tb_room_kelas r ON q.kelas=r.kelas 
   JOIN tb_peserta s ON p.id_peserta=s.id  
   WHERE r.id_room=$id_room 
-  AND q.status=1 
-  AND s.status=1 
+  AND q.status=1 -- hanya kelas aktif
+  AND s.status=1 -- hanya peserta aktif
+  AND s.id_role=1 -- hanya peserta
   AND s.nama NOT LIKE '%dummy%' 
   ) total_peserta,
 

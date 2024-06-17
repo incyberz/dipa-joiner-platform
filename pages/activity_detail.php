@@ -29,7 +29,13 @@ b.no as no_sesi,
 (SELECT id FROM tb_bukti_$jenis WHERE id_peserta=$id_peserta AND id_assign_$jenis=a.id) as id_bukti,
 (
   SELECT COUNT(1) FROM tb_sublevel_challenge  
-  WHERE id_challenge=c.id) count_sublevel 
+  WHERE id_challenge=c.id) count_sublevel, 
+(
+  SELECT COUNT(1) FROM tb_bukti_$jenis p 
+  JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id   
+  JOIN tb_peserta r ON p.id_peserta=r.id
+  WHERE q.id_$jenis=a.id_$jenis
+  AND r.id_role=1) count_submiter 
 FROM tb_assign_$jenis a 
 JOIN tb_sesi b ON a.id_sesi=b.id 
 JOIN tb_$jenis c ON a.id_$jenis=c.id 
@@ -52,6 +58,7 @@ $ontime_point = $d['ontime_point'];
 $ontime_dalam = $d['ontime_dalam'];
 $ontime_deadline = $d['ontime_deadline'];
 $ket = $d['ket'];
+$count_submiter = $d['count_submiter'];
 $link_includes = $d['link_includes'] ?? ''; //untuk latihan tidak ada link_includes
 $link_excludes = $d['link_excludes'] ?? ''; //untuk latihan tidak ada link_excludes
 
@@ -158,7 +165,7 @@ if ($status == -1 and $jenis == 'challenge') {
 $hasil = "<div class='wadah'><div>Hasil $jenis:</div>$hasil$btn_hapus_bukti</div>";
 
 $info_ekstensi = [
-  'latihan' => 'ekstensi harus JPG, jika latihan coding posisikan bukti screenshoot: kiri code, kanan hasil, lalu printscreen dan paste di ms-word. Upload file word ke Google Drive, share to publik, dan dapatkan link-nya, lalu paste di web DIPA',
+  'latihan' => 'ekstensi harus JPG, jika latihan coding posisikan bukti screenshoot: kiri code, kanan hasil',
   'challenge' => 'harus berupa link-online diawali dg http atau https, misal: http://iin-sholihin.github.io, https://insho.rf.gd',
 ];
 
@@ -172,7 +179,7 @@ $input_type = [
   'challenge' => 'text minlength=15 maxlength=100',
 ];
 
-$btn_upload = $id_role != 3 ? "<button class='btn btn-primary btn-block' name=btn_upload value='$id_assign_jenis'>Upload</button>" : "<span class='btn btn-primary btn-block' onclick='alert(\"Anda login sebagai Supervisor! Terima kasih sudah mencoba upload.\")'>Upload</span>";
+$btn_upload = $id_role != 3 ? "<button class='btn btn-primary btn-block' name=btn_upload value='$id_assign_jenis'>Submit</button>" : "<span class='btn btn-primary btn-block' onclick='alert(\"Anda login sebagai Supervisor! Terima kasih sudah mencoba upload.\")'>Upload</span>";
 $form_add_sublevel = '';
 
 if ($id_bukti) {
@@ -187,9 +194,9 @@ if ($id_bukti) {
         $form_bukti = "
           <form method=post enctype=multipart/form-data>
             Bukti kamu mengerjakan:
-            <div class=mb2>
+            <div class='mb2 mt1'>
               <input class=form-control type=$input_type[$jenis] name=bukti accept='$accept_ekstensi[$jenis]' required>
-              <div class='kecil miring abu'>)* $info_ekstensi[$jenis].</div>
+              <div class='kecil miring abu mt1 pl1'>)* $info_ekstensi[$jenis].</div>
             </div>
             $btn_upload
           </form>
@@ -246,12 +253,95 @@ if ($id_bukti) {
 }
 
 $link_panduan_show = $d['link_panduan'] ? "<a target=_blank href='$d[link_panduan]'>$d[link_panduan]</a>" : '<span class="consolas f12 miring">belum ada</span>';
-$tanggal_jenis_show = date('M d, H:i', strtotime($d['tanggal_assign']));
+$tanggal_jenis_show = $nama_hari[date('w', strtotime($d['tanggal_assign']))] . ', ' . date('d-M-Y, H:i', strtotime($d['tanggal_assign']));
 $basic_point_show = number_format($d['basic_point'], 0);
 $ontime_point_show = number_format($d['ontime_point'], 0);
 $ontime_dalam_show = eta(strtotime($tanggal_assign) - strtotime('now') + $d['ontime_dalam'] * 60);
 $ontime_deadline_show = eta(strtotime($tanggal_assign) - strtotime('now') + $d['ontime_deadline'] * 60);
 
+# ============================================================
+# PERSEN SUBMITER
+# ============================================================
+$persen_peserta = round($count_submiter * 100 / $total_peserta, 1);
+# ============================================================
+# POIN ANTRIAN
+# ============================================================
+$ten_percent = intval($total_peserta / 10);
+$poin_antrian_show = '-';
+$be_the_first = '';
+$Submiter = $jenis == 'latihan' ? 'Submiter' : 'Challenger';
+if ($count_submiter < $ten_percent and $count_submiter <= 10) {
+  $arr_persen_poin_antrian = [
+    0 => 40,
+    1 => 32,
+    2 => 26,
+    3 => 20,
+    4 => 16,
+    5 => 13,
+    6 => 10,
+    7 => 8,
+    8 => 7,
+    9 => 5,
+  ];
+  $poin_antrian = $arr_persen_poin_antrian[$count_submiter] * $basic_point / 100;
+  $poin_antrian_show = number_format($poin_antrian, 0) . ' LP';
+
+  $arr_be_the_first = [
+    0 => "Be the First $Submiter !",
+    1 => "Be the Second $Submiter !",
+    2 => "Be the Third $Submiter !",
+    3 => "Be the Top 5 $Submiter !",
+    4 => "Be the Top 5 $Submiter !",
+    5 => "Be the Top 10 $Submiter !",
+    6 => "Be the Top 10 $Submiter !",
+    7 => "Be the Top 10 $Submiter !",
+    8 => "Be the Top 10 $Submiter !",
+    9 => "Be the Top 10 $Submiter !",
+
+  ];
+  $be_the_first = $arr_be_the_first[$count_submiter];
+}
+
+# ============================================================
+# 3 BEST SUBMITER
+# ============================================================
+$best_submiter = '';
+if ($count_submiter) {
+  $s2 = "SELECT 
+  (a.get_point + a.poin_antrian + a.poin_apresiasi) total_poin, 
+  c.nama as nama_submiter, 
+  c.image as image_submiter, 
+  c.war_image as war_image_submiter 
+  FROM tb_bukti_$jenis a 
+  JOIN tb_assign_$jenis b ON a.id_assign_$jenis=b.id   
+  JOIN tb_peserta c ON a.id_peserta=c.id
+  WHERE b.id_$jenis=$id_jenis
+  AND c.id_role=1 
+  ORDER BY total_poin DESC, tanggal_upload  
+  LIMIT 3 
+  ";
+  $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+  while ($d2 = mysqli_fetch_assoc($q2)) {
+    $nama_submiter = $d2['nama_submiter'];
+    // echo "<br>$nama_submiter";
+    $best_submiter .= "
+      <div>
+        <img src='$lokasi_profil/$d2[war_image_submiter]' class=foto_profil>
+        <div class='f12 darkblue'>$d2[nama_submiter]</div>
+      </div>
+    ";
+  }
+  $best_submiter = "
+    <h4>Best $Submiter</h4>
+    <div class='flexy flex-center center'>
+      $best_submiter
+    </div>
+  ";
+}
+
+# ============================================================
+# LATIHAN/CHALLENGE INFO
+# ============================================================
 $list_info = "
   <table class='table kecil mt2 table-striped'>
     <tr>
@@ -267,42 +357,52 @@ $list_info = "
       <td class='darkblue'>$basic_point_show LP</td>
     </tr>
     <tr>
+      <td class='tebal abu'>Bonus First Submit</td>
+      <td class='darkblue'>$poin_antrian_show</td>
+    </tr>
+    <tr>
+      <td class='tebal abu'>Apresiasi Point</td>
+      <td class='darkblue'>0 s.d $basic_point_show LP</td>
+    </tr>
+    <tr>
       <td class='tebal abu'>Ontime Point</td>
       <td class='darkblue'>$ontime_point_show LP</td>
     </tr>
     <tr>
-      <td class='tebal abu'>Last Ontime</td>
+      <td class='tebal abu'>Ontime Dalam</td>
       <td class='tebal darkred'>$ontime_dalam_show</td>
     </tr>
     <tr>
-      <td class='tebal abu'>Deadline</td>
+      <td class='tebal abu'>Ontime Deadline</td>
       <td class='tebal darkred'>$ontime_deadline_show</td>
     </tr>
+    <tr>
+      <td class='tebal abu'>Closing $Jenis</td>
+      <td class='tebal darkred'>hingga UTS/UAS (atau sesuai info dari instruktur)</td>
+    </tr>
   </table>
-  
+
+  <div class='wadah darkblue tengah f14 bg-white'>
+    Dikerjakan oleh $count_submiter of $total_peserta peserta ($persen_peserta%)
+    <div class='progress mt1'>
+      <div class='progress-bar' style='width:$persen_peserta%'>
+      </div>
+    </div>
+    <div class='f20 blue pt2'>
+      $be_the_first
+      $best_submiter
+    </div>
+  </div>
 ";
 
 $admin_hint = $id_role == 2 ? "<span class=abu>Silahkan ubah via <b class='consolas darkblue'>Update $jenis Properties</b>.</span>" : '';
 
-$cara_pengumpulan_show = $d['cara_pengumpulan'] ? "
-  <div class='abu tebal mt4 mb2 consolas'>Cara Pengumpulan:</div>
-  $d[cara_pengumpulan]
-" : "<div class='red f12'>Cara Pengumpulan belum ditentukan. $admin_hint</div>";
-
-if ($jenis == 'latihan' and !$d['cara_pengumpulan']) {
-  $cara_pengumpulan_show = ''; // cara pengumpulan untuk latihan secara default
-}
+$cara_pengumpulan_show = $d['cara_pengumpulan'] ?? $cara_pengumpulan_default;
+$cara_pengumpulan_show = "<div class='abu tebal mt4 mb2 consolas'>Cara Pengumpulan:</div>$cara_pengumpulan_show";
 
 $ket_show = $d['ket'] ? $d['ket'] : "<span class='red f12'>Keterangan $jenis belum ditentukan. $admin_hint</span>";
 
-echo "
-<div class='section-title' data-zzz-aos='fade-up'>
-  <h2 class=proper>$jenis</h2>
-  <p>$yaitu</p>
-</div>
-";
 
-if ($id_role == 2) include 'include/form_target_kelas.php';
 
 echo "
 <div class='wadah gradasi-hijau' data-zzz-aos=fade-up>
@@ -341,8 +441,9 @@ echo "
 # ADMIN ONLY
 # =========================================================
 if ($id_role == 2) {
+  echo '<hr class="mt4 mb4"><h3 class="tebal darkred tengah mb4">Fitur Khusus Instruktur</h3>';
+  include 'include/form_target_kelas.php';
   include 'activity_submiter.php';
-  include 'activity_manage_process.php';
   include 'activity_manage.php';
 }
 ?>

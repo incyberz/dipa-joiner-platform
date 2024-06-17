@@ -6,7 +6,7 @@ set_h2(
 );
 
 $tb = 'Silahkan search!';
-$keyword = '';
+$keyword = $_GET['keyword'] ?? '';
 if (isset($_POST['btn_reset_password'])) {
   $id_peserta = $_POST['btn_reset_password'];
   $s = "UPDATE tb_peserta SET password=NULL where id=$id_peserta";
@@ -18,14 +18,19 @@ if (isset($_POST['btn_reset_password'])) {
 }
 
 if (isset($_POST['btn_search'])) {
+  jsurl("?super_delete_peserta&keyword=$_POST[keyword]");
+}
+if ($keyword) {
 
-  unset($_POST['btn_search']);
-  $keyword = $_POST['keyword'];
-
+  # ============================================================
+  # SELECT PESERTA BY KEYWORD
+  # ============================================================
   $s = "SELECT a.id,
   a.nama,
   -- b.akumulasi_poin,
   d.kelas,
+  (SELECT akumulasi_poin FROM tb_poin WHERE id_peserta=a.id and id_room=$id_room) akumulasi_poin,  
+  (SELECT COUNT(1) FROM tb_kelas_peserta WHERE id_peserta=a.id) count_kelas_peserta,  
   (SELECT COUNT(1) FROM tb_war WHERE id_penjawab=a.id) count_wars,  
   (SELECT COUNT(1) FROM tb_jawabans WHERE id_peserta=a.id) count_ujian  
   FROM tb_peserta a 
@@ -33,29 +38,35 @@ if (isset($_POST['btn_search'])) {
   JOIN tb_kelas d ON c.kelas=d.kelas 
   JOIN tb_room_kelas e ON d.kelas=e.kelas 
   WHERE a.nama like '%$keyword%'
+  AND a.id_role = 1 
   AND d.status=1 
   AND d.tahun_ajar = $tahun_ajar 
   -- AND b.id_room = $id_room 
   AND e.id_room = $id_room 
+  LIMIT 50
   ";
   // echo "<hr>$s";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
   $tr = '';
+  if (!mysqli_num_rows($q)) {
+    $tr = '<tr><td>' . div_alert('danger', "Data peserta tidak ditemukan pada room ini  | keyword: <b>$keyword</b>") . '</td></tr>';
+  }
+
   while ($d = mysqli_fetch_assoc($q)) {
     $id = $d['id'];
-    $super_delete = $d['count_ujian'] ? '' : "<a href='?super_delete_peserta&id=$id' class='btn btn-danger' onclick='return confirm(\"Perform Super Delete?\")'>Super Delete</a>";
+    $super_delete = $d['count_ujian'] ? '' : "<a href='?super_delete_peserta&id=$id' class='btn btn-danger' onclick='return confirm(`Perform Super Delete?\n\nPerhatian! Seluruh data aktifitas dari peserta ini juga akan terhapus.`)'>Super Delete</a>";
     $tr .= "
       <tr>
         <td>
-          $d[nama] | $d[kelas] | $d[akumulasi_poin] LP | Wars: $d[count_wars] | Ujian: $d[count_ujian]
+          $d[nama] | $d[kelas] | $d[akumulasi_poin] LP | Wars: $d[count_wars] | Ujian: $d[count_ujian] | count_kelas_peserta: $d[count_kelas_peserta]
         </td>
         <td>
           $super_delete
         </td>
         <td>
           <form method=post>
-            <button class='btn btn-danger ' name=btn_reset_password value=$id onclick='return confirm(\"Yakin untuk reset password?\")'>Reset Password</button>
+            <button class='btn btn-danger ' name=btn_reset_password value=$id onclick='return confirm(`Yakin untuk reset password?\n\nPassword akan kembali NULL, sehingga untuk login peserta, password  adalah sama dengan username-nya.`)'>Reset Password</button>
           </form>
         </td>
 

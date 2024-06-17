@@ -35,17 +35,17 @@ if (isset($_POST['btn_approve'])) {
   if ($status == 1 || $status == -1) { // approve
     if ($status == 1) {
 
-      $poin_tambahan = intval($_POST['poin_tambahan']);
+      $poin_apresiasi = intval($_POST['poin_apresiasi']);
       $apresiasi = $_POST['apresiasi'];
 
-      $poin_tambahan = $poin_tambahan ? $poin_tambahan : 'NULL';
+      $poin_apresiasi = $poin_apresiasi ? $poin_apresiasi : 'NULL';
       $apresiasi = $apresiasi ? "'$apresiasi'" : 'NULL';
 
       $s = "UPDATE tb_bukti_$jenis SET 
       tanggal_verifikasi=CURRENT_TIMESTAMP,
       verified_by = $id_peserta,
       status = $status,
-      poin_tambahan = $poin_tambahan,
+      poin_apresiasi = $poin_apresiasi,
       apresiasi = $apresiasi
       WHERE id=$id_bukti";
     } else { // status = -1 (reject)
