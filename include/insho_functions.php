@@ -1,4 +1,5 @@
 <?php
+// v.1.3.10 add hari_tanggal
 // v.1.3.9 update eta function
 // v.1.3.8 autoset title when set_judul
 // v.1.3.7 set_h2 id, set_judul, set_sub_judul
@@ -10,6 +11,20 @@
 // v.1.3.1 echolog update
 // v.1.3.0 revision with echolog
 // v.1.2.0 revision with function baca_csv
+
+function hari_tanggal($datetime)
+{
+  $nama_hari = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+  $nama_bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+  $time = strtotime($datetime);
+  return $nama_hari[date('w', $time)]
+    . ', '
+    . date('d', $time)
+    . ' '
+    . $nama_bulan[intval(date('m', $time))]
+    . ' '
+    . date('Y, H:i', $time);
+}
 
 function set_h2($judul, $sub_judul = '', $href_back = '')
 {

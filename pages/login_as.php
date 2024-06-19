@@ -8,14 +8,19 @@ instruktur_only();
 // if($id_role==1) die(erid('roles'));
 $judul = 'Login As';
 
-echo '<pre>';
-var_dump($_SESSION);
-echo '</pre>';
+// echo '<pre>';
+// var_dump($_SESSION);
+// echo '</pre>';
 
-if ($id_role == 2) {
+if ($id_role == 2 || isset($_SESSION['dipa_master_username'])) {
   $new_username = $_GET['username'] ?? '';
   if (!$new_username) {
-    $get_id_peserta = $_GET['id_peserta'] ?? die(erid('id_peserta'));
+    $get_id_peserta = $_GET['id_peserta'] ?? '';
+    if (!$get_id_peserta) {
+      session_destroy();
+      echo div_alert('danger', "Tidak dapat handle multiple Login As. Silahkan login ulang!");
+      jsurl('', 2000);
+    }
     $s = "SELECT username FROM tb_peserta WHERE id=$get_id_peserta";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     if (!mysqli_num_rows($q)) {

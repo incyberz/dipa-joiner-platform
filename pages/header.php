@@ -11,6 +11,7 @@ if ($id_room) {
     ";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     $jumlah_verif += mysqli_num_rows($q);
+    // die($s);
   }
 }
 $jumlah_ask = 0;
@@ -70,13 +71,14 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
           $menu_instruktur = '';
           $li_manage_room = '';
           if ($id_role == 2) {
-            $li_verif = ($id_role == 1 || !$jumlah_verif) ? '' : "<li><a href='?verif' class='proper'><span class='biru tebal'>Verif</span> <span class='count_badge badge_red' id='jumlah_verif'>$jumlah_verif</span></a></li>";
+            $li_verif = !$jumlah_verif ? '' : "<li><a href='?verif' class='proper'><span class='biru tebal'>Verif</span> <span class='count_badge badge_red' id='jumlah_verif'>$jumlah_verif</span></a></li>";
 
             $li_ask = !$jumlah_ask ? '' : "<li class='hideit suspend zzz'><a href='?chats' class='proper'><span class='biru tebal'>Chats</span> <span class='count_badge badge_red' id='jumlah_ask'>$jumlah_ask</span></a></li>";
 
             $li_verif_war = !$jumlah_verif_war ? '' : "<li><a href='?verifikasi_war_profil' class='proper'><span class='biru tebal'>WarProfil</span> <span class='count_badge badge_red' id='jumlah_verif_war'>$jumlah_verif_war</span></a></li>";
 
             $menu_instruktur = "
+              $li_verif
               $li_ask
             ";
 

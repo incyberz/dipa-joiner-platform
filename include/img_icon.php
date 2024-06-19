@@ -29,3 +29,4 @@ $img_delete_disabled = img_icon('delete_disabled');
 $img_hapus = img_icon('delete');
 $img_login_as = img_icon('login_as');
 $img_prev = img_icon('prev');
+$img_warning = img_icon('warning');

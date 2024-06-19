@@ -1,5 +1,65 @@
 <hr>
 <?php
+# ============================================================
+# GET ARRAY DATA FROM DB
+# ============================================================
+$s = "SELECT id,no,nama FROM tb_sesi WHERE id_room=$id_room";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+$arr_id_sesi = [];
+$arr_sesi = [];
+while ($d = mysqli_fetch_assoc($q)) {
+  array_push($arr_id_sesi, $d['id']);
+  array_push($arr_sesi, "P$d[no] $d[nama]");
+}
+
+$s = "SELECT a.kelas,a.id as id_room_kelas FROM tb_room_kelas a 
+JOIN tb_kelas b ON a.kelas=b.kelas  
+WHERE a.id_room=$id_room AND b.status=1
+";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+$li = '';
+$arr_id_room_kelas = [];
+while ($d = mysqli_fetch_assoc($q)) {
+  array_push($arr_id_room_kelas, $d['id_room_kelas']);
+  $li .= "<li>$d[kelas]</li>";
+}
+
+$grup_kelas_pengakses = "
+  <h3 class='darkblue'>Grup Kelas Pengakses $Jenis</h3>
+  <p>$Jenis yang Anda buat akan dapat diakses oleh kelas:</p>
+  <ol>$li</ol>
+  <div class='ml2 pl1 f14'>Opsi: <a href='?assign_room_kelas'>Assign Room Kelas</a></div>
+  <hr>
+";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # ======================================================
 # PROCESSOR :: ASSIGN
 # ======================================================
@@ -7,6 +67,10 @@ if (isset($_POST['btn_assign_sesi'])) {
   $arr = explode('__', $_POST['btn_assign_sesi']);
   $id_jenis = $arr[0];
   $id_sesi = $arr[1];
+
+  echo '<pre>';
+  var_dump($_POST);
+  echo '</pre>';
 
 
 
@@ -26,6 +90,7 @@ if (isset($_POST['btn_assign_sesi'])) {
   }
   echo "<div class='wadah gradasi-hijau'>$pesan</div>";
   jsurl();
+  exit;
 }
 
 # ======================================================
@@ -97,35 +162,6 @@ if (isset($_POST['btn_add_activity'])) {
 
 
 
-
-$s = "SELECT id,no,nama FROM tb_sesi WHERE id_room=$id_room";
-$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$arr_id_sesi = [];
-$arr_sesi = [];
-while ($d = mysqli_fetch_assoc($q)) {
-  array_push($arr_id_sesi, $d['id']);
-  array_push($arr_sesi, "P$d[no] $d[nama]");
-}
-
-$s = "SELECT a.kelas,a.id as id_room_kelas FROM tb_room_kelas a 
-JOIN tb_kelas b ON a.kelas=b.kelas  
-WHERE a.id_room=$id_room AND b.status=1
-";
-$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$li = '';
-$arr_id_room_kelas = [];
-while ($d = mysqli_fetch_assoc($q)) {
-  array_push($arr_id_room_kelas, $d['id_room_kelas']);
-  $li .= "<li>$d[kelas]</li>";
-}
-
-$grup_kelas_pengakses = "
-  <h3 class='darkblue'>Grup Kelas Pengakses $Jenis</h3>
-  <p>$Jenis yang Anda buat akan dapat diakses oleh kelas:</p>
-  <ol>$li</ol>
-  <div class='ml2 pl1 f14'>Opsi: <a href='?assign_room_kelas'>Assign Room Kelas</a></div>
-  <hr>
-";
 
 
 
@@ -221,10 +257,18 @@ while ($d = mysqli_fetch_assoc($q)) {
     </td>
   ";
 
-  if ($d['status_jenis'] == -1) {
-    $btn_close = "<button class='btn btn-success btn-sm' name=btn_open_$jenis value=$d[id] >Open</button>";
+  if ($d['count_bukti']) {
+    if ($d['status_jenis'] == -1) {
+      $btn_close = "<button class='btn btn-success btn-sm' name=btn_open_$jenis value=$d[id] >Open</button>";
+    } else {
+      $btn_close = "<button class='btn btn-danger btn-sm' name=btn_close_$jenis value=$d[id] >Close</button>";
+    }
+    $btn_drop = "<button class='btn btn-danger btn-sm' name=btn_drop_$jenis value=$d[id] >Drop</button>";
+    $btn_delete = '';
   } else {
-    $btn_close = "<button class='btn btn-danger btn-sm' name=btn_close_$jenis value=$d[id] >Close</button>";
+    $btn_delete = "<button class='btn btn-danger btn-sm' name=btn_delete_$jenis value=$d[id] onclick='return confirm(`Yakin hapus $jenis ini?`)'>Delete</button>";
+    $btn_drop = '';
+    $btn_close = '';
   }
 
   # ============================================================
@@ -239,8 +283,9 @@ while ($d = mysqli_fetch_assoc($q)) {
         $d[count_bukti]
       </td>
       <td>
-        <button class='btn btn-danger btn-sm' name=btn_drop_$jenis value=$d[id] >Drop</button> 
+        $btn_drop 
         $btn_close 
+        $btn_delete 
       </td>
     </tr>
   ";
@@ -257,7 +302,7 @@ echo "
   <div class='f14 consolas tebal red mb2'>Form Khusus Instruktur</div>
   
   <form method=post>
-    <h3 class=darkblue>Tabel Manage $Jenis</h3>
+    <h3 class=darkblue>Manage Assign $Jenis</h3>
     <table class=table>
       <thead>
         <th>No</th>

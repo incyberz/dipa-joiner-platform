@@ -1,3 +1,15 @@
+<style>
+  .suggest {
+    color: darkblue;
+    transition: .2s;
+    cursor: pointer;
+  }
+
+  .suggest:hover {
+    color: blue;
+    font-weight: bold;
+  }
+</style>
 <?php
 if ($id_role <= 1) jsurl('?');
 $get_kelas = $_GET['kelas'] ?? '';
@@ -27,7 +39,7 @@ echo "
   </div>
 ";
 
-include 'verif_process.php';
+include 'verif-processors.php';
 
 function menit_show($m)
 {
@@ -99,13 +111,14 @@ foreach ($rjenis as $key => $jenis) {
   AND h.id_room = $id_room 
   AND $sql_kelas 
   AND $sql_keyword 
-  ORDER BY e.nama,g.kelas, d.nama, c.no 
+  ORDER BY a.tanggal_upload, e.nama,g.kelas, d.nama, c.no 
   ";
   // echo '<pre>';
   // var_dump($s);
   // echo '</pre>';
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $row_count = mysqli_num_rows($q);
+
 
   if ($row_count) {
     $tr = '';
@@ -115,6 +128,8 @@ foreach ($rjenis as $key => $jenis) {
     $id_all = ''; // untuk approve all
     while ($d = mysqli_fetch_assoc($q)) {
       $i++;
+      $total_get_point = $d['get_point'] + $d['poin_antrian'] + $d['poin_apresiasi'];
+
       if ($i > $limit) {
         $tr .= "
           <tr>
@@ -126,10 +141,12 @@ foreach ($rjenis as $key => $jenis) {
 
         $id_jenis = $d['id_jenis'];
         $id_bukti = $d['id_bukti'];
+        $basic_point = $d['basic_point'];
+        $ontime_point = $d['ontime_point'];
         $id_all .= "$id_bukti,";
 
         if ($jenis == 'latihan') {
-          $href = "uploads/$d[folder_uploads]/latihan-$d[id_assign].jpg";
+          $href = "uploads/$d[folder_uploads]/$d[image]";
           if (file_exists($href)) {
             if ($show_img) {
               $img_caption = "<img src='$href' style=max-width=300px class='img-thumbnail' />";
@@ -157,12 +174,58 @@ foreach ($rjenis as $key => $jenis) {
           $value_btn_approve = "1__$id_bukti" . "__$jenis" . "__$jenis";
           $value_btn_reject = "-1__$id_bukti" . "__$jenis" . "__$jenis";
 
+          $poin_apresiasi = $basic_point;
+          $poin_apresiasi += $jenis == 'latihan' ? 0 : $ontime_point;
+          // die("ZZZ: $poin_apresiasi");
+
+          $range_apresiasi = "<input 
+            type='range' 
+            class='form-range range' 
+            min='0' 
+            max='$poin_apresiasi' 
+            id='range__poin_apresiasi' 
+            value='0' 
+            step='1' 
+            name=poin_apresiasi
+          >";
+
+          $Q1 = intval($poin_apresiasi / 4);
+          $Q1 = $Q1 > 1000 ? intval($Q1 / 1000) . 'k' : $Q1;
+          $Q2 = intval($poin_apresiasi / 2);
+          $Q2 = $Q2 > 1000 ? intval($Q2 / 1000) . 'k' : $Q2;
+          $Q3 = intval($poin_apresiasi * 3 / 4);
+          $Q3 = $Q3 > 1000 ? intval($Q3 / 1000) . 'k' : $Q3;
+          $Q4 = $poin_apresiasi;
+          $Q4 = $Q4 > 1000 ? intval($Q4 / 1000) . 'k' : $Q4;
+          $range_ruler = "
+            <div class='flexy flex-between f12 abu mb2 mt1'>
+              <div>0</div>
+              <div>$Q1</div>
+              <div>$Q2</div>
+              <div>$Q3</div>
+              <div>$Q4</div>
+            </div>
+          ";
+
+          $Submiter = $jenis == 'latihan' ? 'Submiter' : 'Challenger';
+
           $form_approve = "
-          <div class='hideit wadah gradasi-hijau' id=form_approve$id_bukti>
+          <div class='hideita wadah gradasi-hijau' id=form_approve$id_bukti>
             <form method=post>
               <div class='consolas f10 abu mb2'>Form Approve</div>
-              <input name=poin_apresiasi class='form-control form-control-sm mb2' placeholder='Nilai apresiasi dari instruktur'>
-              <input name=apresiasi class='form-control form-control-sm mb2' placeholder='Apresiasi Selamat! Anda berhasil...'>
+              <div class='f14 abu mb1'>Poin Apresiasi (opsional)</div>
+              $range_apresiasi
+              $range_ruler
+              
+              <div class='f14 green miring pt2 pb2 border-top border-bottom mb2'>
+                <div class=suggest id=suggest1__$id_bukti>The First $Submiter!</div>
+                <div class=suggest id=suggest2__$id_bukti>Second $Submiter!</div>
+                <div class=suggest id=suggest3__$id_bukti>Third $Submiter!</div>
+                <div class=suggest id=suggest4__$id_bukti>Perfect!</div>
+                <div class=suggest id=suggest5__$id_bukti>Mantaf!</div>
+              </div>
+
+              <input name=apresiasi id=apresiasi__$id_bukti class='form-control form-control-sm mb2' placeholder='Apresiasi Selamat! Anda berhasil...'>
               <button class='btn btn-success btn-sm w-100' name=btn_approve value='$value_btn_approve'>Approve</button>
             </form>
           </div>
@@ -199,6 +262,11 @@ foreach ($rjenis as $key => $jenis) {
         } else {
           $div_img_peserta = '';
           $span_icon = '';
+        }
+
+        $total_get_point_show = number_format($d['get_point'], 0);
+        if ($d['poin_antrian']) {
+          $total_get_point_show .= ' <span class="green bold">+ ' . number_format($d['poin_antrian']) . '</span> ';
         }
 
         $get_point_show = number_format($d['get_point'], 0);
@@ -246,7 +314,7 @@ foreach ($rjenis as $key => $jenis) {
             <td>
               $nama_jenis_show 
               <span class='btn_aksi' id=detail" . $id_bukti . "__toggle>$img_detail</span>
-              <div class='f12 abu'>$get_point_show LP $max_point</div> 
+              <div class='f12 abu'>$total_get_point_show LP $max_point</div> 
               <div class='hideit f12 abu wadah mt1' id=detail$id_bukti>
                 <ul class='p0 pl2 m0'>
                   <li>P$d[no_sesi] $d[nama_sesi]</li>
@@ -353,6 +421,16 @@ foreach ($rjenis as $key => $jenis) {
       $("#div_img_peserta__" + dual_id).html(`<img class='foto_profil' src='${src}'/>`);
       $("#div_img_peserta__" + dual_id).fadeIn();
       $("#icon_peserta__" + dual_id).fadeOut();
-    })
+    });
+    $(".suggest").click(function() {
+      let tid = $(this).prop('id');
+      let rid = tid.split('__');
+      let aksi = rid[0];
+      let id_bukti = rid[1];
+      console.log(aksi, id_bukti);
+      $("#apresiasi__" + id_bukti).val(
+        $(this).text()
+      );
+    });
   })
 </script>

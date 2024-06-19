@@ -1,8 +1,8 @@
-<div class="wadah p0 p2 gradasi-kuning">
+<div class="wadah p0 p2 gradasi-kuning tengah">
   <form method=post class=m0>
-    <div class='f14 bold red consolas mb1'>Form Khusus Instruktur</div>
-    <div class='f14 abu consolas mb1'>Saat ini saya sedang berada pada kelas:</div>
-    <div class=flexy>
+    <!-- <div class='f14 bold red consolas mb1'>Form Khusus Instruktur</div> -->
+    <div class='f14 abu consolas mb2 mt2'>Saat ini saya sedang berada pada kelas:</div>
+    <div class='flexy flex-center'>
 
       <?php
       if (isset($_POST['btn_set_target_kelas'])) {
@@ -12,7 +12,7 @@
       }
 
 
-      $s9 = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room";
+      $s9 = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR'";
       $q9 = mysqli_query($cn, $s9) or die(mysqli_error($cn));
       if (!mysqli_num_rows($q9)) {
         echo div_alert('danger', 'Belum terdapat room-kelas pada room ini.');

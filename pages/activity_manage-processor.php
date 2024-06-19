@@ -22,21 +22,24 @@ if (isset($_POST['btn_update_jenis'])) {
 
   $s = "UPDATE tb_$jenis SET $pairs WHERE id=$id";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  jsurl();
+  echo div_alert('success', "Update $jenis sukses.");
+  jsurl('', 2000);
 }
 
 if (isset($_POST['btn_update_assign'])) {
-  echo '<pre>';
-  var_dump($_POST);
-  echo '</pre>';
+  // echo '<pre>';
+  // var_dump($_POST);
+  // echo '</pre>';
 
   foreach ($_POST['tanggal_assign'] as $id_assign => $tanggal_assign) {
-    $is_wajib = $_POST['is_wajib'] == 1 ? 1 : 'NULL';
+    $is_wajib = $_POST['is_wajib'][$id_assign] ?? 'NULL';
     $s = "UPDATE tb_assign_latihan SET
       tanggal = '$tanggal_assign',
       is_wajib = $is_wajib 
       WHERE id = $id_assign
     ";
+    // echo "<br>$s";
+    echolog("updating, id: $id_assign");
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   }
 

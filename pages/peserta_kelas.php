@@ -270,8 +270,12 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
           <td>
             <div>$nama</div>
             <div class='f12 abu'>$d2[kelas]</div>
-            <div class='f12 abu'>Points: $akumulasi_poin <span class=btn_aksi id=detail_poin$d2[id_peserta]__toggle>$img_detail</span></div>
-            <div id=detail_poin$d2[id_peserta] class='wadah hideit f12'>
+            <div class='f12 abu'>
+              Points: $akumulasi_poin 
+              <span class=btn_aksi id=detail_poin$d2[id_peserta]__toggle>$img_detail</span>
+              <a href='?login_as&id_peserta=$d2[id_peserta]'>$img_login_as</a>
+            </div>
+            <div id=detail_poin$d2[id_peserta] class='wadah hideit f12 mt1'>
               $d_poin_show
             </div>
           </td>

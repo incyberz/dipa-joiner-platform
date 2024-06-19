@@ -4,8 +4,6 @@ if (!$status_room) die("<section><div class=container>$div_alert_closed</div></s
 $jenis = $_GET['jenis'] ?? '';
 $id_assign = $_GET['id_assign'] ?? '';
 
-// bukti latihan
-$target_bukti = "uploads/$folder_uploads/$jenis-$id_assign.jpg";
 
 if ($jenis == '') {
   $rjenis = ['latihan', 'challenge'];
@@ -23,6 +21,9 @@ $yaitu = $ryaitu[$jenis];
 $pesan_upload = null;
 $closed = 0;
 $Jenis = ucwords($jenis);
+$cara_pengumpulan_default = $jenis == 'latihan'
+  ? "Kerjakan latihan di Buku Catatan kalian atau di komputer/HP, kemudian foto/screenshot, lalu upload di latihan ini"
+  : "Kerjakan Challenge sesuai dengan Sub Level Challenge yang kalian pilih, khusus untuk MK Pemrograman Web maka wajib dihostingkan, untuk Challenge Video maka wajib diupload ke Youtube, dan untuk Room lainnya upload ke GDrive semua hasil pekerjaan. Dapatkan link-nya dan paste-kan link-nya di Challenge ini agar instruktur dapat memeriksanya via online";
 
 set_h2(
   $Jenis,
@@ -34,18 +35,14 @@ set_h2(
   "
 );
 
-include 'activity_manage_processor.php';
+include 'activity_manage-processor.php';
 
-$cara_pengumpulan_default = $jenis == 'latihan'
-  ? "Kerjakan latihan di Buku Catatan kalian atau di komputer/HP, kemudian foto/screenshot, lalu upload di latihan ini"
-  : "Kerjakan Challenge sesuai dengan Sub Level Challenge yang kalian pilih, khusus untuk MK Pemrograman Web maka wajib dihostingkan, untuk Challenge Video maka wajib diupload ke Youtube, dan untuk Room lainnya upload ke GDrive semua hasil pekerjaan. Dapatkan link-nya dan paste-kan link-nya di Challenge ini agar instruktur dapat memeriksanya via online";
 
 
 # ============================================
-# NORMAL FLOW
+# NORMAL FLOW :: LIST ALL LATIHAN/CHALLENGE
 # ============================================
 if (!$id_assign) {
-
   $s = "SELECT a.nama,
   (
     SELECT 1 FROM tb_assign_$jenis
@@ -135,7 +132,7 @@ if (!$id_assign) {
 
 if ($id_role == 2) {
   if (!$id_assign) {
-    include 'activity_assign.php';
+    include 'activity_manage-assign_latihan_or_challenge.php';
   }
 }
 

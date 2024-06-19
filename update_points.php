@@ -1,5 +1,7 @@
 <?php
-if($harus_update_poin and $id_room_kelas){
+// $harus_update_poin = 1; //zzz
+// die("<h1>harus_update_poin: $harus_update_poin and id_room_kelas:$id_room_kelas</h1>");
+if ($harus_update_poin and $id_room_kelas) {
   echo '<div class="consolas f12 abu">Updating Points... please wait!<hr>';
   # ========================================================
   # HITUNG MY RANK KELAS
@@ -19,21 +21,21 @@ if($harus_update_poin and $id_room_kelas){
   ORDER BY a.akumulasi_poin DESC;
   ";
   // echo $s;
-  // die("<pre>$s</pre>");
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $rank_kelas = 1;
-  $i=1;
-  while($d=mysqli_fetch_assoc($q)){
-    if($d['id_peserta']==$id_peserta){
+  $i = 1;
+  while ($d = mysqli_fetch_assoc($q)) {
+    if ($d['id_peserta'] == $id_peserta) {
       $rank_kelas = $i;
       break;
     }
     $i++;
   }
   echo "<br>updating rank_kelas... rank: $rank_kelas";
-  
-  
-  
+  // die("<pre>$s</pre>");
+
+
+
   # ========================================================
   # HITUNG MY RANK GLOBAL
   # ========================================================
@@ -52,18 +54,18 @@ if($harus_update_poin and $id_room_kelas){
   ";
   // echo $s;
   // die("<pre>$s</pre>");
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $rank_global = 1;
-  $i=1;
-  while($d=mysqli_fetch_assoc($q)){
-    if($d['id_peserta']==$id_peserta){
+  $i = 1;
+  while ($d = mysqli_fetch_assoc($q)) {
+    if ($d['id_peserta'] == $id_peserta) {
       $rank_global = $i;
       break;
     }
     $i++;
   }
   echo "<br>updating rank_global... rank: $rank_global";
-  
+
   # ========================================================
   # HITUNG MY POIN PRESENSI
   # HITUNG MY POIN BERTANYA
@@ -120,16 +122,16 @@ if($harus_update_poin and $id_room_kelas){
   FROM tb_peserta a 
   WHERE a.id=$id_peserta 
   ";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $d = mysqli_fetch_assoc($q);
-  
+
   $akumulasi_poin = 0;
   foreach ($d as $key => $poin) {
     $akumulasi_poin += $poin;
     echo "<br>updating $key... poin: $poin";
   }
-  
-  
+
+
   # ========================================================
   # RE-UPDATE MY POINTS
   # ========================================================
@@ -152,8 +154,8 @@ if($harus_update_poin and $id_room_kelas){
   AND id_peserta=$id_peserta
   ";
   echo "<br>updating poin data... ";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   echo 'success.';
-  
+
   jsurl();
 }

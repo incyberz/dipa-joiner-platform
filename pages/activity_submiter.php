@@ -1,6 +1,34 @@
+<style>
+  .wadah-peserta {
+    position: relative;
+  }
+
+  .icon-aksi {
+    position: absolute;
+    right: 15px;
+    top: 110px;
+    /* box-shadow: 0 0 5px white; */
+    background: white;
+    border: solid 1px white;
+    border-radius: 3px;
+  }
+
+  .img-icon {
+    height: 30px;
+    transition: .2s;
+    cursor: pointer;
+  }
+
+  .img-icon:hover {
+    transform: scale(1.2);
+  }
+</style>
 <?php
 $judul = "Yang Sudah Mengerjakan $jenis";
 $judul2 = "Yang Belum Ngerjain";
+$icon_wa_red = "<img src='$lokasi_img/icons/wa_red.png' class=img-icon>";
+$icon_wa = "<img src='$lokasi_img/icons/wa.png' class=img-icon>";
+$icon_wa_disabled = "<img src='$lokasi_img/icons/wa_disabled.png' class=img-icon>";
 
 
 
@@ -68,6 +96,9 @@ echo "
   </div>
 ";
 
+# ============================================================
+# YANG BELUM NGERJAIN
+# ============================================================
 $s = "SELECT 
 b.kelas,
 c.id as id_peserta,
@@ -90,10 +121,11 @@ while ($d = mysqli_fetch_assoc($q)) {
   $kelas_show = str_replace("~$tahun_ajar", '', $d['kelas']);
 
   $divs_belum .= "
-    <div class='wadah gradasi-hijau tengah'>
+    <div class='wadah gradasi-hijau tengah wadah-peserta'>
       <img src='$lokasi_profil/wars/peserta-$d[id_peserta].jpg' class=foto_profil>
       <div class='f14 darkblue'>$nama_peserta</div> 
-      <div class='f12 abu'>$kelas_show</div> 
+      <div class='f12 abu'>$kelas_show</div>
+      <div class='icon-aksi'>$icon_wa_red</div>
     </div>
   ";
 }

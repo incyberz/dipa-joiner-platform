@@ -58,13 +58,14 @@ if (isset($_POST['btn_approve'])) {
       alasan_reject = '$alasan_reject' 
       WHERE id=$id_bukti";
     }
-    echo '<pre>';
-    var_dump($s);
-    echo '</pre>';
+    // echo '<pre>';
+    // var_dump($s);
+    // echo '</pre>';
+    // die($s);
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
     echo div_alert('success', "Update bukti $jenis sukses. | <a href='?verif'>Back</a>");
-    jsurl('', 500);
+    jsurl('', 1500);
     exit;
   } else {
     die(div_alert('danger', 'Invalid status at verification process.'));
