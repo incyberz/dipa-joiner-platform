@@ -40,6 +40,7 @@ $sebagai = $d_peserta['sebagai'];
 $punya_biodata = $d_peserta['punya_biodata'];
 $nik = $d_peserta['nik'];
 $kelas_show = str_replace("~$tahun_ajar", '', $kelas);
+$Sebagai = ucwords($sebagai);
 
 # =========================================
 # AUTO INSERT BLANKO BIODATA

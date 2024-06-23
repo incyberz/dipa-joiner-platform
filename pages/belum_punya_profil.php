@@ -15,7 +15,7 @@ if ($profil_ok == 1) {
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       jsurl();
     }
-  } else {
+  } elseif ($id_role == 1) {
     $ket = "Hai! Kamu belum punya profil. Silahkan <a href='?upload_profil'>Upload Profile</a> terlebih dahulu untuk proses dokumentasi, cetak nilai KHS, dan keperluan dokumen lainnya.";
   }
 }

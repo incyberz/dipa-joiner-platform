@@ -1,16 +1,17 @@
-<div class="section-title" data-aos="fade-up">
-  <h2>Reset</h2>
-  <p>Fitur Reset khusus Instruktur</p>
-</div>
-
 <?php
-$fkhusus = div_alert('danger', 'Maaf, fitur ini hanya bisa diakses oleh Instruktur | <a href="?login">Login</a>');
+set_h2('Verifikasi WA', 'Verifikasi WA via whatsapp API');
+$fkhusus = div_alert('danger', '
+Maaf, fitur ini hanya bisa diakses oleh Instruktur | 
+<a href="?login">Login</a>
+');
 
 $get_username = $_GET['username'] ?? die($fkhusus);
 $get_kelas = $_GET['kelas'] ?? die($fkhusus);
 $get_no_wa = $_GET['no_wa'] ?? die($fkhusus);
 
-if (!isset($id_role) || $id_role != 2) {
+if ($get_kelas == 'MITRA' || $get_kelas == 'INSTRUKTUR') {
+  div_alert('danger', 'Belum ada handler untuk kelas MITRA atau INSTRUKTUR');
+} elseif (!isset($id_role) || $id_role != 2) {
   echo $fkhusus;
 } else {
   $kunci = date('ymdHis');
@@ -30,9 +31,3 @@ if (!isset($id_role) || $id_role != 2) {
 
   echo "<div data-aos=fade-up><a class='btn btn-primary btn-block' href='$link_wa'>Resend Keys</a></div>";
 }
-
-
-
-
-
-?>

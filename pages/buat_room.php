@@ -1,4 +1,8 @@
 <?php
+if ($id_role != 2) {
+  echo div_alert('danger', 'Hanya instruktur yang berhak membuat Room baru');
+  jsurl('?', 3000);
+}
 instruktur_only();
 set_h2('Create Room', "
   <div class='tengah mb2'>

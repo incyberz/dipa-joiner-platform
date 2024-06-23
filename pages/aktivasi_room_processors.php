@@ -340,6 +340,9 @@ if (isset($_POST['btn_aktivasi'])) {
     $pairs = '__';
     foreach ($_POST as $key => $value) {
       if (!$value) {
+        // echo '<pre>';
+        // var_dump($_POST);
+        // echo '</pre>';
         echo div_alert('danger', "Input aktivasi tidak boleh dikosongkan.");
         jsurl('', 3000);
         exit;

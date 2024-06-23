@@ -5,6 +5,10 @@
 $aktivasi_room = $_GET['aktivasi_room'] ?? '';
 $daftar_ke_room = $_GET['daftar_ke_room'] ?? '';
 
+echo '<pre>';
+var_dump($kelas);
+echo '</pre>';
+
 if ($aktivasi_room) {
   // set session id_room
   $_SESSION['dipa_id_room'] = $aktivasi_room;

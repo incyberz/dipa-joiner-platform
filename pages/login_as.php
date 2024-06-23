@@ -12,14 +12,26 @@ $judul = 'Login As';
 // var_dump($_SESSION);
 // echo '</pre>';
 
+if (isset($_GET['unlog'])) {
+  $_SESSION['dipa_username'] = $_SESSION['dipa_master_username'];
+  unset($_SESSION['dipa_master_username']);
+
+  echo div_alert('success', 'Unlog success.');
+  echo '<script>location.replace("?")</script>';
+  exit;
+}
+
 if ($id_role == 2 || isset($_SESSION['dipa_master_username'])) {
   $new_username = $_GET['username'] ?? '';
   if (!$new_username) {
     $get_id_peserta = $_GET['id_peserta'] ?? '';
     if (!$get_id_peserta) {
-      session_destroy();
+      // session_destroy();
       echo div_alert('danger', "Tidak dapat handle multiple Login As. Silahkan login ulang!");
-      jsurl('', 2000);
+      echo '<pre>';
+      var_dump($_SESSION);
+      echo '</pre>';
+      // jsurl('', 2000);
     }
     $s = "SELECT username FROM tb_peserta WHERE id=$get_id_peserta";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -37,14 +49,7 @@ if ($id_role == 2 || isset($_SESSION['dipa_master_username'])) {
   exit;
 }
 
-if (isset($_GET['unlog'])) {
-  $_SESSION['dipa_username'] = $_SESSION['dipa_master_username'];
-  unset($_SESSION['dipa_master_username']);
 
-  echo div_alert('success', 'Unlog success.');
-  echo '<script>location.replace("?")</script>';
-  exit;
-}
 
 // if(isset($_SESSION['dipa_master_username'])){
 //   echo "<a href='?login_as&unlog'>Back to Master Username</a>";
