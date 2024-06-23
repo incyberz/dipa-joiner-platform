@@ -60,7 +60,7 @@ if ($id_peserta == '') { // belum login
 }
 
 if ($dari == 'routing_verifikasi_wa_instruktur') {
-  $pesan = 'Agar dapat lanjut sebagai INSTRUKTUR nomor whatsapp Anda harus terverifikasi oleh Master Instruktur. Pesan dan link verifikasi akan diteruskan ke Developer Team (Bapak Iin Sholihin)';
+  $pesan = "Agar dapat lanjut sebagai $sebagai nomor whatsapp Anda harus terverifikasi oleh Master Instruktur. Pesan dan link verifikasi akan diteruskan ke Developer Team (Bapak Iin Sholihin)";
 
   // $hide_form = 0;
   // $hide_section = 0;

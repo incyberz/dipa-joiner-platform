@@ -1,13 +1,34 @@
+<style>
+  .text-zoom {
+    cursor: pointer;
+    transition: .2s
+  }
 
-  <style>
-  .text-zoom{cursor: pointer; transition: .2s}
-  .text-zoom:hover{letter-spacing: .5px; font-weight: bold}
-  .rank_number{display:inline-block; color:blue;}
-  .rank_th{display:inline-block; vertical-align:top;}
-  
-  #blok_summary {max-width: 500px; margin:auto}
-  #blok_accuracy {max-width: 360px; margin:auto}
-  </style>
+  .text-zoom:hover {
+    letter-spacing: .5px;
+    font-weight: bold
+  }
+
+  .rank_number {
+    display: inline-block;
+    color: blue;
+  }
+
+  .rank_th {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  #blok_summary {
+    max-width: 500px;
+    margin: auto
+  }
+
+  #blok_accuracy {
+    max-width: 360px;
+    margin: auto
+  }
+</style>
 <?php
 # =================================================================
 // login_only(); // it's public
@@ -30,68 +51,68 @@ echo "
 $active_players = 0;
 $new_questions = 0;
 $war_counts = 0;
-$ahad_skg_show = 'Ahad, '.date('d M Y',strtotime($ahad_skg));
-$ahad_depan_show = date('d M Y',strtotime($ahad_depan));
-$now_show = $nama_hari[date('w')].', '. date('d M Y H:i');
-$minggu_ini_show = 'Ahad, '. date('d M Y',strtotime($ahad_skg)).' s.d '.date('d M Y',strtotime($ahad_depan));
+$ahad_skg_show = 'Ahad, ' . date('d M Y', strtotime($ahad_skg));
+$ahad_depan_show = date('d M Y', strtotime($ahad_depan));
+$now_show = $nama_hari[date('w')] . ', ' . date('d M Y H:i');
+$minggu_ini_show = 'Ahad, ' . date('d M Y', strtotime($ahad_skg)) . ' s.d ' . date('d M Y', strtotime($ahad_depan));
 
 $today = date('Y-m-d');
 
 # =========================================================
 # MAIN SELECT
 # =========================================================
-$rstats = ['Hari ini','Minggu ini','All time'];
+$rstats = ['Hari ini', 'Minggu ini', 'All time'];
 foreach ($rstats as $saat) {
 
-  if($saat=='Hari ini'){
+  if ($saat == 'Hari ini') {
     $and_tanggal = "AND tanggal >= '$today'";
     $now_show = $now_show;
-  }elseif($saat=='Minggu ini'){
+  } elseif ($saat == 'Minggu ini') {
     $and_tanggal = "AND tanggal >= '$ahad_skg'";
     $now_show = $minggu_ini_show;
-  }else{
+  } else {
     $and_tanggal = "AND 1";
     $now_show = 'Dari P1 hingga sekarang';
   }
   // $and_tanggal = $saat=='Hari ini' ? "AND tanggal >= '$today'" : "AND tanggal >= '$ahad_skg'" ;
   // $now_show = $saat=='Hari ini' ? $now_show : $minggu_ini_show;
 
-  
+
   $s = "SELECT 
   a.nama as nama_peserta,
   a.username,
   b.kelas,
   (SELECT COUNT(1) FROM tb_war WHERE id_penjawab=a.id $and_tanggal) war_counts, 
-  (SELECT COUNT(1) FROM tb_soal_pg WHERE id_pembuat=a.id $and_tanggal) new_questions 
+  (SELECT COUNT(1) FROM tb_soal_peserta WHERE id_pembuat=a.id $and_tanggal) new_questions 
   
   FROM tb_peserta a 
   JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
   JOIN tb_kelas c ON b.kelas=c.kelas   
   WHERE a.id_role = 1 
   ORDER BY c.shift, b.kelas, a.nama";
-  
+
   // echo "<pre>$s</pre>";
-  
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $jumlah_row = mysqli_num_rows($q);
-  $i=0;
-  while($d=mysqli_fetch_assoc($q)){
+  $i = 0;
+  while ($d = mysqli_fetch_assoc($q)) {
     $i++;
-    if($d['war_counts'] || $d['new_questions']){
+    if ($d['war_counts'] || $d['new_questions']) {
       $active_players++;
-      if($d['war_counts']){
+      if ($d['war_counts']) {
         $war_counts += $d['war_counts'];
       }
-      if($d['new_questions']){
+      if ($d['new_questions']) {
         $new_questions += $d['new_questions'];
       }
     }
   }
 
-  $active_players_show = number_format($active_players,0);
-  $new_questions_show = number_format($new_questions,0);
-  $war_counts_show = number_format($war_counts,0);
-  
+  $active_players_show = number_format($active_players, 0);
+  $new_questions_show = number_format($new_questions, 0);
+  $war_counts_show = number_format($war_counts, 0);
+
   $stats[$saat] = "
       <div class='tengah abu mb1 kecil'>$saat | $now_show</div>
       <div class='wadah bg-white' id=blok_summary>
@@ -107,11 +128,11 @@ foreach ($rstats as $saat) {
 
 echo "
   <div class='wadah gradasi-hijau' id=blok_summary>
-    ".$stats['Hari ini']."
+    " . $stats['Hari ini'] . "
     <div>&nbsp;</div>
-    ".$stats['Minggu ini']."
+    " . $stats['Minggu ini'] . "
     <div>&nbsp;</div>
-    ".$stats['All time']."
+    " . $stats['All time'] . "
   </div>
 ";
 
@@ -133,7 +154,7 @@ echo "
 
 ?>
 <script>
-  $(function(){
+  $(function() {
 
   })
 </script>

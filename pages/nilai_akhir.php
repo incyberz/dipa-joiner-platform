@@ -418,7 +418,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   if (!$count_sesi_aktif) {
     // terdapat kelas yang belum di set jadwal
     $_SESSION['target_kelas'] = $d['kelas'];
-    die(div_alert('danger', "count_sesi_aktif : $count_sesi_aktif canot be null. Jadwal kuliah belum disetting untuk kelas: $d[kelas]<hr><a href='?presensi' class='btn btn-primary'>Set Jadwal Presensi untuk $d[kelas]</a>"));
+    die(div_alert('danger', "count_sesi_aktif : $count_sesi_aktif canot be null. Jadwal kelas belum disetting untuk kelas: $d[kelas]<hr><a href='?presensi' class='btn btn-primary'>Set Jadwal Presensi untuk $d[kelas]</a>"));
   }
 
   // handler blok tiap kelas
@@ -433,7 +433,7 @@ while ($d = mysqli_fetch_assoc($q)) {
       $reguler = $d['shift'] == 'P' ? 'Reguler' : 'NR';
       $data_csv[$kelas_ini] .= "\n\nDAFTAR HADIR MAHASISWA DAN NILAI UTS TAHUN AKADEMIK 2023-2024 GANJIL\n\n";
       $data_csv[$kelas_ini] .= "Prodi,$d[jenjang] - $d[nama_prodi] - $reguler\n";
-      $data_csv[$kelas_ini] .= "Mata Kuliah,Matematika Informatika\n";
+      $data_csv[$kelas_ini] .= "Mata Ajar,Matematika Informatika\n";
       $data_csv[$kelas_ini] .= "Semester / Kelas,$d[semester] / $d[sub_kelas]\n";
       $data_csv[$kelas_ini] .= "Instruktur,Iin S.T. M.Kom\n\n";
       $data_csv[$kelas_ini] .= "NO,NAMA,NIM,TIMESTAMP KEHADIRAN,NILAI TUGAS,NILAI UTS,KETERANGAN\n";

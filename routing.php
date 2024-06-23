@@ -2,19 +2,20 @@
 if ($parameter == 'login' and $is_login) die('<script>location.replace("?")</script>');
 // echo "<span class=debug>id_peserta:<span id=id_peserta>$id_peserta</span> | nama_peserta:<span id=nama_peserta>$nama_peserta</span> | </span>";
 
-if (!$status and $parameter != 'verifikasi_wa' and $is_login) {
+if (!$status and $parameter != 'verifikasi_wa' and $is_login and $parameter != 'ubah_password') {
   echo "
     <section>
       <div class='wadah gradasi-kuning small miring  p4'>
         <div class=sub_form>Routing Exceptions - Unverified Status as Instruktur</div>
         <p>Halo $nama_peserta!</p>
-        <p>Kamu sudah tercatat sebagai <u>$sebagai</u> pada kelas <u>$kelas</u>. Untuk instruktur baru wajib diverifikasi oleh Master Instruktur yaitu Dev-Team (Bapak Iin Sholihin, dan tim)</p>
+        <p>Kamu sudah tercatat sebagai <u>$sebagai</u> pada kelas <u>$kelas</u>. Untuk $sebagai baru wajib diverifikasi oleh Master Instruktur yaitu Dev-Team (Bapak Iin Sholihin, dan tim)</p>
         <hr>
         <div class='alert alert-danger'>
-          Status <i class=darkblue>Akun INSTRUKTUR</i> Anda belum terverifikasi. | 
-          <a href='?verifikasi_wa&dari=routing_verifikasi_wa_instruktur'>Verifikasi Whatsapp Instruktur</a>
+          Status <i class=darkblue>Akun $sebagai</i> Anda belum terverifikasi. | 
+          <a href='?verifikasi_wa&dari=routing_verifikasi_wa_instruktur'>Verifikasi Whatsapp $sebagai</a>
         </div>
       </div>
+      <a href='?logout'>Logout</a>
     </section>
   ";
   exit;
@@ -32,6 +33,9 @@ switch ($parameter) {
   case '':
   case 'home':
     $konten = 'pages/home.php';
+    break;
+  case 'sync':
+    $konten = 'pages/sync/sync.php';
     break;
     // case 'sections': $konten = 'pages/sections.php'; break;
   default:

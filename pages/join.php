@@ -52,7 +52,7 @@ if (isset($_POST['btn_join'])) {
         $id_role = 2;
       } elseif ($as == 'praktisi') {
         $id_role = 3;
-      } elseif ($as == 'industri') {
+      } elseif ($as == 'mitra') {
         $id_role = 4;
       } else {
         die('Undefined role at processors.');
@@ -122,11 +122,11 @@ if (isset($_POST['btn_join'])) {
 # NORMAL FLOW :: SELECT AS
 # ===========================================================
 if (!$as) {
-  $arr_as = ['peserta', 'instruktur', 'praktisi', 'industri'];
+  $arr_as = ['peserta', 'instruktur', 'praktisi', 'mitra'];
   $arr_gradasi = ['hijau', 'hijau', 'biru', 'kuning'];
   $arr_ket = [
     'Saya ingin belajar dengan target di dunia nyata. Saya akan mengerjakan Challenges baik dari instruktur maupun dari mitra.',
-    'Koordinator mahasiswa, praktisi, dan industri. Saya mempertemukan para mahasiswa, pihak industri, dan juga para professional.',
+    'Koordinator mahasiswa, praktisi, dan mitra (industri). Saya mempertemukan para mahasiswa, pihak mitra, dan juga para professional.',
     'Saya bersedia mentoring dengan senang hati. Saya akan membagikan pengalaman saya di dunia kerja bagi adik-adik mahasiswa.',
     'Saya membutuhkan jasa dari mahasiswa. Dimulai dari yang simple saja!'
   ];
@@ -204,8 +204,8 @@ if (!$as) {
     $option_kelas = '<option value="INSTRUKTUR">KELAS INSTRUKTUR</option>';
   } elseif ($as == 'praktisi') {
     $option_kelas = '<option value="PRAKTISI">KELAS PRAKTISI</option>';
-  } elseif ($as == 'industri') {
-    $option_kelas = '<option>MITRA INDUSTRI</option>';
+  } elseif ($as == 'mitra') {
+    $option_kelas = '<option value=MITRA>MITRA INDUSTRI</option>';
   } else {
     die('Undefined role.');
   }

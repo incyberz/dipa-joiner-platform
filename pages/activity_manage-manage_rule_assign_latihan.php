@@ -89,7 +89,7 @@ while ($d2 = mysqli_fetch_assoc($q2)) {
 
 
 
-$disabled_submit_info = $count_submiter ? div_alert('info red mt2 tengah', "Jika sudah ada submiter maka Tanggal Mulai $Jenis tidak bisa lagi diubah") : '';
+$disabled_submit_assign_info = $count_submiter ? div_alert('info red mt2 tengah', "Jika sudah ada submiter maka Tanggal Mulai $Jenis tidak bisa lagi diubah") : '';
 
 $manage_assign = "
 <h5 class='darkblue proper'>Manage Rule Assign $jenis <span class=btn_aksi id=form_assign__toggle>$img_detail</span></h5>
@@ -109,7 +109,7 @@ $manage_assign = "
   <div class='blue f12 miring mb1 mt1'>)* klik tombol hijau jika ingin Tanggal Mulai $Jenis sama dengan Jadwal Kelas</div>
   <div class='blue f12 miring mb2 mt1'>)* Sifat $Jenis Wajib mempunyai bobot ganda pada kalkulasi <a href='?nilai_akhir'>Nilai Akhir</a></div>
   <button class='btn btn-primary w-100 proper' name=btn_update_assign value=$id_assign>Update Rule Assign $jenis</button>
-  $disabled_submit_info
+  $disabled_submit_assign_info
 </form>
 ";
 ?>

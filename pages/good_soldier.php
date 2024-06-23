@@ -61,7 +61,7 @@ a.nama as nama_peserta,
 a.username,
 b.kelas,
 (SELECT COUNT(1) FROM tb_war WHERE id_penjawab=a.id) play_count, 
-(SELECT COUNT(1) FROM tb_soal_pg WHERE id_pembuat=a.id) soal_count 
+(SELECT COUNT(1) FROM tb_soal_peserta WHERE id_pembuat=a.id) soal_count 
 
 FROM tb_peserta a 
 JOIN tb_kelas_peserta b ON a.id=b.id_peserta 

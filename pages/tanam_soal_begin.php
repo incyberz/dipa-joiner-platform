@@ -82,7 +82,7 @@ if (isset($_POST['btn_simpan'])) {
 
   $_POST['my_tags'] = trim($_POST['my_tags']);
 
-  $s = "INSERT INTO tb_soal_pg 
+  $s = "INSERT INTO tb_soal_peserta 
   (id_sesi,id_pembuat,kalimat_soal,tags,opsies,jawaban,id_status) values 
   ($_POST[id_sesi],$id_peserta,'$kalimat_soal','$_POST[my_tags]','$opsies','$jawaban',$status)
   ";
@@ -109,7 +109,7 @@ if ($id_sesi == '') {
   // include 'include/arr_sesi.php';
   $s = "SELECT a.*, a.id as id_sesi,
   (
-    SELECT count(1) FROM tb_soal_pg p 
+    SELECT count(1) FROM tb_soal_peserta p 
     WHERE id_pembuat=$id_peserta 
     AND id_sesi=a.id) my_soal_count 
   FROM tb_sesi a 
@@ -122,7 +122,7 @@ if ($id_sesi == '') {
 
     if ($id_role != 1) {
       // instruktur only
-      $s2 = "SELECT 1 FROM tb_soal_pg WHERE id_sesi=$id_sesi AND (id_status is null OR id_status >= 0)";
+      $s2 = "SELECT 1 FROM tb_soal_peserta WHERE id_sesi=$id_sesi AND (id_status is null OR id_status >= 0)";
       $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
       $jumlah_soal = mysqli_num_rows($q2);
 

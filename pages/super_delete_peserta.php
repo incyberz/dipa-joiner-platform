@@ -124,7 +124,7 @@ if (isset($_GET['id'])) {
 
 
   // get all war where id_soal=id of soal pg
-  $s = "SELECT id as id_soal_pg FROM tb_soal_pg WHERE id_pembuat=$id";
+  $s = "SELECT id as id_soal_pg FROM tb_soal_peserta WHERE id_pembuat=$id";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   while ($d = mysqli_fetch_assoc($q)) {
     $s2 = "DELETE FROM tb_war WHERE id_soal=$d[id_soal_pg]";
@@ -132,7 +132,7 @@ if (isset($_GET['id'])) {
     $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
   }
 
-  $s = "DELETE FROM tb_soal_pg WHERE id_pembuat=$id";
+  $s = "DELETE FROM tb_soal_peserta WHERE id_pembuat=$id";
   echo "<hr>$s";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 

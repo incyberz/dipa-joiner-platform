@@ -61,7 +61,7 @@ b.nama as pembuat_soal,
 b.username as username_pembuat,
 (SELECT status FROM tb_status_soal WHERE id=a.id_status) status_soal   
 
-FROM tb_soal_pg a 
+FROM tb_soal_peserta a 
 JOIN tb_peserta b ON a.id_pembuat=b.id 
 JOIN tb_sesi d ON a.id_sesi=d.id 
 $left_join_where 

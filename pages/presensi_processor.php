@@ -1,9 +1,9 @@
 <?php
-if (isset($_POST['btn_update_jadwal_kuliah'])) {
+if (isset($_POST['btn_update_jadwal_kelas'])) {
   echo '<br>updating schedule...<hr>';
 
   $jadwal_kelas = "$_POST[tanggal_sesi] $_POST[jam_sesi]";
-  $arr = explode('__', $_POST['btn_update_jadwal_kuliah']);
+  $arr = explode('__', $_POST['btn_update_jadwal_kelas']);
   $cid_sesi = $arr[0];
   $ckelas = $arr[1];
   $id_sesi_and_kelas = "id_sesi=$arr[0] AND kelas='$arr[1]'";
@@ -38,13 +38,13 @@ if (isset($_POST['btn_update_jadwal_kuliah'])) {
       $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
 
       $durasi = $i * 7;
-      $new_jadwal_kuliah = date('Y-m-d H:i', strtotime("+$durasi day", strtotime($jadwal_kelas)));
+      $new_jadwal_kelas = date('Y-m-d H:i', strtotime("+$durasi day", strtotime($jadwal_kelas)));
 
 
       if (mysqli_num_rows($q2)) {
-        $s2 = "UPDATE tb_sesi_kelas SET jadwal_kelas='$new_jadwal_kuliah' WHERE id_sesi=$d2[id_sesi] AND kelas='$ckelas'";
+        $s2 = "UPDATE tb_sesi_kelas SET jadwal_kelas='$new_jadwal_kelas' WHERE id_sesi=$d2[id_sesi] AND kelas='$ckelas'";
       } else {
-        $s2 = "INSERT INTO tb_sesi_kelas (id_sesi,kelas,jadwal_kelas) VALUES ($d2[id_sesi],'$ckelas','$new_jadwal_kuliah')";
+        $s2 = "INSERT INTO tb_sesi_kelas (id_sesi,kelas,jadwal_kelas) VALUES ($d2[id_sesi],'$ckelas','$new_jadwal_kelas')";
       }
       echo "<br>executing... $s2";
       $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));

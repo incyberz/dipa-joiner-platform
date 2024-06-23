@@ -72,7 +72,7 @@ if (mysqli_num_rows($q)) {
 if ($must_update) {
 
   $from_perang = "FROM tb_war p WHERE p.id_penjawab=$id_peserta and p.id_room=$id_room";
-  $from_soal = "FROM tb_soal_pg p 
+  $from_soal = "FROM tb_soal_peserta p 
   JOIN tb_sesi q ON p.id_sesi=q.id 
   WHERE p.id_pembuat=$id_peserta 
   AND q.id_room=$id_room";
@@ -101,7 +101,7 @@ if ($must_update) {
     AND p.id_room=$id_room) as poin_tumbuh_soal,
 
   (
-    SELECT COUNT(1) FROM tb_soal_pg a 
+    SELECT COUNT(1) FROM tb_soal_peserta a 
     LEFT JOIN tb_war b ON a.id=b.id_soal AND b.id_penjawab=$id_peserta 
     JOIN tb_sesi c ON a.id_sesi=c.id 
     WHERE (a.id_status is null OR a.id_status >= 0) 

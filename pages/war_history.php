@@ -60,7 +60,7 @@ c.id_status as id_status_soal,
   WHERE id_peserta=a.id_pembuat AND q.tahun_ajar=$tahun_ajar) kelas_pembuat    
 FROM tb_war a 
 JOIN tb_peserta b ON a.id_penjawab=b.id 
-JOIN tb_soal_pg c ON a.id_soal=c.id 
+JOIN tb_soal_peserta c ON a.id_soal=c.id 
 JOIN tb_kelas_peserta d ON b.id=d.id_peserta 
 
 WHERE $sql_my_wars 
