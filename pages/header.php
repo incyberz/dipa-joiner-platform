@@ -14,10 +14,10 @@ if ($id_room) {
     // die($s);
   }
 }
-$jumlah_ask = 0;
-$s = "SELECT 1 FROM tb_pertanyaan WHERE verif_status is null";
-$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$jumlah_ask = mysqli_num_rows($q);
+// $jumlah_ask = 0;
+// $s = "SELECT 1 FROM tb_bertanya WHERE verif_status is null";
+// $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+// $jumlah_ask = mysqli_num_rows($q);
 
 $red = $available_questions ? 'red' : 'green';
 $available_question_show = "<span class='count_badge badge_$red' id='available_questions'>$available_questions</span>";
@@ -58,7 +58,8 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
           if ($id_role == 2) {
             $li_verif = !$jumlah_verif ? '' : "<li><a href='?verif' class='proper'><span class='biru tebal'>Verif</span> <span class='count_badge badge_red' id='jumlah_verif'>$jumlah_verif</span></a></li>";
 
-            $li_ask = !$jumlah_ask ? '' : "<li class='hideit suspend zzz'><a href='?chats' class='proper'><span class='biru tebal'>Chats</span> <span class='count_badge badge_red' id='jumlah_ask'>$jumlah_ask</span></a></li>";
+            // $li_ask = !$jumlah_ask ? '' : "<li class='hideit suspend zzz'><a href='?chats' class='proper'><span class='biru tebal'>Chats</span> <span class='count_badge badge_red' id='jumlah_ask'>$jumlah_ask</span></a></li>";
+            $li_ask = '';
 
             $li_verif_war = !$jumlah_verif_war ? '' : "<li><a href='?verifikasi_war_profil' class='proper'><span class='biru tebal'>WarProfil</span> <span class='count_badge badge_red' id='jumlah_verif_war'>$jumlah_verif_war</span></a></li>";
 

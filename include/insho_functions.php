@@ -1,4 +1,5 @@
 <?php
+// v.1.3.11 add data AOS to set_h2
 // v.1.3.10 add hari_tanggal
 // v.1.3.9 update eta function
 // v.1.3.8 autoset title when set_judul
@@ -31,7 +32,7 @@ function set_h2($judul, $sub_judul = '', $href_back = '')
   set_title($judul);
   $link = !$href_back ? '' : "<div class='mt2'><a href='$href_back'><img src='assets/img/icons/prev.png' class=img_icon></a></div>";
   echo "
-    <div class='section-title'>
+    <div class='section-title' data-aos='fade'>
       <h2 id=judul>$judul</h2>
       <p id=sub_judul>$sub_judul$link</p>
     </div>

@@ -15,17 +15,13 @@
   }
 </style>
 <?php
-set_h2('Leaderboard');
 $stars = "<img src='$lokasi_img/icons/stars.png' height=25px>";
 $get_update = $_GET['update'] ?? '';
 $get_best = $_GET['best'] ?? '';
 $sql_best = $get_best ? "a.best = '$get_best'" : 1;
-// $sql_id_room = '';
-// if(isset($id_room)){
-//   $sql_id_room = $id_room ? "b.id_room = '$id_room'" : 1;
-// }
 
-$week = intval(strtotime('now') / (7 * 24 * 60 * 60));
+$bulan_tahun = $nama_bulan[intval(date('m')) - 1] . ' ' . date('Y');
+set_h2('Leaderboard', "Peserta Terbaik minggu ke-$week - $bulan_tahun - <i>all time</i>");
 
 
 # ============================================================
@@ -81,7 +77,7 @@ if (!mysqli_num_rows($q) || $get_update) {
       $nama = $arr2[1];
       $kelas = $arr2[2];
       $poin = $arr2[3];
-      $image = $arr2[4];
+      $image = $arr2[4] ?? die(div_alert('danger', "Peserta wajib ada image profil"));
 
       $poin_show = number_format($poin);
 
@@ -124,8 +120,11 @@ if (!mysqli_num_rows($q) || $get_update) {
       ";
     }
 
+    # ============================================================
+    # SINGLE BEST
+    # ============================================================
     $div_best = "
-      <div class='tengah'>
+      <div class='tengah' data-aos='fade-up'>
         <a href='?leaderboard'>$img_prev</a>
         <h4 class='f16 tengah'>
           $stars  
@@ -206,7 +205,7 @@ if (!mysqli_num_rows($q) || $get_update) {
       }
 
       $div_best .= "
-        <div class='col-lg-6'>
+        <div class='col-lg-6'  data-aos='fade-up'>
           <div class='wadah tengah'>
             <h4 class='f16'>
               $stars  

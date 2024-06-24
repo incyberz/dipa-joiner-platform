@@ -68,12 +68,6 @@ if (isset($_POST['btn_assign_sesi'])) {
   $id_jenis = $arr[0];
   $id_sesi = $arr[1];
 
-  echo '<pre>';
-  var_dump($_POST);
-  echo '</pre>';
-
-
-
   $pesan = '';
   foreach ($arr_id_room_kelas as $id_rk) {
     $s = "SELECT 1 FROM tb_assign_$jenis WHERE id_$jenis=$id_jenis AND id_room_kelas='$id_rk'";

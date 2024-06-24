@@ -141,6 +141,13 @@ while ($d_best = mysqli_fetch_assoc($q_best)) {
   ";
   $q = mysqli_query($cn, $s2) or die(mysqli_error($cn));
 
+  // if ($best_code == 'play_quiz') {
+  //   echo '<pre>';
+  //   var_dump($s2);
+  //   echo '</pre>';
+  //   exit;
+  // }
+
   $bestiers = '';
   $arr_best = [];
   $i = 0;
@@ -183,3 +190,5 @@ while ($d_best = mysqli_fetch_assoc($q_best)) {
   echo '<hr>';
   $q = mysqli_query($cn, $s_insert) or die(mysqli_error($cn));
 }
+
+jsurl('?leaderboard', 3000);

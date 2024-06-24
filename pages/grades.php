@@ -60,23 +60,23 @@ if ($selisih >= 600 and $id_role != 3 and $is_login) {
       AND id_room = $id_room  
       ) as war_points,
     (
-      SELECT COUNT(1) FROM tb_pertanyaan  
+      SELECT COUNT(1) FROM tb_bertanya  
       WHERE id_penanya=a.id 
       AND id_room_kelas = d.id  
       ) as count_bertanya,
     (
-      SELECT COUNT(1) FROM tb_pertanyaan_reply  
+      SELECT COUNT(1) FROM tb_bertanya_reply  
       WHERE id_penjawab=a.id 
       AND id_room_kelas = d.id  
       ) as count_menjawab,
     (
-      SELECT SUM(poin) FROM tb_pertanyaan  
+      SELECT SUM(poin) FROM tb_bertanya  
       WHERE id_penanya=a.id 
       AND id_room_kelas = d.id  
       AND verif_date is not null 
       ) as poin_bertanya,
     (
-      SELECT SUM(poin) FROM tb_pertanyaan_reply  
+      SELECT SUM(poin) FROM tb_bertanya_reply  
       WHERE id_penjawab=a.id 
       AND id_room_kelas = d.id  
       AND verif_date is not null 

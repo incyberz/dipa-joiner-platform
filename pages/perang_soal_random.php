@@ -60,11 +60,6 @@ if (!$start) {
 
   if ($available_questions || count($arr_id_soal)) {
 
-    if ($dm) {
-      echo '<pre>';
-      var_dump($arr_id_soal);
-      echo '</pre>';
-    }
     // jika ada soal | resume quiz
     include 'perang_soal_random_started.php';
   } else {

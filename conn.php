@@ -23,7 +23,7 @@ if ($online_version) {
   $db_name = 'db_dipa';
 
   // if ($dm_db) $db_name = 'db_online_dipa_mei_2024';
-  $db_name = 'db_online_dipa_mei_2024';
+  $db_name = 'db_online_dipa_juni_2024';
 }
 
 $cn = new mysqli($db_server, $db_user, $db_pass, $db_name);

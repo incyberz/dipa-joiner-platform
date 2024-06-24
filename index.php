@@ -46,6 +46,9 @@ $lokasi_pages = 'pages';
 $lokasi_profil = 'assets/img/peserta';
 $lokasi_img = 'assets/img';
 
+$week = intval(strtotime('now') / (7 * 24 * 60 * 60));
+
+
 include 'config.php';
 
 # ========================================================

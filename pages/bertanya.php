@@ -1,10 +1,10 @@
 <?php
 $pertanyaan = '';
-if(isset($_POST['btn_submit'])){
+if (isset($_POST['btn_submit'])) {
   $pertanyaan = $_POST['pertanyaan'] ?? '';
-  $s = "INSERT INTO tb_pertanyaan (id_sesi,id_penanya,pertanyaan,tags) values ('$_POST[id_sesi]','$_POST[id_penanya]','$_POST[pertanyaan]','$_POST[input_tags]')";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-  echo div_alert('success','Submit pertanyaan sukses.');
+  $s = "INSERT INTO tb_bertanya (id_sesi,id_penanya,pertanyaan,tags) values ('$_POST[id_sesi]','$_POST[id_penanya]','$_POST[pertanyaan]','$_POST[input_tags]')";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  echo div_alert('success', 'Submit pertanyaan sukses.');
   echo '<script>location.replace("?my_questions")</script>';
   exit;
 }
@@ -12,47 +12,47 @@ if(isset($_POST['btn_submit'])){
 
 // max 3 pertanyaan per hari
 $today = date('Y-m-d');
-$today_end = date('Y-m-d').' 23:59:59';
-$s = "SELECT 1 FROM tb_pertanyaan WHERE id_penanya=$id_peserta AND tanggal >= '$today' AND tanggal < '$today_end' ";
-$qp = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$today_end = date('Y-m-d') . ' 23:59:59';
+$s = "SELECT 1 FROM tb_bertanya WHERE id_penanya=$id_peserta AND tanggal >= '$today' AND tanggal < '$today_end' ";
+$qp = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $jumlah_pertanyaan_hari_ini = mysqli_num_rows($qp);
 
-$max_reached = $jumlah_pertanyaan_hari_ini>=3 
-? ' <span class="darkred miring">Kamu dapat mengajukan kembali pertanyaan esok hari.</span>' 
-: ' Kamu masih boleh mengajukan '.(3-$jumlah_pertanyaan_hari_ini).' pertanyaan lagi.';
+$max_reached = $jumlah_pertanyaan_hari_ini >= 3
+  ? ' <span class="darkred miring">Kamu dapat mengajukan kembali pertanyaan esok hari.</span>'
+  : ' Kamu masih boleh mengajukan ' . (3 - $jumlah_pertanyaan_hari_ini) . ' pertanyaan lagi.';
 
-$jp_info = $jumlah_pertanyaan_hari_ini 
-? "Kamu sudah mengajukan $jumlah_pertanyaan_hari_ini pertanyaan hari ini.$max_reached" 
-: 'Hari ini kamu belum bertanya. Yuk bertanya agar mendapat poin, ilmu, dan wawasan!';
+$jp_info = $jumlah_pertanyaan_hari_ini
+  ? "Kamu sudah mengajukan $jumlah_pertanyaan_hari_ini pertanyaan hari ini.$max_reached"
+  : 'Hari ini kamu belum bertanya. Yuk bertanya agar mendapat poin, ilmu, dan wawasan!';
 
 
 $id_sesi = $_GET['id_sesi'] ?? '';
 $info_sesi = '';
-if($id_sesi==''){
+if ($id_sesi == '') {
   include 'include/arr_sesi.php';
   $pilih_sesi = '';
-  foreach ($arr_sesi as $key => $sesi){
+  foreach ($arr_sesi as $key => $sesi) {
     $tags = $arr_tags[$key];
-    $r = explode(';',$tags);
+    $r = explode(';', $tags);
     sort($r);
-    $imp = $tags=='' ? '<span class=red>belum bisa mengajukan pertanyaan karena belum ada tags sesi.</span>' : implode(', ',$r);
+    $imp = $tags == '' ? '<span class=red>belum bisa mengajukan pertanyaan karena belum ada tags sesi.</span>' : implode(', ', $r);
     $tags_show = "<div class='kecil miring abu'>Tags: $imp</div>";
-    $danger = $tags=='' ? 'danger' : 'success'; 
-    $href = $tags=='' 
-    ? "'#' onclick='alert(\"Maaf, belum bisa mengajukan pertanyaan pada sesi ini karena instuktur belum setting tags untuk sesi ini.\")'" 
-    : "'?bertanya&id_sesi=$key'";
+    $danger = $tags == '' ? 'danger' : 'success';
+    $href = $tags == ''
+      ? "'#' onclick='alert(\"Maaf, belum bisa mengajukan pertanyaan pada sesi ini karena instuktur belum setting tags untuk sesi ini.\")'"
+      : "'?bertanya&id_sesi=$key'";
     $pilih_sesi .= "<a class='btn btn-$danger btn-sm mb1' href=$href>$sesi</a>$tags_show<br>";
-  } 
+  }
 
   $info_sesi = "
     <div class=mb2>Saya ingin bertanya tentang:</div>
     $pilih_sesi
   ";
   $form = '';
-}else{
+} else {
   $s = "SELECT * FROM tb_sesi WHERE id=$id_sesi ";
-  $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-  if(mysqli_num_rows($q)==0) die(erid('id_sesi (not found)'));
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  if (mysqli_num_rows($q) == 0) die(erid('id_sesi (not found)'));
   $d = mysqli_fetch_assoc($q);
   $tags = $d['tags'];
   $nama_sesi = $d['nama'];
@@ -114,17 +114,17 @@ $form = ''; //zzz suspend fitur
 
 <div class="wadah gradasi-hijau" data-aos='fade-up'>
   <div style='padding-bottom: 10px; margin-bottom: 10px; border-bottom: solid 1px #ccc; color: darkblue'>
-    <?=$jp_info?>
+    <?= $jp_info ?>
     <div class="alert alert-danger tengah">
       Maaf, fitur ini di suspend dikarenakan sulitnya dalam proses verifikasi. | Fitur dialihkan ke <a href="?tanam_soal">Tanam Soal</a>
       <hr>
-      <?=meme('funny')?>
+      <?= meme('funny') ?>
 
     </div>
   </div>
 
-  <?=$info_sesi?>
-  <?=$form?>
+  <?= $info_sesi ?>
+  <?= $form ?>
 
 </div>
 
@@ -141,39 +141,39 @@ $form = ''; //zzz suspend fitur
 
 
 <script>
-  $(function(){
+  $(function() {
     let tags = $('#tags').text().split(', ');
 
     // console.log(tags);
     let my_tags = [];
 
-    $('#pertanyaan').keyup(function(){
+    $('#pertanyaan').keyup(function() {
       let val = $(this).val();
       my_tags = [];
       // alert(val);
       tags.forEach(i => {
-        if(val.search(i)>=0){
+        if (val.search(i) >= 0) {
           my_tags.push(i)
         }
       });
       // console.log(my_tags);
-      if(my_tags.length>0){
+      if (my_tags.length > 0) {
 
         $('#input_tags').val(my_tags.join(', '));
         $('#my_tags').text(my_tags.join(', '));
         $('#blok_info_tags').hide();
         $('#blok_my_tags').fadeIn();
-        if(val.length>=50){
+        if (val.length >= 50) {
           $('#saya_menyatakan').slideDown();
           $('#length_info').text('');
           $('#length_info').fadeOut();
-        }else{
+        } else {
           $('#saya_menyatakan').slideUp();
-          $('#length_info').text('minimal 50 karakter, kamu mengetik '+val.length+' karakter.');
+          $('#length_info').text('minimal 50 karakter, kamu mengetik ' + val.length + ' karakter.');
           $('#length_info').fadeIn();
         }
-        
-      }else{
+
+      } else {
         $('#my_tags').text('-');
         $('#blok_my_tags').hide();
         $('#blok_info_tags').fadeIn();
@@ -183,14 +183,14 @@ $form = ''; //zzz suspend fitur
 
     })
 
-    $('.cek_syarat').click(function(){
+    $('.cek_syarat').click(function() {
       let cek1 = $('#cek1').prop('checked');
       let cek2 = $('#cek2').prop('checked');
 
       let dis = cek1 && cek2 ? true : false;
 
       $('#btn_submit').prop('disabled', !(cek1 && cek2));
-      console.log(cek1,cek2,dis);
+      console.log(cek1, cek2, dis);
     })
   })
 </script>

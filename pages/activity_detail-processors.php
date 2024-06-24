@@ -4,9 +4,6 @@ if (isset($_POST['btn_upload'])) {
   # ============================================================
   # SERVER VALIDATION :: D_ASSIGN ALREADY EXIST
   # ============================================================
-  echo '<pre>';
-  var_dump($d_assign);
-  echo '</pre>';
 
   // $no_jenis = $d_assign['no'];
   $basic_point = $d_assign['basic_point'];

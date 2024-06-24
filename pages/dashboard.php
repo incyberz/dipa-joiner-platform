@@ -24,14 +24,28 @@ if ($id_role == 1) {
       </div>
     </div>
   ";
+} elseif ($id_role == 2) {
+  include 'dashboard-instruktur.php';
 } elseif ($id_role == 4) {
   if ($status < 2) {
-    echo "Anda harus aktivasi sebagai Mitra. Status: $status";
+    echo "Anda harus aktivasi sebagai Mitra. Status: $status
+    <ul>
+      <li>melengkapi biodata</li>
+      <li>melengkapi data perusahaan</li>
+      <li>membuat request produk</li>
+    </ul>
+    <ul>
+      <li>PRAKERIN</li>
+      <li>BURSA KERJA</li>
+      <li>ZZZ</li>
+    </ul>
+    
+    ";
   } else {
-    echo div_alert('danger', "Maaf, belum ada dashboard untuk role: $sebagai");
+    echo div_alert('info', "Status Mitra: $status");
   }
 } else {
-  echo div_alert('danger', "Maaf, belum ada dashboard untuk role: $sebagai");
+  echo div_alert('info', "Maaf, dashboard khusus untuk role: $sebagai sedang dalam tahap pengembangan. Silahkan klik menu lainnya.");
 }
 
 // include 'dashboard_room_stats.php'; 

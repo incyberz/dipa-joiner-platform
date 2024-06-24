@@ -41,17 +41,21 @@ b.nama as creator,
 b.id as id_creator,
 (
   SELECT 1  
-  FROM tb_kelas_peserta a 
-  JOIN tb_kelas b ON a.kelas=b.kelas 
-  JOIN tb_room_kelas c ON b.kelas=c.kelas 
-  JOIN tb_room d ON c.id_room=d.id 
-  WHERE a.id_peserta=b.id
-  AND d.id=a.id) my_room 
+  FROM tb_room p 
+  WHERE p.created_by = $id_peserta 
+  AND p.id=a.id) my_room 
 
 FROM tb_room a 
 JOIN tb_peserta b ON a.created_by=b.id  
+WHERE 1 -- b.id = $id_peserta
 ORDER BY my_room DESC, a.status DESC
 ";
+
+// echo '<pre>';
+// var_dump($s);
+// echo '</pre>';
+
+
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $my_room = '';
 $other_room = '';

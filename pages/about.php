@@ -2,19 +2,25 @@
   <div class="container">
 
     <div class="section-title" data-aos="fade-up">
-      <h2>DIPA</h2>
+      <h2>APA ITU DIPA?</h2>
     </div>
 
     <div class="row content">
       <div class="col-lg-6" data-aos="fade-up" data-aos-delay="150">
         <p>
-          Gamified Platform <b>DIPA Joiner</b> memangkas gap antara Dunia Pendidikan dan Dunia Industri secara fun, transparan, dan akurat.
+          <i>Gamified Fun-LMS (Learning Management System)</i> yang memadukan
+          <span class="brown">Dunia Industri (Mitra Usaha)</span>,
+          <span class="darkblue">Praktisi (Professional)</span>, dan
+          <span class="green">Akademisi (Guru, Dosen, Trainer, Civitas, dan Peserta Didik)</span>
+          dalam kebaikan (proses pembelajaran hingga proyekan).
+          <b>DIPA Joiner</b> memangkas gap antara Dunia Pendidikan dan Dunia Industri
+          <i>with fun</i>, transparan, dan akurat.
         </p>
         <ul>
           <li><i class="ri-check-double-line"></i> Fun Learning Management System</li>
           <li><i class="ri-check-double-line"></i> Fully transparent in every aspect of Student's Grading</li>
           <li><i class="ri-check-double-line"></i> Very accurate! Evaluation being metered with timestamp of events</li>
-          <li><i class="ri-check-double-line"></i> Student, lecturer, professional, and stakeholder can join together</li>
+          <li><i class="ri-check-double-line"></i> Student, teacher, lecturer, professionals, and stakeholders can join together</li>
         </ul>
       </div>
       <div class="col-lg-6 pt-4 pt-lg-0" data-aos="fade-up" data-aos-delay="300">

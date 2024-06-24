@@ -9,7 +9,8 @@ $mode = $id_paket ? 'update' : 'add';
 $pesan = $id_paket ? 'Mengubah Data Paket akan mempengaruhi informasi untuk seluruh peserta ujian' : 'Anda sedang melakukan Penambahan Paket Soal untuk ujian baru' . $sebagai;
 set_h2($judul, "$pesan<div class=mt2><a href='?manage_paket_soal' >$img_prev</a></div>");
 
-$global_akhir_ujian = date('Y-m-d H:i', strtotime('now') + 60 * 60);
+// $global_akhir_ujian = date('Y-m-d H:i', strtotime('now') + 60 * 60);
+$global_akhir_ujian = '';
 
 
 
@@ -453,9 +454,14 @@ $range_durasi = "
 
 // $d_paket['tanggal_pembahasan'] = '2020-2-2 13:30';
 
+echo '<pre>';
+var_dump($d_paket);
+echo '</pre>';
+
 $mode_pembahasan = 0; // default tidak ada pembahasan
 $tanggal_pembahasan = $d_paket['tanggal_pembahasan'] ?? '';
 if ($tanggal_pembahasan) {
+  echo "$tanggal_pembahasan == $global_akhir_ujian ZZZ";
   if ($tanggal_pembahasan == $global_akhir_ujian) {
     $mode_pembahasan = 1; // saat semua ujian berakhir
   } else {
@@ -467,6 +473,21 @@ $hide_blok_tanggal_pembahasan = $mode_pembahasan == 2 ? '' : 'hideit';
 
 $global_akhir_ujian_show = date('M d, Y, H:i', strtotime($global_akhir_ujian));
 $eta_global_akhir_ujian = eta2($global_akhir_ujian);
+
+
+$tanggal_pembahasan = $d_paket['tanggal_pembahasan'] ?? '';
+if (strtotime($tanggal_pembahasan) < strtotime($global_akhir_ujian)) {
+  echo div_alert('danger', "
+    Tanggal pembahasan invalid: $tanggal_pembahasan<hr>
+    Auto-update with global_akhir_ujian: $global_akhir_ujian, id_paket: $id_paket
+  ");
+
+  $s = "UPDATE tb_paket SET tanggal_pembahasan='$global_akhir_ujian' WHERE id=$id_paket";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  // jsurl('', 5000);
+  exit;
+}
+
 
 
 # ================================================ -->
@@ -539,12 +560,16 @@ $nama_paket = $d_paket['nama'] ?? '';
 $kisi_kisi = $d_paket['kisi_kisi'] ?? '';
 $mode_pembahasan = $d_paket['mode_pembahasan'] ?? '';
 
-$tanggal_pembahasan = $d_paket['tanggal_pembahasan'] ?? '';
+
 if ($tanggal_pembahasan) {
   $tgl_pembahasan = date('Y-m-d', strtotime($d_paket['tanggal_pembahasan']));
   $jam_pembahasan = date('H:i', strtotime($d_paket['tanggal_pembahasan']));
   $eta_pembahasan = str_replace('lagi', '', eta(strtotime($d_paket['tanggal_pembahasan']) - strtotime($global_akhir_ujian)));
-  $eta_pembahasan = "<div class='tengah mb4'>$eta_pembahasan  sejak ujian berakhir kunci jawaban akan ditampilkan</div>";
+  $eta_pembahasan = "
+    <div class='tengah mb4'>
+      $eta_pembahasan  sejak ujian berakhir kunci jawaban akan ditampilkan
+    </div>
+  ";
 } else {
   $tgl_pembahasan =   date('Y-m-d', strtotime($global_akhir_ujian));
   $jam_pembahasan = date('H:i', strtotime($global_akhir_ujian));

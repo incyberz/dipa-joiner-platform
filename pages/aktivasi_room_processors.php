@@ -19,9 +19,6 @@ if ($aksi == 'reset_room_kelas') {
 # ============================================================
 if (isset($_POST['btn_add_kelas'])) {
   $arr = $_POST['kelas'];
-  echo '<pre>';
-  var_dump($arr);
-  echo '</pre>';
   $s = "SELECT 1 FROM tb_kelas WHERE kelas='$arr[kelas]'";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   echolog("checking duplicate kelas: $arr[kelas]");
@@ -349,9 +346,6 @@ if (isset($_POST['btn_aktivasi'])) {
       } else {
         if (is_array($value)) {
           echolog("key: $key");
-          echo '<pre>';
-          var_dump($value);
-          echo '</pre>';
           die(div_alert('danger', 'Tidak bisa menggunakan array dalam input aktivasi ke data Room.'));
         }
         $value = clean_sql($value);
