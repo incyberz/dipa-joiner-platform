@@ -55,16 +55,16 @@ if ($harus_update_poin and $id_room_kelas) {
   // echo $s;
   // die("<pre>$s</pre>");
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  $rank_global = 1;
+  $rank_room = 1;
   $i = 1;
   while ($d = mysqli_fetch_assoc($q)) {
     if ($d['id_peserta'] == $id_peserta) {
-      $rank_global = $i;
+      $rank_room = $i;
       break;
     }
     $i++;
   }
-  echo "<br>updating rank_global... rank: $rank_global";
+  echo "<br>updating rank_room... rank: $rank_room";
 
   # ========================================================
   # HITUNG MY POIN PRESENSI
@@ -138,7 +138,7 @@ if ($harus_update_poin and $id_room_kelas) {
   $s = "UPDATE tb_poin SET 
 
   rank_kelas = $rank_kelas,
-  rank_global = $rank_global,
+  rank_room = $rank_room,
   poin_presensi = '$d[poin_presensi]',
   poin_bertanya = '$d[poin_bertanya]',
   poin_menjawab = '$d[poin_menjawab]',

@@ -13,17 +13,17 @@ set_h2("Dashboard $Sebagai", $welcome);
 if ($status_room == -1) echo div_alert('info', meme('closed', 6) . '<hr>Room ini sudah ditutup.');
 
 if ($id_role == 1) {
-  echo "
-    <div class='row '>
-      <div class='col-xl-4' data-zzz-aos=fade-up data-zzz-aos-delay=150>
-        <?php include 'dashboard-rank.php'; ?>
-      </div>
-
-      <div class='col-xl-8' data-zzz-aos=fade-up data-zzz-aos-delay=300>
-        <?php include 'dashboard-my-points.php'; ?>
-      </div>
+?>
+  <div class='row '>
+    <div class='col-xl-4' data-zzz-aos=fade-up data-zzz-aos-delay=150>
+      <?php include 'dashboard-rank.php'; ?>
     </div>
-  ";
+
+    <div class='col-xl-8' data-zzz-aos=fade-up data-zzz-aos-delay=300>
+      <?php include 'dashboard-my-points.php'; ?>
+    </div>
+  </div>
+<?php
 } elseif ($id_role == 2) {
   include 'dashboard-instruktur.php';
 } elseif ($id_role == 4) {

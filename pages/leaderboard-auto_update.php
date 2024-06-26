@@ -2,12 +2,12 @@
 echolog('<span class="blue f24 consolas">Auto Update Leaderboards</span>... Please wait');
 echo '<hr>';
 
-$s = [];
+$arr_s = [];
 
 # ============================================================
 # SELECT CHALLENGER 
 # ============================================================
-$s['challenger'] = "SELECT 
+$arr_s['challenger'] = "SELECT 
   SUM(p.get_point + COALESCE(p.poin_antrian,0) + COALESCE(p.poin_apresiasi,0)) 
   FROM tb_bukti_challenge p 
   WHERE id_peserta=a.id
@@ -17,7 +17,7 @@ $s['challenger'] = "SELECT
 # ============================================================
 # SELECT SUBMITER 
 # ============================================================
-$s['submiter'] = "SELECT
+$arr_s['submiter'] = "SELECT
   SUM(p.get_point + COALESCE(p.poin_antrian,0) + COALESCE(p.poin_apresiasi,0)) 
   FROM tb_bukti_latihan p 
   WHERE id_peserta=a.id
@@ -29,7 +29,7 @@ $s['submiter'] = "SELECT
 # ============================================================
 # SELECT INVESTOR
 # ============================================================
-$s['investor'] = "SELECT 
+$arr_s['investor'] = "SELECT 
 COUNT(1) 
 FROM tb_soal_peserta p
 WHERE p.id_pembuat=a.id 
@@ -39,7 +39,7 @@ AND (p.id_status is null or p.id_status > 0)
 # ============================================================
 # SELECT PLAY QUIZ
 # ============================================================
-$s['play_quiz'] = "SELECT 
+$arr_s['play_quiz'] = "SELECT 
   SUM(p.poin_penjawab) 
   FROM tb_war p 
   JOIN tb_room q ON p.id_room=q.id 
@@ -51,7 +51,7 @@ $s['play_quiz'] = "SELECT
 # ============================================================
 # ONTIMER PRESENSI
 # ============================================================
-$s['ontimer'] = "SELECT 
+$arr_s['ontimer'] = "SELECT 
   SUM(p.poin) 
   FROM tb_presensi p 
   JOIN tb_sesi q ON p.id_sesi=q.id 
@@ -67,7 +67,7 @@ $s['ontimer'] = "SELECT
 # ============================================================
 # ACCURACY
 # ============================================================
-$s['accuracy'] = "SELECT 
+$arr_s['accuracy'] = "SELECT 
   (
     (SELECT COUNT(1) FROM tb_war WHERE is_benar=1 AND id_room=q.id AND id_penjawab=p.id_penjawab)*100
     /
@@ -117,14 +117,18 @@ $s_best = "SELECT * FROM tb_best WHERE hidden IS NULL ORDER BY no ";
 $q_best = mysqli_query($cn, $s_best) or die(mysqli_error($cn));
 while ($d_best = mysqli_fetch_assoc($q_best)) {
   $best_code = $d_best['best'];
-  if (!$s[$best_code]) die(div_alert('danger', "Belum ada String SQL untuk update <b class=darkblue>$best_code</b>"));
+  if ($best_code == 'room_player' || $best_code == 'room_kelas') {
+    include 'leaderboard-auto_update-update_room_player_rank.php';
+    exit;
+  }
+  if (!$arr_s[$best_code]) die(div_alert('danger', "Belum ada String SQL untuk update <b class=darkblue>$best_code</b>"));
   $s2 = "SELECT 
     a.id as id_peserta,
     a.nama as nama_peserta,
     a.image,
     a.war_image,
     c.kelas,
-    ($s[$best_code]) best_value
+    ($arr_s[$best_code]) best_value
 
     FROM tb_peserta a 
     JOIN tb_kelas_peserta b ON a.id=b.id_peserta 

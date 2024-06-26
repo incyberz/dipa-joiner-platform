@@ -63,7 +63,15 @@ $nilai_akhir_show = $nilai_akhir ? $nilai_akhir : '?';
     <div><?= $kelas ?></div>
   </div>
   <div class='blok_rank'>
-    <span class='darkblue'>Rank</span> <span class="rank_number"><?= $rank_kelas ?></span><span class="rank_th"><?= $th ?></span> <span class="rank_of">of <span class="rank_of_count"><?= $total_peserta_kelas ?></span> peserta</span>
+    <span class='darkblue'>Rank</span>
+    <span class="rank_number"><?= $rank_kelas ?></span>
+    <span class="rank_th"><?= $th ?></span>
+    <span class="rank_of">of
+      <a href="?peserta_kelas">
+        <span class="rank_of_count"><?= $total_peserta_kelas ?></span>
+      </a>
+      peserta
+    </span>
   </div>
 
   <div class='blok_nilai_akhir'>

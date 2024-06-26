@@ -208,16 +208,25 @@ if (!$id_peserta) die(erid('$id_peserta'));
 # =========================================
 $jeda_update_poin = 600; // boleh update setiap 10 menit
 $s = "SELECT * FROM tb_poin WHERE id_room=$id_room AND id_peserta=$id_peserta";
+// echo "<hr>ZZZ $s";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (mysqli_num_rows($q) > 1) die('Duplicate data poin in room_vars');
 if (mysqli_num_rows($q)) {
   $d = mysqli_fetch_assoc($q);
+  // echo 'ZZZ<pre>';
+  // var_dump($d);
+  // echo '</pre>';
   $last_update_point = $d['last_update_point'];
   $selisih = strtotime('now') - strtotime($last_update_point);
+  // echo "<hr>ZZZ $selisih<hr>";
+  // exit;
   if ($selisih >= $jeda_update_poin) $harus_update_poin = 1;
+  // $harus_update_poin = 1; // ZZZ
 
-  $rank_global = $d['rank_global'];
+  $rank_room = $d['rank_room'];
   $rank_kelas = $d['rank_kelas'];
+  // echo "<hr>ZZZ $rank_kelas";
+  // exit;
   $poin_bertanya = $d['poin_bertanya'];
   $poin_menjawab = $d['poin_menjawab'];
   $poin_latihan = $d['poin_latihan'];
@@ -233,7 +242,7 @@ if (mysqli_num_rows($q)) {
   $hm = $nilai_akhir ? hm($nilai_akhir) : 'B';
 
   $th = $rank_kelas ? th($rank_kelas) : '?';
-  $th_global = $rank_global ? th($rank_global) : '?';
+  $th_global = $rank_room ? th($rank_room) : '?';
 } else { // belum punya data poin
   //auto create data poin
   $s = "INSERT INTO tb_poin (id_room,id_peserta,last_update_point) VALUES ($id_room,$id_peserta,'2024-1-1')";

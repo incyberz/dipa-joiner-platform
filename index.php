@@ -18,7 +18,7 @@ session_start();
 // session_destroy(); exit;
 // echo '<pre style="margin-top: 170px">'; var_dump($_SESSION); echo '</pre>';
 $dm = 0;
-$dm_db = 1;
+$dm_db = 0;
 $is_login = null;
 $id_role = null;
 $status = null;
@@ -196,7 +196,8 @@ if ($username) {
   <main id="main">
     <section>
       <div class="container">
-        <?php if ($dm_db and !$online_version) echo '<div class="red bg-yellow">Mode Online DB</div>'; ?>
+        <?php //if ($dm_db and !$online_version) echo '<div class="red bg-yellow">Mode Online DB</div>'; 
+        ?>
         <?php include 'routing.php'; ?>
       </div>
     </section>

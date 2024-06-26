@@ -221,14 +221,15 @@ if (mysqli_num_rows($q)) {
     }
 
     //autosave rank
-    if ($id_role == 2) {
-      $rank_kelas = $arr_rank_kelas[$d['kelas']];
-      $jp_kelas = $jumlah_peserta_kelas[$d['kelas']];
+    // if ($id_role == 2) {
+    // $rank_kelas = $arr_rank_kelas[$d['kelas']];
+    // $jp_kelas = $jumlah_peserta_kelas[$d['kelas']];
 
-      $s2 = "UPDATE tb_poin SET rank_global='$i',rank_kelas='$rank_kelas' WHERE id=$d[id_peserta]";
-      // die($s2);
-      $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
-    }
+    // $s2 = "UPDATE tb_poin SET rank_room='$i',rank_kelas='$rank_kelas' WHERE id=$d[id_peserta]";
+    // echo "<hr>$s2</hr>";
+    // die($s2);
+    // $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+    // }
 
     $login_as = $id_role == 2 ? "<a href='?login_as&username=$d[username]' target=_blank>$img_login_as</a>" : '';
     $td_profil = ($id_role == 2 and $show_img) ? "<td><img src='$lokasi_profil/wars/peserta-$d[id_peserta].jpg' class=foto_profil></td>" : '';

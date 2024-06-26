@@ -36,7 +36,7 @@ $arr = [
     'default' => 5,
     'desc' => 'Jumlah Submit Challenge Khusus yang wajib dikerjakan',
   ],
-  'rank_global' => [
+  'rank_room' => [
     'default' => 10,
     'desc' => 'Ranking Peserta berdasarkan Jumlah Peserta Room',
   ],

@@ -5,6 +5,9 @@ $s = "SELECT * FROM tb_penilaian_instruktur";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $tr = '';
 $i = 0;
+$arr_multiplier = [];
+$arr_point = [];
+$total_poin = 0;
 while ($d = mysqli_fetch_assoc($q)) {
   $i++;
   $my_multiplier = '';
@@ -13,7 +16,7 @@ while ($d = mysqli_fetch_assoc($q)) {
 
   $penilaian = $d['penilaian'];
   $basic_poin = $d['poin'];
-  $satuan = key2kolom($d['deskripsi']);
+  $satuan = $d['satuan'] ? key2kolom($d['satuan']) : key2kolom($d['deskripsi']);
   $s2 = '';
   if ($penilaian == 'count_learning_path') {
     $s2 = "SELECT 
@@ -115,6 +118,26 @@ while ($d = mysqli_fetch_assoc($q)) {
     AND a.status = 100 -- active room
     AND (c.verif_status is null OR verif_status != -1) -- bukan dirinya 
     ";
+  } elseif ($penilaian == 'count_soal_ujian') {
+    $s2 = "SELECT 1 FROM tb_room a 
+    JOIN tb_soal b ON a.id=b.id_room 
+    WHERE a.created_by = $id_peserta -- milik sendiri pada beberapa room 
+    AND a.status = 100 -- active room
+    ";
+  } elseif ($penilaian == 'count_paket_soal') {
+    $s2 = "SELECT 1 FROM tb_room a 
+    JOIN tb_paket b ON a.id=b.id_room 
+    WHERE a.created_by = $id_peserta -- milik sendiri pada beberapa room 
+    AND a.status = 100 -- active room
+    ";
+  } elseif ($penilaian == 'count_attemp_ujian') {
+    $s2 = "SELECT 1 FROM tb_room a 
+    JOIN tb_paket b ON a.id=b.id_room 
+    JOIN tb_paket_kelas c ON b.id=c.id_paket 
+    JOIN tb_jawabans d ON d.id_paket_kelas=c.paket_kelas 
+    WHERE a.created_by = $id_peserta -- milik sendiri pada beberapa room 
+    AND a.status = 100 -- active room
+    ";
   } else {
     $redirect_show = key2kolom($d['redirect_to']);
     $link_redirect = $d['redirect_to'] ? "| <a href='?$d[redirect_to]'>$redirect_show</a>" : '';
@@ -122,6 +145,8 @@ while ($d = mysqli_fetch_assoc($q)) {
   }
 
   if ($s2) {
+    $arr_multiplier[$penilaian] =  '';
+
     $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
     if (!mysqli_num_rows($q2)) {
       $my_multiplier .= div_alert('danger', "Belum ada data $satuan di semua room Anda");
@@ -151,7 +176,11 @@ while ($d = mysqli_fetch_assoc($q)) {
       } else {
         $my_point += $count * $basic_poin;
       }
+      $arr_multiplier[$penilaian] =  "$count $satuan";
     }
+
+    $arr_point[$penilaian] =  $my_point;
+    $total_poin += $my_point;
   }
 
   $penilaian_show = key2kolom($penilaian);
@@ -170,9 +199,48 @@ while ($d = mysqli_fetch_assoc($q)) {
     </tr>
   ";
 } // end while penilaian
+
+// echo '<pre>';
+// var_dump($arr_multiplier);
+// echo '</pre>';
+// echo '<pre>';
+// var_dump($arr_point);
+// echo '</pre>';
+
+$total_poin_show = number_format($total_poin);
+
 echo "
   <table class=table>
     $thead
     $tr
   </table>
+  <div class='gradasi-toska tengah p4'>
+    <div class=f20>Total Teaching Point (TP) :</div>
+    <div class=f40>$total_poin_show TP</div>
+  </div>
 ";
+
+foreach ($arr_point as $penilaian => $value) {
+  $kode = "$penilaian-$id_peserta-$week";
+  $multiplier_info_or_null = $arr_multiplier[$penilaian] ? "'$arr_multiplier[$penilaian]'" : 'NULL';
+  $s = "INSERT INTO tb_penilaian_weekly (
+    kode, 
+    penilaian,
+    id_instruktur,
+    week,
+    my_multiplier_info,
+    my_point
+  ) VALUES (
+    '$kode', 
+    '$penilaian',
+    $id_peserta,
+    $week,
+    $multiplier_info_or_null,
+    $value
+  )";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  echolog("updating $penilaian");
+}
+
+echo div_alert('success', 'Auto-Update Point Mingguan Instruktur sukses.');
+jsurl('', 10000);

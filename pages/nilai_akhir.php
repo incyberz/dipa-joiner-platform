@@ -87,7 +87,7 @@ $rbobot['count_latihan'] = 5;
 $rbobot['count_latihan_wajib'] = 15;
 $rbobot['count_challenge'] = 5;
 $rbobot['count_challenge_wajib'] = 15;
-$rbobot['rank_global'] = 15;
+$rbobot['rank_room'] = 15;
 $rbobot['rank_kelas'] = 25;
 $rbobot['nilai_uts'] = 0;
 $rbobot['nilai_uas'] = 0;
@@ -101,7 +101,7 @@ $rlink['count_latihan'] = '?activity&jenis=latihan';
 $rlink['count_latihan_wajib'] = '?activity&jenis=latihan';
 $rlink['count_challenge'] = '?activity&jenis=challenge';
 $rlink['count_challenge_wajib'] = '?activity&jenis=challenge';
-$rlink['rank_global'] = '?grades';
+$rlink['rank_room'] = '?grades';
 $rlink['rank_kelas'] = '?grades';
 $rlink['nilai_uts'] = '?ujian';
 $rlink['nilai_uas'] = '?ujian';
@@ -310,9 +310,9 @@ c.*,
 -- MY POIN DATA TEMPORER
 -- ========================================
 (
-  SELECT rank_global FROM tb_poin   
+  SELECT rank_room FROM tb_poin   
   WHERE id_room=$id_room  
-  AND id_peserta=a.id) rank_global,
+  AND id_peserta=a.id) rank_room,
 (
   SELECT rank_kelas FROM tb_poin   
   WHERE id_room=$id_room  
@@ -406,7 +406,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     die("Peserta kelas tidak boleh 0. Kelas: $d[kelas]");
   }
   // exception for temporer rank at tb_poin
-  if ($d['rank_global'] > $d['total_peserta']) $d['rank_global'] = $d['total_peserta'];
+  if ($d['rank_room'] > $d['total_peserta']) $d['rank_room'] = $d['total_peserta'];
 
   $i++;
   $no++;
@@ -495,11 +495,11 @@ while ($d = mysqli_fetch_assoc($q)) {
   $rkonversi['count_challenge_wajib'] = konversikan($d['count_challenge_wajib'], $d['total_count_challenge_wajib']);
 
 
-  if ($d['rank_global']) {
-    $rkonversi['rank_global'] = round(110 - (($d['rank_global'] - 1) * ((round($d['total_peserta'] * 8 / 10, 0) / $d['total_peserta']) * (100 / $d['total_peserta']))), 0);
-    if ($rkonversi['rank_global'] > 100) $rkonversi['rank_global'] = 100;
+  if ($d['rank_room']) {
+    $rkonversi['rank_room'] = round(110 - (($d['rank_room'] - 1) * ((round($d['total_peserta'] * 8 / 10, 0) / $d['total_peserta']) * (100 / $d['total_peserta']))), 0);
+    if ($rkonversi['rank_room'] > 100) $rkonversi['rank_room'] = 100;
   } else {
-    $rkonversi['rank_global'] = 0;
+    $rkonversi['rank_room'] = 0;
   }
 
   if ($d['rank_kelas']) {

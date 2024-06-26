@@ -44,7 +44,7 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
         if ($id_role != 4) {
           echo "
             <li><a class='nav-link scrollto active' href='?'>Home</a></li>
-            <li><a class='nav-link scrollto' href='?grades&kelas=$target_kelas_header'>Grades</a></li>
+            <li><a class='nav-link scrollto' href='?leaderboard'>Leaderboard</a></li>
           ";
         }
 
