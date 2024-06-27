@@ -1,3 +1,11 @@
+<style>
+  @media (max-width: 775px) {
+    .desktop_only_775 {
+      display: none;
+    }
+  }
+</style>
+
 <?php
 # =================================================================
 instruktur_only();
@@ -8,18 +16,13 @@ $img_reject = img_icon('reject');
 $icon_mhs = img_icon('mhs');
 $icon_gray = '<span class="br50 pointer" style="display:inline-block;width:20px;height:20px;background:#ccc;">&nbsp;</span>';
 
-$target_kelas_info = $target_kelas ? "Target kelas : $target_kelas" : 'All kelas pada room ini.';
-
-echo "
-  <div class='section-title' data-aos-zzz='fade-up'>
-    <h2>Rekap Presensi</h2>
-    <div>$target_kelas_info</div>
-  </div>
-";
-
 $get_kelas = $_GET['kelas'] ?? '';
+$nav_mode = "Table Mode | Show Profile | Mobile Mode";
+$nav_mode = ''; //zzz on develop
+set_h2('Rekap Presensi', $nav_mode);
+
 $param_awal = 'presensi_rekap';
-include 'navigasi_kelas.php';
+include 'navigasi_room_kelas.php';
 
 
 # ====================================================
@@ -39,15 +42,16 @@ a.nama as nama_sesi,
 FROM tb_sesi a 
 WHERE a.id_room=$id_room";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+$count_sesi_aktif = 0;
 if (!mysqli_num_rows($q)) {
   echo div_alert('danger', "Belum ada sesi pada room $room.");
 } else {
   while ($d = mysqli_fetch_assoc($q)) {
     $rid_sesi[$d['no']] = $d['id_sesi'];
-    $ris_presensi_aktif[$d['id_sesi']] = $d['is_presensi_aktif'];
+    $arr_is_sesi_aktif[$d['id_sesi']] = $d['is_presensi_aktif'];
+    if ($d['is_presensi_aktif']) $count_sesi_aktif++;
   }
 }
-
 
 # ====================================================
 # GET LIST PESERTA
@@ -71,8 +75,10 @@ JOIN tb_peserta b ON a.id_peserta=b.id
 JOIN tb_kelas c ON a.kelas=c.kelas  
 JOIN tb_room_kelas d ON c.kelas=d.kelas 
 WHERE d.id_room=$id_room 
-AND b.status=1 
-AND $sql_kelas 
+AND b.status=1 -- peserta aktif
+AND b.id_role = 1  -- peserta only
+-- AND $sql_kelas 
+AND c.kelas = '$get_kelas'
 AND b.nama NOT LIKE '%DUMMY%' 
 ORDER BY c.shift, c.kelas, b.nama 
 ";
@@ -81,13 +87,19 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
 $tr = '';
 if (!mysqli_num_rows($q)) {
-  echo div_alert('danger', "Belum ada data peserta pada room ini.");
+  // echo div_alert('danger', "Belum ada data peserta pada room ini.");
 } else {
 
   $table_tag = "<table class='table mt4'>";
 
   $th_sesi = '';
-  foreach ($rid_sesi as $no => $id_sesi) $th_sesi .= "<th>P$no</th>";
+  $j = 0;
+  foreach ($rid_sesi as $no => $id_sesi) {
+    $j++;
+    $desktop_only_775 = $j < $count_sesi_aktif  ? 'desktop_only_775' : '';
+    $th_sesi .= "<th class=$desktop_only_775>P$no</th>";
+  }
+
   $thead = "
     <thead class='gradasi-toska'>
       <th>No</th>
@@ -108,9 +120,13 @@ if (!mysqli_num_rows($q)) {
       SELECT is_ontime FROM tb_presensi 
       WHERE id_peserta=$d[id_peserta] 
       AND id_sesi=a.id) is_ontime   
-    FROM tb_sesi a WHERE a.id_room=$id_room";
+    FROM tb_sesi a 
+    WHERE a.id_room=$id_room 
+    AND jenis=1
+    ";
     $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
     $td_presensi = '';
+    $j = 0;
     while ($d2 = mysqli_fetch_assoc($q2)) {
       $icon_hadir = '';
       if ($d2['is_ontime'] === '1') {
@@ -118,13 +134,15 @@ if (!mysqli_num_rows($q)) {
       } elseif ($d2['is_ontime'] === '0') {
         $icon_hadir = $img_late;
       } else {
-        if ($ris_presensi_aktif[$d2['id_sesi']]) {
+        if ($arr_is_sesi_aktif[$d2['id_sesi']]) {
           $icon_hadir = $img_reject;
         } else {
           $icon_hadir = '-';
         }
       }
-      $td_presensi .= "<td>$icon_hadir</td>";
+      $j++;
+      $desktop_only_775 = $j < $count_sesi_aktif  ? 'desktop_only_775' : '';
+      $td_presensi .= "<td class='$desktop_only_775'>$icon_hadir</td>";
     }
 
 

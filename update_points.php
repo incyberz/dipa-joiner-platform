@@ -31,7 +31,7 @@ if ($harus_update_poin and $id_room_kelas) {
     }
     $i++;
   }
-  echo "<br>updating rank_kelas... rank: $rank_kelas";
+  echo "<br>getting rank_kelas... rank: $rank_kelas";
   // die("<pre>$s</pre>");
 
 

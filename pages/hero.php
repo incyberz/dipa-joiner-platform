@@ -18,8 +18,14 @@
           <span class="green">Akademisi</span>
           dalam kebaikan
         </h2>
-        <div data-aos="fade-up" data-aos-delay="800">
-          <a href="?join" class="btn-get-started scrollto">Join</a>
+        <div class="flexy flex-center">
+          <div data-aos="fade-up" data-aos-delay="800">
+            <a href="?join" class="btn-get-started scrollto">Join</a>
+          </div>
+          <div data-aos="fade-up" data-aos-delay="1000">
+            <a href="?login" class="btn-get-started scrollto">Login</a>
+          </div>
+
         </div>
       </div>
       <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="fade-left" data-aos-delay="200" style='position:relative'>

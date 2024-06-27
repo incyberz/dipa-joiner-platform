@@ -84,6 +84,27 @@ $arr_s['accuracy'] = "SELECT
 ";
 
 
+# ============================================================
+# RANK_ROOM
+# ============================================================
+// $arr_s['rank_room'] = "SELECT 
+//   (
+//     (SELECT COUNT(1) FROM tb_war WHERE is_benar=1 AND id_room=q.id AND id_penjawab=p.id_penjawab)*100
+//     /
+//     (SELECT COUNT(1) FROM tb_war WHERE id_room=q.id AND id_penjawab=p.id_penjawab)
+//     *
+//     (SELECT COUNT(1) FROM tb_war WHERE id_room=q.id AND id_penjawab=p.id_penjawab)
+//   )
+//   FROM tb_war p 
+//   JOIN tb_room q ON p.id_room=q.id 
+//   WHERE p.id_penjawab=a.id
+//   AND q.status = 100 -- Active Room 
+//   AND q.tahun_ajar=$tahun_ajar 
+//   LIMIT 1
+// ";
+// $arr_s['rank_room'] = 1;
+
+
 
 
 
@@ -117,82 +138,107 @@ $s_best = "SELECT * FROM tb_best WHERE hidden IS NULL ORDER BY no ";
 $q_best = mysqli_query($cn, $s_best) or die(mysqli_error($cn));
 while ($d_best = mysqli_fetch_assoc($q_best)) {
   $best_code = $d_best['best'];
-  if ($best_code == 'room_player' || $best_code == 'room_kelas') {
-    include 'leaderboard-auto_update-update_room_player_rank.php';
-    exit;
+  if ($best_code == 'rank_room' || $best_code == 'rank_kelas') {
+    if ($id_room) {
+      echolog('including leaderboard-auto_update-update_room_player_rank.php');
+      include 'leaderboard-auto_update-update_room_player_rank.php';
+    } else {
+      echo div_alert('info', 'Tidak bisa update rank_room dan rank_kelas karena belum login.');
+    }
+    // exit;
+  } else {
+    if (!$arr_s[$best_code]) die(div_alert('danger', "Belum ada String SQL untuk update <b class=darkblue>$best_code</b>"));
+
+    $JOIN_tb_room_kelas_d = '';
+    $sql_id_room = 1;
+    if ($id_room) {
+      $JOIN_tb_room_kelas_d = "JOIN tb_room_kelas d ON c.kelas=d.kelas ";
+      $sql_id_room = "d.id_room = $id_room";
+    }
+
+    $s2 = "SELECT 
+      a.id as id_peserta,
+      a.nama as nama_peserta,
+      a.image,
+      a.war_image,
+      c.kelas,
+      ($arr_s[$best_code]) best_value
+  
+      FROM tb_peserta a 
+      JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
+      JOIN tb_kelas c ON b.kelas=c.kelas 
+      $JOIN_tb_room_kelas_d
+      WHERE a.status = 1 -- Peserta Aktif 
+      AND a.id_role = 1 -- Peserta Only 
+      AND a.image IS NOT NULL -- Peserta punya Image
+      AND c.status = 1 -- Kelas Aktif 
+      AND c.kelas_non_peserta IS NULL -- Kelas Peserta Only 
+      AND c.tahun_ajar = $tahun_ajar 
+      AND c.kelas != 'INSTRUKTUR' 
+      AND $sql_id_room
+  
+      ORDER BY best_value DESC 
+      LIMIT 10  
+    ";
+    echo '<pre>';
+    var_dump($s2);
+    echo '</pre>';
+    $q = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+
+    // if ($best_code == 'play_quiz') {
+    //   echo '<pre>';
+    //   var_dump($s2);
+    //   echo '</pre>';
+    //   exit;
+    // }
+
+    $bestiers = '';
+    $arr_best = [];
+    $i = 0;
+    while ($d = mysqli_fetch_assoc($q)) {
+      $i++;
+      $arr_best[$i] = $d['id_peserta'];
+      $image = $d['war_image'] ?? $d['image'];
+      $bestiers .= "$d[id_peserta]|$d[nama_peserta]|$d[kelas]|$d[best_value]|$image--";
+      if ($i <= 3) echo "<br>$d[nama_peserta] | $d[kelas] | $d[best_value]";
+    }
+
+    $id_room_or_null = $id_room ? $id_room : 'NULL';
+    $best_code_week = $id_room ? "$best_code-$week-$id_room" : "$best_code-$week";
+    $s_insert = "INSERT INTO tb_best_week (
+      best_week, 
+      best, 
+      week, 
+      id_room,
+      best1, 
+      best2, 
+      best3, 
+      bestiers
+    ) VALUES (
+      '$best_code_week', 
+      '$best_code', 
+      '$week',
+      $id_room_or_null,
+      '$arr_best[1]', 
+      '$arr_best[2]', 
+      '$arr_best[3]', 
+      '$bestiers'    
+  
+    ) ON DUPLICATE KEY UPDATE 
+      best = '$best_code', 
+      week = $week,
+      id_room = $id_room_or_null,
+      best1 = '$arr_best[1]',  
+      best2 = '$arr_best[2]',  
+      best3 = '$arr_best[3]',  
+      bestiers = '$bestiers'
+    ";
+
+    echo '<br>';
+    echolog("<span class='blue f24 consolas'>Updating $d_best[best]</span>");
+    echo '<hr>';
+    $q = mysqli_query($cn, $s_insert) or die(mysqli_error($cn));
   }
-  if (!$arr_s[$best_code]) die(div_alert('danger', "Belum ada String SQL untuk update <b class=darkblue>$best_code</b>"));
-  $s2 = "SELECT 
-    a.id as id_peserta,
-    a.nama as nama_peserta,
-    a.image,
-    a.war_image,
-    c.kelas,
-    ($arr_s[$best_code]) best_value
-
-    FROM tb_peserta a 
-    JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
-    JOIN tb_kelas c ON b.kelas=c.kelas 
-    WHERE a.status = 1 -- Peserta Aktif 
-    AND a.id_role = 1 -- Peserta Only 
-    AND a.image IS NOT NULL -- Peserta punya Image
-    AND c.status = 1 -- Kelas Aktif 
-    AND c.kelas_non_peserta IS NULL -- Kelas Peserta Only 
-    AND c.tahun_ajar = $tahun_ajar 
-
-    ORDER BY best_value DESC 
-    LIMIT 10  
-  ";
-  $q = mysqli_query($cn, $s2) or die(mysqli_error($cn));
-
-  // if ($best_code == 'play_quiz') {
-  //   echo '<pre>';
-  //   var_dump($s2);
-  //   echo '</pre>';
-  //   exit;
-  // }
-
-  $bestiers = '';
-  $arr_best = [];
-  $i = 0;
-  while ($d = mysqli_fetch_assoc($q)) {
-    $i++;
-    $arr_best[$i] = $d['id_peserta'];
-    $image = $d['war_image'] ?? $d['image'];
-    $bestiers .= "$d[id_peserta]|$d[nama_peserta]|$d[kelas]|$d[best_value]|$image||";
-    if ($i <= 3) echo "<br>$d[nama_peserta] | $d[kelas] | $d[best_value]";
-  }
-
-  $s_insert = "INSERT INTO tb_best_week (
-    best_week, 
-    best, 
-    week, 
-    best1, 
-    best2, 
-    best3, 
-    bestiers
-  ) VALUES (
-    '$best_code-$week', 
-    '$best_code', 
-    '$week', 
-    '$arr_best[1]', 
-    '$arr_best[2]', 
-    '$arr_best[3]', 
-    '$bestiers'    
-
-  ) ON DUPLICATE KEY UPDATE 
-    best = '$best_code', 
-    week = $week,
-    best1 = '$arr_best[1]',  
-    best2 = '$arr_best[2]',  
-    best3 = '$arr_best[3]',  
-    bestiers = '$bestiers'
-  ";
-
-  echo '<br>';
-  echolog("<span class='blue f24 consolas'>Updating $d_best[best]</span>");
-  echo '<hr>';
-  $q = mysqli_query($cn, $s_insert) or die(mysqli_error($cn));
 }
 
 jsurl('?leaderboard', 3000);

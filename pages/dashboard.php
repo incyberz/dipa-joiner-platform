@@ -1,15 +1,29 @@
+<style>
+  @media (max-width: 450px) {
+    .desktop_only {
+      display: none;
+    }
+  }
+</style>
 <?php
 if (!$id_peserta) jsurl('?login');
 if (!$id_room) jsurl('?pilih_room');
+$img_check = img_icon('check');
+$img_next = img_icon('next');
+$null_red = '<span class="red consolas miring">null</span>';
+
 
 $welcome_kelas = $id_role == 1 ? "kelas <span class='tebal darkblue'>$kelas </span> pada Room <span class='tebal darkblue'>$nama_room</span>" : '';
-$welcome = "Welcome
-    <span class='tebal darkblue'>$nama_peserta</span>
-    ! Anda login sebagai
-    <span class='tebal darkblue'>$Sebagai</span> 
-    $welcome_kelas
+$welcome = "
+  <div>
+    Welcome
+    <span class='tebal darkblue'>$nama_peserta!</span>
+  </div>
+  Anda login sebagai
+  <span class='tebal darkblue'>$Sebagai</span> 
+  $welcome_kelas
 ";
-set_h2("Dashboard $Sebagai", $welcome);
+set_h2("Dashboard <span class=desktop_only>$Sebagai</span>", $welcome);
 if ($status_room == -1) echo div_alert('info', meme('closed', 6) . '<hr>Room ini sudah ditutup.');
 
 if ($id_role == 1) {

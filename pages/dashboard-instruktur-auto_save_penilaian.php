@@ -193,8 +193,8 @@ while ($d = mysqli_fetch_assoc($q)) {
         <div class='darkabu miring f14 mb1 mt1'>$d[deskripsi]</div>
         <div class='abu f12'>$d[multiplier_info]</div>
       </td>
-      <td class=tengah>$basic_poin TP</td>
-      <td>$my_multiplier</td>
+      <td class='tengah desktop_only'>$basic_poin TP</td>
+      <td class='desktop_only'>$my_multiplier</td>
       <td>$my_point TP</td>
     </tr>
   ";

@@ -115,6 +115,13 @@ echo "
       $my_room
     </div>
     <hr>
+    <div class='tengah'>
+      <div class='mb2'>
+        <a class='btn btn-success' href='?buat_room' onclick='return confirm(`Buat Room Baru?`)'>Buat Room Baru</a>
+      </div>
+      <a href='?logout' onclick='return confirm(`Logout?`)'>Logout</a>
+    </div>
+    <hr>
     <h3 class='mt4 mb4 tengah'>Other Rooms</h3>
     <div class=row>
       $other_room
@@ -122,12 +129,3 @@ echo "
   </form>
 </div>
 ";
-?>
-
-<hr>
-<div class="tengah">
-  <div class="mb2">
-    <a class="btn btn-success" href="?buat_room" onclick='return confirm("Buat Room Baru?")'>Buat Room Baru</a>
-  </div>
-  <a href="?logout" onclick='return confirm("Logout?")'>Logout</a>
-</div>

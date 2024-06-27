@@ -1,7 +1,14 @@
 <?php
 if (!$id_room) die(erid('id_room'));
 if (!$kelas) {
-  die("<b style=color:red>Username Anda belum dimasukan ke kelas manapun atau tidak dijadikan sebagai Grup INSTRUKTUR</b><hr>Silahkan hubungi Developer (Iin, M.Kom) untuk Verifikasi akun Anda!");
+  die("
+  <b style=color:red>
+  Username Anda belum dimasukan ke kelas manapun atau tidak dijadikan sebagai Grup INSTRUKTUR</b>
+  <hr>
+  Silahkan hubungi Developer (Iin, M.Kom) untuk Verifikasi akun Anda!
+  <hr>
+  <a href='?logout'>Logout</a>
+  ");
 }
 
 # ========================================================
@@ -233,7 +240,8 @@ if (mysqli_num_rows($q)) {
   $poin_challenge = $d['poin_challenge'];
   $akumulasi_poin = $d['akumulasi_poin'];
 
-  $my_points = number_format($akumulasi_poin, 0);
+  $my_points = $akumulasi_poin;
+  $my_points_show = number_format($akumulasi_poin, 0);
 
   $nilai_akhir = $d['nilai_akhir'];
   $nilai_akhir = $nilai_akhir > 100 ? 100 : $nilai_akhir;

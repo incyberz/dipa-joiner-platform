@@ -31,7 +31,7 @@ $total_peserta = null;
 $total_peserta_kelas = null;
 $profil_ok = null;
 
-$tahun_ajar = 20232;
+$tahun_ajar = 20241;
 $id_room_kelas = null;
 $room = null;
 $nama_room = null;
@@ -45,6 +45,7 @@ $null = '<span class="consolas f12 red miring">null</span>';
 $lokasi_pages = 'pages';
 $lokasi_profil = 'assets/img/peserta';
 $lokasi_img = 'assets/img';
+$src_profil_na_fixed = 'assets/img/img_na.jpg';
 
 $week = intval(strtotime('now') / (7 * 24 * 60 * 60));
 

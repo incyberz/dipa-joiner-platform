@@ -1,7 +1,6 @@
-<div class="section-title" data-aos="fade-up">
-  <h2>Join</h2>
-</div>
 <?php
+$img_home = img_icon('home');
+set_h2('Join', "<a href='?'>$img_home</a> <a href='?login'>$img_login_as</a> ");
 $as = $_GET['as'] ?? '';
 $as = strtolower($as);
 
@@ -93,7 +92,7 @@ if (isset($_POST['btn_join'])) {
         <li><b class=abu>Username:</b> $username</li>
         <li><b class=abu>Password:</b> $username</li>
       </ul>
-      <a class='btn btn-primary btn-sm btn-block' href='?login&username=$username'>Menuju Login Page</a>
+      <a class='btn btn-primary btn-sm btn-block' href='?login&username=$username'>Menuju Login Page</a> 
       ");
 
     $pesan = urlencode($pesan);
@@ -154,7 +153,9 @@ if (!$as) {
 
     <div class='tengah mt3' data-aos='fade-up' data-aos-delay='800'>
       Sudah punya akun? Silahkan 
-      <a href='?login'><b>Login</b></a>
+      <a href='?login'><b>Login $img_login_as</b></a>
+      <hr> 
+      <a href='?'>Back Home $img_home</a>
     </div>
   ";
 } else {

@@ -65,7 +65,7 @@ function menit_show($m)
 # NAVIGASI BY KELAS
 # =============================================================
 $param_awal = "verif&history=$get_history";
-include 'navigasi_kelas.php';
+include 'navigasi_room_kelas.php';
 $sql_kelas = $get_kelas ? "g.kelas = '$get_kelas'" : '1';
 
 # =============================================================
@@ -210,7 +210,7 @@ foreach ($rjenis as $key => $jenis) {
           $Submiter = $jenis == 'latihan' ? 'Submiter' : 'Challenger';
 
           $form_approve = "
-          <div class='hideita wadah gradasi-hijau' id=form_approve$id_bukti>
+          <div class='hideit wadah gradasi-hijau' id=form_approve$id_bukti>
             <form method=post>
               <div class='consolas f10 abu mb2'>Form Approve</div>
               <div class='f14 abu mb1'>Poin Apresiasi (opsional)</div>

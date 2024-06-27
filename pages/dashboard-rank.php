@@ -1,12 +1,16 @@
-<?php
-$nilai_akhir_show = $nilai_akhir ? $nilai_akhir : '?';
-?>
 <style>
   .blok_rank,
-  .blok_nilai_akhir {
+  .blok_nilai_akhir,
+  .blok_progres {
     border-top: solid 1px #ccc;
     margin: 0 10px;
     text-align: center
+  }
+
+  .blok_progres label {
+    font-size: 12px;
+    color: gray;
+    margin: 10px 0 5px 0;
   }
 
   .nama_peserta {
@@ -55,6 +59,36 @@ $nilai_akhir_show = $nilai_akhir ? $nilai_akhir : '?';
     font-weight: 600
   }
 </style>
+<?php
+function progres($Label, $href, $count, $count_of, $persen_count, $styles = '')
+{
+  return "
+    <a href='?$href'>
+      <label>$Label $count of $count_of ($persen_count%)</label>
+      <div class='progress'>
+        <div class='progress-bar' style='width: $persen_count%; $styles;'></div>
+      </div>
+    </a>  
+  ";
+}
+
+$nilai_akhir_show = $nilai_akhir ? $nilai_akhir : '?';
+
+$progres['presensi'] = progres('Presensi', 'presensi', 12, 14, 85);
+$progres['latihan'] = progres('Latihan', 'activity&jenis=latihan', 12, 14, 75);
+$progres['challenge'] = progres('Challenge', 'activity&jenis=challenge', 12, 14, 65);
+$progres['ujian'] = progres('Ujian', 'ujian', 12, 14, 25);
+
+$blok_progres = "
+  <div class='mt2 mb4'>
+    $progres[presensi]
+    $progres[latihan]
+    $progres[challenge]
+    $progres[ujian]
+  </div>
+";
+?>
+
 <div class="card mb2">
   <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
@@ -69,13 +103,24 @@ $nilai_akhir_show = $nilai_akhir ? $nilai_akhir : '?';
     <span class="rank_of">of
       <a href="?peserta_kelas">
         <span class="rank_of_count"><?= $total_peserta_kelas ?></span>
+        peserta
       </a>
-      peserta
     </span>
   </div>
 
   <div class='blok_nilai_akhir'>
-    <span class="abu">Nilai Akhir:</span> <span class="nilai_akhir_hm"><?= $hm ?></span> <span class="nilai_akhir_angka">(<?= $nilai_akhir_show ?>)</span> <a href="?nilai_akhir"><i class="bi bi-arrow-right-circle-fill "></i></a>
+    <span class="abu">Nilai Akhir:</span>
+    <span class="nilai_akhir_hm"><?= $hm ?></span>
+    ~
+    <a href="?nilai_akhir">
+      <span class="">
+        <?= $nilai_akhir_show ?>
+      </span>
+      <?= $img_next ?>
+    </a>
   </div>
 
+  <div class='blok_progres'>
+    <?= $blok_progres ?>
+  </div>
 </div>
