@@ -41,11 +41,16 @@ if ($get_mode != 'fast') include 'include/date_managements.php';
 # ================================================================
 $s = "SELECT a.kelas, a.id as id_room_kelas 
 FROM tb_room_kelas a 
+JOIN tb_kelas b ON a.kelas=b.kelas 
 WHERE a.id_room=$id_room 
 AND $sql_kelas 
 AND a.kelas != 'INSTRUKTUR' 
+AND b.tahun_ajar = $tahun_ajar 
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+if (!mysqli_num_rows($q)) {
+  $blok_kelas = div_alert('danger', "Belum ada Grup Kelas pada Room ini untuk TA $ta_show");
+}
 while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
 
   $s2 = "SELECT 
@@ -61,6 +66,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
   JOIN tb_peserta d ON a.id_peserta=d.id  
   WHERE c.id=$d[id_room_kelas] 
   AND b.status=1 
+  AND b.tahun_ajar=$tahun_ajar 
   AND d.status=1 
   AND d.nama NOT LIKE '%dummy%'
   ORDER BY b.shift, b.prodi,d.nama";
@@ -350,11 +356,6 @@ if ($id_role == 2) {
   $pilih_mode = '';
 }
 
-echo "
-<div class='section-title' zzzdata-aos='fade-up'>
-  <h2>$judul</h2>
-  <p>Peserta Kelas MK $room :: $jumlah_peserta peserta $pilih_mode</p>
-  
-</div>
-$blok_kelas 
-";
+
+set_h2($judul, "Peserta Kelas MK $room :: $jumlah_peserta peserta $pilih_mode");
+echo $blok_kelas;

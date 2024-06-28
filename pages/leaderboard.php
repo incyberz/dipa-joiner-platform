@@ -326,7 +326,11 @@ if ($get_update) {
       ];
       $div_peserta = '';
       $i = 0;
+      // echo '<pre>';
+      // var_dump($id_besties);
+      // echo '</pre>';
       foreach ($id_besties as $id_bestie => $arr_nama_kelas) {
+        if (!$arr_nama_kelas['nama']) continue;
         $i++;
         $class_style = $id_bestie == $id_peserta ? 'br10 gradasi-pink border_mine' : '';
         $src = "$lokasi_profil/wars/peserta-$id_bestie.jpg";

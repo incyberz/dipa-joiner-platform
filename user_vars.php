@@ -1,4 +1,6 @@
 <?php
+$id_role = $_SESSION['dipa_id_role'];
+if (!$id_role) die(erid('id_role at user_vars'));
 if (!$tahun_ajar) die(erid('tahun_ajar at user_vars'));
 if ($dm) echo "<div style='height:50px'>.</div>DEBUG MODE ON<hr>";
 
@@ -8,6 +10,7 @@ $undef = '<span class="red kecil miring">undefined</span>';
 # ========================================================
 # SELECT DATA PESERTA
 # ========================================================
+$sql_ta = $id_role == 2 ? 1 : "q.tahun_ajar=$tahun_ajar";
 $s = "SELECT 
 a.id as id_peserta, 
 a.*,
@@ -17,13 +20,14 @@ b.*,
 (
   SELECT p.kelas FROM tb_kelas_peserta p  
   JOIN tb_kelas q ON p.kelas=q.kelas  
-  WHERE q.tahun_ajar=$tahun_ajar
+  WHERE $sql_ta
   AND p.id_peserta=a.id) kelas
 
 FROM tb_peserta a 
 JOIN tb_role b ON a.id_role=b.id 
 WHERE a.username='$username' 
 ";
+
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) die('Username tidak ditemukan.');
 $d_peserta = mysqli_fetch_assoc($q);
@@ -54,7 +58,6 @@ if (!$punya_biodata) {
 # FOLDER UPLOADS HANDLER
 # ========================================================
 $folder_uploads = $d_peserta['folder_uploads'];
-$id_role = $d_peserta['id_role'];
 if (!$folder_uploads) {
   # ========================================================
   # AUTO-CREATE FOLDER UPLOADS

@@ -1,15 +1,4 @@
 <?php
-function tahun_ajar($ta)
-{
-  if (strlen($ta) != 5) return false;
-  if ($ta < 20201 || $ta > 20252) return "[tahun_ajar: $ta out of range.]";
-  $smt = substr($ta, 4, 1);
-  if ($smt < 1 || $smt > 2) return "[smt: $smt out of range]";
-  $gg = $smt == 2 ? 'Genap' : 'Ganjil';
-  $thn = substr($ta, 0, 4);
-  return   "$thn/" . ($thn + 1) . " $gg";
-}
-
 # ============================================================
 # INFO TAHUN AJAR DAN PEKAN
 # ============================================================
@@ -24,7 +13,11 @@ echo div_alert('info tengah', "
 # ============================================================
 echo div_alert('info tengah', "
   <div class='f12 abu'>Pekan-id #$week</div>
-  <div>P13 Proyek Tugas Web</div>
+    <div>
+      <a href='?list_sesi'>
+        P13 Proyek Tugas Web
+      </a>
+    </div>
   <div class='f12 abu mb1'>Tatap Muka pada 5 Agustus 2024 | 3 hari lagi</div>
 ");
 

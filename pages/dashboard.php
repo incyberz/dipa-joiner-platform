@@ -1,10 +1,3 @@
-<style>
-  @media (max-width: 450px) {
-    .desktop_only {
-      display: none;
-    }
-  }
-</style>
 <?php
 if (!$id_peserta) jsurl('?login');
 if (!$id_room) jsurl('?pilih_room');

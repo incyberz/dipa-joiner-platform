@@ -1,6 +1,15 @@
 <?php
 function div_best($best, $div_peserta, $stars, $title, $desc, $gradasi = '')
 {
+  if (!$div_peserta) {
+    $title = ucwords(strtolower($title));
+    $div_peserta = div_alert('info', "
+      No Data...
+      <hr> 
+      Jadilah kamu sebagai The First of $title
+  
+    ");
+  }
   return "
     <div class='col-lg-6'  data-aos='fade-up'>
       <div class='wadah tengah $gradasi'>

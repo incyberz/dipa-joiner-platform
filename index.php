@@ -98,6 +98,8 @@ include 'include/meme.php';
 include 'include/insho_functions.php';
 include 'include/dipa_functions.php';
 include 'include/img_icon.php';
+$ta_show = tahun_ajar($tahun_ajar);
+
 
 # ========================================================
 # ROOM PROPERTIES

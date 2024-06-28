@@ -164,7 +164,7 @@ $tr_tambah = "
       <td colspan=100%>
         <div class='btn_aksi tebal green pointer mt4 mb4' id=form_add_kelas__toggle>$img_add Add Kelas</div>
         <div class='abu mt2 mb2' id=form_add_kelas__note>Kosongkan ceklis pada tabel diatas jika ingin menambah kelas</div>
-        <div class='wadah mb4 hideit' id=form_add_kelas>
+        <div class='wadah gradasi-toska mb4 hideit' id=form_add_kelas>
           <table class='table'>
             $tr_add_input
             <tr>

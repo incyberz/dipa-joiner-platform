@@ -303,4 +303,10 @@
   .abumuda {
     color: #aaa
   }
+
+  @media (max-width: 450px) {
+    .desktop_only {
+      display: none;
+    }
+  }
 </style>
