@@ -27,11 +27,13 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
 <header id="header" class="fixed-top d-flex align-items-center">
   <div class="container d-flex align-items-center justify-content-between">
 
+    <div style="position: absolute; z-index: -100; color:white; background: white; height: 1px; width: 1px; overflow: hidden">
+      <h1><?= $meta_title ?></h1>
+      <p><?= $meta_description ?></p>
+    </div>
+
     <div class="logo">
       <img src="assets/img/dipa-logo.png" alt="dipa-logo" class="img-fluid">
-      <!-- <h1>DIPA</h1> -->
-      <!-- Uncomment below if you prefer to use an image logo -->
-      <!-- <a href="index.html"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
     </div>
 
     <nav id="navbar" class="navbar">

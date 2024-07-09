@@ -24,6 +24,7 @@ $sql_best = $get_best ? "a.best = '$get_best'" : 1;
 
 $bulan_tahun = $nama_bulan[intval(date('m')) - 1] . ' ' . date('Y');
 $Leaderboard = $id_room ? 'Room Leaderboard' : 'Leaderboard';
+$Leaderboard = $parameter ? $Leaderboard : $meta_title;
 $nama_room_show = $id_room ? " - <span class=darkblue>$nama_room</span> " : '';
 set_h2($Leaderboard, "Peserta Terbaik minggu ini - $bulan_tahun $nama_room_show - <i>all time</i>");
 include 'leaderboard-functions.php';

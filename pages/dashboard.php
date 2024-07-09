@@ -7,19 +7,20 @@ $null_red = '<span class="red consolas miring">null</span>';
 
 
 $welcome_kelas = $id_role == 1 ? "kelas <span class='tebal darkblue'>$kelas </span> pada Room <span class='tebal darkblue'>$nama_room</span>" : '';
+$login_as_info = $is_login_as ? '<span class="darkred bold">[login_as]</span>' : '';
 $welcome = "
   <div>
     Welcome
     <span class='tebal darkblue'>$nama_peserta!</span>
   </div>
-  Anda login sebagai
+  Anda login $login_as_info sebagai
   <span class='tebal darkblue'>$Sebagai</span> 
   $welcome_kelas
 ";
-set_h2("Dashboard <span class=desktop_only>$Sebagai</span>", $welcome);
+set_h2("Dashboard", $welcome);
 if ($status_room == -1) echo div_alert('info', meme('closed', 6) . '<hr>Room ini sudah ditutup.');
 
-if ($id_role == 1) {
+if ($id_role == 1 || $is_login_as) {
 ?>
   <div class='row '>
     <div class='col-xl-4' data-zzz-aos=fade-up data-zzz-aos-delay=150>

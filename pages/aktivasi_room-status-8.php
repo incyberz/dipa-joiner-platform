@@ -1,11 +1,5 @@
 <!-- <link rel='stylesheet' href='assets/css/radio-toolbar.css'> -->
 <style>
-  .ilustrasi {
-    max-width: 100px;
-    display: inline-block;
-    margin: 15px;
-  }
-
   .label {
     transition: .2s;
     color: #228;
@@ -110,7 +104,7 @@ foreach ($arr as $key => $syarat) {
   $tr .= "
     <tr>
       <td>
-        <img src='assets/img/ilustrasi/$syarat[image]' alt='img-$key' class='ilustrasi'>
+        <img src='assets/img/ilustrasi/$syarat[image]' alt='img-$key' class='img_ilustrasi'>
       </td>
       <td>
         <h4>$syarat[caption]</h4>

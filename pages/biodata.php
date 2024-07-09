@@ -2,76 +2,69 @@
 $unset = '<span class="consolas red miring kecil">unset</span>';
 
 $pesan_update = '';
-if(isset($_POST['btn_update'])){
+if (isset($_POST['btn_update'])) {
   $pairs = '';
   foreach ($_POST as $key => $value) {
-    if($key=="id" || $key=='btn_update') continue;
-    $value = $value=='' ? 'NULL' : '\''.clean_sql(strtoupper($value)).'\'';
+    if ($key == "id" || $key == 'btn_update') continue;
+    $value = $value == '' ? 'NULL' : '\'' . clean_sql(strtoupper($value)) . '\'';
     $pairs .= "$key = $value, ";
   }
 
   $id = $_POST["id"];
   $s = "UPDATE tb_biodata SET $pairs WHERE id=$id ";
-  $s = str_replace(',  WHERE', ' WHERE',$s); // hilangkan koma
+  $s = str_replace(',  WHERE', ' WHERE', $s); // hilangkan koma
   // echo $s;
   $link_back = "<hr><a href='?'>Kembali ke Home</a> | <a href='?ujian'>Ke Menu Ujian</a>";
 
   try {
-    $q = mysqli_query($cn,$s) or throw new Exception(mysqli_error($cn));
+    $q = mysqli_query($cn, $s) or throw new Exception(mysqli_error($cn));
     $pesan_update = div_alert('success', "Update success. $link_back");
   } catch (Exception $e) {
-    if(strpos("salt$e",'Duplicate entry')){
-      echo div_alert('danger',"Input kode sudah ada di database. Silahkan memakai kode unik lainnya. $link_back");
-    }else{
-      echo div_alert('danger',"Tidak bisa menjalankan Query SQL.");
+    if (strpos("salt$e", 'Duplicate entry')) {
+      echo div_alert('danger', "Input kode sudah ada di database. Silahkan memakai kode unik lainnya. $link_back");
+    } else {
+      echo div_alert('danger', "Tidak bisa menjalankan Query SQL.");
     }
   }
-
-}else{
-
+} else {
 }
 # =========================================
 # DESCRIBE THIS TABLE
 # =========================================
 $s = "DESCRIBE tb_biodata";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $colField = [];
 $colType = [];
 $colLength = [];
 $colNull = [];
 $colKey = [];
 $colDefault = [];
-while($d=mysqli_fetch_assoc($q)){
+while ($d = mysqli_fetch_assoc($q)) {
   array_push($colField, $d['Field']);
   array_push($colNull, $d['Null']);
   array_push($colKey, $d['Key']);
   array_push($colDefault, $d['Default']);
 
-  if($d['Type']=='date'){
+  if ($d['Type'] == 'date') {
     $Type = 'date';
     $Length = 10;
-  }else if($d['Type']=='timestamp'){
+  } else if ($d['Type'] == 'timestamp') {
     $Type = 'timestamp';
     $Length = 19;
-  }else{
-    $pos = strpos($d['Type'],'(');
-    $pos2 = strpos($d['Type'],')');
+  } else {
+    $pos = strpos($d['Type'], '(');
+    $pos2 = strpos($d['Type'], ')');
     $len = strlen($d['Type']);
-    $len_type = $len - ($len-$pos);
-    $len_length = $len - ($len-$pos2) - $len_type - 1;
-  
-    $Type = substr($d['Type'],0,$len_type);
-    $Length = intval(substr($d['Type'],$pos+1, $len_length));
+    $len_type = $len - ($len - $pos);
+    $len_length = $len - ($len - $pos2) - $len_type - 1;
+
+    $Type = substr($d['Type'], 0, $len_type);
+    $Length = intval(substr($d['Type'], $pos + 1, $len_length));
   }
 
   array_push($colType, $Type);
   array_push($colLength, $Length);
-  // echo "<h1>Length : $Length</h1>";
 }
-
-// echo '<pre>';
-// var_dump($colType);
-// echo '</pre>';
 
 
 
@@ -80,7 +73,7 @@ while($d=mysqli_fetch_assoc($q)){
 # SELECT MY BIODATA
 # =========================================
 $s = "SELECT * FROM tb_biodata WHERE id=$id_peserta";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $d = mysqli_fetch_assoc($q);
 
 $isi_data = [];
@@ -95,22 +88,23 @@ $id = $d["id"];
 # =========================================
 $inputs = '';
 foreach ($colField as $key => $field) {
-  if($field=='id'
-  ||$field=='tanggal_update'
-  ||$field=='tanggal_lahir'
-  ||$field=='gender'
-  ||$field=='nik'
-  ||$field=='bekerja_sebagai'
-  ||$field=='bekerja_di'
+  if (
+    $field == 'id'
+    || $field == 'tanggal_update'
+    || $field == 'tanggal_lahir'
+    || $field == 'gender'
+    || $field == 'nik'
+    || $field == 'bekerja_sebagai'
+    || $field == 'bekerja_di'
   ) continue;
   // echo "<h1>field : $field</h1>";
-  $nama_kolom = ucwords(str_replace('_',' ',$field));
-  
+  $nama_kolom = ucwords(str_replace('_', ' ', $field));
+
 
   # =========================================
   # KEY FIELD HANDLERS
   # =========================================
-  if($field=='sudah_bekerja'){
+  if ($field == 'sudah_bekerja') {
     $input = "
       <div class='kecil mb2'>
         <div class='mb1'>
@@ -150,7 +144,7 @@ foreach ($colField as $key => $field) {
         <input class='form-control mb2' name=bekerja_sebagai id=bekerja_sebagai required placeholder='Bekerja sebagai ...' />
       </div>
     ";
-  }else  if($field=='status_menikah'){
+  } else  if ($field == 'status_menikah') {
     $input = "
       <div class='kecil mb2'>
         <div class='mb1'>
@@ -175,7 +169,7 @@ foreach ($colField as $key => $field) {
         </div>
       </div>
     ";
-  }elseif($field=='agama'){
+  } elseif ($field == 'agama') {
     $input = "
       <div class='kecil mb2'>
         <div class='mb1'>
@@ -240,34 +234,32 @@ foreach ($colField as $key => $field) {
         </div>
       </div>
     ";
-  }else if($colKey[$key]=='MUL'){
+  } else if ($colKey[$key] == 'MUL') {
     # =========================================
     # CREATE INPUT SELECT
     # =========================================
-    if($colField[$key]=='satuan'){
+    if ($colField[$key] == 'satuan') {
       $s2 = "SELECT satuan FROM tb_satuan";
-    }else{
+    } else {
       $arr = explode('_', $colField[$key]);
       $s2 = "SELECT id,nama FROM tb_$arr[1] WHERE status=1";
     }
     // echo "$s2";
-    $q2 = mysqli_query($cn,$s2) or die(mysqli_error($cn));
+    $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
     $opt = '';
-    while($d2=mysqli_fetch_assoc($q2)){
-      if($colField[$key]=='satuan'){
+    while ($d2 = mysqli_fetch_assoc($q2)) {
+      if ($colField[$key] == 'satuan') {
         $selected = $d2['satuan'] == $d[$colField[$key]] ? 'selected' : '';
         $opt .= "<option value='$d2[satuan]' $selected>$d2[satuan]</option>";
-      }else{
+      } else {
         $selected = $d2['id'] == $d[$colField[$key]] ? 'selected' : '';
         $opt .= "<option value='$d2[id]' $selected>$d2[nama]</option>";
       }
-
     }
 
-    $disabled_change_role = ($id_role!=9 and biodata=='user') ? 'disabled' : '';
+    $disabled_change_role = ($id_role != 9 and biodata == 'user') ? 'disabled' : '';
     $input = "<select class='form-control mb2' name='$field' $disabled_change_role>$opt</select>";
-    
-  }else{
+  } else {
     # =========================================
     # NORMAL INPUT OR TEXTAREA
     # =========================================
@@ -277,17 +269,16 @@ foreach ($colField as $key => $field) {
 
     $ftype = $colType[$key];
 
-    if($ftype=='varchar'||$ftype=='char'){
+    if ($ftype == 'varchar' || $ftype == 'char') {
       $type = 'text';
-      $param_maxlength = $ftype=='varchar' ? "maxlength='$colLength[$key]' " : "maxlength='$colLength[$key]' minlength='$colLength[$key]' ";
-    }elseif($ftype=='int'||$ftype=='smallint'||$ftype=='tinyint'||$ftype=='decimal'){
+      $param_maxlength = $ftype == 'varchar' ? "maxlength='$colLength[$key]' " : "maxlength='$colLength[$key]' minlength='$colLength[$key]' ";
+    } elseif ($ftype == 'int' || $ftype == 'smallint' || $ftype == 'tinyint' || $ftype == 'decimal') {
       $type = 'number';
-      if($ftype=='decimal') $param_step = 'step="0.01"';
-
-    }elseif($ftype=='timestamp' || $ftype=='date') {
+      if ($ftype == 'decimal') $param_step = 'step="0.01"';
+    } elseif ($ftype == 'timestamp' || $ftype == 'date') {
       $type = 'date';
-    }else{
-      die(div_alert('danger',"Type of field: $ftype belum ditentukan."));
+    } else {
+      die(div_alert('danger', "Type of field: $ftype belum ditentukan."));
     }
     $params = "
       type='$type'
@@ -302,15 +293,13 @@ foreach ($colField as $key => $field) {
       required
     ";
 
-    if($colLength[$key]>100){
+    if ($colLength[$key] > 100) {
       $input = "<textarea $params>$d[$field]</textarea>";
-    }else{
+    } else {
       $input = "<input $params>";
     }
 
-    if($field=='wirausaha_bidang') $input.= "<div class='kecil miring abu mt1 mb2'>Strip jika tidak punya wirausaha</div>";
-
-    
+    if ($field == 'wirausaha_bidang') $input .= "<div class='kecil miring abu mt1 mb2'>Strip jika tidak punya wirausaha</div>";
   }
 
   # =========================================
@@ -324,7 +313,7 @@ foreach ($colField as $key => $field) {
 
 
 
-$hide_after_nik = $isi_data['nik']=='' ? 'hideit' : '';
+$hide_after_nik = $isi_data['nik'] == '' ? 'hideit' : '';
 
 # ==============================================================
 # FINAL OUTPUT TR 
@@ -411,14 +400,14 @@ include 'biodata_nik_handle.php';
 
 
 ?><script>
-  $(function(){
-    $('.sudah_bekerja').click(function(){
+  $(function() {
+    $('.sudah_bekerja').click(function() {
       let val = $(this).val();
-      if(val==1){
+      if (val == 1) {
         $('#jika_bekerja').fadeIn();
         $('#bekerja_di').val('');
         $('#bekerja_sebagai').val('');
-      }else{
+      } else {
         $('#jika_bekerja').fadeOut();
         $('#bekerja_di').val('-');
         $('#bekerja_sebagai').val('-');
@@ -427,9 +416,9 @@ include 'biodata_nik_handle.php';
     });
 
 
-    $('#show_pacar').click(function(){
+    $('#show_pacar').click(function() {
       let y = confirm("Try to connect Disdukcapil API to retrieve this data?\n\nShow me!");
-      if(!y) return;
+      if (!y) return;
 
       $('#show_pacar').hide();
       $('#show_pacar').html('<span class="kecil miring red">... (maaf, system merahasiakan hal ini)</span>');
@@ -437,9 +426,9 @@ include 'biodata_nik_handle.php';
       $('#ket_tanggal_nikah').fadeIn(4000);
 
     })
-    $('#show_tanggal_nikah').click(function(){
+    $('#show_tanggal_nikah').click(function() {
       let y = confirm("Try to connect Kemenag API to retrieve this data?\n\nYes, connect.");
-      if(!y) return;
+      if (!y) return;
 
       $('#show_tanggal_nikah').hide();
       $('#show_tanggal_nikah').html('<span class="kecil miring red">... (Kemenag API not responded. Kamu penasaran ya!? Sepertinya kamu jomblo!!)</span>');

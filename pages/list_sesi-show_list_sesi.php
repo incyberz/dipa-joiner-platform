@@ -130,21 +130,6 @@ while ($d_sesi = mysqli_fetch_assoc($q)) {
     $tags_show = $tags_show;
     $fitur_sesi = "$lats $chals $asks";
 
-    // if ($id_role == 2 and $manage) {
-    //   $r = explode(', ', $d_sesi['tags']);
-    //   sort($r);
-    //   $tags_sort = implode(', ', $r);
-    //   $nama_show = "<input class='form-control input_editable mb1' name=nama id=nama__$id_sesi value='$d_sesi[nama_sesi]'>";
-    //   $ket_show = "<textarea class='form-control input_editable mb1' rows=5 name=deskripsi id=ket__$id_sesi placeholder='keterangan sesi...'>$d_sesi[deskripsi]</textarea>";
-    //   $tags_show = "<textarea class='form-control input_editable mb1' rows=5 name=tags id=tags__$id_sesi placeholder='tag-tag materi...'>$d_sesi[tags]</textarea>";
-    //   $fitur_sesi = '';
-    // } else {
-    //   $nama_show = $d_sesi['nama_sesi'];
-    //   $ket_show = $d_sesi['deskripsi'];
-    //   $tags_show = $tags_show;
-    //   $fitur_sesi = "$lats $chals $asks";
-    // }
-
     $pelaksanaan = $d_sesi['jadwal_kelas'] ? $d_sesi['jadwal_kelas'] : '<span class="f12 miring abu">belum dilaksanakan</span>';
 
     $div_list .= "

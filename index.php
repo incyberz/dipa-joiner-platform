@@ -2,18 +2,18 @@
 # ========================================================
 # DIPA INDEX
 # ========================================================
-if (0) {
-  die("
-  <style>*{margin:0;padding:0;background:black;color:white;text-align:center}
-  hr{margin:15px}</style>
-  <div style='padding:15px'>
-    <h1 style='color:yellow'>DIPA Joiner sedang maintenance.</h1>
-    <hr>
-    <p>Mohon maaf, saat ini sedang update Fitur Ujian dan Polling System</p>
-    <hr>
-    <p>Jika maintenance melebihi pukul 11.00 harap hubungi Pihak Developer. Terimakasih.</p>
-  </div>");
-}
+// if (0) {
+//   die("
+//   <style>*{margin:0;padding:0;background:black;color:white;text-align:center}
+//   hr{margin:15px}</style>
+//   <div style='padding:15px'>
+//     <h1 style='color:yellow'>DIPA Joiner sedang maintenance.</h1>
+//     <hr>
+//     <p>Mohon maaf, saat ini sedang update Fitur Ujian dan Polling System</p>
+//     <hr>
+//     <p>Jika maintenance melebihi pukul 11.00 harap hubungi Pihak Developer. Terimakasih.</p>
+//   </div>");
+// }
 session_start();
 // session_destroy(); exit;
 // echo '<pre style="margin-top: 170px">'; var_dump($_SESSION); echo '</pre>';
@@ -31,7 +31,7 @@ $total_peserta = null;
 $total_peserta_kelas = null;
 $profil_ok = null;
 
-$tahun_ajar = 20241;
+$tahun_ajar = 20232;
 $id_room_kelas = null;
 $room = null;
 $nama_room = null;
@@ -48,6 +48,14 @@ $lokasi_img = 'assets/img';
 $src_profil_na_fixed = 'assets/img/img_na.jpg';
 
 $week = intval(strtotime('now') / (7 * 24 * 60 * 60));
+$is_login_as = isset($_SESSION['dipa_master_username']) ? 1 : 0;
+
+# ============================================================
+# META
+# ============================================================
+$meta_title = "DIPA Joiner Gamified LMS - Fun Learning Management System bagi Mitra, Praktisi, dan Akademisi";
+$meta_description = "Fun e-Learning Management System (LMS) berbasis Game Mechanics (Gamification) bagi Mitra (Dunia Industri), Praktisi, dan Akademisi. Dengan Rank System, Leaderboard, Play Quiz, dan Tanam Soal, menjadikan Pembelajaran seindah permainan.";
+$meta_keywords = "learning management system, fun lms, gamification, game mechanic, rank, leaderboard, quiz, bank soal, pembelajaran jarak jauh";
 
 
 include 'config.php';
@@ -133,9 +141,9 @@ if ($username) {
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>DIPA Joiner</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
+  <title><?= $meta_title ?></title>
+  <meta content="<?= $meta_description ?>" name="description">
+  <meta content="<?= $meta_keywords ?>" name="keywords">
 
   <!-- Favicons -->
   <link href="assets/img/favicon.png" rel="icon">

@@ -304,6 +304,23 @@
     color: #aaa
   }
 
+  .img_ilustrasi {
+    max-width: 100px;
+    display: inline-block;
+    margin: 15px;
+    transition: .2s;
+  }
+
+  .img_ilustrasi:hover {
+    transform: scale(1.1);
+  }
+
+  .btn-transparan {
+    border: none;
+    background: none;
+  }
+
+
   @media (max-width: 450px) {
     .desktop_only {
       display: none;

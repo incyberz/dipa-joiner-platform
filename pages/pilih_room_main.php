@@ -33,17 +33,31 @@ if (isset($_POST['btn_pilih'])) {
 # ============================================================
 # MAIN SELECT ROOM
 # ============================================================
+if ($id_role == 1) {
+  // room kelas peserta
+  $sub_sql_my_room = "SELECT 1  
+  FROM tb_room_kelas p 
+  JOIN tb_kelas q ON p.kelas=q.kelas  
+  JOIN tb_kelas_peserta r ON q.kelas=r.kelas  
+  WHERE p.id_room=a.id
+  AND q.kelas='$kelas'
+  AND r.id_peserta = $id_peserta";
+} else {
+  // room owner
+  $sub_sql_my_room = "SELECT 1  
+  FROM tb_room p 
+  WHERE p.created_by = $id_peserta 
+  AND p.id=a.id
+  ";
+}
+
 $s = "SELECT a.*,
 a.nama as room,
 a.status as status_room,
 a.id as id_room,
 b.nama as creator,
 b.id as id_creator,
-(
-  SELECT 1  
-  FROM tb_room p 
-  WHERE p.created_by = $id_peserta 
-  AND p.id=a.id) my_room 
+($sub_sql_my_room) my_room 
 
 FROM tb_room a 
 JOIN tb_peserta b ON a.created_by=b.id  
@@ -107,10 +121,14 @@ while ($d = mysqli_fetch_assoc($q)) {
     $other_room .= $room;
   }
 }
+$my_room = $my_room ?? div_alert('danger', "Kamu belum dimasukan ke Room manapun pada TA. $ta_show");
+
 
 echo "
 <div class=container>
   <form method=post>
+    <hr>
+    <h3 class='darkblue f20 upper tengah mb4'>Room Aktif $ta_show</h3>
     <div class=row>
       $my_room
     </div>

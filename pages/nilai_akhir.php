@@ -22,7 +22,7 @@ function gradasi($nilai)
       return  'merah';
     }
   } else {
-    if ($nilai === 0) {
+    if ($nilai == 0 || !$nilai) {
       return 'merah';
     } else {
       return '';
@@ -81,16 +81,16 @@ $img['delete'] = '<img class=zoom src="assets/img/icons/delete.png" height=25px 
 # PEMBOBOTAN DAN HEADER TABEL
 # =======================================================
 $rbobot['count_presensi_offline'] = 0;
-$rbobot['count_presensi_online'] = 15;
-$rbobot['count_ontime'] = 10;
+$rbobot['count_presensi_online'] = 10;
+$rbobot['count_ontime'] = 5;
 $rbobot['count_latihan'] = 5;
-$rbobot['count_latihan_wajib'] = 15;
+$rbobot['count_latihan_wajib'] = 10;
 $rbobot['count_challenge'] = 5;
-$rbobot['count_challenge_wajib'] = 15;
-$rbobot['rank_room'] = 15;
-$rbobot['rank_kelas'] = 25;
-$rbobot['nilai_uts'] = 0;
-$rbobot['nilai_uas'] = 0;
+$rbobot['count_challenge_wajib'] = 10;
+$rbobot['rank_room'] = 12;
+$rbobot['rank_kelas'] = 17;
+$rbobot['nilai_uts'] = 15;
+$rbobot['nilai_uas'] = 15;
 $rbobot['nilai_remed_uts'] = 0;
 $rbobot['nilai_remed_uas'] = 0;
 
@@ -302,6 +302,17 @@ c.*,
   SELECT p.tanggal_submit $from_tb_jawabans = '$nama_paket_soal_remed_uas'
   ORDER BY p.nilai DESC LIMIT 1) tanggal_submit_remed_uas, 
 
+-- ========================================
+-- SELECT UTS | UAS MANUAL 
+-- ========================================
+(
+  SELECT uts FROM tb_poin   
+  WHERE id_room=$id_room  
+  AND id_peserta=a.id) uts_manual,
+(
+  SELECT uas FROM tb_poin   
+  WHERE id_room=$id_room  
+  AND id_peserta=a.id) uas_manual,
 
 
 
@@ -475,6 +486,8 @@ while ($d = mysqli_fetch_assoc($q)) {
 
   foreach ($rbobot as $key => $value) {
     $my_value[$key] = $d[$key] ?? 0; // or zero
+    if ($key == 'nilai_uts' and !$d[$key]) $my_value[$key] = $d['uts_manual'];
+    if ($key == 'nilai_uas' and !$d[$key]) $my_value[$key] = $d['uas_manual'];
     $rtotal_value[$key] = $d['total_' . $key];
     if (strpos("salt$key", 'nilai_')) {
       $rvalue_of[$key] = $my_value[$key];
@@ -509,9 +522,9 @@ while ($d = mysqli_fetch_assoc($q)) {
     $rkonversi['rank_kelas'] = 0;
   }
 
-  $rkonversi['nilai_uts'] = $d['nilai_uts'];
+  $rkonversi['nilai_uts'] = $d['nilai_uts'] ?? $d['uts_manual'];
   $rkonversi['nilai_remed_uts'] = $d['nilai_remed_uts'];
-  $rkonversi['nilai_uas'] = $d['nilai_uas'];
+  $rkonversi['nilai_uas'] = $d['nilai_uas'] ?? $d['uas_manual'];
   $rkonversi['nilai_remed_uas'] = $d['nilai_remed_uas'];
   # =======================================================
   # NILAI AKHIR BY LOOP CALCULATIONS

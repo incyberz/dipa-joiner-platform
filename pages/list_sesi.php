@@ -4,52 +4,66 @@ $id_sesi = $_GET['id_sesi'] ?? '';
 $no_sesi = $_GET['no_sesi'] ?? '';
 $nama_sesi = $_GET['nama_sesi'] ?? '';
 $part = $_GET['part'] ?? '';
+$nama_sesi_show = "P$no_sesi - $nama_sesi";
 
-if ($id_sesi and !$part) {
-  echo div_alert('info tengah', "
-    <h4 class=mb2>P$no_sesi - $nama_sesi</h4>
-    <a href=?list_sesi>$img_prev</a>
-    <hr>
-    Mana yang ingin Anda atur ?
-  ");
-  $arr_part = [
-    'deskripsi' => [
-      'title' => 'Nama dan Deskripsi',
-      'desc' => 'Editing Nama Sesi dan Deskripsi Singkat tentang sesi tersebut',
-    ],
-    'tags' => [
-      'title' => 'Tag-tag Materi',
-      'desc' => 'Memberikan arahan kepada Peserta Didik agar dapat Tanam Soal dan Bertanya sesuai tag-tag materi yang Anda siapkan',
-    ],
-    'awal_presensi' => [
-      'title' => 'Rule Presensi',
-      'desc' => 'Editing Rule (Aturan) kapan peserta dapat Presensi Online pada sesi ini',
-    ],
-    'durasi' => [
-      'title' => 'Durasi Tatap Muka',
-      'desc' => 'Rule (aturan) untuk kegiatan Pembelajaran Tatap Muka',
-    ],
-    'kelengkapan' => [
-      'title' => 'Kelengkapan Sesi',
-      'desc' => 'Upload materi PDF (ebook), PPT, Video Ajar, dan kelengkapan lainnya',
-    ],
-  ];
+$arr_part = [
+  'urutan_sesi' => [
+    'title' => 'Urutan Sesi',
+    'desc' => 'Mengurutkan sesi-sesi normal, minggu tenang, dan pekan ujian',
+    'image' => 'learning_path.png',
+  ],
+  'deskripsi' => [
+    'title' => 'Nama, dan Deskripsi',
+    'desc' => 'Editing Nama Sesi dan Deskripsi Singkat tentang sesi tersebut',
+    'image' => 'learning_path.png',
+  ],
+  'tags' => [
+    'title' => 'Tag-tag Materi',
+    'desc' => 'Memberikan arahan kepada Peserta Didik agar dapat Tanam Soal dan Bertanya sesuai tag-tag materi yang Anda siapkan',
+    'image' => 'latihan.png',
+  ],
+  'bahan_ajar' => [
+    'title' => 'Bahan Ajar',
+    'desc' => 'Upload materi PDF (ebook) atau dokumen lainnya untuk Peserta',
+    'image' => 'latihan.png',
+  ],
+  'file_presentasi' => [
+    'title' => 'File Presentasi',
+    'desc' => 'Upload File Presentasi (PPTX) atau dokumen lainnya untuk Presentasi Tatap Muka/Maya',
+    'image' => 'challenge.png',
+  ],
+  'video_ajar' => [
+    'title' => 'Video Ajar',
+    'desc' => 'Tambahkan link Video Ajar (Youtube) atau link video lainnya bagi Peserta',
+    'image' => 'project.png',
+  ],
+  'awal_presensi' => [
+    'title' => 'Rule Presensi',
+    'desc' => 'Editing Rule (Aturan) kapan peserta dapat Presensi Online pada sesi ini',
+    'image' => 'project.png',
+  ],
+  'durasi' => [
+    'title' => 'Durasi Tatap Muka',
+    'desc' => 'Rule (aturan) untuk kegiatan Pembelajaran Tatap Muka',
+    'image' => 'challenge.png',
+  ],
+];
 
-  $col = '';
-  foreach ($arr_part as $part => $arr_value) {
-    $col .= "
-      <div class='col-md-4 col-lg-3 col-xl-2'>
-        <a class='btn btn-success w-100 mb1' href='?list_sesi&id_sesi=$id_sesi&part=$part'>
-          $arr_value[title]
-        </a>
-        <div class='f12 abu tengah mb4'>$arr_value[desc]</div>
-      </div>
-    ";
-  }
-
-  echo "<div class=row>$col</div>";
+if ($id_sesi) {
+  # ============================================================
+  # PROPS SESI
+  # ============================================================
+  $s = "SELECT a.*, 
+  a.id as id_sesi,
+  a.nama as nama_sesi
+  FROM tb_sesi a WHERE a.id=$id_sesi";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  $d_sesi = mysqli_fetch_assoc($q);
+  # ============================================================
+  # MANAGE SESI
+  # ============================================================
+  include 'list_sesi-manage_sesi.php';
 } else {
-
   # ============================================================
   # SHOW LIST SESI
   # ============================================================

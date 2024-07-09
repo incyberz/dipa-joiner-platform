@@ -1,6 +1,4 @@
 <?php
-// $harus_update_poin = 1; //zzz
-// die("<h1>harus_update_poin: $harus_update_poin and id_room_kelas:$id_room_kelas</h1>");
 if ($harus_update_poin and $id_room_kelas) {
   echo '<div class="consolas f12 abu">Updating Points... please wait!<hr>';
   # ========================================================
