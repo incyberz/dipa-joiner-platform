@@ -26,9 +26,9 @@
 <?php
 $judul = "Yang Sudah Mengerjakan $jenis";
 $judul2 = "Yang Belum Ngerjain";
-$icon_wa_red = "<img src='$lokasi_img/icons/wa_red.png' class=img-icon>";
-$icon_wa = "<img src='$lokasi_img/icons/wa.png' class=img-icon>";
-$icon_wa_disabled = "<img src='$lokasi_img/icons/wa_disabled.png' class=img-icon>";
+$icon_wa_red = "<img src='$lokasi_img/icon/wa_red.png' class=img-icon>";
+$icon_wa = "<img src='$lokasi_img/icon/wa.png' class=img-icon>";
+$icon_wa_disabled = "<img src='$lokasi_img/icon/wa_disabled.png' class=img-icon>";
 
 
 
@@ -56,7 +56,7 @@ JOIN tb_peserta d ON a.id_peserta=d.id
 JOIN tb_kelas_peserta e ON e.id_peserta=d.id 
 JOIN tb_kelas f ON e.kelas=f.kelas 
 WHERE c.id=$id_jenis 
-AND f.tahun_ajar=$tahun_ajar 
+AND f.tahun_ajar=$ta 
 AND f.status=1 
 AND f.kelas = '$target_kelas'
 ORDER BY f.kelas, d.nama 
@@ -68,7 +68,7 @@ $divs = '';
 while ($d = mysqli_fetch_assoc($q)) {
   array_push($arr_yg_sudah, $d['id_peserta']);
   $nama_peserta = ucwords(strtolower($d['nama_peserta']));
-  $kelas_show = str_replace("~$tahun_ajar", '', $d['kelas']);
+  $kelas_show = str_replace("~$ta", '', $d['kelas']);
 
   if ($d['status'] == 1) {
     $gradasi = 'hijau';
@@ -106,7 +106,7 @@ c.nama as nama_peserta
 FROM tb_kelas_peserta a 
 JOIN tb_kelas b ON a.kelas=b.kelas 
 JOIN tb_peserta c ON a.id_peserta=c.id 
-WHERE b.tahun_ajar=$tahun_ajar 
+WHERE b.tahun_ajar=$ta 
 AND b.status = 1 
 AND b.kelas = '$target_kelas' 
 ORDER BY b.kelas, c.nama 
@@ -118,7 +118,7 @@ $divs_belum = '';
 while ($d = mysqli_fetch_assoc($q)) {
   if (in_array($d['id_peserta'], $arr_yg_sudah)) continue;
   $nama_peserta = ucwords(strtolower($d['nama_peserta']));
-  $kelas_show = str_replace("~$tahun_ajar", '', $d['kelas']);
+  $kelas_show = str_replace("~$ta", '', $d['kelas']);
 
   $divs_belum .= "
     <div class='wadah gradasi-hijau tengah wadah-peserta'>

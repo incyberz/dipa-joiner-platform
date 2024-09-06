@@ -13,14 +13,14 @@ function tanggal_sesi_show($no_minggu, $awal_sesi, $jeda_sesi = 7, $jenis_sesi =
 # ============================================================
 # PRE FORM
 # ============================================================
-$awal_sesi = $d_room['awal_sesi'];
-$awal_sesi_show = '<span class="tebal biru">' . $nama_hari[date('w', strtotime($awal_sesi))] . ', ' . date('F-d, Y, H:i', strtotime($awal_sesi)) . '</span> | ' . eta2($d_room['awal_sesi']);
+$awal_sesi = $room['awal_sesi'];
+$awal_sesi_show = '<span class="tebal biru">' . $nama_hari[date('w', strtotime($awal_sesi))] . ', ' . date('d-M-Y, H:i', strtotime($awal_sesi)) . '</span> | ' . eta2($room['awal_sesi']);
 $mingguan = $Minggu . 'an';
 $pre_form = "
   <form method=post class='wadah bg-white'>
     <div class=' flexy'>
       <div>
-        Awal Sesi : $awal_sesi_show 
+        Awal Pekan Pertama : $awal_sesi_show 
       </div>
       <div>
         <button name=reset_awal_sesi class='btn btn-danger btn-sm' onclick='return confirm(`Yakin untuk Reset Awal Sesi?`)'>Reset Awal Sesi</button>
@@ -33,7 +33,7 @@ $pre_form = "
 # ============================================================
 # AKTIVASI JADWAL SESI
 # ============================================================
-if (!$d_room['awal_sesi']) {
+if (!$room['awal_sesi']) {
   die(div_alert('danger', "Data Room awal sesi belum ada."));
 } else {
   $inputs = '';
@@ -47,23 +47,27 @@ if (!$d_room['awal_sesi']) {
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $num_rows = mysqli_num_rows($q);
   if ($num_rows) {
-    $inputs .= div_alert('success', "Sudah ada $num_rows sesi aktif yang sudah mempunyai awal dan akhir presensi.<input type=hidden name=date_created value='$now'>");
-  } else {
+    $inputs .= div_alert('success', "Sudah ada $num_rows sesi aktif yang sudah mempunyai awal dan akhir presensi 
+      (data awal/akhir presensi akan di-replace).
+      <input type=hidden name=date_created value='$now'>
+    ");
+  }
+  if (1) {
     $no_sesi_harian = 0;
     $no_minggu = 0;
     $tr = '';
     $arr = [
       'uts' => [
         'caption' => 'UTS',
-        'jumlah_sesi' => $d_room['minggu_normal_uts'],
-        'minggu_tenang' => $d_room['minggu_tenang_uts'],
-        'durasi_ujian' => $d_room['durasi_uts'],
+        'jumlah_sesi' => $room['minggu_normal_uts'],
+        'minggu_tenang' => $room['minggu_tenang_uts'],
+        'durasi_ujian' => $room['durasi_uts'],
       ],
       'uas' => [
         'caption' => 'UAS',
-        'jumlah_sesi' => $d_room['minggu_normal_uas'],
-        'minggu_tenang' => $d_room['minggu_tenang_uas'],
-        'durasi_ujian' => $d_room['durasi_uas'],
+        'jumlah_sesi' => $room['minggu_normal_uas'],
+        'minggu_tenang' => $room['minggu_tenang_uas'],
+        'durasi_ujian' => $room['durasi_uas'],
       ],
     ];
 
@@ -124,7 +128,7 @@ if (!$d_room['awal_sesi']) {
 
     $inputs = "
       $inputs
-      <h3 class=mt4>Tabel Estimasi Jadwal Sesi</h3>
+      <h3 class=mt4>Tabel Estimasi Pekan Sesi</h3>
       <p>Untuk seting Jadwal tiap sesi dapat dilakukan nanti pada Manage Sesi</p>
       <div class=wadah>
         <table class=table>
@@ -146,7 +150,7 @@ if (!$d_room['awal_sesi']) {
     $tgl_close = date('Y-m-d',  strtotime($tanggal_close));
     $tanggal_close_show = date('d-M-Y, H:i', strtotime($tanggal_close));
 
-    $total_sesi = $d_room['minggu_normal_uts'] + $d_room['minggu_normal_uas'];
+    $total_sesi = $room['minggu_normal_uts'] + $room['minggu_normal_uas'];
 
     $inputs .= "
       )* default Close Room adalah dua $Minggu setelah UAS.

@@ -1,7 +1,7 @@
 <?php
 $info_room = '';
 if ($jumlah_sesi) {
-  $awal_sesi = $d_room['awal_sesi'];
+  $awal_sesi = $room['awal_sesi'];
 
   if ($awal_sesi) {
     $tanggal = date('d-F-Y H:i', strtotime($awal_sesi));
@@ -23,6 +23,7 @@ if ($jumlah_sesi) {
   }
 
   $w = date('w', strtotime($d['awal_presensi']));
+  $add = 0;
   if ($w == 0) $add = 1;
   if ($w > 1) $add = 1 - $w;
 
@@ -32,13 +33,14 @@ if ($jumlah_sesi) {
     $info_room 
     <input type=hidden name=awal_sesi value='$senin_pertama'>
   ";
-} else {
-  if (!$d_room['minggu_normal_uts']) {
-    die(div_alert('danger', "Data Room minggu_normal_uts belum lengkap."));
+}
+if (1) {
+  if (!$room['minggu_normal_uts']) {
+    die(div_alert('danger', "Data Room minggu_normal_uts (jumlah sesi normal sebelum UTS) belum lengkap (masih null)."));
   } else {
     $inputs = '';
     $inputs .= "
-      <input class='bg-yellow' type='hidden' name=awal_sesi id=awal_sesi required />
+      <input class='bg-yellow' type='hiddena' name=awal_sesi id=awal_sesi required />
       <div class='mb1'>Senin pada Minggu Pertama tanggal:</div>
       <div class='flexy'>
         <div>
@@ -47,6 +49,12 @@ if ($jumlah_sesi) {
         <div>
           <input class='form-control awal_sesi_trigger' type='time' id=jam_awal_sesi min='7:00' max='22:00' value='08:00' />
         </div>
+      </div>
+      
+      <div class='flexy mt4'>
+        <div class='abu miring pt1'>
+          durasi tatap muka
+        </div>
         <div>
           <input required type=number min=30 max=240 step=5 name=durasi_tatap_muka class='form-control mb1' placeholder='Durasi tatap muka...' value=90 style='width:80px' />
         </div>
@@ -54,6 +62,8 @@ if ($jumlah_sesi) {
           menit
         </div>
       </div>
+
+      <hr>
       
       <div class='f14 abu miring mb1'>)* usahakan awal minggu adalah hari Senin</div>
       <div class='f14 abu miring mb1'>)* default awal pembelajaran adalah pukul 08:00</div>

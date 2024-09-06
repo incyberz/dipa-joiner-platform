@@ -69,7 +69,7 @@ echo "
 # INITIAL VARIABLE
 # =======================================================
 $belum = '<span class="consolas darkred f12 miring">belum</span>';
-$img['delete'] = '<img class=zoom src="assets/img/icons/delete.png" height=25px />';
+$img['delete'] = '<img class=zoom src="assets/img/icon/delete.png" height=25px />';
 
 
 
@@ -230,7 +230,7 @@ c.*,
   JOIN tb_kelas q ON p.kelas=q.kelas  
   JOIN tb_kelas_peserta r ON q.kelas=r.kelas
   JOIN tb_peserta s ON r.id_peserta=s.id 
-  WHERE q.tahun_ajar=$tahun_ajar 
+  WHERE q.tahun_ajar=$ta 
   AND s.id_role = 1 
   AND s.status = 1 
   AND s.nama NOT LIKE '%dummy%' 
@@ -239,7 +239,7 @@ c.*,
   SELECT count(1) FROM tb_kelas_peserta p  
   JOIN tb_kelas q ON p.kelas=q.kelas  
   JOIN tb_peserta r ON p.id_peserta=r.id 
-  WHERE q.tahun_ajar=$tahun_ajar 
+  WHERE q.tahun_ajar=$ta 
   AND r.id_role = 1 
   AND r.status = 1 
   AND r.nama NOT LIKE '%dummy%' 
@@ -339,7 +339,7 @@ WHERE 1 -- peserta aktif/nonaktif
 AND password is not null -- peserta aktif pasti sudah ganti pass
 AND a.id_role=1 -- peserta only tidak GM
 AND $sql_id_peserta -- SWITCH VIEW PESERTA | GM
-AND c.tahun_ajar = $tahun_ajar 
+AND c.tahun_ajar = $ta 
 AND d.id_room = $id_room 
 AND a.nama NOT LIKE '%dummy%' -- bukan peserta dummy 
 

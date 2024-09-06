@@ -5,7 +5,6 @@ WHERE b.id_room=$id_room";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $num_rows = mysqli_num_rows($q);
 if ($num_rows) {
-  $inputs = div_alert('success', "Sudah ada $num_rows jadwal kelas pada room ini.<input type=hidden name=date_created value='$now'>");
-} else {
-  include 'aktivasi_room-status-7b.php';
+  echo div_alert('danger', "Sudah ada $num_rows item jadwal kelas pada room ini.<input type=hidden name=date_created value='$now'>");
 }
+include 'aktivasi_room-status-7b.php';

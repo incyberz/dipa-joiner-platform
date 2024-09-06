@@ -377,9 +377,9 @@ while ($d = mysqli_fetch_assoc($q)) {
     </tr>
   ";
 }
-$gg = $tahun_ajar % 2 == 0 ? 'Genap' : 'Ganjil';
-$ta_gg = substr($tahun_ajar, 0, 4) . ' ' . $gg;
-$misal_nama_paket = "UTS $room Semester 1 TA. $ta_gg";
+$gg = $ta % 2 == 0 ? 'Genap' : 'Ganjil';
+$ta_gg = substr($ta, 0, 4) . ' ' . $gg;
+$misal_nama_paket = "UTS $singkatan_room Semester 1 TA. $ta_gg";
 
 
 

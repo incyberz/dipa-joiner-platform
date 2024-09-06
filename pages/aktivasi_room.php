@@ -1,6 +1,6 @@
 <?php
 instruktur_only();
-$jeda_sesi = $d_room['jeda_sesi'] ?? 7;
+$jeda_sesi = $room['jeda_sesi'] ?? 7;
 $Minggu = $jeda_sesi == 7 ? 'minggu' : 'hari';
 $Minggu = $jeda_sesi == 30 ? 'bulan' : $Minggu;
 

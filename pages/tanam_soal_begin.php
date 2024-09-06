@@ -293,8 +293,8 @@ if ($id_sesi == '') {
     let tags = $('#tags').text().split(',');
     let my_tags = [];
     let minimal_30_huruf = $('#minimal_30_huruf').text();
-    let img_check = '<img src="assets/img/icons/check.png" alt="ok" height="20px" />';
-    let img_reject = '<img src="assets/img/icons/reject.png" alt="ok" height="20px" />';
+    let img_check = '<img src="assets/img/icon/check.png" alt="ok" height="20px" />';
+    let img_reject = '<img src="assets/img/icon/reject.png" alt="ok" height="20px" />';
     let kalimat_soal = '';
     let opsi__a = '';
     let opsi__b = '';

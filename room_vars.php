@@ -40,16 +40,26 @@ if (!mysqli_num_rows($q)) {
   die(div_alert('danger', "Room tidak ditemukan. id_room: $id_room"));
 }
 
-$d_room = mysqli_fetch_assoc($q);
-$room = $d_room['singkatan'];
-$nama_room = $d_room['nama'];
-$status_room = $d_room['status'];
-$id_room_kelas = $d_room['id_room_kelas'];
-$id_instruktur = $d_room['id_instruktur'];
-$nama_instruktur = $d_room['nama_instruktur'];
-$last_update_room = $d_room['last_update_room'];
-$jumlah_sesi = $d_room['count_sesi'];
-$count_sesi = $d_room['count_sesi'];
+$room = mysqli_fetch_assoc($q);
+$status_room = $room['status'];
+$nama_instruktur = $room['nama_instruktur'];
+if ($status_room != 100) {
+  if ($parameter != 'aktivasi_room') {
+    if ($id_role == 2) {
+      echo div_alert('danger', "Status Room tidak 100% ... Anda harus reactivate!");
+      jsurl('?aktivasi_room', 2000);
+    } else {
+      die(div_alert('danger', "Statu Room ini belum siap untuk digunakan.<hr>Silahkan hubungi Instruktur [ $nama_instruktur ]  "));
+    }
+  }
+}
+$singkatan_room = $room['singkatan'];
+$nama_room = $room['nama'];
+$id_room_kelas = $room['id_room_kelas'];
+$id_instruktur = $room['id_instruktur'];
+$last_update_room = $room['last_update_room'];
+$jumlah_sesi = $room['count_sesi'];
+$count_sesi = $room['count_sesi'];
 
 # ========================================================
 # PROFILE INSTRUKTUR
@@ -85,7 +95,7 @@ if (!$id_room_kelas) {
 
     die(div_alert('danger', "
       <hr>
-      <b style=color:red>Kelas <u>$kelas</u> belum di-assign ke room <u>$room</u>.</b> 
+      <b style=color:red>Kelas <u>$kelas</u> belum di-assign ke room <u>$singkatan_room</u>.</b> 
       <hr>
       Room ini dimiliki oleh:
       <ul>
@@ -278,7 +288,7 @@ $s = "SELECT
   SELECT count(1) FROM tb_kelas_peserta p  
   JOIN tb_kelas q ON p.kelas=q.kelas  
   JOIN tb_peserta r ON p.id_peserta=r.id 
-  WHERE q.tahun_ajar=$tahun_ajar 
+  WHERE q.tahun_ajar=$ta 
   AND r.id_role = $id_role 
   AND r.status = 1 
   AND r.nama NOT LIKE '%dummy%' 

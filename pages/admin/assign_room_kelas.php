@@ -2,7 +2,7 @@
 if (!$id_room) die(erid('id_room'));
 instruktur_only();
 
-// $d_room['status'] = 5;
+// $room['status'] = 5;
 // $status_room = 5;
 // include "$lokasi_pages/aktivasi_room.php";
 // exit;
@@ -66,12 +66,12 @@ while ($d = mysqli_fetch_assoc($q)) {
   <tr>
     <td valign=top>
       <div class="wadah">
-        <div class="mb2">Available Grup Kelas pada TA <?= $tahun_ajar ?> : </div>
+        <div class="mb2">Available Grup Kelas pada TA <?= $ta ?> : </div>
         <form method=post>
           <ol>
             <?php
 
-            $s = "SELECT * FROM tb_kelas WHERE tahun_ajar=$tahun_ajar ORDER BY status DESC,fakultas,semester,prodi,shift";
+            $s = "SELECT * FROM tb_kelas WHERE tahun_ajar=$ta ORDER BY status DESC,fakultas,semester,prodi,shift";
             $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
             while ($d = mysqli_fetch_assoc($q)) {
@@ -88,7 +88,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     </td>
     <td valign=top>
       <div class="wadah">
-        <div>Assigned Kelas pada Room <?= $room ?> :</div>
+        <div>Assigned Kelas pada Room <?= $singkatan_room ?> :</div>
         <form method=post>
           <?php
           echo $li_assigned ? "<ol>$li_assigned</ol>" : '<div class="red mt2 f12 consolas miring">Belum ada kelas pada Room ini.</div>';

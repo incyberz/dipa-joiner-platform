@@ -26,7 +26,7 @@ $u = $_GET['u'] ?? 'uts';
 echo "
 <div class='section-title' data-aos='fade'>
   <h2>Hasil Polling</h2>
-  <p>Berikut adalah hasil polling untuk <span id=nama_instruktur class=darkblue>$nama_instruktur</span> pada room <span class=darkblue>$room</span></p>
+  <p>Berikut adalah hasil polling untuk <span id=nama_instruktur class=darkblue>$nama_instruktur</span> pada room <span class=darkblue>$singkatan_room</span></p>
 </div>
 ";
 
@@ -140,7 +140,7 @@ foreach ($rpolling as $no => $rtanya) {
         $red = (5 - $i) * 50;
         $bg = "rgb($red,$green,100)";
         $no_counter = $no . "__$i";
-        $opsi .= "<img src=assets/img/icons/stars.png height=20px>";
+        $opsi .= "<img src=assets/img/icon/stars.png height=20px>";
         $opsies .= "
         <div class=kecil style='display:grid;grid-template-columns: 120px 80px auto'>
           <div class=right>$opsi</div>

@@ -37,7 +37,7 @@ if (isset($_POST['btn_add_kelas'])) {
     $isis = strtoupper(str_replace('__,', '', $isis));
 
 
-    $s = "INSERT INTO tb_kelas ($koloms,tahun_ajar) VALUES ($isis,$tahun_ajar)";
+    $s = "INSERT INTO tb_kelas ($koloms,tahun_ajar) VALUES ($isis,$ta)";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     echolog("Executing: $s");
   }
@@ -73,12 +73,20 @@ if (isset($_POST['btn_batalkan_aktivasi'])) {
 if (isset($_POST['btn_aktivasi'])) {
   echolog('Validation room data');
 
+  // echo '<pre>';
+  // var_dump($_POST);
+  // echo '</pre>';
+  // exit;
+
   // exception awal_sesi harus hari senin
   if (isset($_POST['awal_sesi'])) {
     $awal_sesi = $_POST['awal_sesi'];
     if ($awal_sesi) {
       $w = date('w', strtotime($awal_sesi));
-      if ($w != 1) {
+      if ($w != 1 && $room['jeda_sesi'] == 7) {
+        // echo '<pre>';
+        // var_dump($room);
+        // echo '</pre>';
         echo div_alert('danger', "Awal sesi minggu pertama harus hari Senin, Anda memilih hari $nama_hari[$w].");
         jsurl('', 2000);
         exit;
@@ -90,14 +98,22 @@ if (isset($_POST['btn_aktivasi'])) {
   unset($_POST['btn_aktivasi']);
 
   if ($_POST) {
-
+    // echo '<pre>';
+    // var_dump($_POST);
+    // echo '</pre>';
+    // exit;
     # ============================================================
     # EXCEPTION FOR ARRAY AWAL PRESENSI
     # ============================================================
     if (isset($_POST['awal_presensi'])) {
       $arr = $_POST['awal_presensi'];
-      $durasi = $d_room['durasi_tatap_muka'] ?? 90;
+      $durasi = $room['durasi_tatap_muka'] ?? 90;
       $no_sesi_normal = 0;
+
+      // echo '<pre>';
+      // var_dump($arr);
+      // echo '</pre>';
+      // exit;
       foreach ($arr as $no => $str) {
         $arr2 = explode('--', $str);
         $awal_presensi = $arr2[0];
@@ -123,10 +139,6 @@ if (isset($_POST['btn_aktivasi'])) {
           echolog('updating sesi');
           $d = mysqli_fetch_assoc($q);
           $s = "UPDATE tb_sesi SET
-            id_room = $id_room,
-            jenis = $jenis,
-            no = $no,
-            nama = '$nama',
             awal_presensi = '$awal_presensi',
             akhir_presensi = '$akhir_presensi',
             durasi = $durasi
@@ -262,17 +274,23 @@ if (isset($_POST['btn_aktivasi'])) {
 
       $koloms = '__';
       $isis = '__';
+      $pairs = '__';
       foreach ($arr as $kolom => $isi) {
         $koloms .= ",$kolom";
         $isis .= ",'$isi'";
+        $pairs .= ",$kolom = '$isi' ";
       }
       $koloms = str_replace('__,', '', $koloms);
       $isis = strtoupper(str_replace('__,', '', $isis));
+      $pairs = strtoupper(str_replace('__,', '', $pairs));
 
-
-      $s = "INSERT INTO tb_syarat_presensi ($koloms,id_room) VALUES ($isis,$id_room)";
-      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+      $s = "INSERT INTO tb_syarat_presensi ($koloms,id_room) 
+      VALUES ($isis,$id_room) 
+      ON DUPLICATE KEY UPDATE 
+      $pairs
+      ";
       echolog("Executing: $s");
+      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
       unset($_POST['syarat_presensi']);
     }
@@ -285,17 +303,23 @@ if (isset($_POST['btn_aktivasi'])) {
 
       $koloms = '__';
       $isis = '__';
+      $pairs = '__';
       foreach ($arr as $kolom => $isi) {
+        $isi = strtoupper($isi);
         $koloms .= ",$kolom";
         $isis .= ",'$isi'";
+        $pairs .= ",$kolom = '$isi'";
       }
       $koloms = str_replace('__,', '', $koloms);
-      $isis = strtoupper(str_replace('__,', '', $isis));
+      $isis = str_replace('__,', '', $isis);
+      $pairs = str_replace('__,', '', $pairs);
 
 
-      $s = "INSERT INTO tb_bobot ($koloms,id_room) VALUES ($isis,$id_room)";
-      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+      $s = "INSERT INTO tb_bobot ($koloms,id_room) VALUES ($isis,$id_room)
+      ON DUPLICATE KEY UPDATE $pairs 
+      ";
       echolog("Executing: $s");
+      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
       unset($_POST['bobot']);
     }
@@ -303,7 +327,10 @@ if (isset($_POST['btn_aktivasi'])) {
 
 
 
-
+    // echo '<pre>';
+    // var_dump($_POST);
+    // echo '</pre>';
+    // exit;
 
 
 
@@ -336,12 +363,12 @@ if (isset($_POST['btn_aktivasi'])) {
     # ============================================================
     $pairs = '__';
     foreach ($_POST as $key => $value) {
-      if (!$value) {
-        // echo '<pre>';
-        // var_dump($_POST);
-        // echo '</pre>';
-        echo div_alert('danger', "Input aktivasi tidak boleh dikosongkan.");
-        jsurl('', 3000);
+      echo '<pre>';
+      var_dump($_POST);
+      echo '</pre>';
+      if ($value === false || $value === '') {
+        echo div_alert('danger', "Input aktivasi [$key] tidak boleh dikosongkan.");
+        // jsurl('', 3000);
         exit;
       } else {
         if (is_array($value)) {
@@ -356,9 +383,6 @@ if (isset($_POST['btn_aktivasi'])) {
     $pairs = str_replace('__,', '', $pairs);
 
     $s = "UPDATE tb_room SET $pairs WHERE id=$id_room";
-    // echo '<pre>';
-    // var_dump($s);
-    // echo '</pre>';
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     echo div_alert('success', 'Update sukses.');
     jsurl('', 1000);

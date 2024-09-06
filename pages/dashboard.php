@@ -18,7 +18,8 @@ $welcome = "
   $welcome_kelas
 ";
 set_h2("Dashboard", $welcome);
-if ($status_room == -1) echo div_alert('info', meme('closed', 6) . '<hr>Room ini sudah ditutup.');
+$link_reactivate = $id_role != 2 ? '' : "<a href='?reactivate_room&id_room=$id_room'>Reactivate</a>";
+if ($status_room == -1) echo div_alert('info', meme('closed', 6) . "<hr>Room ini sudah ditutup. $link_reactivate");
 
 if ($id_role == 1 || $is_login_as) {
 ?>

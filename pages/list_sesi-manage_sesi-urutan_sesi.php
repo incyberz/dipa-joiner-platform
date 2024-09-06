@@ -97,12 +97,7 @@ if (isset($_POST['btn_add_sesi'])) {
 # ============================================================
 # LIST ALL SESI
 # ============================================================
-$s = "SELECT 
-a.id, 
-a.no, 
-a.nama, 
-a.jenis, 
-a.deskripsi 
+$s = "SELECT a.*
 FROM tb_sesi a WHERE id_room=$id_room 
 ORDER BY a.no";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -144,16 +139,6 @@ while ($d = mysqli_fetch_assoc($q)) {
         value='$d[nama]'
       />
     ";
-
-    $input_deskripsi = "
-      <textarea 
-        class='form-control input_editable mb1' 
-        rows=7 
-        name=deskripsi 
-        id=deskripsi__$d[id] 
-        placeholder='deskripsi sesi...'
-      >$d[deskripsi]</textarea>
-    ";
   } else { // sesi non-normal
     $no_sesi_normal_show = '&nbsp;';
     $input_deskripsi = '';
@@ -178,13 +163,6 @@ while ($d = mysqli_fetch_assoc($q)) {
       <td>$no_sesi_normal_show</td>
       <td>
         <div>$input_nama</div>
-        <div class='hideit' id=input_deskripsi_$d[id]>
-          $input_deskripsi
-          <div class='mt1 mb2 f12 abu miring'>)* Jika input input berubah menjadi hijau artinya perubahan sudah tersimpan</div>
-        </div>
-      </td>
-      <td>
-        $btn_edit
       </td>
       <td>
         $btn_up 

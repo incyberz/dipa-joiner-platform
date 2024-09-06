@@ -2,9 +2,9 @@
 # ============================================================
 # INFO TAHUN AJAR DAN PEKAN
 # ============================================================
-$ta = tahun_ajar($tahun_ajar);
+$ta_show = tahun_ajar_show($ta);
 echo div_alert('info tengah', "
-  Tahun Ajar Aktif $ta
+  Tahun Ajar Aktif $ta_show
   <div class='abu miring'>Februari - Juli 2024</div>
 ");
 

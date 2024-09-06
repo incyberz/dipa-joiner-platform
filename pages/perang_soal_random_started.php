@@ -162,7 +162,7 @@ if ($jumlah_soal) {
           <br>
           <span class='kecil miring abu'><span id=poin_penjawab__$id_soal>???</span> LP</span>
         </td>
-        <td class='tengah' width=100px valign=middle><img src='assets/img/guns/wp$r.png' width=100px id=weapon__$id_soal></td>
+        <td class='tengah' width=100px valign=middle><img src='assets/img/gun/wp$r.png' width=100px id=weapon__$id_soal></td>
         <td class='tengah'>
           $profil_pembuat
           <br>$username_pembuat
@@ -194,7 +194,7 @@ if ($jumlah_soal) {
                 <br><span id=username_penjawab>$username</span>
                 <br><span class='miring kecil abu'><span id=poin_penjawab>100</span> LP</span>
               </td>
-              <td width=100px class='tengah'><img class='senjata' src='assets/img/guns/wp10.png' id=weapon width=100px></td>
+              <td width=100px class='tengah'><img class='senjata' src='assets/img/gun/wp10.png' id=weapon width=100px></td>
               <td class='tengah'>
                 <img src='assets/img/no_profil.jpg' class=profil_pembuat id=profil_pembuat>
                 <br><span id=username_pembuat>???</span>
@@ -413,8 +413,8 @@ if ($jumlah_soal) {
     let arr_idnjpp = []; //id + jawaban + poin penjawab + poin pembuat
     let menjawab_benar = false;
     let abjad = ['a', 'b', 'c', 'd'];
-    let img_check = '<img src="assets/img/icons/check.png" alt="ok" height="20px" />';
-    let img_reject = '<img src="assets/img/icons/reject.png" alt="ok" height="20px" />';
+    let img_check = '<img src="assets/img/icon/check.png" alt="ok" height="20px" />';
+    let img_reject = '<img src="assets/img/icon/reject.png" alt="ok" height="20px" />';
     let timer_on = '1';
     let cid_status = '0'; // reject available
     let time_bonus = 0;
@@ -659,9 +659,9 @@ if ($jumlah_soal) {
         poin_pembuat = 0; // 
 
         // weapon reject red at pembahasan
-        $('#weapon').prop('src', 'assets/img/guns/wp0.png');
+        $('#weapon').prop('src', 'assets/img/gun/wp0.png');
         // weapon at hasil akhir
-        $('#weapon__' + id_soal).prop('src', 'assets/img/guns/wp0.png');
+        $('#weapon__' + id_soal).prop('src', 'assets/img/gun/wp0.png');
         // update bg yellow
         $('#row_hasil__' + id_soal).addClass('gradasi-kuning');
 
@@ -669,7 +669,7 @@ if ($jumlah_soal) {
 
         // random weapon
         let r = parseInt(Math.random() * 12) + 1;
-        $('#weapon').prop('src', 'assets/img/guns/wp' + r + '.png');
+        $('#weapon').prop('src', 'assets/img/gun/wp' + r + '.png');
 
         // reset classes
         $('#kamu_benar').removeClass('blue');

@@ -6,7 +6,7 @@ Silahkan join class atau hubungi Instruktur jika ada kesulitan!
 ");
 
 if ($id_role == 2) {
-  echo div_alert('success blue', "Auto Create Kelas INSTRUKTUR-$tahun_ajar");
+  echo div_alert('success blue', "Auto Create Kelas INSTRUKTUR-$ta");
   $s = "INSERT INTO tb_kelas (
     
   ) VALUES ()";
@@ -19,7 +19,7 @@ if ($id_role == 2) {
 # ====================================================
 if (isset($_POST['btn_join_kelas'])) {
   $kelas = $_POST['btn_join_kelas'];
-  $s = "SELECT 1 FROM tb_kelas_peserta a JOIN tb_kelas b ON a.kelas=b.kelas WHERE b.tahun_ajar=$tahun_ajar AND id_peserta=$id_peserta";
+  $s = "SELECT 1 FROM tb_kelas_peserta a JOIN tb_kelas b ON a.kelas=b.kelas WHERE b.tahun_ajar=$ta AND id_peserta=$id_peserta";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   if (!mysqli_num_rows($q)) {
     $s = "INSERT INTO tb_kelas_peserta (kelas,id_peserta) VALUES ('$kelas',$id_peserta)";
@@ -34,7 +34,7 @@ if (isset($_POST['btn_join_kelas'])) {
 
 $and_inst = $id_role == 2 ? "AND prodi='INST'" : '';
 
-$s = "SELECT * FROM tb_kelas WHERE tahun_ajar=$tahun_ajar $and_inst ORDER BY fakultas,prodi,shift";
+$s = "SELECT * FROM tb_kelas WHERE tahun_ajar=$ta $and_inst ORDER BY fakultas,prodi,shift";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
 $li = '';

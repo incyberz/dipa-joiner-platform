@@ -11,7 +11,7 @@ FROM tb_peserta a
 JOIN tb_kelas_peserta b ON a.id=b.id_peserta
 JOIN tb_kelas c ON b.kelas=c.kelas 
 JOIN tb_room_kelas d ON c.kelas=d.kelas
-WHERE c.tahun_ajar=$tahun_ajar
+WHERE c.tahun_ajar=$ta
 AND c.status=1 -- kelas aktif
 AND d.id_room=$id_room 
 ";

@@ -1,15 +1,25 @@
 <?php
-$thn_ajar = $d_room['tahun_ajar'] ? substr($d_room['tahun_ajar'], 0, 4) : date('Y');
+$thn_ajar = $room['tahun_ajar'] ? substr($room['tahun_ajar'], 0, 4) : date('Y');
 $gg_year = date('m') >= 7 ? 1 : 2;
-$gg = $d_room['tahun_ajar'] ? substr($d_room['tahun_ajar'], 4, 1) : $gg_year;
+$gg = $room['tahun_ajar'] ? substr($room['tahun_ajar'], 4, 1) : $gg_year;
 $selected[1] = $gg == 1 ? 'selected' : '';
 $selected[2] = $gg == 2 ? 'selected' : '';
 
-$room_tahun_ajar = $d_room['tahun_ajar'] ?? "$thn_ajar$gg";
+$room_tahun_ajar = $room['tahun_ajar'] > 20201 ? $room['tahun_ajar'] : "$thn_ajar$gg";
+
+// echo '<pre>';
+// echo "
+//   <br>thn_ajar: $thn_ajar
+//   <br>tahun_ajar: $ta
+//   <br>room_tahun_ajar: $room_tahun_ajar
+//   <br>gg: $gg
+// ";
+// echo '</pre>';
+
 
 $ket_ta = '';
-if ($d_room['tahun_ajar']) {
-  $ket_ta = "<div class='green bold wadah'>Tahun Ajar Room sudah di set ke TA. $d_room[tahun_ajar]</div>";
+if ($room['tahun_ajar']) {
+  $ket_ta = "<div class='green bold wadah'>Tahun Ajar Room sudah di set ke TA. $room[tahun_ajar]</div>";
 }
 
 $inputs = "
@@ -26,7 +36,7 @@ $inputs = "
       </select>
     </div>
     <div>
-      <input class='form-control ' required name=lembaga minlength='3' maxlength='30' placeholder='Lembaga...' value='$d_room[lembaga]'>
+      <input class='form-control ' required name=lembaga minlength='3' maxlength='30' placeholder='Lembaga...' value='$room[lembaga]'>
     </div>
 
   </div>

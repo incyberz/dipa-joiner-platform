@@ -17,7 +17,7 @@
   }
 </style>
 <?php
-$stars = "<img src='$lokasi_img/icons/stars.png' height=25px>";
+$stars = "<img src='$lokasi_img/icon/stars.png' height=25px>";
 $get_update = $_GET['update'] ?? '';
 $get_best = $_GET['best'] ?? '';
 $sql_best = $get_best ? "a.best = '$get_best'" : 1;
@@ -44,15 +44,15 @@ b.*,
 (
   SELECT p.kelas FROM tb_kelas_peserta p 
   JOIN tb_kelas q ON p.kelas=q.kelas
-  WHERE p.id_peserta=b.best1 AND q.tahun_ajar=$tahun_ajar) kelas_best1,
+  WHERE p.id_peserta=b.best1 AND q.tahun_ajar=$ta) kelas_best1,
 (
   SELECT p.kelas FROM tb_kelas_peserta p 
   JOIN tb_kelas q ON p.kelas=q.kelas
-  WHERE p.id_peserta=b.best2 AND q.tahun_ajar=$tahun_ajar) kelas_best2,
+  WHERE p.id_peserta=b.best2 AND q.tahun_ajar=$ta) kelas_best2,
 (
   SELECT p.kelas FROM tb_kelas_peserta p 
   JOIN tb_kelas q ON p.kelas=q.kelas
-  WHERE p.id_peserta=b.best3 AND q.tahun_ajar=$tahun_ajar) kelas_best3,
+  WHERE p.id_peserta=b.best3 AND q.tahun_ajar=$ta) kelas_best3,
 (SELECT nama FROM tb_peserta WHERE id=b.best1) nama_best1,
 (SELECT nama FROM tb_peserta WHERE id=b.best2) nama_best2,
 (SELECT nama FROM tb_peserta WHERE id=b.best3) nama_best3
@@ -292,7 +292,7 @@ if ($get_update) {
                 <div class='f12 darkblue'>$arr_bestie[nama]</div>
                 <div class='f12 abu miring'>$arr_bestie[kelas]</div>
                 <div style='position:absolute; top:80px; right:0'>
-                  <img src='$lokasi_img/gifs/juara-$i.gif' height=50px>
+                  <img src='$lokasi_img/gif/juara-$i.gif' height=50px>
                 </div>
               </div>
             ";
@@ -344,7 +344,7 @@ if ($get_update) {
             <div class='f12 darkblue'>$arr_nama_kelas[nama]</div>
             <div class='f12 abu miring'>$arr_nama_kelas[kelas]</div>
             <div style='position:absolute; top:80px; right:0'>
-              <img src='$lokasi_img/gifs/juara-$i.gif' height=50px>
+              <img src='$lokasi_img/gif/juara-$i.gif' height=50px>
             </div>
           </div>
         ";

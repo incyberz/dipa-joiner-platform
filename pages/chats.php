@@ -1,6 +1,6 @@
 <?php
 // if($id_role<=1) die('<script>location.replace("?")</script>');
-$img_delete = '<img class=zoom src="assets/img/icons/delete.png" height=20px>';
+$img_delete = '<img class=zoom src="assets/img/icon/delete.png" height=20px>';
 
 $sub_judul = $id_role == 2 ? 'Berikut adalah pertanyaan dari para Peserta yang harus Anda tanggapi!' : "Halo $nama_peserta! Silahkan Anda bergabung pada chats berikut!";
 

@@ -15,8 +15,15 @@
 //   </div>");
 // }
 session_start();
+
 // session_destroy(); exit;
 // echo '<pre style="margin-top: 170px">'; var_dump($_SESSION); echo '</pre>';
+
+# ============================================================
+# TAHUN AJAR AKTIF
+# ============================================================
+$ta = 20241;
+
 $dm = 0;
 $dm_db = 0;
 $is_login = null;
@@ -31,9 +38,8 @@ $total_peserta = null;
 $total_peserta_kelas = null;
 $profil_ok = null;
 
-$tahun_ajar = 20232;
 $id_room_kelas = null;
-$room = null;
+$singkatan_room = null;
 $nama_room = null;
 
 $target_kelas = $_SESSION['target_kelas'] ?? null;
@@ -106,7 +112,7 @@ include 'include/meme.php';
 include 'include/insho_functions.php';
 include 'include/dipa_functions.php';
 include 'include/img_icon.php';
-$ta_show = tahun_ajar($tahun_ajar);
+$ta_show = tahun_ajar_show($ta);
 
 
 # ========================================================

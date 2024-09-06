@@ -26,13 +26,21 @@ b.no as no_sesi,
   JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id   
   JOIN tb_peserta r ON p.id_peserta=r.id
   WHERE q.id_$jenis=a.id_$jenis
-  AND r.id_role=1) count_submiter 
+  AND r.id_role=1) count_submiter,
+(
+  SELECT p.tanggal FROM tb_assign_$jenis p 
+  JOIN tb_room_kelas q ON p.id_room_kelas=q.id
+  WHERE q.kelas = '$target_kelas' 
+  AND q.id_room=$id_room) tanggal_assign_target_kelas 
 FROM tb_assign_$jenis a 
 JOIN tb_sesi b ON a.id_sesi=b.id 
 JOIN tb_$jenis c ON a.id_$jenis=c.id 
 WHERE a.id=$id_assign  
 ";
 // echo "<pre>$s</pre>";
+echo '<pre>';
+var_dump($target_kelas);
+echo '</pre>';
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) die(section(div_alert('danger', "Maaf, data $jenis tidak ditemukan.<hr><a class=proper href='?activity&jenis=$jenis'>Pilih $jenis</a>")));
 $d_assign = mysqli_fetch_assoc($q);
@@ -47,6 +55,7 @@ $nama_sesi = $d_assign['nama_sesi'];
 $no_sesi = $d_assign['no_sesi'];
 $id_bukti = $d_assign['id_bukti'];
 $tanggal_assign = $d_assign['tanggal_assign'];
+$tanggal_assign_target_kelas = $d_assign['tanggal_assign_target_kelas'];
 $basic_point = $d_assign['basic_point'];
 $ontime_point = $d_assign['ontime_point'];
 $ontime_dalam = $d_assign['ontime_dalam'];
@@ -284,7 +293,11 @@ if ($id_bukti) {
 }
 
 $link_panduan_show = $d_assign['link_panduan'] ? "<a target=_blank href='$d_assign[link_panduan]'>$d_assign[link_panduan]</a>" : '<span class="consolas f12 miring">belum ada</span>';
-$tanggal_jenis_show = $nama_hari[date('w', strtotime($d_assign['tanggal_assign']))] . ', ' . date('d-M-Y, H:i', strtotime($d_assign['tanggal_assign']));
+$tanggal_assign_show = $nama_hari[date('w', strtotime($tanggal_assign))] . ', ' . date('d-M-Y, H:i', strtotime($tanggal_assign));
+if ($tanggal_assign_target_kelas) {
+  $tanggal_assign = $tanggal_assign_target_kelas;
+  $tanggal_assign_show = "<div class='abu mb1'>Target kelas <b>$target_kelas</b>:</div>" . $nama_hari[date('w', strtotime($tanggal_assign))] . ', ' . date('d-M-Y, H:i', strtotime($tanggal_assign));
+}
 $apresiasi_poin_show = number_format($max_apresiasi_poin, 0);
 $basic_point_show = number_format($d_assign['basic_point'], 0);
 $ontime_point_show = number_format($d_assign['ontime_point'], 0);
@@ -312,10 +325,6 @@ $list_info = "
       <td class='darkblue'>$link_panduan_show</td>
     </tr>
     <tr>
-      <td class='tebal abu'>Tanggal mulai</td>
-      <td class='darkblue'>$tanggal_jenis_show</td>
-    </tr>
-    <tr>
       <td class='tebal abu'>Basic Point</td>
       <td class='darkblue'>$basic_point_show LP</td>
     </tr>
@@ -330,6 +339,10 @@ $list_info = "
     <tr>
       <td class='tebal abu'>Ontime Point</td>
       <td class='darkblue'>$ontime_point_show LP</td>
+    </tr>
+    <tr>
+      <td class='tebal abu'>Tanggal mulai</td>
+      <td class='darkblue'>$tanggal_assign_show</td>
     </tr>
     <tr>
       <td class='tebal abu'>Ontime Dalam</td>

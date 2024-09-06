@@ -1,4 +1,5 @@
 <?php
+// v.1.3.12 update fungsi hari_tanggal
 // v.1.3.11 add data AOS to set_h2
 // v.1.3.10 add hari_tanggal
 // v.1.3.9 update eta function
@@ -13,24 +14,28 @@
 // v.1.3.0 revision with echolog
 // v.1.2.0 revision with function baca_csv
 
-function hari_tanggal($datetime)
+function hari_tanggal($datetime = '', $long_mode = 1, $with_day = 1, $with_hour = 1, $with_second = false, $separator = ' ')
 {
+  $time = $datetime ? strtotime($datetime) : strtotime('now');
   $nama_hari = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
   $nama_bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-  $time = strtotime($datetime);
-  return $nama_hari[date('w', $time)]
-    . ', '
-    . date('d', $time)
-    . ' '
-    . $nama_bulan[intval(date('m', $time))]
-    . ' '
-    . date('Y, H:i', $time);
+  if (!$long_mode) {
+    $nama_hari = ['Ah', 'Sn', 'Sl', 'Rb', 'Km', 'Jm', 'Sb'];
+    $nama_bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+  }
+  $hari_show = $with_day ? $nama_hari[date('w', $time)] . ', ' : '';
+  $year_format = $with_hour ? 'Y, H:i' : 'Y';
+  $year_format = $with_second ? 'Y, H:i:s' : $year_format;
+  $tanggal_show =  date('d', $time) . $separator . $nama_bulan[intval(date('m', $time)) - 1] . $separator . date($year_format, $time);
+
+
+  return $hari_show . $tanggal_show;
 }
 
 function set_h2($judul, $sub_judul = '', $href_back = '')
 {
   set_title($judul);
-  $link = !$href_back ? '' : "<div class='mt2'><a href='$href_back'><img src='assets/img/icons/prev.png' class=img_icon></a></div>";
+  $link = !$href_back ? '' : "<div class='mt2'><a href='$href_back'><img src='assets/img/icon/prev.png' class=img_icon></a></div>";
   echo "
     <div class='section-title' data-aos='fade'>
       <h2 id=judul>$judul</h2>
@@ -201,43 +206,6 @@ function jsreload()
 }
 
 
-// function penyebut($nilai) {
-//   $nilai = abs($nilai);
-//   $huruf = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
-//   $temp = '';
-
-//   if ($nilai < 12) {
-//     $temp = " ". $huruf[$nilai];
-//   } else if ($nilai <20) {
-//     $temp = penyebut($nilai - 10). " belas";
-//   } else if ($nilai < 100) {
-//     $temp = penyebut($nilai/10)." puluh". penyebut($nilai % 10);
-//   } else if ($nilai < 200) {
-//     $temp = " seratus" . penyebut($nilai - 100);
-//   } else if ($nilai < 1000) {
-//     $temp = penyebut($nilai/100) . " ratus" . penyebut($nilai % 100);
-//   } else if ($nilai < 2000) {
-//     $temp = " seribu" . penyebut($nilai - 1000);
-//   } else if ($nilai < 1000000) {
-//     $temp = penyebut($nilai/1000) . " ribu" . penyebut($nilai % 1000);
-//   } else if ($nilai < 1000000000) {
-//     $temp = penyebut($nilai/1000000) . " juta" . penyebut($nilai % 1000000);
-//   } else if ($nilai < 1000000000000) {
-//     $temp = penyebut($nilai/1000000000) . " milyar" . penyebut(fmod($nilai,1000000000));
-//   } else if ($nilai < 1000000000000000) {
-//     $temp = penyebut($nilai/1000000000000) . " trilyun" . penyebut(fmod($nilai,1000000000000));
-//   }     
-//   return $temp;
-// }
-
-// function terbilang($nilai) {
-//   if($nilai<0) {
-//     $hasil = "minus ". trim(penyebut($nilai));
-//   } else {
-//     $hasil = trim(penyebut($nilai));
-//   }         
-//   return $hasil;
-// }
 
 function set_title($text)
 {

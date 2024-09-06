@@ -1,6 +1,6 @@
 <?php
 $best_submiter = '';
-$stars = "<img src='$lokasi_img/icons/stars.png' height=25px>";
+$stars = "<img src='$lokasi_img/icon/stars.png' height=25px>";
 if ($count_submiter) {
   $s2 = "SELECT 
   (a.get_point + COALESCE(a.poin_antrian,0) + COALESCE(a.poin_apresiasi,0)) total_poin, 
@@ -33,7 +33,7 @@ if ($count_submiter) {
         <div class='f12 darkblue'>$d2[nama_submiter]</div>
         <div class='f12 abu miring'>$d2[kelas_submiter]</div>
         <div style='position:absolute; top:80px; right:0'>
-          <img src='$lokasi_img/gifs/juara-$i.gif' height=50px>
+          <img src='$lokasi_img/gif/juara-$i.gif' height=50px>
         </div>
       </div>
     ";

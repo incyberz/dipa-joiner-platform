@@ -67,7 +67,7 @@ FROM tb_peserta a
 JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
 JOIN tb_kelas c ON b.kelas=c.kelas 
 WHERE a.id_role = 1 
-AND c.tahun_ajar=$tahun_ajar 
+AND c.tahun_ajar=$ta 
 AND c.status = 1 
 AND $sql_kelas
 ORDER BY c.shift, b.kelas, a.nama";
@@ -83,7 +83,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   $i++;
   $no++;
   $nama = ucwords(strtolower($d['nama_peserta']));
-  $login_as = $id_role == 1 ? '' : "<a href='?login_as&username=$d[username]'><img src='assets/img/icons/login_as.png' height=25px></a>";
+  $login_as = $id_role == 1 ? '' : "<a href='?login_as&username=$d[username]'><img src='assets/img/icon/login_as.png' height=25px></a>";
 
   $div_header = '';
   if ($last_kelas != $d['kelas']) {

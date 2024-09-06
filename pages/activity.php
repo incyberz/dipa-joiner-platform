@@ -87,7 +87,7 @@ if (!$id_assign) {
     if ($count_jenis) {
       echo div_alert('danger', "Terdapat $count_jenis $jenis yang belum di-assign oleh instruktur untuk kelas $kelas");
     } else {
-      echo div_alert('danger', "Maaf, belum ada satupun $jenis pada room $room. Beritahukan hal ini kepada instruktur!");
+      echo div_alert('danger', "Maaf, belum ada satupun $jenis pada room $singkatan_room. Beritahukan hal ini kepada instruktur!");
     }
   } else {
     $list_jenis = '';

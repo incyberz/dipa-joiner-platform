@@ -23,7 +23,7 @@ if ($online_version) {
   $db_name = 'db_dipa';
 
   // if ($dm_db) $db_name = 'db_online_dipa_mei_2024';
-  $db_name = 'db_online_dipa_juni_2024';
+  $db_name = 'db_online_dipa_sep_2024';
 }
 
 $cn = new mysqli($db_server, $db_user, $db_pass, $db_name);
@@ -36,7 +36,7 @@ date_default_timezone_set("Asia/Jakarta");
 
 function erid($a)
 {
-  return "Error, index $a belum terdefinisi.";
+  return "Error, index [$a] belum terdefinisi.";
 }
 
 function clean_sql($a)

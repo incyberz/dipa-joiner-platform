@@ -91,8 +91,8 @@
             # =================================================
             # READY TO PEMBAHASAN
             # =================================================
-            $img_check = '<img src="assets/img/icons/check.png" height=25px />';
-            $img_reject = '<img src="assets/img/icons/reject.png" height=25px />';
+            $img_check = '<img src="assets/img/icon/check.png" height=25px />';
+            $img_reject = '<img src="assets/img/icon/reject.png" height=25px />';
             echo div_alert('info', 'Perhatikan dan ingat baik-baik Pembahasan Soal berikut! Sebagian besar akan muncul di ujian berikutnya.');
 
             $s = "SELECT * FROM tb_jawabans a 

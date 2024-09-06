@@ -1,13 +1,34 @@
+<style>
+  .text-zoom {
+    cursor: pointer;
+    transition: .2s
+  }
 
-  <style>
-  .text-zoom{cursor: pointer; transition: .2s}
-  .text-zoom:hover{letter-spacing: .5px; font-weight: bold}
-  .rank_number{display:inline-block; color:blue;}
-  .rank_th{display:inline-block; vertical-align:top;}
-  
-  #blok_summary {max-width: 500px; margin:auto}
-  #blok_accuracy {max-width: 360px; margin:auto}
-  </style>
+  .text-zoom:hover {
+    letter-spacing: .5px;
+    font-weight: bold
+  }
+
+  .rank_number {
+    display: inline-block;
+    color: blue;
+  }
+
+  .rank_th {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  #blok_summary {
+    max-width: 500px;
+    margin: auto
+  }
+
+  #blok_accuracy {
+    max-width: 360px;
+    margin: auto
+  }
+</style>
 <?php
 # =================================================================
 login_only();
@@ -37,31 +58,31 @@ JOIN tb_peserta b ON a.id_peserta=b.id
 WHERE b.id_role=1 
 AND id_room=$id_room 
 ORDER BY war_points DESC LIMIT 10";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $rnama = [];
 $rpoints = [];
-while($d=mysqli_fetch_assoc($q)){
-  array_push($rnama,$d['nama_peserta']);
-  array_push($rpoints,$d['war_points']);
+while ($d = mysqli_fetch_assoc($q)) {
+  array_push($rnama, $d['nama_peserta']);
+  array_push($rpoints, $d['war_points']);
 }
 
 $juara1 = ucwords(strtolower($rnama[0]));
 $juara2 = ucwords(strtolower($rnama[1]));
 $juara3 = ucwords(strtolower($rnama[2]));
 
-$poin_juara1 = number_format($rpoints[0],0);
-$poin_juara2 = number_format($rpoints[1],0);
-$poin_juara3 = number_format($rpoints[2],0);
+$poin_juara1 = number_format($rpoints[0], 0);
+$poin_juara2 = number_format($rpoints[1], 0);
+$poin_juara3 = number_format($rpoints[2], 0);
 
 $juara4 = '';
 $btop = '';
 foreach ($rnama as $key => $nama) {
-  if($key<3) continue;
-  if($key>3) $btop = 'btop';
+  if ($key < 3) continue;
+  if ($key > 3) $btop = 'btop';
   $juara_ke = $key + 1;
-  $points = number_format($rpoints[$key],0);
+  $points = number_format($rpoints[$key], 0);
   $nama = ucwords(strtolower($nama));
-  $juara4.="
+  $juara4 .= "
     <div class='flexy $btop'>
       <div class='mt1 mb1' style='flex: 1'>$juara_ke <span class='rank_th f10'>th</span></div>
       <div class='mt1 mb1' style='flex: 3'>$nama</div>
@@ -83,7 +104,7 @@ echo "
   <div class='wadah gradasi-hijau' id=blok_summary>
 
     <div class='wadah tengah ' style='background: linear-gradient(#ffbbff,#fef)'>
-      <img src=assets/img/gifs/medal1-1.gif height=90px>
+      <img src=assets/img/gif/medal1-1.gif height=90px>
       <div class='darkblue mt1 f20'>$juara1</div>
       <div class=' darkblue '>$poin_juara1 LP</div>
     </div>
@@ -92,14 +113,14 @@ echo "
     <div class=row>
       <div class=col-6>
         <div class='wadah tengah bg-white' >
-          <img src=assets/img/gifs/medal2-1.gif height=70px>
+          <img src=assets/img/gif/medal2-1.gif height=70px>
           <div class='darkblue mt1'>$juara2</div>
           <div class='kecil darkblue'>$poin_juara2 LP</div>
         </div>
       </div>
       <div class=col-6>
         <div class='wadah tengah bg-white'>
-          <img src=assets/img/gifs/medal3-1.gif height=70px>
+          <img src=assets/img/gif/medal3-1.gif height=70px>
           <div class='darkblue mt1'>$juara3</div>
           <div class='kecil darkblue'>$poin_juara3 LP</div>
         </div>
@@ -133,7 +154,7 @@ echo "
 
 ?>
 <script>
-  $(function(){
+  $(function() {
 
   })
 </script>

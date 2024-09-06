@@ -137,7 +137,7 @@ if (!$as) {
     <div class='col-lg-3' data-aos='fade-up' data-aos-delay='$time_anim'>
       <div class='wadah gradasi-$arr_gradasi[$key]'>
         <div class='text-center p-4'>
-          <img src='assets/img/icons/$value.png' alt='as $value' class='foto-ilustrasi'>
+          <img src='assets/img/icon/$value.png' alt='as $value' class='foto-ilustrasi'>
         </div>
         <a href='?join&as=$value' class='btn btn-primary btn-block proper'>Sebagai $value</a>
         <div class='tengah kecil abu mt1'>$arr_ket[$key]</div>
@@ -194,7 +194,7 @@ if (!$as) {
   # SELECTED AS
   # ===========================================================
   if ($as == 'peserta') {
-    $s = "SELECT kelas FROM tb_kelas WHERE tahun_ajar=$tahun_ajar AND status=1  ";
+    $s = "SELECT kelas FROM tb_kelas WHERE tahun_ajar=$ta AND status=1  ";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     $option_kelas = '';
     while ($d = mysqli_fetch_assoc($q)) {
@@ -217,7 +217,7 @@ if (!$as) {
   <div class='section-title' data-aos='fade-up'>
     <p><a href='?join'>Back</a> | Silahkan Anda Join sebagai <span class=proper>$as</span></p>
     <div class='mt3 mb4'>
-      <img src='assets/img/icons/$as.png' alt='img-as-$as' class='foto-ilustrasi'>
+      <img src='assets/img/icon/$as.png' alt='img-as-$as' class='foto-ilustrasi'>
     </div>
     $pesan_join
   </div>
@@ -237,7 +237,7 @@ if (!$as) {
           <div class='f12 miring mt1'>Usahakan agar username adalah nama depan atau nama panggilan!</div>
         </div>
         <div class='form-group'>
-          <label for='select_kelas'>Kelas Aktif <span class='f12 abu'>pada TA $tahun_ajar</span></label>
+          <label for='select_kelas'>Kelas Aktif <span class='f12 abu'>pada TA $ta</span></label>
           <select name='select_kelas' id='select_kelas' class='form-control'>
             <option value='0'>--Pilih--</option>
             $option_kelas

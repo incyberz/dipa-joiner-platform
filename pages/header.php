@@ -96,7 +96,7 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
                   <li><a href='?upload_profil_perang'>Reupload Profil Perang</a></li>
                 </ul>
               </li>
-              <li class='dropdown'><a  href='#'><span class='tebal darkblue'>$room</span> <i class='bi bi-chevron-down'></i></a>
+              <li class='dropdown'><a  href='#'><span class='tebal darkblue'>$singkatan_room</span> <i class='bi bi-chevron-down'></i></a>
                 <ul>
                   <li><a href='?pilih_room'>Pilih Room</a></li>
                   <li><a href='?list_sesi'>Learning Path</a></li>

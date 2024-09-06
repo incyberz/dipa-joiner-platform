@@ -85,7 +85,7 @@ if (isset($_POST['btn_join'])) {
 
 
 
-$s = "SELECT kelas FROM tb_kelas WHERE tahun_ajar=$tahun_ajar AND status=1  ";
+$s = "SELECT kelas FROM tb_kelas WHERE tahun_ajar=$ta AND status=1  ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $option_kelas = '';
 while ($d = mysqli_fetch_assoc($q)) {
@@ -100,7 +100,7 @@ $hideit_btn_join = ($nama != '' and $username != '' and $select_kelas != '0') ? 
   <h2>Join</h2>
   <p>Silahkan Anda Join sebagai Peserta</p>
   <div class="mt3 mb4">
-    <img src='assets/img/icons/<?= $as ?>.png' alt='img as' class='foto-ilustrasi'>
+    <img src='assets/img/icon/<?= $as ?>.png' alt='img as' class='foto-ilustrasi'>
   </div>
   <?= $pesan_join ?>
 </div>
@@ -117,7 +117,7 @@ $hideit_btn_join = ($nama != '' and $username != '' and $select_kelas != '0') ? 
       <div class='kecil miring mt1'>Untuk mahasiswa, username harus nama depan atau nama panggilan kamu.</div>
     </div>
     <div class="form-group">
-      <label for="select_kelas">Kelas <span class="f12 abu">pada TA <?= $tahun_ajar ?></span></label>
+      <label for="select_kelas">Kelas <span class="f12 abu">pada TA <?= $ta ?></span></label>
       <select name="select_kelas" id="select_kelas" class="form-control">
         <option value="0">--Pilih--</option>
         <?= $option_kelas ?>

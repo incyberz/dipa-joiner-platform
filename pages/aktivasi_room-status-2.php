@@ -3,19 +3,104 @@
 # AKTIVASI JUMLAH SESI
 # ============================================================
 if ($jumlah_sesi) {
-  $info_room = "
-    <div class=wadah>
-      <div>minggu_normal_uts: $d_room[minggu_normal_uts]</div>
-      <div>minggu_tenang_uts: $d_room[minggu_tenang_uts]</div>
-      <div>durasi_uts: $d_room[durasi_uts]</div>
-      <div>minggu_normal_uas: $d_room[minggu_normal_uas]</div>
-      <div>minggu_tenang_uas: $d_room[minggu_tenang_uas]</div>
-      <div>durasi_uas: $d_room[durasi_uas]</div>
-      <div>jeda_sesi: $d_room[jeda_sesi]</div>
-    </div>
-    <input type=hidden name=date_created value='$now'>
-  ";
-  $inputs = div_alert('success', "Sudah ada $jumlah_sesi sesi aktif pada room ini.<hr>$info_room");
+
+  if (!$room['minggu_normal_uts']) { // minggu_normal_uts belum ada artinya room lama harus diupdate 
+
+    // nomor sesi saat UTS
+    $s = "SELECT a.no
+    FROM tb_sesi a 
+    WHERE a.jenis=2 AND a.id_room=$id_room";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    if (!mysqli_num_rows($q)) die('Tidak dapat menemukan nomor [no] sesi UTS. Silahkan tambah dahulu sesi UTS pada Room ini kemudian atur urutan sesi UTS tersebut');
+    $d = mysqli_fetch_assoc($q);
+    $durasi_uts = mysqli_num_rows($q);
+    $no_sesi_uts = $d['no'];
+
+    // select normal sesi dengan nomor < no_sesi_uts
+    $s = "SELECT 1 FROM tb_sesi WHERE no<$no_sesi_uts AND jenis=1 AND id_room=$id_room";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    $minggu_normal_uts = mysqli_num_rows($q);
+
+    // select normal sesi dengan nomor > no_sesi_uts
+    $s = "SELECT 1 FROM tb_sesi WHERE no > $no_sesi_uts AND jenis=1 AND id_room=$id_room";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    $minggu_normal_uas = mysqli_num_rows($q);
+
+    // select minggu_tenang dengan nomor < no_sesi_uts
+    $s = "SELECT 1 FROM tb_sesi WHERE no<$no_sesi_uts AND jenis=0 AND id_room=$id_room";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    $minggu_tenang_uts = mysqli_num_rows($q);
+
+    // select minggu_tenang dengan nomor > no_sesi_uts
+    $s = "SELECT 1 FROM tb_sesi WHERE no > $no_sesi_uts AND jenis=0 AND id_room=$id_room";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    $minggu_tenang_uas = mysqli_num_rows($q);
+
+    // count_sesi_UAS
+    $s = "SELECT 1 FROM tb_sesi WHERE jenis=3 AND id_room=$id_room";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    $durasi_uas = mysqli_num_rows($q);
+
+
+
+
+    $info_room = "
+      <div class=wadah>
+        <div class=mb2>Sesi-sesi pada room lama:</div>
+        <div class='row mt2'>
+          <div class=col-6>
+            <div class=wadah>
+              <div>Calculated minggu_normal_uts: $minggu_normal_uts</div>
+              <div>Calculated minggu_tenang_uts: $minggu_tenang_uts</div>
+              <div>Calculated durasi_uts: $durasi_uts</div>
+            </div>
+          </div>
+          <div class=col-6>
+            <div class=wadah>
+              <div>Calculated minggu_normal_uas: $minggu_normal_uas</div>
+              <div>Calculated minggu_tenang_uas: $minggu_tenang_uas</div>
+              <div>Calculated durasi_uas: $durasi_uas</div>
+            </div>
+          </div>
+        </div>
+        <div class=wadah>Default jeda_sesi: $jeda_sesi</div>
+      </div>
+      <input type=hidden name=date_created value='$now'>
+    ";
+
+    # ============================================================
+    # UPDATE ROOM WITH CALCULATED COUNT
+    # ============================================================
+    $s = "UPDATE tb_room SET 
+    minggu_normal_uts = $minggu_normal_uts,
+    minggu_normal_uas = $minggu_normal_uas,
+    minggu_tenang_uts = $minggu_tenang_uts,
+    minggu_tenang_uas = $minggu_tenang_uas,
+    durasi_uts = $durasi_uts,
+    durasi_uas = $durasi_uas,
+    jeda_sesi = $jeda_sesi
+
+    WHERE id=$id_room
+    ";
+    echolog($s);
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+
+    $inputs = $info_room;
+  } else {
+    $info_room = "
+      <div class=wadah>
+        <div>minggu_normal_uts: $room[minggu_normal_uts]</div>
+        <div>minggu_tenang_uts: $room[minggu_tenang_uts]</div>
+        <div>durasi_uts: $room[durasi_uts]</div>
+        <div>minggu_normal_uas: $room[minggu_normal_uas]</div>
+        <div>minggu_tenang_uas: $room[minggu_tenang_uas]</div>
+        <div>durasi_uas: $room[durasi_uas]</div>
+        <div>jeda_sesi: $room[jeda_sesi]</div>
+      </div>
+      <input type=hidden name=date_created value='$now'>
+    ";
+    $inputs = div_alert('success', "Sudah ada $jumlah_sesi sesi pada room ini.<hr>$info_room");
+  }
 } else {
   $inputs = "
     <div class=row>
@@ -43,10 +128,10 @@ if ($jumlah_sesi) {
       
         <select name='durasi_uts' class='form-control mb2'>
           <option value='0'>Tidak ada UTS</option>
-          <option value='1'>Durasi UTS selama 1 minggu</option>
-          <option value='2' selected>Durasi UTS selama 2 minggu</option>
-          <option value='3'>Durasi UTS selama 3 minggu</option>
-          <option value='4'>Durasi UTS selama 4 minggu</option>
+          <option value='1'>Durasi UTS selama 1 pekan</option>
+          <option value='2' selected>Durasi UTS selama 2 pekan</option>
+          <option value='3'>Durasi UTS selama 3 pekan</option>
+          <option value='4'>Durasi UTS selama 4 pekan</option>
         </select>
         </div>
       </div>
@@ -75,10 +160,10 @@ if ($jumlah_sesi) {
         </select>
       
         <select name='durasi_uas' class='form-control mb2'>
-          <option value='1'>Durasi UAS selama 1 minggu</option>
-          <option value='2' selected>Durasi UAS selama 2 minggu</option>
-          <option value='3'>Durasi UAS selama 3 minggu</option>
-          <option value='4'>Durasi UAS selama 4 minggu</option>
+          <option value='1'>Durasi UAS selama 1 pekan</option>
+          <option value='2' selected>Durasi UAS selama 2 pekan</option>
+          <option value='3'>Durasi UAS selama 3 pekan</option>
+          <option value='4'>Durasi UAS selama 4 pekan</option>
         </select>
         </div>
   

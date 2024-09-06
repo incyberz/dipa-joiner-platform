@@ -41,7 +41,7 @@ JOIN tb_kelas_peserta b ON a.id=b.id_peserta
 JOIN tb_kelas c ON b.kelas=c.kelas 
 JOIN tb_room_kelas d ON c.kelas=d.kelas 
 WHERE a.status=1 
-AND c.tahun_ajar = $tahun_ajar  
+AND c.tahun_ajar = $ta  
 AND d.id_room=$id_room 
 AND $sql_id_peserta  
 AND $sql_profil_ok   

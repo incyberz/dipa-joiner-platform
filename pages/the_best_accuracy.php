@@ -115,7 +115,7 @@ ORDER BY accuracy DESC LIMIT 10";
   <div class='wadah gradasi-hijau' id=blok_summary>
 
     <div class='wadah tengah ' style='background: linear-gradient(#ffbbff,#fef)'>
-      <img src=assets/img/gifs/medal1-1.gif height=90px>
+      <img src=assets/img/gif/medal1-1.gif height=90px>
       <div class='darkblue mt1 f20'>$juara1</div>
       <div class=' darkblue '>$poin_juara1 %</div>
     </div>
@@ -124,14 +124,14 @@ ORDER BY accuracy DESC LIMIT 10";
     <div class=row>
       <div class=col-6>
         <div class='wadah tengah bg-white' >
-          <img src=assets/img/gifs/medal2-1.gif height=70px>
+          <img src=assets/img/gif/medal2-1.gif height=70px>
           <div class='darkblue mt1'>$juara2</div>
           <div class='kecil darkblue'>$poin_juara2 %</div>
         </div>
       </div>
       <div class=col-6>
         <div class='wadah tengah bg-white'>
-          <img src=assets/img/gifs/medal3-1.gif height=70px>
+          <img src=assets/img/gif/medal3-1.gif height=70px>
           <div class='darkblue mt1'>$juara3</div>
           <div class='kecil darkblue'>$poin_juara3 %</div>
         </div>

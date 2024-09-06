@@ -17,7 +17,7 @@ a.prodi,
 
 FROM tb_kelas a 
 WHERE a.status=1 
-AND a.tahun_ajar = $tahun_ajar  
+AND a.tahun_ajar = $ta  
 AND kelas != 'INSTRUKTUR'
 ORDER BY a.fakultas,a.prodi,a.kelas";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -72,14 +72,14 @@ while ($d = mysqli_fetch_assoc($q)) {
 $arr = [
   'fakultas' => [
     'caption' => 'Fakultas / Lembaga',
-    'minlength' => 10,
+    'minlength' => 4,
     'maxlength' => 30,
     'placeholder' => 'Fakultas/Lembaga...',
     'info' => 'Contoh: FTEK MU, FTI UNISBA, FISIP ITS, FIKOM UNPAD, dll',
   ],
   'nama_prodi' => [
     'caption' => 'Nama Lengkap Prodi / Jurusan',
-    'minlength' => 10,
+    'minlength' => 4,
     'maxlength' => 30,
     'placeholder' => 'Nama Lengkap Prodi...',
     'info' => 'Contoh: Teknik Informatika, Komputerisasi Akuntansi, dll',
@@ -191,7 +191,7 @@ $tr_tambah = "
 
 $inputs = "
   <h3 class=tr>Select Room Kelas</h3>
-  <p class=tr>Silahkan Anda pilih Grup <b class=darkblue>Kelas aktif TA. $tahun_ajar</b> yang boleh mengakses Room Anda (max: 5 kelas).</p>
+  <p class=tr>Silahkan Anda pilih Grup <b class=darkblue>Kelas aktif TA. $ta</b> yang boleh mengakses Room Anda (max: 5 kelas).</p>
   <table class='table' id=tb_kelas>
     <thead class='tr'>
       <th>Fakultas / Lembaga</th>

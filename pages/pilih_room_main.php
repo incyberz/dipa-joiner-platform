@@ -104,7 +104,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     $btn = "<a href='?pilih_room&daftar_ke_room=$d[id_room]' class='btn btn-secondary mt2 w-100' value=$d[id_room]>Daftar Anggota</a>";
   }
 
-  $room = "
+  $singkatan_room = "
     <div class='col-md-4 col-lg-3'>
       <div class='wadah $wadah_active gradasi-$gradasi tengah' style='border: $border;'>
         <div class='darkblue f18'>$d[room]</div>
@@ -116,13 +116,13 @@ while ($d = mysqli_fetch_assoc($q)) {
     </div>
   ";
   if ($d['my_room']) {
-    $my_room .= $room;
+    $my_room .= $singkatan_room;
   } else {
-    $other_room .= $room;
+    $other_room .= $singkatan_room;
   }
 }
 $my_room = $my_room ?? div_alert('danger', "Kamu belum dimasukan ke Room manapun pada TA. $ta_show");
-
+$link_buat_room_baru = $id_role == 2 ? "<div class='mb2'><a class='btn btn-success' href='?buat_room' onclick='return confirm(`Buat Room Baru?`)'>Buat Room Baru</a></div>" : '';
 
 echo "
 <div class=container>
@@ -134,9 +134,7 @@ echo "
     </div>
     <hr>
     <div class='tengah'>
-      <div class='mb2'>
-        <a class='btn btn-success' href='?buat_room' onclick='return confirm(`Buat Room Baru?`)'>Buat Room Baru</a>
-      </div>
+      $link_buat_room_baru
       <a href='?logout' onclick='return confirm(`Logout?`)'>Logout</a>
     </div>
     <hr>

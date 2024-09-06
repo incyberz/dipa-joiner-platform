@@ -8,7 +8,7 @@ if (!$id_room || !$id_peserta) jsurl('?public_grades');
 $get_kelas = $_GET['kelas'] ?? '';
 if (($get_kelas == 'all' and $id_role == 1) || $get_kelas == '') die("<script>location.replace('?grades&kelas=$kelas')</script>");
 $judul = 'The Best Top 10';
-$img_login_as = '<img src="assets/img/icons/login_as.png" height=20px class=zoom>';
+$img_login_as = '<img src="assets/img/icon/login_as.png" height=20px class=zoom>';
 $show_img = isset($_GET['show_img']) ? $_GET['show_img'] : 0;
 
 if ($kelas != 'all') {
@@ -261,7 +261,7 @@ if ($id_role == 2 && $get_kelas != 'all') {
   $s = "SELECT a.kelas 
   FROM tb_kelas a 
   JOIN tb_room_kelas b ON a.kelas=b.kelas 
-  WHERE a.tahun_ajar=$tahun_ajar 
+  WHERE a.tahun_ajar=$ta 
   AND a.status=1 
   AND b.id_room=$id_room 
   ";

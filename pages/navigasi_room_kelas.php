@@ -19,7 +19,7 @@ if (!mysqli_num_rows($q)) {
     $font_size = $d['kelas'] == $get_kelas ? 'f16 blue bold' : 'f10';
     $kelas_show = "$d[prodi]-$reg-SM$d[semester]";
     $kelas_show = $d['caption'];
-    $kelas_show = str_replace("~$tahun_ajar", '', $kelas_show);
+    $kelas_show = str_replace("~$ta", '', $kelas_show);
     $li .= "
       <li>
         <a class='$font_size $btn_class' href='?$param_awal&kelas=$d[kelas]'>

@@ -3,24 +3,8 @@
 # URUTAN DAN DESKRIPSI
 # ============================================================
 
-$r = explode(', ', $d_sesi['tags']);
-sort($r);
-$tags_sort = implode(', ', $r);
-$tags_show = "
-  <textarea 
-    class='form-control input_editable mb1' 
-    rows=5 
-    name=tags 
-    id=tags__$id_sesi 
-    placeholder='tag-tag materi...'
-  >$d_sesi[tags]</textarea>
-";
-
 $s = "SELECT 
-a.id, 
-a.nama, 
-a.jenis, 
-a.deskripsi 
+a.*
 FROM tb_sesi a WHERE id_room=$id_room";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $divs = '';
@@ -39,32 +23,24 @@ while ($d = mysqli_fetch_assoc($q)) {
     // $nav .= "<span class='btn btn-secondary btn-sm'>P ZZZ</span> ";
   }
 
-  $input_nama = "
-    <input 
-      class='form-control input_editable mb1' 
-      name=nama 
-      id=nama__$d[id] 
-      value='$d[nama]'
-    />
-  ";
-  $input_deskripsi = "
-    <textarea 
-      class='form-control input_editable mb1' 
-      rows=5 
-      name=deskripsi 
-      id=deskripsi__$d[id] 
-      placeholder='deskripsi sesi...'
-    >$d[deskripsi]</textarea>
-  ";
-
   $divs .= "
     <tr>
-      <td>$i $img_up $img_down</td>
+      <td>$i</td>
       <td>
-        <div>$input_nama</div>
-        <div class='hideit'>$input_deskripsi</div>
+        <div class='mb2'>Sesi: <b class=darkblue>$d[nama]</b></div>
+        <div class='mb1 f12 mt4 miring'>Tags:</div>
+        <div><input class='form-control input_editable mb1' name=tags id=tags__$d[id] value='$d[tags]' /></div>
+        <div class='mb1 f12 mt4 miring'>Deskripsi:</div>
+        <div class=''>
+          <textarea 
+            class='form-control input_editable mb1' 
+            rows=5 
+            name=deskripsi 
+            id=deskripsi__$d[id] 
+            placeholder='deskripsi sesi...'
+          >$d[deskripsi]</textarea>          
+        </div>
       </td>
-      <td>$img_edit</td>
     </tr>
   ";
 }
@@ -73,7 +49,10 @@ echo "
   <div>
     $nav
   </div>
-  <table class=table>
-    $divs
-  </table>
+  <div class='alert alert-info biru bold tengah'><span class=biru>Tags digunakan agar peserta tidak \"Out of Topic\" dalam membuat Soal PG sebagai syarat presensi.</span></div>
+  <div class='gradasi-hijau br5 p1 pt0 br10'>
+    <table class='table td_trans td_toska '>
+      $divs
+    </table>
+  </div>
 ";

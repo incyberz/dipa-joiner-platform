@@ -3,13 +3,13 @@
 # HEADER ASSIGN PESERTA KELAS
 # ============================================================
 $get_kelas = $_GET['kelas'] ?? die(erid('kelas'));
-if (!$tahun_ajar) die(erid('tahun_ajar'));
+if (!$ta) die(erid('tahun_ajar'));
 set_h2(
   'Assign Peserta Kelas',
   "Proses memasukan peserta ke Grup Kelas 
   <b class=darkblue>$get_kelas</b>
   pada TA. 
-  <b class=darkblue>$tahun_ajar</b>
+  <b class=darkblue>$ta</b>
   <div class=mt2>
     <a href='?peserta_kelas'>
       $img_prev
@@ -33,7 +33,7 @@ FROM tb_kelas_peserta a
 JOIN tb_kelas b ON a.kelas=b.kelas    
 JOIN tb_peserta c ON a.id_peserta=c.id 
 WHERE b.kelas='$get_kelas' 
-AND b.tahun_ajar=$tahun_ajar
+AND b.tahun_ajar=$ta
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (mysqli_num_rows($q) == 0) {
@@ -66,7 +66,7 @@ a.nama as nama_peserta,
   FROM tb_kelas_peserta p 
   JOIN tb_kelas q ON p.kelas=q.kelas  
   WHERE id_peserta=a.id
-  AND q.tahun_ajar=$tahun_ajar) kelas 
+  AND q.tahun_ajar=$ta) kelas 
 
 FROM tb_peserta a 
 WHERE status=1 

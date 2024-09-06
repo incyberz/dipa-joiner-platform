@@ -44,7 +44,7 @@ WHERE a.id_room=$id_room";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $count_sesi_aktif = 0;
 if (!mysqli_num_rows($q)) {
-  echo div_alert('danger', "Belum ada sesi pada room $room.");
+  echo div_alert('danger', "Belum ada sesi pada room $singkatan_room.");
 } else {
   while ($d = mysqli_fetch_assoc($q)) {
     $rid_sesi[$d['no']] = $d['id_sesi'];

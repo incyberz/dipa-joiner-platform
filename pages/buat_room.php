@@ -16,7 +16,7 @@ include 'include/date_managements.php';
 // variabel awal
 $nama_room = '';
 $singkatan_room = '';
-$tahun_ajar = date('Y');
+$ta = date('Y');
 $prodi = '';
 $jumlah_sesi = 16;
 $pukul = '08:00:00';

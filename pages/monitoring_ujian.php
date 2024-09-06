@@ -28,7 +28,7 @@ echo "
 </div>";
 
 
-$img_check = '<img src=assets/img/icons/check.png height=25px />';
+$img_check = '<img src=assets/img/icon/check.png height=25px />';
 
 
 

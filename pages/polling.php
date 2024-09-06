@@ -138,7 +138,7 @@ foreach ($rpolling as $no => $rtanya) {
     for ($i = 1; $i <= 5; $i++) {
       $no_counter = $no . "__$i";
       $opsi .= "
-      <img id=stars__$no_counter class='zoom pointer stars stars__$no aksi' src=assets/img/icons/stars.png height=40px> 
+      <img id=stars__$no_counter class='zoom pointer stars stars__$no aksi' src=assets/img/icon/stars.png height=40px> 
       ";
     }
     $opsi = "<div class='tengah mt2 mb4'>$opsi</div>";
@@ -297,9 +297,9 @@ foreach ($rpolling as $no => $rtanya) {
         $('.btn__' + no).removeClass('btn-active');
         $(this).addClass('btn-active');
       } else if (aksi == 'stars') {
-        $('.stars__' + no).prop('src', 'assets/img/icons/stars.png');
+        $('.stars__' + no).prop('src', 'assets/img/icon/stars.png');
         for (let i = 1; i <= counter; i++) {
-          $('#stars__' + no + '__' + i).prop('src', 'assets/img/icons/stars_red.png');
+          $('#stars__' + no + '__' + i).prop('src', 'assets/img/icon/stars_red.png');
         }
       }
 

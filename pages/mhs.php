@@ -35,7 +35,7 @@ while ($d = mysqli_fetch_assoc($q)) {
 
 <div class="section-title" data-aos="fade-up">
   <h2>Daftar Peserta</h2>
-  <p>Daftar Peserta MK <?= $room ?></p>
+  <p>Daftar Peserta MK <?= $singkatan_room ?></p>
 </div>
 
 <?= $data ?>

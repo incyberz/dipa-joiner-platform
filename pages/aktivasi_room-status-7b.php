@@ -22,7 +22,7 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $div = '';
 $arr = [];
 for ($i = 0; $i < 6; $i++) {
-  $date = date('Y-m-d H:i', strtotime("+$i day", strtotime($d_room['awal_sesi'])));
+  $date = date('Y-m-d H:i', strtotime("+$i day", strtotime($room['awal_sesi'])));
   array_push($arr, $date);
 }
 

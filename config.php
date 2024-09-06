@@ -54,7 +54,7 @@ $link_back = "<a href='javascript:history.go(-1)'>Kembali</a>";
 $btn_back = "<a href='javascript:history.go(-1)'><button class='btn btn-primary' style='margin-top:5px;margin-bottom:5px'>Kembali</button></a>";
 
 $bm = '<span style="color: red;font-weight: bold">*</span>';
-$img_wa = "<img src='assets/img/icons/wa.png' width=20px class='img_zoom' />";
+$img_wa = "<img src='assets/img/icon/wa.png' width=20px class='img_zoom' />";
 
 
 

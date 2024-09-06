@@ -53,11 +53,11 @@ c.id_status as id_status_soal,
 (
   SELECT p.kelas FROM tb_kelas_peserta p 
   JOIN tb_kelas q ON p.kelas=q.kelas   
-  WHERE id_peserta=a.id_penjawab AND q.tahun_ajar=$tahun_ajar) kelas_penjawab,   
+  WHERE id_peserta=a.id_penjawab AND q.tahun_ajar=$ta) kelas_penjawab,   
 (
   SELECT p.kelas FROM tb_kelas_peserta p 
   JOIN tb_kelas q ON p.kelas=q.kelas   
-  WHERE id_peserta=a.id_pembuat AND q.tahun_ajar=$tahun_ajar) kelas_pembuat    
+  WHERE id_peserta=a.id_pembuat AND q.tahun_ajar=$ta) kelas_pembuat    
 FROM tb_war a 
 JOIN tb_peserta b ON a.id_penjawab=b.id 
 JOIN tb_soal_peserta c ON a.id_soal=c.id 
@@ -113,7 +113,7 @@ if (!mysqli_num_rows($q)) {
     $tanggal = date('M d, Y, H:i:s', strtotime($d['tanggal']));
     $eta_show = eta(-strtotime('now') + strtotime($d['tanggal']));
 
-    $img_guns = "<img src='assets/img/guns/wp$r.png' style='max-width:70px' class='$cermin pt4'  />";
+    $img_guns = "<img src='assets/img/gun/wp$r.png' style='max-width:70px' class='$cermin pt4'  />";
 
     $src_profil_penjawab = "$lokasi_profil/wars/peserta-$d[id_penjawab].jpg";
     $profil_penjawab = "<img class=profil_penjawab src='$src_profil_penjawab' />";

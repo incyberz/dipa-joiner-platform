@@ -17,16 +17,20 @@ login_only();
 include 'include/date_managements.php';
 include 'presensi_processor.php';
 
-$total_peserta_presensi = $total_peserta_kelas; // kelas sendiri
-if ($target_kelas) {
-  $s = "SELECT 1 FROM tb_kelas_peserta a 
-  JOIN tb_peserta b ON a.id_peserta=b.id 
-  WHERE b.status=1 
-  AND a.kelas='$target_kelas'
-  ";
-  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  $total_peserta_presensi = mysqli_num_rows($q); // sesuai target kelas
-}
+
+$sql_target_kelas = $target_kelas ? "a.kelas='$target_kelas'" : '1';
+$s = "SELECT 1 
+FROM tb_kelas_peserta a 
+JOIN tb_peserta b ON a.id_peserta=b.id 
+JOIN tb_kelas c ON a.kelas=c.kelas
+JOIN tb_room_kelas d ON c.kelas=d.kelas
+WHERE b.status = 1 -- peserta aktif
+AND b.id_role = 1 -- peserta only
+AND $sql_target_kelas 
+AND d.id_room = $id_room 
+";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+$total_peserta_presensi = mysqli_num_rows($q); // sesuai target kelas
 $info_target_kelas = $target_kelas ? "<div>Target Kelas: $target_kelas</div>" : '';
 $rekap = $id_role == 1 ? '<p class=f14>Presenting your work! Not only a signature.</p>' : "Admin only: <a href='?presensi_rekap'>Rekap Presensi</a>$info_target_kelas";
 echo "
@@ -170,15 +174,19 @@ a.id as id_sesi,
 
 
 FROM tb_sesi a 
-WHERE a.id_room=$id_room";
+WHERE a.id_room=$id_room 
+AND jenis = 1 -- sesi normal
+";
 // echo "<pre>$s</pre>";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $presenters_kelas_last_active_sesi = 0;
 $is_ontime_now = 0;
+$i = 0;
 while ($d = mysqli_fetch_assoc($q)) {
 
   // $d['play_count'] = 999; //debug var
   // $d['jumlah_soal'] = 999; //debug var
+  $i++;
 
   $id_sesi = $d['id_sesi'];
   $sudah_presensi = $d['sudah_presensi'];
@@ -250,8 +258,8 @@ while ($d = mysqli_fetch_assoc($q)) {
     $poin = number_format($d2['poin'], 0);
     $tgl = date('D, M d, H:i:s', strtotime($d2['tanggal']));
 
-    $img_ontime = '<img src="assets/img/icons/ontime.png" height=50px />';
-    $img_late = '<img src="assets/img/icons/late.png" height=50px />';
+    $img_ontime = '<img src="assets/img/icon/ontime.png" height=50px />';
+    $img_late = '<img src="assets/img/icon/late.png" height=50px />';
     $img = $d2['is_ontime'] ? $img_ontime : $img_late;
     $sudah_presensi = $d2['is_ontime'] ? '<span class="biru tebal">Ontime</span>' : '<span class="darkred">Telat Presensi</span>';
 
@@ -282,20 +290,20 @@ while ($d = mysqli_fetch_assoc($q)) {
     if ($jumlah_soal < $syarat_soal_count) {
       $syarat_soal = "<span class=red>$syarat_soal</span> | <a href='?tanam_soal&id_sesi=$id_sesi'>Tanam</a>";
     } else {
-      $syarat_soal = "<span class=green>$syarat_soal</span> <img src='assets/img/icons/check.png' height=20px />";
+      $syarat_soal = "<span class=green>$syarat_soal</span> <img src='assets/img/icon/check.png' height=20px />";
     }
 
     if ($play_count < $syarat_play_count) {
       $syarat_play = "<span class=red>$syarat_play</span> | <a href='?perang_soal&mode=random'>Play</a>";
     } else {
-      $syarat_play = "<span class=green>$syarat_play</span> <img src='assets/img/icons/check.png' height=20px />";
+      $syarat_play = "<span class=green>$syarat_play</span> <img src='assets/img/icon/check.png' height=20px />";
     }
 
     if ($syarat_latihan_count) {
       if ($my_latihan_count < $syarat_latihan_count) {
         $syarat_latihan = "<span class=red>$syarat_latihan</span> | <a href='?perang_soal&mode=random'>Play</a>";
       } else {
-        $syarat_latihan = "<span class=green>$syarat_latihan</span> <img src='assets/img/icons/check.png' height=20px />";
+        $syarat_latihan = "<span class=green>$syarat_latihan</span> <img src='assets/img/icon/check.png' height=20px />";
       }
     } else {
       $syarat_latihan = '-';
@@ -412,7 +420,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     <div class='gradasi-$hijau mb2 bordered br5 p2 f12 $border_blue' id='row_presensi__$id_sesi'>
       <div class='row'>
         <div class='col-lg-3'>
-          <div class='mb1 darkblue tebal'>P$d[no] $d[nama]</div>
+          <div class='mb1 darkblue tebal'>P$i $d[nama]</div>
           <div class='mb1 abu miring'>$d[count_yg_hadir] of $total_peserta_presensi sudah hadir</div>
         </div>
         <div class='col-lg-4'>

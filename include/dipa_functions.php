@@ -4,7 +4,7 @@ function akhir_ujian($awal_ujian, $durasi_ujian = 60)
   return date('Y-m-d H:i:s', strtotime($awal_ujian) + 60 * $durasi_ujian);
 }
 
-function tahun_ajar($ta)
+function tahun_ajar_show($ta)
 {
   if (strlen($ta) != 5) return false;
   if ($ta < 20201 || $ta > 20252) return "[tahun_ajar: $ta out of range.]";
