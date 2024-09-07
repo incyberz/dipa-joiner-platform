@@ -29,6 +29,7 @@ $judul2 = "Yang Belum Ngerjain";
 $icon_wa_red = "<img src='$lokasi_img/icon/wa_red.png' class=img-icon>";
 $icon_wa = "<img src='$lokasi_img/icon/wa.png' class=img-icon>";
 $icon_wa_disabled = "<img src='$lokasi_img/icon/wa_disabled.png' class=img-icon>";
+$no_data = '<i class="abu f12">--no data--</i>';
 
 
 
@@ -64,7 +65,7 @@ ORDER BY f.kelas, d.nama
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
 $arr_yg_sudah = [];
-$divs = '';
+$divs = null;
 while ($d = mysqli_fetch_assoc($q)) {
   array_push($arr_yg_sudah, $d['id_peserta']);
   $nama_peserta = ucwords(strtolower($d['nama_peserta']));
@@ -86,6 +87,8 @@ while ($d = mysqli_fetch_assoc($q)) {
     </div>
   ";
 }
+
+$divs = $divs ?? $no_data;
 
 echo "
   <div class='wadah gradasi-hijau proper'>
@@ -114,7 +117,7 @@ ORDER BY b.kelas, c.nama
 
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
-$divs_belum = '';
+$divs_belum = null;
 while ($d = mysqli_fetch_assoc($q)) {
   if (in_array($d['id_peserta'], $arr_yg_sudah)) continue;
   $nama_peserta = ucwords(strtolower($d['nama_peserta']));
@@ -129,6 +132,8 @@ while ($d = mysqli_fetch_assoc($q)) {
     </div>
   ";
 }
+
+$divs_belum = $divs_belum ?? $no_data;
 
 echo "
   <div class='wadah gradasi-merah proper'>

@@ -93,25 +93,26 @@ if (!$id_assign) {
     $list_jenis = '';
     while ($d = mysqli_fetch_assoc($q)) {
       $sum_point = number_format($d['sum_point'], 0);
+
       if ($d['status_jenis'] == -1) {
         $closed = 1;
         $primary = 'secondary';
-        $is_wajib_icon = "<span class='f12 red'>Closed</span>";
+        $nama_jenis = "$d[nama] ( <b class=red>CLOSED</b> )";
       } else {
         $primary = $d['sudah_mengerjakan'] ? 'warning' : 'primary';
         $primary = $d['status_mengerjakan'] ? 'success' : $primary;
-        $is_wajib_icon = $d['is_wajib'] ? '<b class="consolas f12 gradasi-kuning red bordered br10" style="padding: 5px 10px">Wajib</b>' : '';
+        $nama_jenis = $d['is_wajib'] ? "<b style=color:#ff0>$d[nama] (WAJIB)</b>" : "$d[nama]";
       }
 
       $list_jenis .= "
         <div>
-          <a class='btn btn-$primary btn-sm mb2' href='?activity&jenis=$jenis&id_assign=$d[id_assign]'>
+          <a class='btn btn-$primary btn-sm mb2 w-100' href='?activity&jenis=$jenis&id_assign=$d[id_assign]'>
             P$d[no] 
             ~ 
-            $d[nama]
+            $nama_jenis
             ~ 
             $sum_point
-          </a> $is_wajib_icon
+          </a> 
         </div>
       ";
     }

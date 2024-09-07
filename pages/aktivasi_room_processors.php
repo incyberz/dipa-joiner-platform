@@ -234,6 +234,13 @@ if (isset($_POST['btn_aktivasi'])) {
         unset($_POST['radio__' . $kelas]);
       }
 
+      // unset($_POST['sesi_kelas_count']);
+
+      // echo '<pre>';
+      // var_dump($_POST);
+      // echo '</pre>';
+      // exit;
+
       $s = "SELECT id as id_sesi FROM tb_sesi WHERE id_room=$id_room";
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       if (!mysqli_num_rows($q)) {

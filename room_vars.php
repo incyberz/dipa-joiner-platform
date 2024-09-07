@@ -22,8 +22,12 @@ b.nama as nama_instruktur,
   WHERE kelas='$kelas' 
   AND id_room='$id_room') id_room_kelas,
 (
-  SELECT last_update FROM tb_room_stats  
-  WHERE id_room='$id_room') last_update_room,
+  SELECT count(1) FROM tb_room_kelas 
+  WHERE id_room='$id_room'
+  AND ta=$ta) total_kelas,
+(
+  SELECT last_update FROM tb_room_count  
+  WHERE id_room='$id_room') last_update,
 (
   SELECT COUNT(1) FROM tb_sesi  
   WHERE id_room='$id_room') count_sesi
@@ -41,6 +45,10 @@ if (!mysqli_num_rows($q)) {
 }
 
 $room = mysqli_fetch_assoc($q);
+
+# ============================================================
+# STATUS ROOM VALIDATION
+# ============================================================
 $status_room = $room['status'];
 $nama_instruktur = $room['nama_instruktur'];
 if ($status_room != 100) {
@@ -53,22 +61,29 @@ if ($status_room != 100) {
     }
   }
 }
+
+
+# ============================================================
+# TOTAL KELAS VALIDATION
+# ============================================================
+if (!$room['total_kelas']) {
+  die(div_alert('danger', "Belum ada satupun kelas pada Room ini di TA $ta"));
+}
+
+# ============================================================
+# EXTRACT ROOM DATA
+# ============================================================
 $singkatan_room = $room['singkatan'];
 $nama_room = $room['nama'];
 $id_room_kelas = $room['id_room_kelas'];
 $id_instruktur = $room['id_instruktur'];
-$last_update_room = $room['last_update_room'];
 $jumlah_sesi = $room['count_sesi'];
 $count_sesi = $room['count_sesi'];
-
-# ========================================================
-# PROFILE INSTRUKTUR
-# ========================================================
 $path_profil_instruktur = "$lokasi_profil/peserta-$id_instruktur.jpg";
 $profil_instruktur = "<img src='$path_profil_instruktur' class='foto_profil' alt='profil_instruktur' />";
 
 # ========================================================
-# STOP JIKA KELAS BELUM DI-ASSIGN KE ROOM INI
+# ASSIGN ROOM-KELAS VALIDATION | STOP JIKA KELAS BELUM DI-ASSIGN KE ROOM INI
 # ========================================================
 if (!$id_room_kelas) {
 
@@ -110,51 +125,71 @@ if (!$id_room_kelas) {
 
 
 
-# =======================================================
-# COUNT TOTAL LATIHAN / TUGAS / CHALLENGE
-# =======================================================
-$s = "SELECT 
-(
-  SELECT COUNT(1) 
-  FROM tb_kelas_peserta p 
-  JOIN tb_kelas q ON p.kelas=q.kelas 
-  JOIN tb_room_kelas r ON q.kelas=r.kelas 
-  JOIN tb_peserta s ON p.id_peserta=s.id  
-  WHERE r.id_room=$id_room 
-  AND q.status=1 -- hanya kelas aktif
-  AND s.status=1 -- hanya peserta aktif
-  AND s.id_role=1 -- hanya peserta
-  AND s.nama NOT LIKE '%dummy%' 
-  ) total_peserta,
 
-(
-  SELECT COUNT(1) 
-  FROM tb_assign_latihan 
-  WHERE id_room_kelas=$id_room_kelas) total_latihan,
-(
-  SELECT COUNT(1) 
-  FROM tb_assign_latihan 
-  WHERE id_room_kelas=$id_room_kelas 
-  AND is_wajib is not null) total_latihan_wajib,
 
-(
-  SELECT COUNT(1) 
-  FROM tb_assign_challenge 
-  WHERE id_room_kelas=$id_room_kelas) total_challenge,
-(
-  SELECT COUNT(1) 
-  FROM tb_assign_challenge 
-  WHERE id_room_kelas=$id_room_kelas 
-  AND is_wajib is not null) total_challenge_wajib
 
-";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ============================================================
+# VALIDATIONS PASSED
+# ============================================================
+
+# ========================================================
+# DATA INSTRUKTUR
+# ========================================================
+$s = "SELECT id,nama,folder_uploads,username,no_wa,gender,image,war_image FROM tb_peserta WHERE id=$room[created_by] AND id_role=2 AND status=1";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$d = mysqli_fetch_assoc($q);
-$total_peserta = $d['total_peserta'];
-$total_latihan = $d['total_latihan'];
-$total_challenge = $d['total_challenge'];
-$total_latihan_wajib = $d['total_latihan_wajib'];
-$total_challenge_wajib = $d['total_challenge_wajib'];
+if (!mysqli_num_rows($q)) die(div_alert('danger', 'Data Instruktur untuk Room ini tidak ditemukan (atau inactive)'));
+$instruktur = mysqli_fetch_assoc($q);
+
+# =======================================================
+# ROOM COUNT
+# =======================================================
+if (!$room['last_update']) {
+  # ============================================================
+  # CREATE ROOM COUNT
+  # ============================================================
+  $s = "INSERT INTO tb_room_count (id_room) VALUES ($id_room)";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  jsurl();
+  // } elseif (($id_role == 2 and $selisih > 600) || date('Y-m-d', strtotime($room['last_update'])) != $today) {
+} elseif (($id_role == 2 and (strtotime('now') - strtotime($room['last_update'])) > 6) || date('Y-m-d', strtotime($room['last_update'])) != $today) {
+  # ============================================================
+  # UPDATE ROOM COUNT
+  # ============================================================
+  include "$lokasi_pages/update_room_count.php";
+  jsurl();
+} else {
+  # ============================================================
+  # ACCESS ROOM COUNT
+  # ============================================================
+  $s = "SELECT * FROM tb_room_count WHERE id_room=$id_room";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  $room_count = mysqli_fetch_assoc($q);
+  $total_peserta = $room_count['count_peserta'];
+  $total_latihan = $room_count['count_latihan'];
+  $total_challenge = $room_count['count_challenge'];
+  $total_latihan_wajib = $room_count['count_latihan_wajib'];
+  $total_challenge_wajib = $room_count['count_challenge_wajib'];
+}
+
+
 
 
 # ============================================================
@@ -219,9 +254,8 @@ if ($id_role == 2) {
 # MY ROOM VARS
 # ========================================================
 if (!$id_peserta) die(erid('$id_peserta'));
-
 # =========================================
-# MY DATA POIN TEMPORER
+# MY POINT (TEMPORER)
 # =========================================
 $jeda_update_poin = 600; // boleh update setiap 10 menit
 $s = "SELECT * FROM tb_poin WHERE id_room=$id_room AND id_peserta=$id_peserta";
@@ -229,31 +263,31 @@ $s = "SELECT * FROM tb_poin WHERE id_room=$id_room AND id_peserta=$id_peserta";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (mysqli_num_rows($q) > 1) die('Duplicate data poin in room_vars');
 if (mysqli_num_rows($q)) {
-  $d = mysqli_fetch_assoc($q);
+  $my_point = mysqli_fetch_assoc($q);
   // echo 'ZZZ<pre>';
-  // var_dump($d);
+  // var_dump($my_point);
   // echo '</pre>';
-  $last_update_point = $d['last_update_point'];
+  $last_update_point = $my_point['last_update_point'];
   $selisih = strtotime('now') - strtotime($last_update_point);
   // echo "<hr>ZZZ $selisih<hr>";
   // exit;
   if ($selisih >= $jeda_update_poin) $harus_update_poin = 1;
   // $harus_update_poin = 1; // ZZZ
 
-  $rank_room = $d['rank_room'];
-  $rank_kelas = $d['rank_kelas'];
+  $rank_room = $my_point['rank_room'];
+  $rank_kelas = $my_point['rank_kelas'];
   // echo "<hr>ZZZ $rank_kelas";
   // exit;
-  $poin_bertanya = $d['poin_bertanya'];
-  $poin_menjawab = $d['poin_menjawab'];
-  $poin_latihan = $d['poin_latihan'];
-  $poin_challenge = $d['poin_challenge'];
-  $akumulasi_poin = $d['akumulasi_poin'];
+  $poin_bertanya = $my_point['poin_bertanya'];
+  $poin_menjawab = $my_point['poin_menjawab'];
+  $poin_latihan = $my_point['poin_latihan'];
+  $poin_challenge = $my_point['poin_challenge'];
+  $akumulasi_poin = $my_point['akumulasi_poin'];
 
   $my_points = $akumulasi_poin;
   $my_points_show = number_format($akumulasi_poin, 0);
 
-  $nilai_akhir = $d['nilai_akhir'];
+  $nilai_akhir = $my_point['nilai_akhir'];
   $nilai_akhir = $nilai_akhir > 100 ? 100 : $nilai_akhir;
 
   if ($nilai_akhir > 100) die('Invalid nilai akhir at room_vars');

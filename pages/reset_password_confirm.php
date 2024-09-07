@@ -15,6 +15,6 @@ $text_wa_show = str_replace('%0a', ' ', $text_wa);
     <textarea class="form-control" rows="10" disabled><?= $text_wa_show ?></textarea>
   </div>
   <div class="form-group">
-    <a href='https://api.whatsapp.com/send?phone=6287729007318&text=<?= $text_wa ?>' class="btn btn-primary btn-block">Kirim Pesan Reset Password</a>
+    <a href='https://api.whatsapp.com/send?phone=<?= $instruktur['no_wa'] ?>&text=<?= $text_wa ?>' class="btn btn-primary btn-block">Kirim Pesan Reset Password</a>
   </div>
 </div>

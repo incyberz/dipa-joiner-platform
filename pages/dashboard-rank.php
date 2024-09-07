@@ -74,10 +74,38 @@ function progres($Label, $href, $count, $count_of, $persen_count, $styles = '')
 
 $nilai_akhir_show = $nilai_akhir ? $nilai_akhir : '?';
 
-$progres['presensi'] = progres('Presensi', 'presensi', 12, 14, 85);
-$progres['latihan'] = progres('Latihan', 'activity&jenis=latihan', 12, 14, 75);
-$progres['challenge'] = progres('Challenge', 'activity&jenis=challenge', 12, 14, 65);
-$progres['ujian'] = progres('Ujian', 'ujian', 12, 14, 25);
+echo '<pre>';
+var_dump($room_count);
+echo '</pre>';
+
+$progres['presensi'] = progres(
+  'Presensi',
+  'presensi',
+  12,
+  $room_count['count_presensi'],
+  85
+);
+$progres['latihan'] = progres(
+  'Latihan',
+  'activity&jenis=latihan',
+  12,
+  $room_count['count_latihan'],
+  75
+);
+$progres['challenge'] = progres(
+  'Challenge',
+  'activity&jenis=challenge',
+  12,
+  $room_count['count_challenge'],
+  65
+);
+$progres['ujian'] = progres(
+  'Ujian',
+  'ujian',
+  12,
+  $room_count['count_ujian'],
+  25
+);
 
 $blok_progres = "
   <div class='mt2 mb4'>

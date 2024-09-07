@@ -32,7 +32,7 @@ foreach ($d as $key => $value) {
 
   if (strlen($value) > 30 || $key == 'ket' || $key == 'cara_pengumpulan') {
     if (!$value and $key == 'cara_pengumpulan') $value = $cara_pengumpulan_default;
-    $input = "<textarea required minlength=50 class='form-control' name=$key rows=$rows>$value</textarea>";
+    $input = "<textarea required minlength=20 class='form-control' name=$key rows=$rows>$value</textarea>";
   } elseif ($key == 'ontime_deadline' || $key == 'ontime_dalam') {
 
     $opt_hari = '';
@@ -104,7 +104,7 @@ foreach ($d as $key => $value) {
   ";
 }
 $form_manage_jenis = "
-<h5 class='darkblue proper'>Manage $jenis <span class=btn_aksi id=form_properties__toggle>$img_detail</span></h5>
+<h5 class='darkblue proper' id=manage_$jenis>Manage $jenis <span class=btn_aksi id=form_properties__toggle>$img_detail</span></h5>
 <p>Manage prosedur latihan, timing, dan cara pengumpulannya</p>
 <form method=post id=form_properties class=hideita>
   <table class=table>

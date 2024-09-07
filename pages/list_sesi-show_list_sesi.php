@@ -1,7 +1,26 @@
+<style>
+  .icon_bahan_ajar_disabled {
+    opacity: 20%;
+    -webkit-filter: grayscale();
+  }
+
+  .icon_bahan_ajar {
+    height: 50px;
+    width: 50px;
+    object-fit: cover;
+    transition: .2s;
+  }
+
+  .icon_bahan_ajar:hover {
+    transform: scale(1.1)
+  }
+</style>
 <?php
 $img_ask = img_icon('ask');
 $img_play_kuis = img_icon('gray');
 $img_tanam_soal = img_icon('gray');
+$img_gray = img_icon('gray');
+
 
 $arr_fitur_sesi = [
   'play_kuis' => [
@@ -53,40 +72,28 @@ $arr_fitur_sesi = [
 
 
 # ============================================================
-# get list latihan
+# ACTIVITIES
 # ============================================================
-$s = "SELECT id as id_assign, id_sesi 
-FROM tb_assign_latihan 
-WHERE id_room_kelas='$id_room_kelas' 
-ORDER BY id_latihan 
-";
-$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$rlats = [];
-while ($d = mysqli_fetch_assoc($q)) {
-  if (isset($rlats[$d['id_sesi']])) {
-    array_push($rlats[$d['id_sesi']], $d['id_assign']);
-  } else {
-    $rlats[$d['id_sesi']][0] = $d['id_assign'];
+$arr_act = ['latihan', 'challenge'];
+$arr_data_act = [];
+foreach ($arr_act as $act) {
+  $s = "SELECT a.id, a.id_sesi,b.nama as nama_act,b.ket 
+  FROM tb_assign_$act a
+  JOIN tb_$act b ON a.id_$act=b.id
+  WHERE id_room_kelas='$id_room_kelas' 
+  ";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  while ($d = mysqli_fetch_assoc($q)) {
+    if (isset($arr_data_act[$act][$d['id_sesi']])) {
+      array_push($arr_data_act[$act][$d['id_sesi']], $d);
+    } else {
+      $arr_data_act[$act][$d['id_sesi']][0] = $d;
+    }
   }
 }
 
-# ============================================================
-# get list challenge
-# ============================================================
-$s = "SELECT id as id_assign, id_sesi 
-FROM tb_assign_challenge 
-WHERE id_room_kelas='$id_room_kelas' 
-ORDER BY id_challenge 
-";
-$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$rchals = [];
-while ($d = mysqli_fetch_assoc($q)) {
-  if (isset($rchals[$d['id_sesi']])) {
-    array_push($rchals[$d['id_sesi']], $d['id_assign']);
-  } else {
-    $rchals[$d['id_sesi']][0] = $d['id_assign'];
-  }
-}
+
+
 
 
 $count_sesi = [];
@@ -108,7 +115,11 @@ a.*,
   WHERE p.id_sesi=a.id 
   AND p.kelas='$kelas' 
   AND p.is_terlaksana=1 
-  ) jadwal_kelas 
+  ) jadwal_kelas,
+(SELECT COUNT(1) FROM tb_link_file WHERE jenis_file='ba' AND id_sesi=a.id) count_ba, 
+(SELECT COUNT(1) FROM tb_link_file WHERE jenis_file='fp' AND id_sesi=a.id) count_fp, 
+(SELECT COUNT(1) FROM tb_link_file WHERE jenis_file='va' AND id_sesi=a.id) count_va, 
+(SELECT COUNT(1) FROM tb_link_file WHERE jenis_file='fl' AND id_sesi=a.id) count_fl 
 FROM tb_sesi a 
 WHERE a.id_room=$id_room 
 ORDER BY a.no
@@ -117,6 +128,7 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $total_count_sesi = mysqli_num_rows($q);
 $div_list = '';
 $no_sesi = 0;
+$count_file = [];
 while ($sesi = mysqli_fetch_assoc($q)) {
   if ($sesi['jenis'] === '0') {
     $div_list .= "<div class='alert alert-info tengah' data-aos='fade'>Minggu tenang</div>";
@@ -132,39 +144,72 @@ while ($sesi = mysqli_fetch_assoc($q)) {
     $jenis = $sesi['jenis'];
     $count_sesi[$jenis]++;
 
+    $count_file['bahan_ajar'] = $sesi['count_ba'];
+    $count_file['file_ppt'] = $sesi['count_fp'];
+    $count_file['video_ajar'] = $sesi['count_va'];
+    $count_file['file_lain'] = $sesi['count_fl'];
+
 
     # ============================================================
     # FITUR SESI HANDLER AT LOOP SESI NORMAL
     # ============================================================
     $str_fiturs = '';
+    $is_icon = 0;
     foreach ($arr_fitur_sesi as $k => $arr) {
       if (($k == 'bertanya' || $k == 'tanam_soal') and !$sesi['tags']) {
         $str_fiturs .= "<div class='abu miring f12 mb1 bordered br5 p1'>belum bisa $k</div>";
       } elseif ($k == 'challenge' || $k == 'latihan') {
-        $sub_fitur = "<div class='abu miring f12 mb1 bordered br5 p1'>belum ada $k</div>";
+        $title = '';
+        $sub_fitur = "<div class='abu miring f12'>belum ada $k</div>";
 
-        if ($k == 'challenge' and isset($rchals[$id_sesi])) {
+        if (isset($arr_data_act[$k][$id_sesi])) {
+          $title = "<div class='mb1 green bold f12 proper'>$k</div>";
           $sub_fitur = '';
           $j = 0;
-          foreach ($rchals[$id_sesi] as $k2 => $v2) {
+          foreach ($arr_data_act[$k][$id_sesi] as $k2 => $v2) {
             $j++;
-            $sub_fitur .= "<a href='?activity&jenis=challenge&id_assign=$v2' class='btn btn-danger btn-sm mb1' onclick='return confirm(\"Menuju laman Challenge?\")'>C$j</a> ";
-          }
-        } elseif ($k == 'latihan' and isset($rlats[$id_sesi])) {
-          $sub_fitur = '';
-          $j = 0;
-          foreach ($rlats[$id_sesi] as $k2 => $v2) {
-            $j++;
-            $sub_fitur .= "<a href='?activity&jenis=challenge&id_assign=$v2' class='btn btn-success btn-sm mb1' onclick='return confirm(\"Menuju laman Challenge?\")'>L$j</a> ";
+            $btn_info = $v2['ket'] ? 'btn-info' : 'btn-secondary';
+            $sub_fitur .= "<a href='?activity&jenis=$k&id_assign=$v2[id]' class='btn $btn_info btn-sm mb1 w-100' onclick='return confirm(`Menuju laman $k?`)'>$j. $v2[nama_act]</a> ";
           }
         }
-        $str_fiturs .= "<div>$sub_fitur</div>";
+        $str_fiturs .= "<div class='bordered br5 p1 mb1'>$title $sub_fitur</div>";
       } else {
-        $str_fiturs .= "
-          <div>
-            <a href='?$arr[param]&id_sesi=$id_sesi' class='btn btn-primary btn-sm mb1 w-100' onclick='return confirm(`$arr[title]?`)'>$arr[title]</a>
-          </div>
-        ";
+        # ============================================================
+        # BAHAN AJAR, PPT, VIDEO, FILE LAIN
+        # ============================================================
+        if ($is_icon) {
+          if ($count_file[$k]) {
+            $link = "
+              <a href='?akses_link&f=$arr[param]&id_sesi=$id_sesi' onclick='return confirm(`$arr[title]?`)'>
+                <img src='assets/img/ilustrasi/$k.png' class='icon_bahan_ajar' >
+              </a>
+            ";
+          } else {
+            $link = "
+              <span onclick='return confirm(`$arr[title] pada sesi ini belum tersedia.`)'>
+                <img src='assets/img/ilustrasi/$k.png' class='icon_bahan_ajar icon_bahan_ajar_disabled' >
+              </span>
+            ";
+          }
+          $str_fiturs .= "
+            <div class='col-3'>
+              <div class=' mt4 mb4 br5'>
+                $link
+              </div>
+            </div>
+          ";
+        } else {
+          $str_fiturs .= "
+            <div>
+              <a href='?$arr[param]&id_sesi=$id_sesi' class='btn btn-primary btn-sm mb1 w-100' onclick='return confirm(`$arr[title]?`)'>$arr[title]</a>
+            </div>
+          ";
+        }
+      }
+      // if ($k == 'challenge') $str_fiturs .= "</div></div><div class='wadah'><div class='flexy flex-center'>";
+      if ($k == 'challenge') {
+        $str_fiturs .= "</div><div class='row'>";
+        $is_icon = 1;
       }
     }
 
@@ -264,7 +309,7 @@ set_h2('Learning Path', "
 # ============================================================
 # FINAL ECHO
 # ============================================================
-echo $div_list;
+echo "<div class='flexy flex-center'><div style=max-width:700px>$div_list</div></div>";
 
 
 
@@ -353,7 +398,8 @@ if ($manage) { ?>
           }
         })
 
-      })
+      });
+
     })
   </script>
 <?php } ?>

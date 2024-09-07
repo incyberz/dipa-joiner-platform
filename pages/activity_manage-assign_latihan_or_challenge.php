@@ -97,6 +97,16 @@ if (isset($_POST["btn_drop_$jenis"])) {
   echo "<div class='wadah gradasi-hijau'>Drop $jenis from all kelas ... OK</div>";
   jsurl();
 }
+# ======================================================
+# PROCESSOR :: DELETE
+# ======================================================
+if (isset($_POST["btn_delete_$jenis"])) {
+  $id_jenis = $_POST["btn_delete_$jenis"];
+  $s = "DELETE FROM tb_$jenis WHERE id=$id_jenis";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  echo "<div class='wadah gradasi-hijau'>delete $jenis from all kelas ... OK</div>";
+  jsurl();
+}
 
 
 # ======================================================
@@ -231,6 +241,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     $dual_id = $d['id'] . "__$arr_id_sesi[$key]";
     $assigned_to .= "<div class=mb1><button class='btn btn-$primary btn-sm' name=btn_assign_sesi value='$dual_id'>$sesi</button></div>";
   }
+  $is_set = $assigned_sesi == $unset ? false : true;
 
 
   $img_detail = img_icon('detail');
@@ -251,7 +262,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     </td>
   ";
 
-  if ($d['count_bukti']) {
+  if ($is_set) {
     if ($d['status_jenis'] == -1) {
       $btn_close = "<button class='btn btn-success btn-sm' name=btn_open_$jenis value=$d[id] >Open</button>";
     } else {
@@ -264,6 +275,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     $btn_drop = '';
     $btn_close = '';
   }
+
 
   # ============================================================
   # FINAL TR OUTPUT
@@ -303,7 +315,7 @@ echo "
         <th class=proper>$jenis</th>
         <th>Assigned to</th>
         <th>Count Bukti</th>
-        <th>Aksi</th>
+        <th width=200px>Aksi</th>
       </thead>
       $tr
     </table>

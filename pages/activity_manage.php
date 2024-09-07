@@ -3,6 +3,7 @@
 # MANAGE ACTIVITY UI
 # ============================================================
 $img_detail = img_icon('detail');
+// $hide_manage_rule = '';
 
 $s = "SELECT * FROM tb_assign_$jenis WHERE id=$id_assign";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -18,7 +19,10 @@ if (mysqli_num_rows($q)) {
   # ============================================================
   # GET ALL ID_ASSIGN 
   # ============================================================
-  include 'activity_manage-manage_rule_assign_latihan.php';
+  $manage_assign = "<span class='abu miring f12'>-- belum bisa manage rule assign untuk tiap kelas | Silahkan Manage $jenis terlebih dahulu --</span>";
+  if (!$hide_manage_rule) {
+    include 'activity_manage-manage_rule_assign_latihan.php';
+  }
 
   # ============================================================
   # MANAGE LATIHAN/CHALLENGE
@@ -32,7 +36,7 @@ echo "
   <div class='wadah gradasi-kuning'>
     $form_manage_jenis
   </div>
-  <div class='wadah gradasi-kuning'>
+  <div class='wadah gradasi-kuning '  id=blok_manage_rule_$jenis >
     $manage_assign
   </div>
 ";

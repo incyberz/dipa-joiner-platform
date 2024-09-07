@@ -26,21 +26,14 @@ b.no as no_sesi,
   JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id   
   JOIN tb_peserta r ON p.id_peserta=r.id
   WHERE q.id_$jenis=a.id_$jenis
-  AND r.id_role=1) count_submiter,
-(
-  SELECT p.tanggal FROM tb_assign_$jenis p 
-  JOIN tb_room_kelas q ON p.id_room_kelas=q.id
-  WHERE q.kelas = '$target_kelas' 
-  AND q.id_room=$id_room) tanggal_assign_target_kelas 
+  AND r.id_role=1) count_submiter 
+
 FROM tb_assign_$jenis a 
 JOIN tb_sesi b ON a.id_sesi=b.id 
 JOIN tb_$jenis c ON a.id_$jenis=c.id 
 WHERE a.id=$id_assign  
 ";
-// echo "<pre>$s</pre>";
-echo '<pre>';
-var_dump($target_kelas);
-echo '</pre>';
+
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) die(section(div_alert('danger', "Maaf, data $jenis tidak ditemukan.<hr><a class=proper href='?activity&jenis=$jenis'>Pilih $jenis</a>")));
 $d_assign = mysqli_fetch_assoc($q);
@@ -55,7 +48,6 @@ $nama_sesi = $d_assign['nama_sesi'];
 $no_sesi = $d_assign['no_sesi'];
 $id_bukti = $d_assign['id_bukti'];
 $tanggal_assign = $d_assign['tanggal_assign'];
-$tanggal_assign_target_kelas = $d_assign['tanggal_assign_target_kelas'];
 $basic_point = $d_assign['basic_point'];
 $ontime_point = $d_assign['ontime_point'];
 $ontime_dalam = $d_assign['ontime_dalam'];
@@ -70,13 +62,33 @@ $sub_level_point = $d_assign['sub_level_point'];
 $max_apresiasi_poin = $d_assign['basic_point'];
 $max_apresiasi_poin += $jenis == 'latihan' ? 0 : $d_assign['ontime_point'];
 
+# ============================================================
+# TANGGAL ASSIGN TARGET KELAS
+# ============================================================
+$s = "SELECT p.tanggal as tanggal_assign_target_kelas FROM tb_assign_$jenis p 
+  JOIN tb_room_kelas q ON p.id_room_kelas=q.id
+  WHERE q.kelas = '$target_kelas' 
+  AND q.id_room=$id_room 
+  AND p.id_$jenis = $id_jenis 
+   ";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+if (mysqli_num_rows($q) > 1) {
+  die('Subquery return more than one.');
+} elseif (mysqli_num_rows($q)) {
+  $d = mysqli_fetch_assoc($q);
+  $tanggal_assign_target_kelas = $d['tanggal_assign_target_kelas'];
+} else {
+  $tanggal_assign_target_kelas = null;
+}
+
+
 
 
 
 # ============================================================
 # POIN ANTRIAN
 # ============================================================
-$ten_percent = intval($total_peserta / 10);
+$ten_percent = intval($total_peserta / 10) + 1;
 $poin_antrian = 0;
 $poin_antrian_show = '-';
 $be_the_first = '';
@@ -243,7 +255,21 @@ if ($id_bukti) {
         ";
       }
     } else {
-      $form_bukti = div_alert('danger', "Belum bisa upload bukti latihan. Instruktur belum mengisi keterangan untuk latihan ini. Silahkan hubungi beliau!");
+
+      if ($instruktur['no_wa']) {
+        $link_akses = urlencode($_SERVER['REQUEST_URI']);
+        $text_wa = "Yth. Instruktur ($instruktur[nama]),%0a%0aPak/Bu $jenis nya belum disetting. Segera ya Pak/Bu, mau saya kerjakan :) %0a%0aLink akses:%0a$link_akses";
+        $href = "https://api.whatsapp.com/?send&phone=$instruktur[no_wa]&text=$text_wa";
+        $link_wa = "<a href='$href' target=_blank>Hubungi Instruktur $img_wa</a>";
+      } else {
+        $link_wa = div_alert('danger', "Instruktur belum mempunyai nomor whatsapp, silahkan hubungi via manual.");
+      }
+
+      $form_bukti = div_alert('danger tengah mt2', "
+        Belum bisa upload bukti latihan. Instruktur belum mengisi keterangan untuk latihan ini. 
+        Silahkan hubungi beliau! <hr>
+        $link_wa 
+      ");
     }
   } elseif ($jenis == 'challenge') {
 
@@ -310,74 +336,99 @@ $ontime_deadline_show = eta(strtotime($tanggal_assign) - strtotime('now') + $d_a
 $persen_peserta = round($count_submiter * 100 / $total_peserta, 1);
 
 
-# ============================================================
-# 3 BEST SUBMITER
-# ============================================================
-include 'activity_detail-best_submiter.php';
+$admin_hint = $id_role == 2 ? " | <a href='#manage_$jenis'><span class=' darkblue'>Update $jenis Properties</span>.</a>" : '';
 
-# ============================================================
-# LATIHAN/CHALLENGE INFO
-# ============================================================
-$list_info = "
-  <table class='table kecil mt2 table-striped'>
-    <tr>
-      <td class='tebal abu'>Link Panduan</td>
-      <td class='darkblue'>$link_panduan_show</td>
-    </tr>
-    <tr>
-      <td class='tebal abu'>Basic Point</td>
-      <td class='darkblue'>$basic_point_show LP</td>
-    </tr>
-    <tr>
-      <td class='tebal abu'>Bonus First Submit</td>
-      <td class='darkblue'>$poin_antrian_show</td>
-    </tr>
-    <tr>
-      <td class='tebal abu'>Apresiasi Point</td>
-      <td class='darkblue'>0 s.d $apresiasi_poin_show LP</td>
-    </tr>
-    <tr>
-      <td class='tebal abu'>Ontime Point</td>
-      <td class='darkblue'>$ontime_point_show LP</td>
-    </tr>
-    <tr>
-      <td class='tebal abu'>Tanggal mulai</td>
-      <td class='darkblue'>$tanggal_assign_show</td>
-    </tr>
-    <tr>
-      <td class='tebal abu'>Ontime Dalam</td>
-      <td class='tebal darkred'>$ontime_dalam_show</td>
-    </tr>
-    <tr>
-      <td class='tebal abu'>Ontime Deadline</td>
-      <td class='tebal darkred'>$ontime_deadline_show</td>
-    </tr>
-    <tr>
-      <td class='tebal abu'>Closing $Jenis</td>
-      <td class='tebal darkred'>hingga UTS/UAS (atau sesuai info dari instruktur)</td>
-    </tr>
-  </table>
 
-  <div class='wadah darkblue tengah f12 bg-white'>
-    Dikerjakan oleh $count_submiter of $total_peserta peserta ($persen_peserta%)
-    <div class='progress mt1'>
-      <div class='progress-bar' style='width:$persen_peserta%'>
+if (!$d_assign['ket']) {
+  $cara_pengumpulan = '';
+  $list_info = '';
+  $ket_kosong = true;
+} else { // keterangan latihan sudah diupdate
+  $ket_kosong = false;
+
+  # ============================================================
+  # 3 BEST SUBMITER
+  # ============================================================
+  include 'activity_detail-best_submiter.php';
+
+  # ============================================================
+  # LATIHAN/CHALLENGE INFO
+  # ============================================================
+  $list_info = "
+    <table class='table kecil mt2 table-striped'>
+      <tr>
+        <td class='tebal abu'>Link Panduan</td>
+        <td class='darkblue'>$link_panduan_show</td>
+      </tr>
+      <tr>
+        <td class='tebal abu'>Basic Point</td>
+        <td class='darkblue'>$basic_point_show LP</td>
+      </tr>
+      <tr>
+        <td class='tebal abu'>Bonus First Submit</td>
+        <td class='darkblue'>$poin_antrian_show</td>
+      </tr>
+      <tr>
+        <td class='tebal abu'>Apresiasi Point</td>
+        <td class='darkblue'>0 s.d $apresiasi_poin_show LP</td>
+      </tr>
+      <tr>
+        <td class='tebal abu'>Ontime Point</td>
+        <td class='darkblue'>$ontime_point_show LP</td>
+      </tr>
+      <tr>
+        <td class='tebal abu'>Tanggal mulai</td>
+        <td class='darkblue'>$tanggal_assign_show</td>
+      </tr>
+      <tr>
+        <td class='tebal abu'>Ontime Dalam</td>
+        <td class='tebal darkred'>$ontime_dalam_show</td>
+      </tr>
+      <tr>
+        <td class='tebal abu'>Bonus Deadline</td>
+        <td class='tebal darkred'>$ontime_deadline_show</td>
+      </tr>
+      <tr>
+        <td class='tebal abu'>Closing $Jenis</td>
+        <td class='tebal darkred'>hingga UTS/UAS (atau sesuai info dari instruktur)</td>
+      </tr>
+    </table>
+  
+    <div class='wadah darkblue tengah f12 bg-white'>
+      Dikerjakan oleh $count_submiter of $total_peserta peserta ($persen_peserta%)
+      <div class='progress mt1'>
+        <div class='progress-bar' style='width:$persen_peserta%'>
+        </div>
+      </div>
+      <div class='f20 blue pt2'>
+        $be_the_first
+        $best_submiter
       </div>
     </div>
-    <div class='f20 blue pt2'>
-      $be_the_first
-      $best_submiter
-    </div>
-  </div>
-";
+  ";
 
-$admin_hint = $id_role == 2 ? "<span class=abu>Silahkan ubah via <b class='consolas darkblue'>Update $jenis Properties</b>.</span>" : '';
+  if (!$d_assign['cara_pengumpulan']) {
+    $cara_pengumpulan = '';
+  } else {
+    $cara_pengumpulan = $d_assign['cara_pengumpulan'] ?? $cara_pengumpulan_default;
+    $cara_pengumpulan = "<div class='darkblue mt4 mb1 tengah '>Cara Pengumpulan:</div>
+    <div class='tengah mb4'>$cara_pengumpulan</div>
+    ";
+  }
+}
 
-$cara_pengumpulan_show = $d_assign['cara_pengumpulan'] ?? $cara_pengumpulan_default;
 $ket_show = $d_assign['ket'] ? $d_assign['ket'] : "<span class='red f12'>Keterangan $jenis belum ditentukan. $admin_hint</span>";
+$hide_manage_rule = $d_assign['ket'] ? '' : 'hideit';
+
+# ============================================================
+# SET TITLE
+# ============================================================
+set_title("$jenis - $d_assign[nama]");
 
 
-
+# ============================================================
+# FINAL ECHO
+# ============================================================
 echo "
 <div class='wadah gradasi-hijau' data-zzz-aos=fade-up>
   $pesan_upload
@@ -386,11 +437,10 @@ echo "
 
   <div class='f20 tebal darkblue tengah proper mb2' style='border-bottom:solid 1px #ddd;border-top:solid 1px #ddd; padding:15px 0; background: linear-gradient(#eff,#ffe)'>$d_assign[nama]</div>
 
-  <div class='darkblue mt4 mb1 tengah '>Prosedur Pengerjaan:</div>
-  <div class=tengah>$ket_show</div>
+  <div class='darkred mt4 mb1 tengah '>Prosedur Pengerjaan:</div>
+  <div class='tengah bold darkblue'>$ket_show</div>
   
-  <div class='darkblue mt4 mb1 tengah '>Cara Pengumpulan:</div>
-  <div class='tengah mb4'>$cara_pengumpulan_show</div>
+  $cara_pengumpulan
   
   $list_info 
   $form_bukti 
@@ -404,9 +454,11 @@ echo "
 # =========================================================
 if ($id_role == 2) {
   echo '<hr class="mt4 mb4"><h3 class="tebal darkred tengah mb4">Fitur Khusus Instruktur</h3>';
-  include 'include/form_target_kelas.php';
-  if ($target_kelas) {
-    include 'activity_submiter.php';
+  if (!$ket_kosong) {
+    include 'include/form_target_kelas.php';
+    if ($target_kelas) {
+      include 'activity_submiter.php';
+    }
   }
   include 'activity_manage.php';
 }

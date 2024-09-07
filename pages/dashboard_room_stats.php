@@ -1,26 +1,27 @@
 <?php
-$tb_room_stats = '';
+$tb_room_count = '';
 # ==========================================================
 # ROOM STATISTICS
 # ==========================================================
-$s = "DESCRIBE tb_room_stats";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$s = "DESCRIBE tb_room_count";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $Field = [];
-while($d=mysqli_fetch_assoc($q)){
-  array_push($Field,$d['Field']);
+while ($d = mysqli_fetch_assoc($q)) {
+  array_push($Field, $d['Field']);
 }
 
-$s = "SELECT * FROM tb_room_stats WHERE id_room=$id_room";
-$q = mysqli_query($cn,$s) or die(mysqli_error($cn));
+$s = "SELECT * FROM tb_room_count WHERE id_room=$id_room";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $d = mysqli_fetch_assoc($q);
-if($d){
+if ($d) {
   $tr_war = '';
   foreach ($Field as $kolom) {
-    if($kolom=='id' 
-      || $kolom=='id_room'
+    if (
+      $kolom == 'id'
+      || $kolom == 'id_room'
     ) continue;
     $value = $d[$kolom] ?? $unset;
-    $kolom_show = ucwords(str_replace('_',' ',$kolom));
+    $kolom_show = ucwords(str_replace('_', ' ', $kolom));
     $tr_war .= "
       <tr>
         <td>$kolom_show</td>
@@ -31,13 +32,13 @@ if($d){
 
   $img = img_icon('detail');
 
-  $tb_room_stats = "
+  $tb_room_count = "
     <table class='table table-striped f12'>
       $tr_war
     </table>
   ";
-}else{
-  $tb_room_stats = div_alert('info','Belum ada Room Statistic untuk room ini.');
+} else {
+  $tb_room_count = div_alert('info', 'Belum ada Room Statistic untuk room ini.');
 }
 
 echo "
@@ -46,7 +47,7 @@ echo "
   <div class='col-xl-8' data-zzz-aos=fade-up data-zzz-aos-delay=150>
     <div class='wadah'>
       <h2 class='mb2 f24 darkblue'>Room Statistics</h2>
-      $tb_room_stats
+      $tb_room_count
     </div>
   </div>
 
