@@ -116,7 +116,7 @@ if ($jumlah_soal) {
 
     $status_soal = $d['status_soal'] == '' ? '<span class=darkred>unverified</span>' : "<span class='hijau tebal'>$d[status_soal]</span>";
 
-    $profil_pembuat = "<img src='$lokasi_profil/wars/peserta-$id_pembuat.jpg' class=profil_pembuat id=profil_pembuat__$id_soal>";
+    $profil_pembuat = "<img src='$lokasi_profil/$war_image_pembuat' class=profil_pembuat id=profil_pembuat__$id_soal>";
 
 
 
@@ -132,7 +132,7 @@ if ($jumlah_soal) {
             <div class='kecil miring abu mb2'>by: $d[pembuat_soal] ~ $status_soal question</div>
           </div>
           <div>
-            <img src='$lokasi_profil/wars/peserta-$id_pembuat.jpg' class=profil_pembuat id=profil_pembuat__$id_soal>
+            <img src='$lokasi_profil/$war_image_pembuat' class=profil_pembuat id=profil_pembuat__$id_soal>
           </div>
         </div>
         <div class='darkblue mt2 mb2'>$d[kalimat_soal]</div>

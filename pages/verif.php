@@ -248,7 +248,7 @@ foreach ($rjenis as $key => $jenis) {
         $icon_peserta = img_icon('mhs');
 
         $src_profil = "$lokasi_profil/$d[war_image]";
-        $src_profil_hi = "$lokasi_profil/wars/peserta-$d[id_peserta]-hi.jpg";
+        $src_profil_hi = "$lokasi_profil/$d[image]";
         if (file_exists($src_profil)) {
           $dual_id = $id_peserta . "__$id_bukti";
           if ($show_img) {

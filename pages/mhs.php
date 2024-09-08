@@ -15,7 +15,7 @@ while ($d = mysqli_fetch_assoc($q)) {
 
     $peserta .= "
     <div class='kecil tengah abu'>
-      <img src='$lokasi_profil/wars/peserta-$d2[id].jpg' class='foto_profil'>
+      <img src='$lokasi_profil/$d2[war_image]' class='foto_profil'>
       <div>$nama</div>
     </div>";
   }

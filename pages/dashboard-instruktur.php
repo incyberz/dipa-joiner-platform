@@ -8,18 +8,12 @@ echo div_alert('info tengah', "
   <div class='abu miring'>Februari - Juli 2024</div>
 ");
 
+
 # ============================================================
-# JADWAL SESI
+# INFO NOTIFICATIONS
 # ============================================================
-echo div_alert('info tengah', "
-  <div class='f12 abu'>Pekan-id #$week</div>
-    <div>
-      <a href='?list_sesi'>
-        P13 Proyek Tugas Web
-      </a>
-    </div>
-  <div class='f12 abu mb1'>Tatap Muka pada 5 Agustus 2024 | 3 hari lagi</div>
-");
+include 'dashboard-instruktur-info_pekan.php';
+include 'dashboard-instruktur-info_presensi.php';
 
 # ============================================================
 # PRESENSI

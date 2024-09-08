@@ -10,7 +10,7 @@ if (isset($_POST['btn_upload'])) {
   $target = "$lokasi_profil/$_POST[war_image]";
   if (move_uploaded_file($_FILES['war_profil']['tmp_name'], $target)) {
     echo div_alert('success', 'Upload Success');
-    rename("$lokasi_profil/war-$_POST[id_peserta].jpg", "$lokasi_profil/wars/peserta-$_POST[id_peserta]-hi.jpg");
+    rename('zzz', 'xxx');
   }
 } elseif (isset($_POST['btn_approve_war_image'])) {
   $tmp = explode('__', $_POST['btn_approve_war_image']);

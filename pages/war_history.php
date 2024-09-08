@@ -103,7 +103,7 @@ if (!mysqli_num_rows($q)) {
       $cermin = 'cermin';
     }
 
-    $profil2 = "$lokasi_profil/wars/peserta-$id_pembuat.jpg";
+    $profil2 = "$lokasi_profil/$war_image_pembuat";
     if (file_exists($profil2)) {
       $profil2 = "<img class=profil_penjawab src='$profil2' />";
     } else {
@@ -115,7 +115,7 @@ if (!mysqli_num_rows($q)) {
 
     $img_guns = "<img src='assets/img/gun/wp$r.png' style='max-width:70px' class='$cermin pt4'  />";
 
-    $src_profil_penjawab = "$lokasi_profil/wars/peserta-$d[id_penjawab].jpg";
+    $src_profil_penjawab = "$lokasi_profil/$war_image_penjawab";
     $profil_penjawab = "<img class=profil_penjawab src='$src_profil_penjawab' />";
     if (!file_exists($src_profil_penjawab)) $profil_penjawab = $no_war_profil;
 

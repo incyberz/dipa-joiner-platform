@@ -10,9 +10,11 @@ $s = "SELECT *,a.id as id_room_kelas_peserta ,
   WHERE p.kelas=a.kelas 
   AND q.status=1 -- hanya peserta aktif
   AND q.id_role=1 -- hanya peserta
-  AND q.nama NOT LIKE '%dummy%' 
-
-  ) count_peserta_kelas
+  ) count_peserta_kelas, 
+(
+  SELECT COUNT(1) 
+  FROM tb_presensi p 
+  WHERE p.id_sesi=$id_sesi_aktif) count_presenter
 FROM tb_room_kelas a 
 WHERE a.id_room=$id_room AND a.kelas != 'INSTRUKTUR'";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -20,7 +22,7 @@ $arr_count_peserta_kelas = '';
 while ($d = mysqli_fetch_assoc($q)) {
   $satu_kelas_peserta = $d['kelas'];
   $satu_id_room_kelas_peserta = $d['id_room_kelas_peserta'];
-  $arr_count_peserta_kelas .= "$d[kelas]=$d[count_peserta_kelas];";
+  $arr_count_peserta_kelas .= "$d[kelas]=$d[count_presenter]=$d[count_peserta_kelas];";
 }
 echo '<pre>';
 var_dump($arr_count_peserta_kelas);

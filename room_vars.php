@@ -346,3 +346,23 @@ $d = mysqli_fetch_assoc($q);
 $sudah_polling_uts = $d['sudah_polling_uts'];
 $sudah_polling_uas = $d['sudah_polling_uas'];
 $total_peserta_kelas = $d['total_peserta_kelas'];
+
+
+# ============================================================
+# SESI AKTIF ATAU SESI PERTAMA YANG AKAN DATANG 
+# ============================================================
+$s = "SELECT * FROM tb_sesi WHERE awal_presensi >= '$now' AND akhir_presensi < '$now' AND id_room=$id_room";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+$sesi_aktif = [];
+$sesi_pertama = [];
+if (!mysqli_num_rows($q)) {
+  # ============================================================
+  # COBA SESI PERTAMA JIKA TIDAK ADA SESI AKTIF
+  # ============================================================
+  $s = "SELECT * FROM tb_sesi WHERE no=1 AND id_room=$id_room";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  $sesi_pertama = mysqli_fetch_assoc($q);
+} else {
+  if (mysqli_num_rows($q) > 1) die(div_alert('danger', 'Terdapat multiple sesi dalam satu pekan.'));
+  $sesi_aktif = mysqli_fetch_assoc($q);
+}
