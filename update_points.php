@@ -64,17 +64,49 @@ if ($harus_update_poin and $id_room_kelas) {
   }
   echo "<br>updating rank_room... rank: $rank_room";
 
-  # ========================================================
-  # HITUNG MY POIN PRESENSI
-  # HITUNG MY POIN BERTANYA
-  # HITUNG MY POIN MENJAWAB
-  # HITUNG MY POIN LATIHAN
-  # HITUNG MY POIN CHALLENGE 
-  # HITUNG MY POIN PLAY KUIS
-  # HITUNG MY POIN TANAM SOAL 
-  # HITUNG MY AKUMULASI POIN
-  # ========================================================
   $s = "SELECT 
+    -- ========================================================
+    -- HITUNG MY COUNT PRESENSI
+    -- HITUNG MY COUNT PRESENSI ONTIME
+    -- HITUNG MY COUNT LATIHAN
+    -- HITUNG MY COUNT LATIHAN VERIFIED
+    -- HITUNG MY COUNT CHALLENGE
+    -- HITUNG MY COUNT CHALLENGE VERIFIED
+    -- HITUNG MY COUNT UJIAN
+    -- ========================================================
+    (
+      SELECT 0 -- ZZZ DEBUG 
+      ) count_presensi,
+    (
+      SELECT 0 -- ZZZ DEBUG 
+      ) count_presensi_ontime,
+    (
+      SELECT 0 -- ZZZ DEBUG 
+      ) count_latihan,
+    (
+      SELECT 0 -- ZZZ DEBUG 
+      ) count_latihan_verified,
+    (
+      SELECT 0 -- ZZZ DEBUG 
+      ) count_challenge,
+    (
+      SELECT 0 -- ZZZ DEBUG 
+      ) count_challenge_verified,
+    (
+      SELECT 0 -- ZZZ DEBUG 
+      ) count_ujian,
+
+    -- ========================================================
+    -- HITUNG MY POIN PRESENSI
+    -- HITUNG MY POIN BERTANYA
+    -- HITUNG MY POIN MENJAWAB
+    -- HITUNG MY POIN LATIHAN
+    -- HITUNG MY POIN CHALLENGE 
+    -- HITUNG MY POIN PLAY KUIS
+    -- HITUNG MY POIN TANAM SOAL 
+    -- HITUNG MY AKUMULASI POIN
+    -- ========================================================
+
     (
       SELECT poin_presensi 
       FROM tb_presensi_summary   
@@ -124,9 +156,11 @@ if ($harus_update_poin and $id_room_kelas) {
   $d = mysqli_fetch_assoc($q);
 
   $akumulasi_poin = 0;
+  $pairs = '';
   foreach ($d as $key => $poin) {
     $akumulasi_poin += $poin;
     echo "<br>updating $key... poin: $poin";
+    $pairs .= "$key = '$poin',";
   }
 
 
@@ -137,13 +171,9 @@ if ($harus_update_poin and $id_room_kelas) {
 
   rank_kelas = $rank_kelas,
   rank_room = $rank_room,
-  poin_presensi = '$d[poin_presensi]',
-  poin_bertanya = '$d[poin_bertanya]',
-  poin_menjawab = '$d[poin_menjawab]',
-  poin_latihan = '$d[poin_latihan]',
-  poin_challenge = '$d[poin_challenge]',
-  poin_play_kuis = '$d[poin_play_kuis]',
-  poin_tanam_soal = '$d[poin_tanam_soal]',
+
+  $pairs
+
   akumulasi_poin = $akumulasi_poin,
 
   last_update_point = CURRENT_TIMESTAMP 
@@ -151,6 +181,7 @@ if ($harus_update_poin and $id_room_kelas) {
   WHERE id_room=$id_room
   AND id_peserta=$id_peserta
   ";
+
   echo "<br>updating poin data... ";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   echo 'success.';

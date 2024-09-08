@@ -122,7 +122,7 @@ if ($d) {
 ?>
 <div class="wadah mb2 p2 tengah">
   <h2 class="f24 darkblue m2">My Points</h2>
-  <div class='my_points gradasi-toska p2 mb2 border-top border-bottom'><?= $my_points_show ?> LP</div>
+  <div class='my_points gradasi-toska p2 mb2 border-top border-bottom'><?= $my_poins_show ?> LP</div>
   <p class="small fst-italic">Poin didapatkan dari seluruh aktifitas pembelajaran semisal latihan, challenge, bertanya, presensi, dan Wars.</p>
 
   <?= $div_wars ?>

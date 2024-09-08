@@ -96,7 +96,7 @@
             echo div_alert('info', 'Perhatikan dan ingat baik-baik Pembahasan Soal berikut! Sebagian besar akan muncul di ujian berikutnya.');
 
             $s = "SELECT * FROM tb_jawabans a 
-            JOIN tb_paket_kelas b ON a.id_paket_kelas=b.paket_kelas 
+            JOIN tb_paket_kelas b ON a.paket_kelas=b.paket_kelas 
             JOIN tb_paket c ON b.id_paket=c.id  
             WHERE b.id_paket=$id_paket 
             AND a.id_peserta=$id_peserta";

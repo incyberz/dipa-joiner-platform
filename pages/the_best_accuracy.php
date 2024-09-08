@@ -72,7 +72,7 @@ ORDER BY accuracy DESC LIMIT 10";
   $rpoints = [];
   while ($d = mysqli_fetch_assoc($q)) {
     // if($d['accuracy']==0) continue;
-    $img = $id_role == 1 ? '' : "<div><img src='$lokasi_profil/wars/peserta-$d[id_peserta].jpg' class='profil_pembuat' ></div> ";
+    $img = $id_role == 1 ? '' : "<div><img src='$lokasi_profil/$d[war_image]' class='profil_pembuat' ></div> ";
     array_push($rnama, $img . $d['nama_peserta']);
     array_push($rpoints, $d['accuracy'] ?? 0);
   }

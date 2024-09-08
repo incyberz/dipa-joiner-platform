@@ -126,7 +126,7 @@ $s = "SELECT a.nama as nama_paket_soal,
 (
   SELECT COUNT(1) 
   FROM tb_jawabans p 
-  JOIN tb_paket_kelas q ON p.id_paket_kelas=q.paket_kelas  
+  JOIN tb_paket_kelas q ON p.paket_kelas=q.paket_kelas  
   WHERE q.id_paket=a.id) count_penjawab, 
 (
   SELECT COUNT(1) FROM tb_assign_soal 
@@ -222,7 +222,7 @@ if (!$count_soal) {
 }
 
 
-$btn_assign_all = $count_assign == $count_soal ? '' : "
+$btn_assign_all = ($count_assign == $count_soal || $count_penjawab) ? '' : "
   <button 
     name='btn_assign_all' 
     class='btn btn-primary btn-sm' 
@@ -231,7 +231,7 @@ $btn_assign_all = $count_assign == $count_soal ? '' : "
     Assign All [$count_soal]
   </button>
 ";
-$btn_drop_all = !$count_assign ? '' : "
+$btn_drop_all = (!$count_assign || $count_penjawab) ? '' : "
   <button 
     name='btn_drop_all' 
     class='btn btn-danger btn-sm' 

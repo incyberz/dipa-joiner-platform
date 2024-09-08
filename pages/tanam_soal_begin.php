@@ -113,9 +113,13 @@ if ($id_sesi == '') {
     WHERE id_pembuat=$id_peserta 
     AND id_sesi=a.id) my_soal_count 
   FROM tb_sesi a 
-  WHERE a.id_room='$id_room' ORDER BY a.no";
+  WHERE a.id_room='$id_room' 
+  AND a.jenis=1 -- sesi normal
+  ORDER BY a.no";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  $i = 0;
   while ($d = mysqli_fetch_assoc($q)) {
+    $i++;
     $id_sesi = $d['id_sesi'];
     $tmp_jumlah_soal = $d['tmp_jumlah_soal_pg'] ?? 0;
     $my_soal_count = $d['my_soal_count'];
@@ -147,7 +151,7 @@ if ($id_sesi == '') {
     $pilih_sesi .= "
       <div class='col-md-4 mb2'>
         <a class='btn btn-$danger btn-sm mb1 btn-block' href=$href>
-          P$d[no] $d[nama] <span class='count_badge $badge_green'>$my_soal_count</span>
+          P$i $d[nama] <span class='count_badge $badge_green'>$my_soal_count</span>
         </a>
         $tags_show
       </div>
@@ -218,17 +222,16 @@ if ($id_sesi == '') {
 
       $opsies
 
-      <div class='wadah mt2 blok_info'>
-        <div class='miring abu' style='font-size:10px'>Syarat simpan soal:</div>
-        <div class='kecil miring darkred mt2' id=opsi_error></div>
-        <div class='kecil miring darkred mt2' id=info_kj>Kunci Jawaban belum di Set</div>
-        <div class='kecil miring darkred mt2' id=info_tags>Tags belum ada di kalimat atau opsi soal</div>
+      <div class='wadah mt2 blok_info tengah'>
+        <div class='kecil miring red bold mt2' id=opsi_error></div>
+        <div class='kecil miring red bold mt2 hideit' id=info_kj>Kunci Jawaban belum di Set $img_warning</div>
+        <div class='kecil miring red bold mt2 hideit' id=info_tags>Tags belum ada di kalimat atau opsi soal  $img_warning</div>
         <div class='kecil miring abu mt1 mb2' id=info_tags_awal>
-          Pilihan Tags: 
+          <div class='mt1'>Pilihan Tags:</div> 
           <span id=tags class=green>$tags</span>.
         </div>
         <div class='kecil miring darkred mt2 hideit' id=blok_similaritas>
-          <span class='btn btn-secondary btn-sm' id=btn_cek_similaritas>Cek Similaritas</span>
+          <span class='btn btn-primary btn-sm w-100' id=btn_cek_similaritas>Cek Similaritas</span>
           <span id=similaritas>0% </span>
           <span id=similaritas_info>???</span>
         </div>
@@ -245,7 +248,7 @@ if ($id_sesi == '') {
         <div class='kecil darkblue miring tengah'>Saat ini kamu boleh mengubah kalimat soal, membuat pembahasan, atau langsung simpan soal</div>
       </div>
 
-      <div id=blok_toggle_pembahasan class='hideit mt2'>
+      <div id=blok_toggle_pembahasanZZZ class='hideit mt2'>
         <span class='hideit btn btn-secondary btn-sm kecil' id=toggle_pembahasan>Tambah Pembahasan (+50 LP):</span>
       </div>
       <div id=blok_pembahasan class='hideit mt2'>
@@ -254,7 +257,7 @@ if ($id_sesi == '') {
       </div>
 
       <div class=form-group>
-        <button name=btn_simpan id=btn_simpan class='btn btn-primary btn-block' disabled>Simpan Soal Saya</button>
+        <button name=btn_simpan id=btn_simpan class='btn btn-primary btn-block hideit' disabled>Simpan Soal Saya</button>
       </div>
 
     </form>
@@ -309,6 +312,7 @@ if ($id_sesi == '') {
     function reset_form() {
       $('#info_poin').text('');
       $('#btn_simpan').prop('disabled', true);
+      $('#btn_simpan').hide();
       $('#blok_similaritas').hide();
       $('#blok_toggle_pembahasan').hide();
       $('#blok_reset_similaritas').hide();
@@ -322,10 +326,16 @@ if ($id_sesi == '') {
       $('.set_kj').show();
     }
 
+    // ==============================================
+    // FORM LOAD
+    // ==============================================
+    reset_form();
+
     function ready_simpan() {
       $('#blok_toggle_pembahasan').fadeIn();
       $('#info_poin').html('<span class="btn btn-secondary btn-sm">Poin membuat soal +100 LP</span> ' + img_check);
       $('#btn_simpan').prop('disabled', false);
+      $('#btn_simpan').show();
       $('#kalimat_soal2').val(kalimat_soal);
       $('#opsi__a2').val(opsi__a);
       $('#opsi__b2').val(opsi__b);
@@ -389,6 +399,8 @@ if ($id_sesi == '') {
           $('#opsi_error').text('Dilarang ada opsi yang sama!');
         } else {
           $('#opsi_error').text('');
+          $('#info_tags').show();
+
           // =================================================
           // OPSIES LENGTH ARE OK :: MY TAGS
           // =================================================
@@ -407,14 +419,15 @@ if ($id_sesi == '') {
           if (my_tags.length == 0) {
             $('#info_tags').text('Tags belum ada di kalimat atau opsi soal');
             $('#info_tags_awal').fadeIn();
-            $('#info_tags').addClass('darkred');
+            // $('#info_tags').addClass('red');
             $('#tags').val('');
           } else {
             // =================================================
             // MY TAGS OK
             // =================================================
+            $('#info_kj').show();
             $('#info_tags_awal').fadeOut();
-            $('#info_tags').html('<div class=mb2>Tags yang dipakai: <span class=blue>' +
+            $('#info_tags').html('<div class="mb2"><span class=green>Tags yang dipakai:</span> <span class=blue>' +
               my_tags.join(', ') + '</span> ' + img_check + '</div>');
             $('#info_tags').removeClass('darkred');
             $('#my_tags').val(my_tags.join(','));
@@ -446,8 +459,8 @@ if ($id_sesi == '') {
       $('.set_kj').text('Set KJ');
       $(this).removeClass('unclicked');
       $(this).text('KJ : ' + abjad.toUpperCase());
-      $('#info_kj').html('Kunci Jawaban : ' + abjad.toUpperCase() + ' ' + img_check);
-      $('#info_kj').removeClass('darkred');
+      $('#info_kj').html('<span class=green>Kunci Jawaban : ' + abjad.toUpperCase() + '</span> ' + img_check);
+      // $('#info_kj').removeClass('darkred');
       $('#info_kj').addClass('biru tebal');
       $('#kj').val(abjad);
       kj = abjad;

@@ -100,7 +100,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     ";
   }
 
-  $img = $id_role == 1 ? '' : "<img src='$lokasi_profil/peserta-$d[id_peserta].jpg' class='profil_pembuat' > <span>&nbsp;</span> ";
+  $img = $id_role == 1 ? '' : "<img src='$lokasi_profil/$d[image]' class='profil_pembuat' > <span>&nbsp;</span> ";
 
   $lazys .= "
     $div_header

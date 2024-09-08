@@ -70,7 +70,7 @@ $rpoints = [];
 while ($d = mysqli_fetch_assoc($q)) {
   // if($d['my_questions']==0) continue;
 
-  $img = $id_role == 1 ? '' : "<img src='$lokasi_profil/wars/peserta-$d[id_peserta].jpg' class='profil_pembuat' ><br> ";
+  $img = $id_role == 1 ? '' : "<img src='$lokasi_profil/$d[war_image]' class='profil_pembuat' ><br> ";
 
   array_push($rnama, $img . $d['nama_peserta']);
   array_push($rpoints, $d['my_questions'] ?? 0);

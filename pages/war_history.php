@@ -77,7 +77,7 @@ if (!mysqli_num_rows($q)) {
   echo div_alert('danger tengah', "<div class=mb2>Lo ga pernah ikut perang jehh!!</div>$meme");
 } else {
   $div = '';
-  $profil = "$lokasi_profil/wars/peserta-$id_peserta.jpg";
+  $profil = "$lokasi_profil/$war_image";
   if (file_exists($profil)) {
     $profil = "<img class=profil_penjawab src='$profil' />";
   } else {

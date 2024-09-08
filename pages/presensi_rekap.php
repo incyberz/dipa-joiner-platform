@@ -154,7 +154,7 @@ if (!mysqli_num_rows($q)) {
       $i = 0;
     }
 
-    $path = "$lokasi_profil/wars/peserta-$d[id_peserta].jpg";
+    $path = "$lokasi_profil/$d[war_image]";
     $path_na = 'assets/img/no_profil.jpg';
     if (file_exists($path)) {
       $src_profile = $path;

@@ -21,7 +21,7 @@ while ($d = mysqli_fetch_assoc($q)) {
 }
 
 $path_na = "assets/img/no_profil.jpg";
-$path = "$lokasi_profil/wars/peserta-$id_peserta.jpg";
+$path = "$lokasi_profil/$war_image";
 $path = file_exists($path) ? $path : $path_na;
 $profil_penjawab = "<img src='$path' class=profil_penjawab>";
 

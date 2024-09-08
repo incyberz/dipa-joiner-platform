@@ -6,13 +6,6 @@ if (!$id_peserta) jsurl('?');
 if (isset($_POST['btn_upload'])) {
   unset($_POST['btn_upload']);
   echo '<div class="f18 consolas">Processing upload images...</div><hr>';
-  // echo '<pre>';
-  // var_dump($_POST);
-  // echo '</pre>';
-
-  // echo '<pre>';
-  // var_dump($_FILES);
-  // echo '</pre>';
   $date = date('ymdHis');
   $nama = strtolower(str_replace(' ', '_', $nama_peserta));
   $image = "$id_peserta-$nama-$date.jpg";
@@ -25,13 +18,15 @@ if (isset($_POST['btn_upload'])) {
   # HAPUS FILE LAMA
   # ============================================================
   echo "$d_peserta[image] > $image";
-  if (!unlink("$lokasi_profil/$d_peserta[image]")) {
-    die(div_alert('danger', "Tidak bisa menghapus file profile lama."));
+  $src = "$lokasi_profil/$d_peserta[image]";
+  if (file_exists($src) and $d_peserta['image']) {
+    if (!unlink($src)) {
+      die(div_alert('danger', "Tidak bisa menghapus file profile lama."));
+    }
   }
 
   if (move_uploaded_file($tmpName, $target)) {
     echo '<br>move_uploaded_file... success<br>';
-
 
     # ============================================================
     # RESET STATUS PROFIL_OK DAN UPDATE IMAGE
@@ -72,11 +67,7 @@ if (isset($_POST['btn_upload'])) {
   }
 }
 
-// $no_profil = 'assets/img/no_profil.jpg';
-// $src_profil = "$lokasi_profil/peserta-$id_peserta.jpg";
-
 $sudah_upload = file_exists($src_profil) ? 1 : 0;
-// $src_profil = file_exists($src_profil) ? $src_profil : $no_profil;
 
 $onclick = $sudah_upload ? 'Foto ini hanya terlihat oleh kamu dan instruktur.' : 'Masak sihh kamu ga punya foto,, gak percaya!!';
 

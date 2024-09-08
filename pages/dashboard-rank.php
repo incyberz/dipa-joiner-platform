@@ -74,37 +74,34 @@ function progres($Label, $href, $count, $count_of, $persen_count, $styles = '')
 
 $nilai_akhir_show = $nilai_akhir ? $nilai_akhir : '?';
 
-echo '<pre>';
-var_dump($room_count);
-echo '</pre>';
-
 $progres['presensi'] = progres(
   'Presensi',
   'presensi',
-  12,
-  $room_count['count_presensi'],
-  85
+  $my_poin['count_presensi'],
+  $room_count['count_presensi_aktif'],
+  $room_count['count_presensi_aktif'] ? round($my_poin['count_presensi'] * 100 / $room_count['count_presensi_aktif']) : 0
+
 );
 $progres['latihan'] = progres(
   'Latihan',
   'activity&jenis=latihan',
-  12,
+  $my_poin['count_latihan_verified'],
   $room_count['count_latihan'],
-  75
+  $room_count['count_latihan'] ? round($my_poin['count_latihan_verified'] * 100 / $room_count['count_latihan']) : 0
 );
 $progres['challenge'] = progres(
   'Challenge',
   'activity&jenis=challenge',
-  12,
+  $my_poin['count_challenge_verified'],
   $room_count['count_challenge'],
-  65
+  $room_count['count_challenge'] ? round($my_poin['count_challenge_verified'] * 100 / $room_count['count_challenge']) : 0
 );
 $progres['ujian'] = progres(
   'Ujian',
   'ujian',
-  12,
+  $my_poin['count_ujian'],
   $room_count['count_ujian'],
-  25
+  $room_count['count_ujian'] ? round($my_poin['count_ujian'] * 100 / $room_count['count_ujian']) : 0
 );
 
 $blok_progres = "

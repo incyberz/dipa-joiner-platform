@@ -19,69 +19,76 @@ $judul = 'Profile';
 <?php
 if (!$id_peserta) jsurl('?'); // jika auto-loogut
 $blok_status = '';
-$src_profil_perang = "$lokasi_profil/war-$id_peserta.jpg";
-$src_profil_perang_accepted = "$lokasi_profil/wars/peserta-$id_peserta.jpg";
-$src_profil_perang_rejected = "$lokasi_profil/war-$id_peserta-reject.jpg";
-$is_reject = file_exists($src_profil_perang_rejected) ? 1 : 0;
+$src_profil_perang = "$lokasi_profil/$d_peserta[war_image]";
 
 if (isset($_POST['btn_upload'])) {
-  if (move_uploaded_file($_FILES['profil_perang']['tmp_name'], $src_profil_perang)) {
-    if (file_exists($src_profil_perang_rejected)) unlink($src_profil_perang_rejected);
-    echo div_alert('success', "Upload profil berhasil. Mohon tunggu... redirecting...");
-    jsurl('', 3000);
-  } else {
-    echo div_alert('danger', "Upload gagal.");
+  unset($_POST['btn_upload']);
+  echo '<div class="f18 consolas">Processing upload war profiles...</div><hr>';
+  $date = date('ymdHis');
+  $nama = strtolower(str_replace(' ', '_', $nama_peserta));
+  $new_war_image = "$id_peserta-war_unverified-$nama-$date.jpg";
+  $target = "$lokasi_profil/$new_war_image";
+  echo "<br>$target  ";
+  $tmpName = $_FILES['profil_perang']['tmp_name'];
+
+  # ============================================================
+  # HAPUS FILE LAMA
+  # ============================================================
+  echo "<hr>nama file baru:<br>$new_war_image";
+  $src = "$lokasi_profil/$d_peserta[war_image]";
+  if (file_exists($src) and $d_peserta['war_image'] and $d_peserta['war_image'] != 'war_image_rejected.jpg') {
+    if (!unlink($src)) {
+      die(div_alert('danger', "Tidak bisa menghapus file profile lama."));
+    }
   }
 
-  echo '<hr><a class="btn btn-primary" href="?upload_profil_perang">Back to Upload Profile Perang</a>';
+  if (move_uploaded_file($tmpName, $target)) {
+    echo '<br>move_uploaded_file... success<br>';
 
-  exit;
+    # ============================================================
+    # RESET STATUS PROFIL_OK DAN UPDATE IMAGE
+    # ============================================================
+    $s = "UPDATE tb_peserta SET war_image='$new_war_image' WHERE id=$id_peserta";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    echo '<br>updating with unverified war image<br>';
+
+    include 'include/resize_img.php';
+    resize_img($target, '', 1000, 1000); // resize ke 150 saat verified
+    echo div_alert('success mt2', 'Upload Profil sukses.');
+    jsurl('', 2000);
+  } else { // gagal move_uploaded_file
+    echo '<br>gagal move_uploaded_file...';
+  }
 }
 
 $src_no_profil_perang = meme_src('soldier');
 
-
-
 $alert = 'Upload profil yang cocok buat kamu perang!!';
 
-$path = '$lokasi_profil/wars';
-$rexample = scandir($path);
-$examples = '';
-$i = 0;
-$j = 0;
-$rand = rand(1, intval(count($rexample) / 3));
-foreach ($rexample as $x) {
-  $j++;
-  if ($j < $rand) continue;
-  if (strpos("salt$x", '-hi.jpg')) continue;
-
-  $i++;
-  if ($i > 5) break;
-  if (strlen($x) > 2) {
-    $examples .= "<img src='$path/$x' class=example />";
-  }
-}
-
-
 $status_show = '<span class="f12 abu miring consolas">Belum upload.</span>';
-$btn_reupload = '';
+$btn_reupload = "<button class='btn btn-secondary btn-sm' id=btn_reupload>Reupload</button>";
 $info = '';
-if ($is_reject) {
+$src = "$lokasi_profil/$d_peserta[war_image]";
+if ($d_peserta['war_image'] == 'war_image_rejected.jpg') {
   $info = "Kamu sudah upload profil perang akan tetapi instruktur menolaknya, <span class=darkred>mungkin kurang layak</span> untuk Perang! <span class='tebal darkred'>Jangan foto formal!</span> Silahkan <a href='?pengajar'>whatsapp beliau</a> jika ada kesalahan. Sekarang <span class=blue>silahkan reupload sesuai contoh profil</span>.";
   $status_show = "<span class='darkred'>Profil Ditolak, silahkan reupload!</span>";
-  $src = $src_profil_perang_rejected;
-} else if (file_exists($src_profil_perang)) {
+  $btn_reupload = '';
+} else if (strpos($src_profil_perang, 'war_unverified') and file_exists($src_profil_perang)) {
   $info = "Kamu sudah upload profil perang akan tetapi belum diverifikasi oleh instruktur. Silahkan <a href='?pengajar'>whatsapp beliau</a> untuk mempercepat proses verifikasi profil ini. Jika ingin mengubahnya silahkan reupload.";
   $status_show = "<span class='darkred'>Belum diverifikasi</span>";
-  $btn_reupload = "<button class='btn btn-secondary btn-sm' id=btn_reupload>Reupload</button>";
-} else if (file_exists($src_profil_perang_accepted)) {
   $hideit_blok_upload = 'hideit';
-  $src = $src_profil_perang_accepted;
+} else if (file_exists($src) and $d_peserta['war_image']) {
+  $hideit_blok_upload = 'hideit';
+  // $src = $src_profil_perang_accepted;
   $info = "Profil perang kamu sudah terverifikasi. Kamu bisa mengakses fitur <a href='?perang_soal'>Perang Soal</a> secara penuh. Jika ingin mengubah kembali foto profil silahkan reupload, namun kamu harus menunggu kembali verifikasi dari instruktur.";
   $status_show = "<span class='green'>Accepted </span>";
 } else {
+  echo '<pre>';
+  var_dump($src);
+  echo '</pre>';
   $src = $src_no_profil_perang;
   $hideit_blok_upload = '';
+  $btn_reupload = '';
 }
 
 $blok_status = "
@@ -92,6 +99,8 @@ $blok_status = "
     <hr>
   </div>
 ";
+
+$examples = 'examples not available';
 
 ?>
 <div class="wadah tengah blok_upload" data-aos="fade-up" data-aos-delay="150">

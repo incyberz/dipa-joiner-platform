@@ -134,7 +134,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     $s2 = "SELECT 1 FROM tb_room a 
     JOIN tb_paket b ON a.id=b.id_room 
     JOIN tb_paket_kelas c ON b.id=c.id_paket 
-    JOIN tb_jawabans d ON d.id_paket_kelas=c.paket_kelas 
+    JOIN tb_jawabans d ON d.paket_kelas=c.paket_kelas 
     WHERE a.created_by = $id_peserta -- milik sendiri pada beberapa room 
     AND a.status = 100 -- active room
     ";

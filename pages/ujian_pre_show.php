@@ -31,18 +31,18 @@ $sql_kelas = $id_role == 2 ? '1' : "d.kelas='$kelas'";
 $s = "SELECT 
 a.*,
 b.nama as pembuat,
-c.nama as nama_sesi,
+-- c.nama as nama_sesi,
 d.awal_ujian,
 (
   SELECT COUNT(1) FROM tb_jawabans p 
-  JOIN tb_paket_kelas q ON p.id_paket_kelas=q.paket_kelas 
+  JOIN tb_paket_kelas q ON p.paket_kelas=q.paket_kelas 
   WHERE q.id_paket=a.id 
   AND p.id_peserta=$id_peserta)  jumlah_attemp,  
 (
   SELECT COUNT(1) FROM tb_assign_soal WHERE id_paket=a.id)  jumlah_soal  
 FROM tb_paket a 
 JOIN tb_peserta b ON a.id_pembuat=b.id  
-JOIN tb_kode_sesi c ON a.kode_sesi=c.kode_sesi 
+-- JOIN tb kode sesi c ON a.kode sesi=c.kode sesi 
 JOIN tb_paket_kelas d ON a.id=d.id_paket   
 WHERE a.id=$id_paket 
 AND $sql_kelas";
@@ -57,7 +57,7 @@ $is_locked = $d['is_locked'];
 $tmp_jawabans = $d['tmp_jawabans'];
 $tmp_jumlah_soal = $d['tmp_jumlah_soal'];
 $nama_sesi = $d['nama_sesi'];
-$kode_sesi = strtoupper($d['kode_sesi']);
+$id_sesi = $d['id_sesi'];
 $sifat_ujian = $d['sifat_ujian'] ?? 'Close Book';
 $pembuat = $d['pembuat'] ?? '-';
 $kisi_kisi = $d['kisi_kisi'] ?? '-';
@@ -153,7 +153,7 @@ if ($tanggal_pembahasan) {
 } else {
   $tanggal_pembahasan_show = 'Tidak ada pembahasan Kunci Jawab untuk ujian ini.';
 }
-$kode_sesi_show = "$kode_sesi | $nama_sesi";
+$kode_sesi_show = "$id_sesi | $nama_sesi";
 $max_attemp_show = $max_attemp ?? '<span class="kecil miring consolas">unlimitted</span>';
 
 
@@ -272,11 +272,11 @@ if ($selisih > 0) { //belum mulai
       $s = "SELECT a.*, b.tmp_jumlah_soal,b.tanggal_pembahasan,
       (
         SELECT MAX(nilai) FROM tb_jawabans p 
-        JOIN tb_paket_kelas q ON p.id_paket_kelas=q.paket_kelas  
+        JOIN tb_paket_kelas q ON p.paket_kelas=q.paket_kelas  
         WHERE q.id_paket=$id_paket 
         AND p.id_peserta=$id_peserta ) nilai_max  
       FROM tb_jawabans a 
-      JOIN tb_paket_kelas c ON a.id_paket_kelas=c.paket_kelas 
+      JOIN tb_paket_kelas c ON a.paket_kelas=c.paket_kelas 
       JOIN tb_paket b ON c.id_paket=b.id  
       WHERE c.id_paket=$id_paket 
       AND a.id_peserta=$id_peserta 

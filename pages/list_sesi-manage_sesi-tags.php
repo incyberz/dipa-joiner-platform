@@ -5,7 +5,7 @@
 
 $s = "SELECT 
 a.*
-FROM tb_sesi a WHERE id_room=$id_room";
+FROM tb_sesi a WHERE id_room=$id_room and jenis=1";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $divs = '';
 $nav = '';

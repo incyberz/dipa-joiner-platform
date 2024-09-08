@@ -1,9 +1,10 @@
 <?php
 $dp = 1;
 instruktur_only();
+if ($username != 'abi') die('Hanya developer yang bisa akses.');
 $null = '<span class="abu f12 miring consolas">null</span>';
 
-$judul = 'Manage Paket Soal';
+$judul = 'Manage All Paket Soal';
 set_h2($judul, "Paket Soal adalah wadah untuk soal-soal yang akan diujikan ke tiap Grup Kelas<div class=mt2><a href='?ujian' >$img_prev</a></div>");
 
 
@@ -33,6 +34,14 @@ if (isset($_POST['btn_delete_paket_soal'])) {
     echo div_alert('success', 'Delete paket berhasil.');
     jsurl('', 1000);
   }
+}
+if (isset($_POST['btn_set_id_sesi'])) {
+  $id_sesi = $_POST['btn_set_id_sesi'];
+  $s = "UPDATE tb_paket SET id_sesi = $id_sesi WHERE id=$_POST[id_paket]";
+  echo '<pre>';
+  var_dump($s);
+  echo '</pre>';
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 }
 
 
@@ -78,12 +87,12 @@ if (isset($_POST['btn_delete_paket_soal'])) {
 # MAIN SELECT
 # =============================================
 $s = "SELECT  
+a.*,
 a.id as id_paket,
 a.nama as nama_paket,
 a.durasi_ujian,
 a.tanggal_pembahasan,
 a.max_attemp,
-b.nama as nama_sesi,
 (
   SELECT COUNT(1) FROM tb_assign_soal 
   WHERE id_paket=a.id) count_soal,
@@ -97,9 +106,9 @@ b.nama as nama_sesi,
   WHERE q.id_paket=a.id) count_submit
 
 FROM tb_paket a 
-JOIN tb_sesi b ON a.id_sesi=b.id 
-WHERE b.id_room=$id_room 
-ORDER BY count_kelas, count_soal, date_created 
+WHERE 1 -- a.id_room=$id_room 
+AND id_sesi is null
+ORDER BY date_created 
 ";
 
 // echo '<pre>';
@@ -117,7 +126,8 @@ if (!mysqli_num_rows($q)) {
     $count_soal = $d['count_soal'];
     $count_kelas = $d['count_kelas'];
     $count_submit = $d['count_submit'] ?? 0;
-    $nama_sesi = $d['nama_sesi'];
+    // $untuk_event = $d['untuk_event'];
+    $untuk_event = 'ZZZ';
     $nama_paket = $d['nama_paket'];
     $max_attemp = $d['max_attemp'];
     $durasi_ujian = $d['durasi_ujian'];
@@ -129,6 +139,18 @@ if (!mysqli_num_rows($q)) {
         <button class='p0 m0' name=btn_delete_paket_soal style='display:inline; background:none; border:none' onclick='return confirm(\"Yakin untuk hapus paket ini?\")' value=$id_paket>$img_delete</button>
       </form>
     ";
+
+
+    # ============================================================
+    # SELECT SESI
+    # ============================================================
+    $s2 = "SELECT * FROM tb_sesi WHERE id_room=$d[id_room] ORDER BY no";
+    $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+    $btns = '';
+    while ($d2 = mysqli_fetch_assoc($q2)) {
+      $btns .= "<div><button name=btn_set_id_sesi value=$d2[id]>$d2[id] - $d2[nama]</button></div>";
+    }
+
 
 
     $list_kelas = '';
@@ -164,7 +186,7 @@ if (!mysqli_num_rows($q)) {
     ";
 
     $form_destroy_paket = $username != 'abi' ? '' : "
-      <div class=hideit>
+      <div>
         <a target=_blank href='?destroy_paket&id_paket=$id_paket' class='btn btn-sm btn-danger' >DESTROY</a>
       </div>
     ";
@@ -176,7 +198,11 @@ if (!mysqli_num_rows($q)) {
       <tr class=tr_paket_soal id=tr_paket_soal__$id_paket>
         <td>$no</td>
         <td>
-          <div class='f14 miring'>$nama_sesi</div>
+          <div class='f14 miring'>$untuk_event</div>
+          <form method=post>
+            <input type=hiddena name=id_paket value=$id_paket>
+            $btns
+          </form>
           <div class='f16 darkblue tebal'>
             $nama_paket 
             <a href='?add_paket_soal&id_paket=$id_paket'>$img_edit</a>

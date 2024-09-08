@@ -12,6 +12,25 @@ set_h2($judul, "$pesan<div class=mt2><a href='?manage_paket_soal' >$img_prev</a>
 // $global_akhir_ujian = date('Y-m-d H:i', strtotime('now') + 60 * 60);
 $global_akhir_ujian = '';
 
+# ============================================================
+# SELECT ID SESI
+# ============================================================
+$opt = '';
+$s = "SELECT * FROM tb_sesi WHERE id_room=$id_room ORDER BY no";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+$no_sesi = 0;
+while ($d = mysqli_fetch_assoc($q)) {
+  // $id=$d['id'];
+  if ($d['jenis'] == 1) {
+    $no_sesi++;
+    $nama = "P$no_sesi $d[nama]";
+  } else {
+    $nama = $d['nama'];
+  }
+  $awal = date('d-M-y', strtotime($d['awal_presensi']));
+  $opt .= "<option value=$d[id]>Untuk Sesi $nama (awal pekan: $awal)</option>";
+}
+$select_id_sesi = "<select class='form-control mb2' name=id_sesi>$opt</select>";
 
 
 
@@ -112,32 +131,29 @@ if (isset($_POST['btn_simpan_paket_soal'])) {
   # =============================================
   $s = "INSERT INTO tb_paket (
     id,
-    id_room,
+    id_sesi,
     nama,
     id_pembuat,
     tanggal_pembahasan,
-    kode_sesi,
     sifat_ujian,
     kisi_kisi,
     max_attemp,
     durasi_ujian
   ) VALUES (
     $id_paket_or_new,
-    $id_room,
+    $_POST[id_sesi],
     '$_POST[nama_paket]',
     $id_peserta,
     $tanggal_pembahasan_or_null,
-    '$_POST[kode_sesi]',
     '$_POST[sifat_ujian]',
     $kisi_kisi_or_null,
     $_POST[max_attemp],
     $_POST[durasi_ujian]
   ) ON DUPLICATE KEY UPDATE 
-    id_room = $id_room,
+    id_sesi = $_POST[id_sesi],
     nama = '$_POST[nama_paket]',
     id_pembuat = $id_peserta,
     tanggal_pembahasan = $tanggal_pembahasan_or_null,
-    kode_sesi = '$_POST[kode_sesi]',
     sifat_ujian = '$_POST[sifat_ujian]',
     kisi_kisi = $kisi_kisi_or_null,
     max_attemp = $_POST[max_attemp],
@@ -228,7 +244,7 @@ if ($id_paket) {
   a.*,
   (
     SELECT COUNT(1) FROM tb_jawabans p 
-    JOIN tb_paket_kelas q ON p.id_paket_kelas=q.paket_kelas  
+    JOIN tb_paket_kelas q ON p.paket_kelas=q.paket_kelas  
     WHERE q.id_paket=a.id) count_submit
   FROM tb_paket a WHERE a.id=$id_paket";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -236,6 +252,7 @@ if ($id_paket) {
     die("Data paket dengan id: $id_paket tidak ditemukan.");
   } else {
     $d_paket = mysqli_fetch_assoc($q);
+
     if ($d_paket['count_submit']) {
       echo div_alert('danger', "Paket soal ini tidak bisa lagi diedit karena sudah ada $d_paket[count_submit] peserta yang submit jawaban");
       echo "
@@ -291,15 +308,7 @@ if ($id_paket) {
 # ================================================ -->
 # SELECT KODE SESI
 # ================================================ -->
-$s = "SELECT * FROM tb_kode_sesi ";
-$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$opt = '';
-$this_kode_sesi = $d_paket['kode_sesi'] ?? '';
-while ($d = mysqli_fetch_assoc($q)) {
-  $selected = $d['kode_sesi'] == $this_kode_sesi ? 'selected' : '';
-  $opt .= "<option value='$d[kode_sesi]' $selected>Untuk event $d[nama]</option>";
-}
-$select_kode_sesi = "<select name=kode_sesi id=kode_sesi class='form-control mb2'>$opt</select>";
+// aborted
 
 # ================================================ -->
 # SELECT KELAS DAN MISAL NAMA PAKET
@@ -452,12 +461,6 @@ $range_durasi = "
   </div>
 ";
 
-// $d_paket['tanggal_pembahasan'] = '2020-2-2 13:30';
-
-echo '<pre>';
-var_dump($d_paket);
-echo '</pre>';
-
 $mode_pembahasan = 0; // default tidak ada pembahasan
 $tanggal_pembahasan = $d_paket['tanggal_pembahasan'] ?? '';
 if ($tanggal_pembahasan) {
@@ -561,7 +564,7 @@ $kisi_kisi = $d_paket['kisi_kisi'] ?? '';
 $mode_pembahasan = $d_paket['mode_pembahasan'] ?? '';
 
 
-if ($tanggal_pembahasan) {
+if (isset($d_paket['tanggal_pembahasan'])) {
   $tgl_pembahasan = date('Y-m-d', strtotime($d_paket['tanggal_pembahasan']));
   $jam_pembahasan = date('H:i', strtotime($d_paket['tanggal_pembahasan']));
   $eta_pembahasan = str_replace('lagi', '', eta(strtotime($d_paket['tanggal_pembahasan']) - strtotime($global_akhir_ujian)));
@@ -585,7 +588,7 @@ echo "
       <div class='abu f14 miring  mb4'>Form <span class=proper>$mode</span> Paket Soal</div>
 
       <input name=id_paket class='hideit' value=$id_paket>
-      $select_kode_sesi
+      $select_id_sesi
 
       <input required minlength=10 maxlength=50 class='form-control mb2' placeholder='Enter Nama Paket Soal...' name=nama_paket id=nama_paket value='$nama_paket'>
       <div class='f12 abu mb4'>Misal: <span class='darkblue miring pointer' id=misal_nama_paket>$misal_nama_paket</span></div>

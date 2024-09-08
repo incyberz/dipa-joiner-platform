@@ -66,15 +66,14 @@ AND $sql_id_room
 AND $sql_kelas
 ORDER BY a.no
 ";
-// echo '<pre>';
-// var_dump($s);
-// echo '</pre>';
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+// $get_update = 1;
 if ($get_update) {
   echolog('including leaderboard-auto_update.php first');
   include 'leaderboard-auto_update.php';
   exit;
 } else {
+  if (!mysqli_num_rows($q)) die(div_alert('danger', "Data untuk BEST [$get_best] tidak ditemukan"));
   $tr_best = '';
   if ($get_best) { // single best
     # ============================================================
@@ -220,6 +219,8 @@ if ($get_update) {
       a.rank_kelas,
       b.id as id_peserta,
       b.nama as nama_peserta,
+      b.image,
+      b.war_image,
       d.kelas 
 
       FROM tb_poin a 
@@ -235,9 +236,6 @@ if ($get_update) {
       ORDER BY a.akumulasi_poin DESC
       ";
 
-      // echo '<pre>';
-      // var_dump($s2);
-      // echo '</pre>';
       $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
       $arr_rank_room = [];
       $i = 0;
@@ -249,6 +247,8 @@ if ($get_update) {
             'nama' => $d['nama_peserta'],
             'kelas' => $d['kelas'],
             'poin' => $d['akumulasi_poin'],
+            'image' => $d['image'],
+            'war_image' => $d['war_image'],
           ];
         }
         $arr_rank_kelas[$d['kelas']][$d['rank_kelas']] = [
@@ -256,6 +256,8 @@ if ($get_update) {
           'nama' => $d['nama_peserta'],
           'kelas' => $d['kelas'],
           'poin' => $d['akumulasi_poin'],
+          'image' => $d['image'],
+          'war_image' => $d['war_image'],
         ];
       }
 
@@ -283,8 +285,8 @@ if ($get_update) {
             $i++;
             $id_bestie = $arr_bestie['id'];
             $class_style = $id_bestie == $id_peserta ? 'br10 gradasi-pink border_mine' : '';
-            $src = "$lokasi_profil/wars/peserta-$id_bestie.jpg";
-            if (!file_exists($src)) $src = "$lokasi_profil/peserta-$id_bestie.jpg";
+            $src = "$lokasi_profil/$arr_bestie[war_image]";
+            if (!file_exists($src)) $src = "$lokasi_profil/$arr_bestie[image]";
             if (!file_exists($src)) $src = $src_profil_na_fixed;
             $div_peserta .= "
               <div style='position: relative;' class='$class_style '>
@@ -320,6 +322,8 @@ if ($get_update) {
       if ($d['best'] == 'rank_room' || $d['best'] == 'rank_kelas') continue;
       $count_blok_public++;
       $AT = strtoupper(key2kolom($d['best']));
+
+
       $id_besties = [
         $d['best1'] => ['nama' => $d['nama_best1'], 'kelas' => $d['kelas_best1']],
         $d['best2'] => ['nama' => $d['nama_best2'], 'kelas' => $d['kelas_best2']],
@@ -327,15 +331,19 @@ if ($get_update) {
       ];
       $div_peserta = '';
       $i = 0;
-      // echo '<pre>';
-      // var_dump($id_besties);
-      // echo '</pre>';
       foreach ($id_besties as $id_bestie => $arr_nama_kelas) {
         if (!$arr_nama_kelas['nama']) continue;
+
+        // get war image
+        $s2 = "SELECT image, war_image FROM tb_peserta WHERE id=$id_bestie";
+        $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+        $d2 = mysqli_fetch_assoc($q2);
+        $image = $d2['war_image'] ?? $d2['image'];
+
+
         $i++;
         $class_style = $id_bestie == $id_peserta ? 'br10 gradasi-pink border_mine' : '';
-        $src = "$lokasi_profil/wars/peserta-$id_bestie.jpg";
-        if (!file_exists($src)) $src = "$lokasi_profil/peserta-$id_bestie.jpg";
+        $src = "$lokasi_profil/$image";
         if (!file_exists($src)) $src = $src_profil_na_fixed;
 
         $div_peserta .= "

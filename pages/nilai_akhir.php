@@ -31,7 +31,9 @@ function gradasi($nilai)
 }
 function konversikan($count, $total)
 {
-  if ($count == 0 || $total == 0) {
+  if ($total == 0) {
+    return 100;
+  } elseif ($count == 0) {
     return 0;
   } elseif ($count == 1 and $total == 1) {
     return 100;
@@ -174,7 +176,7 @@ $nama_paket_soal_remed_uts = 'Soal Pasca UTS';
 $nama_paket_soal_remed_uas = 'Soal Remed UAS';
 
 $from_tb_jawabans = "FROM tb_jawabans p 
-  JOIN tb_paket_kelas q ON p.id_paket_kelas=q.paket_kelas 
+  JOIN tb_paket_kelas q ON p.paket_kelas=q.paket_kelas 
   JOIN tb_paket r ON q.id_paket=r.id 
   WHERE p.id_peserta=a.id 
   AND p.id_room=$id_room 
@@ -211,16 +213,6 @@ c.*,
 
 
 
--- ========================================
--- SELECT SESI AKTIF
--- ========================================
-(
-  SELECT COUNT(1) FROM tb_sesi p 
-  JOIN tb_sesi_kelas q ON p.id=q.id_sesi 
-  WHERE p.id_room=$id_room 
-  AND p.awal_presensi <= '$now' 
-  AND p.awal_presensi < '$ahad_depan'
-  AND q.kelas=c.kelas) count_sesi_aktif,
 
 -- ========================================
 -- SELECT TOTAL PESERTA
@@ -422,15 +414,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   $i++;
   $no++;
 
-  // extract row value
   $nama_peserta = strtoupper($d['nama_peserta']);
-  // $jumlah_ontime = $d['jumlah_ontime'];
-  $count_sesi_aktif = $d['count_sesi_aktif'];
-  if (!$count_sesi_aktif) {
-    // terdapat kelas yang belum di set jadwal
-    $_SESSION['target_kelas'] = $d['kelas'];
-    die(div_alert('danger', "count_sesi_aktif : $count_sesi_aktif canot be null. Jadwal kelas belum disetting untuk kelas: $d[kelas]<hr><a href='?presensi' class='btn btn-primary'>Set Jadwal Presensi untuk $d[kelas]</a>"));
-  }
 
   // handler blok tiap kelas
   $kelas_ini = $d['kelas'];
@@ -470,9 +454,9 @@ while ($d = mysqli_fetch_assoc($q)) {
   # ======================================================
 
   // inject from room_vars
-  $d['total_count_presensi_offline'] = $count_sesi_aktif;
-  $d['total_count_presensi_online'] = $count_sesi_aktif;
-  $d['total_count_ontime'] = $count_sesi_aktif;
+  $d['total_count_presensi_offline'] = $room_count['count_presensi_aktif'];
+  $d['total_count_presensi_online'] = $room_count['count_presensi_aktif'];
+  $d['total_count_ontime'] = $room_count['count_presensi_aktif'];
   $d['total_count_latihan'] = $total_latihan;
   $d['total_count_latihan_wajib'] = $total_latihan_wajib;
   $d['total_count_challenge'] = $total_challenge;
@@ -592,7 +576,7 @@ while ($d = mysqli_fetch_assoc($q)) {
       $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
     } else {
       if ($get_show_img) {
-        $src = "$lokasi_profil/wars/peserta-$d[id_peserta].jpg";
+        $src = "$lokasi_profil/$d[war_image]";
         if (file_exists($src)) {
           $img = "<img src='$src' class='foto_profil'>";
         } else {

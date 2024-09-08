@@ -11,7 +11,6 @@
   <p><?php if ($id_role == 2) echo "Berikut adalah profil peserta yang harus diverifikasi. | 
         <a href='?verifikasi_profil_peserta'>Unverified</a> | 
         <a href='?verifikasi_profil_peserta&profil_ok=1'>Accepted</a> | 
-        <a href='?verifikasi_profil_peserta&profil_ok=2'>Formal</a> |
         <a href='?verifikasi_profil_peserta&profil_ok=-1'>Rejected</a>";
       if ($id_role == 1) echo 'Berikut adalah status verifikasi untuk Profil kamu'; ?>
   </p>
@@ -34,7 +33,8 @@ if ($id_role == 2) {
 $s = "SELECT a.id as id_peserta,
 a.nama as nama_peserta,
 b.kelas,
-a.profil_ok 
+a.profil_ok,
+a.image  
 
 FROM tb_peserta a 
 JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
@@ -49,17 +49,21 @@ AND c.kelas != 'INSTRUKTUR'
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) {
-  $divs = ('<span class=red>Data tidak ditemukan</span>');
+  $divs = div_alert('info', "Belum ada profil peserta yang harus Anda verifikasi."); // ('<span class=red>Data tidak ditemukan</span>');
 } else {
   $divs = '';
   $batas = 20;
   while ($d = mysqli_fetch_assoc($q)) {
     $id = $d['id_peserta'];
-    $path = "$lokasi_profil/peserta-$id.jpg";
+    $path = "$lokasi_profil/$d[image]";
     if (file_exists($path)) {
       $batas--;
       if ($batas >= 0) {
         if ($id_role == 2) {
+
+          $btn_accept = $get_profil_ok == 1 ? '<button class="btn btn-secondary btn-sm btn-block " disabled>Accept</button>' : "<button class='btn btn-success btn-sm btn-block btn_verif' id=accept__$id>Accept</button>";
+          $btn_reject = $get_profil_ok == -1 ? '<button class="btn btn-secondary btn-sm btn-block " disabled>Reject</button>' : "<button class='btn btn-danger btn-sm btn-block btn_verif' id=reject__$id>Reject</button>";
+
           $divs .= "
             <div class='flexy-item tengah bg-white' id=box__$id>
               <div>
@@ -72,13 +76,13 @@ if (!mysqli_num_rows($q)) {
                 <table width=100%>
                   <tr>
                     <td width=50%>
-                      <button class='btn btn-success btn-sm btn-block btn_verif' id=accept__$id>Accept</button>
+                      $btn_accept
                     </td>
                     <td width=50%>
-                      <button class='btn btn-danger btn-sm btn-block btn_verif' id=reject__$id>Reject</button>
+                      $btn_reject
                     </td>
                   </tr>
-                  <tr>
+                  <tr class=hideit>
                     <td colspan=2>
                       <button class='btn btn-primary btn-sm btn-block btn_verif' id=formal__$id>Formal</button>
                     </td>
@@ -110,7 +114,11 @@ if (!mysqli_num_rows($q)) {
 
 
 echo $id_role == 2 ? "<div class='wadah gradasi-hijau flexy'>$divs</div>" : "<div class='wadah tengah'>$divs</div>";
-if ($id_role == 2) include 'verifikasi_war_profil.php';
+if ($id_role == 2) {
+
+  echolog('include verifikasi_war_profil.php');
+  include 'verifikasi_war_profil.php';
+}
 
 
 

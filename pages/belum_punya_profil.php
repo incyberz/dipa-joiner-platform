@@ -16,7 +16,7 @@ if ($profil_ok == 1) {
       jsurl();
     }
   } elseif ($id_role == 1) {
-    $ket = "Hai! Kamu belum punya profil. Silahkan <a href='?upload_profil'>Upload Profile</a> terlebih dahulu untuk proses dokumentasi, cetak nilai KHS, dan keperluan dokumen lainnya.";
+    $ket = "Profile is missing.<br><a href='?upload_profil'>Upload Foto Profil-nya dulu ya !!</a>";
   }
 }
 

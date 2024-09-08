@@ -68,7 +68,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
   AND b.status=1 
   AND b.tahun_ajar=$ta 
   AND d.status=1 
-  AND d.nama NOT LIKE '%dummy%'
+  -- AND d.nama NOT LIKE '%dummy%'
   ORDER BY b.shift, b.prodi,d.nama";
 
   $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
@@ -83,27 +83,29 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
   while ($d2 = mysqli_fetch_assoc($q2)) {
     $nama = ucwords(strtolower($d2['nama']));
     $jumlah_peserta++;
+    $img_src = "$lokasi_profil/$d2[image]";
+    $war_src = "$lokasi_profil/$d2[war_image]";
 
     if ($get_mode == 'fast') {
-      $src2 = "$lokasi_profil/peserta-$d2[id_peserta].jpg";
-      $src = "$lokasi_profil/wars/peserta-$d2[id_peserta].jpg";
       $sty = '';
       $link_super_delete = '';
-      if (file_exists($src)) {
+      if (file_exists($war_src) and $d2['war_image']) {
         // do nothing
-      } elseif (file_exists($src2) and !file_exists($src)) {
+        $src = $war_src;
+      } elseif (file_exists($img_src) and $d2['image']) {
         // profil ada tapi belum jadi profil wars
         $sty = 'border:solid 3px blue';
-        $src = $src2;
+        $src = $img_src;
       } else {
         $src = 'assets/img/img_na.jpg';
         $link_super_delete = $id_role == 2 ? "<a href='?super_delete_peserta&keyword=$d2[nama]'>$img_delete</a>" : '';
       }
       $list_peserta .= "
-      <div class='kecil tengah abu'>
-        <img src='$src' class='foto_profil' style='$sty'>
-        <div>$nama $link_super_delete</div>
-      </div>";
+        <div class='kecil tengah abu'>
+          <img src='$src' class='foto_profil' style='$sty'>
+          <div>$nama $link_super_delete</div>
+        </div>
+      ";
     } elseif ($get_mode == 'detail') {
       $no++;
 
@@ -316,9 +318,9 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
 
   if ($get_mode == 'fast') {
     $blok_kelas .= "
-      <div class='wadah gradasi-hijau' zzzdata-aos='fade-up' data-aos-delay='150'>
-        Peserta Kelas $d[kelas]
-        <div class='wadah bg-white flexy mt1'>
+      <div class='wadah gradasi-hijau tengah' zzzdata-aos='fade-up' data-aos-delay='150'>
+        $d[kelas]
+        <div class='wadah bg-white flexy mt1 flex-center'>
           $list_peserta
         </div>
         $link_assign

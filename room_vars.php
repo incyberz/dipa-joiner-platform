@@ -16,6 +16,8 @@ if (!$kelas) {
 # ========================================================
 $s = "SELECT a.*, 
 b.id as id_instruktur,
+b.image as image_instruktur,
+b.war_image as war_image_instruktur,
 b.nama as nama_instruktur,
 (
   SELECT id FROM tb_room_kelas 
@@ -79,7 +81,14 @@ $id_room_kelas = $room['id_room_kelas'];
 $id_instruktur = $room['id_instruktur'];
 $jumlah_sesi = $room['count_sesi'];
 $count_sesi = $room['count_sesi'];
-$path_profil_instruktur = "$lokasi_profil/peserta-$id_instruktur.jpg";
+if ($room['war_image_instruktur'] and file_exists("$lokasi_profil/$room[war_image_instruktur]")) {
+  $path_profil_instruktur = "$lokasi_profil/$room[war_image_instruktur]";
+} elseif ($room['image_instruktur'] and file_exists("$lokasi_profil/$room[image_instruktur]")) {
+  $path_profil_instruktur = "$lokasi_profil/$room[image_instruktur]";
+} else {
+  $path_profil_instruktur = "$lokasi_profil/peserta-$room[id_instruktur].jpg"; // old code
+
+}
 $profil_instruktur = "<img src='$path_profil_instruktur' class='foto_profil' alt='profil_instruktur' />";
 
 # ========================================================
@@ -168,8 +177,7 @@ if (!$room['last_update']) {
   $s = "INSERT INTO tb_room_count (id_room) VALUES ($id_room)";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   jsurl();
-  // } elseif (($id_role == 2 and $selisih > 600) || date('Y-m-d', strtotime($room['last_update'])) != $today) {
-} elseif (($id_role == 2 and (strtotime('now') - strtotime($room['last_update'])) > 6) || date('Y-m-d', strtotime($room['last_update'])) != $today) {
+} elseif (($id_role == 2 and (strtotime('now') - strtotime($room['last_update'])) > 600) || date('Y-m-d', strtotime($room['last_update'])) != $today) {
   # ============================================================
   # UPDATE ROOM COUNT
   # ============================================================
@@ -263,31 +271,31 @@ $s = "SELECT * FROM tb_poin WHERE id_room=$id_room AND id_peserta=$id_peserta";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (mysqli_num_rows($q) > 1) die('Duplicate data poin in room_vars');
 if (mysqli_num_rows($q)) {
-  $my_point = mysqli_fetch_assoc($q);
+  $my_poin = mysqli_fetch_assoc($q);
   // echo 'ZZZ<pre>';
-  // var_dump($my_point);
+  // var_dump($my_poin);
   // echo '</pre>';
-  $last_update_point = $my_point['last_update_point'];
+  $last_update_point = $my_poin['last_update_point'];
   $selisih = strtotime('now') - strtotime($last_update_point);
   // echo "<hr>ZZZ $selisih<hr>";
   // exit;
   if ($selisih >= $jeda_update_poin) $harus_update_poin = 1;
   // $harus_update_poin = 1; // ZZZ
 
-  $rank_room = $my_point['rank_room'];
-  $rank_kelas = $my_point['rank_kelas'];
+  $rank_room = $my_poin['rank_room'];
+  $rank_kelas = $my_poin['rank_kelas'];
   // echo "<hr>ZZZ $rank_kelas";
   // exit;
-  $poin_bertanya = $my_point['poin_bertanya'];
-  $poin_menjawab = $my_point['poin_menjawab'];
-  $poin_latihan = $my_point['poin_latihan'];
-  $poin_challenge = $my_point['poin_challenge'];
-  $akumulasi_poin = $my_point['akumulasi_poin'];
+  $poin_bertanya = $my_poin['poin_bertanya'];
+  $poin_menjawab = $my_poin['poin_menjawab'];
+  $poin_latihan = $my_poin['poin_latihan'];
+  $poin_challenge = $my_poin['poin_challenge'];
+  $akumulasi_poin = $my_poin['akumulasi_poin'];
 
-  $my_points = $akumulasi_poin;
-  $my_points_show = number_format($akumulasi_poin, 0);
+  $my_poins = $akumulasi_poin;
+  $my_poins_show = number_format($akumulasi_poin, 0);
 
-  $nilai_akhir = $my_point['nilai_akhir'];
+  $nilai_akhir = $my_poin['nilai_akhir'];
   $nilai_akhir = $nilai_akhir > 100 ? 100 : $nilai_akhir;
 
   if ($nilai_akhir > 100) die('Invalid nilai akhir at room_vars');

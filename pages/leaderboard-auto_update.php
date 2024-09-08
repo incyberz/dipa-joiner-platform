@@ -180,17 +180,8 @@ while ($d_best = mysqli_fetch_assoc($q_best)) {
       ORDER BY best_value DESC 
       LIMIT 10  
     ";
-    echo '<pre>';
-    var_dump($s2);
-    echo '</pre>';
     $q = mysqli_query($cn, $s2) or die(mysqli_error($cn));
 
-    // if ($best_code == 'play_quiz') {
-    //   echo '<pre>';
-    //   var_dump($s2);
-    //   echo '</pre>';
-    //   exit;
-    // }
 
     $bestiers = '';
     $arr_best = [];
@@ -205,6 +196,8 @@ while ($d_best = mysqli_fetch_assoc($q_best)) {
 
     $id_room_or_null = $id_room ? $id_room : 'NULL';
     $best_code_week = $id_room ? "$best_code-$week-$id_room" : "$best_code-$week";
+    $arr_best_2nd = $arr_best[2] ?? '';
+    $arr_best_3rd = $arr_best[3] ?? '';
     $s_insert = "INSERT INTO tb_best_week (
       best_week, 
       best, 
@@ -220,8 +213,8 @@ while ($d_best = mysqli_fetch_assoc($q_best)) {
       '$week',
       $id_room_or_null,
       '$arr_best[1]', 
-      '$arr_best[2]', 
-      '$arr_best[3]', 
+      '$arr_best_2nd', 
+      '$arr_best_3rd', 
       '$bestiers'    
   
     ) ON DUPLICATE KEY UPDATE 
@@ -229,8 +222,8 @@ while ($d_best = mysqli_fetch_assoc($q_best)) {
       week = $week,
       id_room = $id_room_or_null,
       best1 = '$arr_best[1]',  
-      best2 = '$arr_best[2]',  
-      best3 = '$arr_best[3]',  
+      best2 = '$arr_best_2nd',  
+      best3 = '$arr_best_3rd',  
       bestiers = '$bestiers'
     ";
 

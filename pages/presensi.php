@@ -35,7 +35,7 @@ $info_target_kelas = $target_kelas ? "<div>Target Kelas: $target_kelas</div>" : 
 $rekap = $id_role == 1 ? '<p class=f14>Presenting your work! Not only a signature.</p>' : "Admin only: <a href='?presensi_rekap'>Rekap Presensi</a>$info_target_kelas";
 echo "
   <div class='section-title' data-aos-zzz='fade-up'>
-    <h2>Presensi Pembelajaran</h2>
+    <h2>Presensi</h2>
     $rekap
   </div>
 ";
@@ -162,14 +162,14 @@ a.id as id_sesi,
   SELECT COUNT(1) FROM tb_assign_latihan p 
   WHERE p.id_room_kelas='$id_room_kelas' 
   AND p.is_wajib=1
-  AND p.id_sesi=a.id) latihan_count,
+  AND p.id_sesi=a.id) latihan_wajib_count,
 (
   SELECT COUNT(1) FROM tb_bukti_latihan p 
   JOIN tb_assign_latihan q ON p.id_assign_latihan=q.id  
   WHERE q.id_room_kelas='$id_room_kelas' 
   AND q.is_wajib=1
   AND q.id_sesi=a.id
-  AND p.id_peserta=$id_peserta) my_latihan_count 
+  AND p.id_peserta=$id_peserta) my_latihan_wajib_count 
 
 
 
@@ -281,10 +281,9 @@ while ($d = mysqli_fetch_assoc($q)) {
     $syarat_soal = "$jumlah_soal of $syarat_soal_count";
     $syarat_play = "$play_count of $syarat_play_count";
 
-    $my_latihan_count = $d['my_latihan_count'];
-    $latihan_count = $d['latihan_count'];
-    $syarat_latihan_count = $latihan_count ? 1 : 0;
-    $syarat_latihan = "$my_latihan_count of $syarat_latihan_count";
+    $my_latihan_wajib_count = $d['my_latihan_wajib_count'];
+    $latihan_wajib_count = $d['latihan_wajib_count'];
+    $syarat_latihan_wajib = "$my_latihan_wajib_count of $latihan_wajib_count";
 
 
     if ($jumlah_soal < $syarat_soal_count) {
@@ -299,14 +298,15 @@ while ($d = mysqli_fetch_assoc($q)) {
       $syarat_play = "<span class=green>$syarat_play</span> <img src='assets/img/icon/check.png' height=20px />";
     }
 
-    if ($syarat_latihan_count) {
-      if ($my_latihan_count < $syarat_latihan_count) {
-        $syarat_latihan = "<span class=red>$syarat_latihan</span> | <a href='?perang_soal&mode=random'>Play</a>";
+    if ($latihan_wajib_count) {
+      if ($my_latihan_wajib_count < $latihan_wajib_count) {
+        $syarat_latihan_wajib = "<span class=red>$syarat_latihan_wajib</span> | <a href='?activity&jenis=latihan'>Kerjakan</a>";
       } else {
-        $syarat_latihan = "<span class=green>$syarat_latihan</span> <img src='assets/img/icon/check.png' height=20px />";
+        $syarat_latihan_wajib = "<span class=green>$syarat_latihan_wajib</span> <img src='assets/img/icon/check.png' height=20px />";
       }
+      $syarat_latihan_wajib = "<div class=mb2>Latihan wajib: $syarat_latihan_wajib</div>";
     } else {
-      $syarat_latihan = '-';
+      $syarat_latihan_wajib = '';
     }
 
     $dikurangi = '';
@@ -354,7 +354,7 @@ while ($d = mysqli_fetch_assoc($q)) {
       <div class='abu miring'>Syarat presensi:</div> 
       <div class=mb1>Soal saya: $syarat_soal</div> 
       <div class=mb1>Play count: $syarat_play</div>
-      <div class=mb2>Latihan: $syarat_latihan</div>
+      $syarat_latihan_wajib
     ";
   }
 
@@ -494,7 +494,7 @@ echo "
 <div class='tengah wadah' style='max-width:500px; margin:auto; margin-bottom: 30px'>
   <div>Your Present:</div>
   <div class='f50 darkblue'><span id=persen_ontime>$persen_ontime</span>%</div>
-  <div class=' kecil abu miring'>$jumlah_ontime of $sesi_aktif sessies | Poin: $jumlah_poin_presensi LP</div>
+  <div class=' kecil abu miring'>$jumlah_ontime of $sesi_aktif active sessions | Poin: $jumlah_poin_presensi LP</div>
   <hr>
   <div class='kecil abu '>Ontime Points next: <span class='consolas darkred'><span id=epp_detik>$epp_detik</span>.<span id=epp_milidetik>$epp_milidetik</span> LP</span></div>
 </div>

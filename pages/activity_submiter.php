@@ -48,6 +48,8 @@ a.*,
 d.id as id_peserta,
 d.nama as nama_peserta,
 d.folder_uploads,
+d.image,
+d.war_image,
 f.kelas
 
 FROM tb_bukti_$jenis a 
@@ -79,9 +81,12 @@ while ($d = mysqli_fetch_assoc($q)) {
     $gradasi = 'kuning';
   }
 
+  $war_image = $d['war_image'] ?? $d['image'];
+  $src = "$lokasi_profil/$war_image";
+
   $divs .= "
     <div class='wadah gradasi-$gradasi tengah'>
-      <img src='$lokasi_profil/wars/peserta-$d[id_peserta].jpg' class=foto_profil>
+      <img src='$src' class=foto_profil>
       <div class='f14 darkblue'>$nama_peserta</div> 
       <div class='f12 abu'>$kelas_show</div> 
     </div>
@@ -105,7 +110,10 @@ echo "
 $s = "SELECT 
 b.kelas,
 c.id as id_peserta,
-c.nama as nama_peserta  
+c.nama as nama_peserta,
+c.image,
+c.war_image
+
 FROM tb_kelas_peserta a 
 JOIN tb_kelas b ON a.kelas=b.kelas 
 JOIN tb_peserta c ON a.id_peserta=c.id 
@@ -123,9 +131,12 @@ while ($d = mysqli_fetch_assoc($q)) {
   $nama_peserta = ucwords(strtolower($d['nama_peserta']));
   $kelas_show = str_replace("~$ta", '', $d['kelas']);
 
+  $war_image = $d['war_image'] ?? $d['image'];
+  $src = "$lokasi_profil/$war_image";
+
   $divs_belum .= "
     <div class='wadah gradasi-hijau tengah wadah-peserta'>
-      <img src='$lokasi_profil/wars/peserta-$d[id_peserta].jpg' class=foto_profil>
+      <img src='$src' class=foto_profil>
       <div class='f14 darkblue'>$nama_peserta</div> 
       <div class='f12 abu'>$kelas_show</div>
       <div class='icon-aksi'>$icon_wa_red</div>

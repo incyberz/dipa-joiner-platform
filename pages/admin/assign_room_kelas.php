@@ -2,6 +2,19 @@
 if (!$id_room) die(erid('id_room'));
 instruktur_only();
 
+$get_ta = $_GET['ta'] ?? $ta;
+
+$s = "SELECT ta FROM tb_ta";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+$nav_ta = '';
+while ($d = mysqli_fetch_assoc($q)) {
+  $current = $d['ta'] == $get_ta ? 'blue bold' : '';
+  $slash = $nav_ta ? ' | ' : '';
+  $nav_ta .= "$slash<a href='?assign_room_kelas&ta=$d[ta]'><span class='$current'>$d[ta]</span></a>";
+}
+
+
+set_h2("Assign Room Kelas", "$nav_ta");
 // $room['status'] = 5;
 // $status_room = 5;
 // include "$lokasi_pages/aktivasi_room.php";
@@ -51,27 +64,17 @@ while ($d = mysqli_fetch_assoc($q)) {
 }
 
 ?>
-<h1>Assign Room Kelas</h1>
-<div class="flexy">
-  <div class="wadah">
-    Kelas
-  </div>
-  <div class="wadah">--></div>
-  <div class="wadah">
-    Room
-  </div>
-</div>
 
 <table>
   <tr>
     <td valign=top>
       <div class="wadah">
-        <div class="mb2">Available Grup Kelas pada TA <?= $ta ?> : </div>
+        <div class="mb2">Available Grup Kelas pada TA <?= $get_ta ?> : </div>
         <form method=post>
           <ol>
             <?php
 
-            $s = "SELECT * FROM tb_kelas WHERE tahun_ajar=$ta ORDER BY status DESC,fakultas,semester,prodi,shift";
+            $s = "SELECT * FROM tb_kelas WHERE tahun_ajar=$get_ta ORDER BY status DESC,fakultas,semester,prodi,shift";
             $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
             while ($d = mysqli_fetch_assoc($q)) {

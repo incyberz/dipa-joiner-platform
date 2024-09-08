@@ -59,6 +59,8 @@ $s = "SELECT
 a.id as id_peserta,
 a.nama as nama_peserta,
 a.username,
+a.image,
+a.war_image,
 b.kelas,
 (SELECT COUNT(1) FROM tb_war WHERE id_penjawab=a.id) play_count, 
 (SELECT COUNT(1) FROM tb_soal_peserta WHERE id_pembuat=a.id) soal_count 
@@ -101,7 +103,10 @@ while ($d = mysqli_fetch_assoc($q)) {
 
   $warcounts = $d['play_count'] + $d['soal_count'];
 
-  $img = $id_role == 1 ? '' : "<img src='$lokasi_profil/wars/peserta-$d[id_peserta].jpg' class='profil_pembuat' style='display:inline-block;margin-right:10px'> ";
+  $war_image = $d['war_image'] ?? $d['image'];
+  $src = "$lokasi_profil/$war_image";
+
+  $img = $id_role == 1 ? '' : "<img src='$src' class='profil_pembuat' style='display:inline-block;margin-right:10px'> ";
 
   $goods .= "
     $div_header
