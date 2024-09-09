@@ -73,6 +73,39 @@ if (!$room['total_kelas']) {
 }
 
 # ============================================================
+# SESI AKTIF ATAU SESI PERTAMA VALIDATION
+# ============================================================
+$s = "SELECT * FROM tb_sesi WHERE awal_presensi >= '$now' AND akhir_presensi < '$now' AND id_room=$id_room";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+$sesi_aktif = [];
+$sesi_pertama = [];
+if (!mysqli_num_rows($q)) {
+  # ============================================================
+  # COBA SESI PERTAMA JIKA TIDAK ADA SESI AKTIF
+  # ============================================================
+  $s = "SELECT * FROM tb_sesi WHERE no=1 AND id_room=$id_room";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  $sesi_pertama = mysqli_fetch_assoc($q);
+} else {
+  if (mysqli_num_rows($q) > 1) die(div_alert('danger', 'Terdapat multiple sesi dalam satu pekan.'));
+  $sesi_aktif = mysqli_fetch_assoc($q);
+}
+$id_sesi_aktif = $sesi_aktif ? $sesi_aktif['id'] : $sesi_pertama['id'];
+
+// echo '<pre>';
+// var_dump($sesi_aktif);
+// echo '</pre>';
+
+// echo '<pre>';
+// var_dump($sesi_pertama);
+// echo '</pre>';
+
+// echo '<pre>';
+// var_dump($id_sesi_aktif);
+// echo '</pre>';
+
+
+# ============================================================
 # EXTRACT ROOM DATA
 # ============================================================
 $singkatan_room = $room['singkatan'];
@@ -158,6 +191,7 @@ if (!$id_room_kelas) {
 # ============================================================
 # VALIDATIONS PASSED
 # ============================================================
+
 
 # ========================================================
 # DATA INSTRUKTUR
@@ -292,13 +326,12 @@ if (mysqli_num_rows($q)) {
   $poin_challenge = $my_poin['poin_challenge'];
   $akumulasi_poin = $my_poin['akumulasi_poin'];
 
-  $my_poins = $akumulasi_poin;
+  $my_points = $akumulasi_poin;
   $my_poins_show = number_format($akumulasi_poin, 0);
 
   $nilai_akhir = $my_poin['nilai_akhir'];
   $nilai_akhir = $nilai_akhir > 100 ? 100 : $nilai_akhir;
 
-  if ($nilai_akhir > 100) die('Invalid nilai akhir at room_vars');
   $hm = $nilai_akhir ? hm($nilai_akhir) : 'B';
 
   $th = $rank_kelas ? th($rank_kelas) : '?';
@@ -333,7 +366,6 @@ $s = "SELECT
   WHERE q.tahun_ajar=$ta 
   AND r.id_role = $id_role 
   AND r.status = 1 
-  AND r.nama NOT LIKE '%dummy%' 
   AND q.kelas='$kelas') total_peserta_kelas 
 
 FROM tb_peserta a 
@@ -346,23 +378,3 @@ $d = mysqli_fetch_assoc($q);
 $sudah_polling_uts = $d['sudah_polling_uts'];
 $sudah_polling_uas = $d['sudah_polling_uas'];
 $total_peserta_kelas = $d['total_peserta_kelas'];
-
-
-# ============================================================
-# SESI AKTIF ATAU SESI PERTAMA YANG AKAN DATANG 
-# ============================================================
-$s = "SELECT * FROM tb_sesi WHERE awal_presensi >= '$now' AND akhir_presensi < '$now' AND id_room=$id_room";
-$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$sesi_aktif = [];
-$sesi_pertama = [];
-if (!mysqli_num_rows($q)) {
-  # ============================================================
-  # COBA SESI PERTAMA JIKA TIDAK ADA SESI AKTIF
-  # ============================================================
-  $s = "SELECT * FROM tb_sesi WHERE no=1 AND id_room=$id_room";
-  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  $sesi_pertama = mysqli_fetch_assoc($q);
-} else {
-  if (mysqli_num_rows($q) > 1) die(div_alert('danger', 'Terdapat multiple sesi dalam satu pekan.'));
-  $sesi_aktif = mysqli_fetch_assoc($q);
-}

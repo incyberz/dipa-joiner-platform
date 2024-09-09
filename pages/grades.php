@@ -106,7 +106,6 @@ if ($selisih >= 600 and $id_role != 3 and $is_login) {
   WHERE a.status = 1 
   AND a.id_role = 1 
   AND c.status = 1 
-  AND a.nama NOT LIKE '%dummy%' 
   AND d.id_room=$id_room 
   ";
 
@@ -190,7 +189,6 @@ AND a.id_room=$id_room
 AND b.status = 1 
 AND d.status = 1 
 AND e.id_room=$id_room 
-AND d.nama NOT LIKE '%dummy%'
 ORDER BY e.akumulasi_poin DESC $limit";
 if ($dm) echo "<pre>$s</pre>";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));

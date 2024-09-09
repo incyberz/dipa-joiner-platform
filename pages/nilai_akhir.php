@@ -225,7 +225,6 @@ c.*,
   WHERE q.tahun_ajar=$ta 
   AND s.id_role = 1 
   AND s.status = 1 
-  AND s.nama NOT LIKE '%dummy%' 
   AND p.id_room=$id_room) total_peserta,
 (
   SELECT count(1) FROM tb_kelas_peserta p  
@@ -234,7 +233,6 @@ c.*,
   WHERE q.tahun_ajar=$ta 
   AND r.id_role = 1 
   AND r.status = 1 
-  AND r.nama NOT LIKE '%dummy%' 
   AND q.kelas=c.kelas) total_peserta_kelas,
 
 -- ========================================
@@ -333,7 +331,6 @@ AND a.id_role=1 -- peserta only tidak GM
 AND $sql_id_peserta -- SWITCH VIEW PESERTA | GM
 AND c.tahun_ajar = $ta 
 AND d.id_room = $id_room 
-AND a.nama NOT LIKE '%dummy%' -- bukan peserta dummy 
 
 
 ORDER BY b.kelas, a.nama
@@ -511,15 +508,11 @@ while ($d = mysqli_fetch_assoc($q)) {
   $rkonversi['nilai_uas'] = $d['nilai_uas'] ?? $d['uas_manual'];
   $rkonversi['nilai_remed_uas'] = $d['nilai_remed_uas'];
   # =======================================================
-  # NILAI AKHIR BY LOOP CALCULATIONS
+  # NILAI AKHIR BY LOOP CALCULATIONS FOR EVERYONE
   # =======================================================
-  $nilai_akhir = 0;
-  foreach ($rbobot as $key => $value) $nilai_akhir += $rbobot[$key] * $rkonversi[$key];
-  $nilai_akhir = round($nilai_akhir, 0);
-  if ($nilai_akhir > 100) $nilai_akhir = 100;
-
   $td = '';
   $nilai_akhir = 0;
+  $bobot_penyesuaian = 0;
   foreach ($rbobot as $key => $value) {
     $kolom = str_replace('_', ' ', $key);
     if (strpos("salt$key", 'nilai_')) {
@@ -532,6 +525,12 @@ while ($d = mysqli_fetch_assoc($q)) {
     $nilai_akhir += $sub_nilai_akhir;
     $gradasi = $rbobot[$key] ?  gradasi($rkonversi[$key]) : '';
 
+    if ($key == 'nilai_uts' and !$room_count['sudah_uts']) {
+    } elseif ($key == 'nilai_uas' and !$room_count['sudah_uas']) {
+    } else {
+      $bobot_penyesuaian += $rbobot[$key];
+    }
+
     $td .= "
       <td class='gradasi-$gradasi'>
         <div class=hideit>$kolom:</div>
@@ -542,7 +541,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     ";
   }
   if ($nilai_akhir > 100) $nilai_akhir = 100;
-
+  $nilai_akhir = round($nilai_akhir * $total_bobot / $bobot_penyesuaian, 2);
 
 
 
@@ -657,62 +656,7 @@ if ($id_role == 2) {
     </div>
   ";
 } else {
-  $single_show = '';
-  $blok_kelas = '';
-  $nilai_akhir = 0;
-  foreach ($rbobot as $key => $value) {
-    $sub_nilai_akhir = round(($rkonversi[$key] * $rbobot[$key]) / 100, 2);
-    $nilai_akhir += $sub_nilai_akhir;
-    $abu = $rbobot[$key] ? '' : 'abu f10 miring';
-    $kolom = str_replace('_', ' ', $key);
-    $kolom = str_replace('uts', 'UTS', $kolom);
-    $kolom = str_replace('uas', 'UAS', $kolom);
-
-    $sub_nilai_akhir_sty = ($rbobot[$key] and !$sub_nilai_akhir) ? 'red' : 'darkblue';
-    $gradasi = $rbobot[$key] ?  gradasi($rkonversi[$key]) : '';
-
-    $single_show .= "
-      <div class='p2 $abu gradasi-$gradasi'>
-        <div class=row>
-          <div class='col-md-4 miring darkblue proper'>
-            <a href='$rlink[$key]'>$kolom</a>
-          </div>
-          <div class='col-md-3'>
-            $rvalue_of[$key]
-          </div>
-          <div class='col-md-3'>
-            $rkonversi[$key] <span class='kecil miring abu'>x $rbobot[$key]%</span>
-          </div>
-          <div class='col-md-2 kanan $sub_nilai_akhir_sty'>
-            $sub_nilai_akhir
-          </div>
-        </div>
-      </div>
-    ";
-  }
-
-  $nilai_akhir = $nilai_akhir > 100 ? 100 : $nilai_akhir;
-
-  $blok_kelas .= "
-    <div class=wadah>
-      <h3 class='darkblue mt3 mb3'>$nama_peserta <span class='miring abu kecil'>$kelas</span></h3>
-      $single_show
-      <div class='btop p2 gradasi-toska'>
-        <div class=row>
-          <div class='col-md-10 darkblue'>
-            Nilai Akhir
-          </div>
-          <div class='col-md-2 f30 blue kanan'>
-            $nilai_akhir
-          </div>
-        </div>
-      </div>
-    </div>
-  ";
-
-  // auto-save for self
-  $s = "UPDATE tb_poin SET nilai_akhir=$nilai_akhir WHERE id_peserta=$id_peserta AND id_room=$id_room";
-  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  include 'nilai_akhir-show_single.php';
 }
 
 

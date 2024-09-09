@@ -100,14 +100,14 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
                 <ul>
                   <li><a href='?pilih_room'>Pilih Room</a></li>
                   <li><a href='?list_sesi'>Learning Path</a></li>
+                  <li class=><a href='?presensi'>Presensi</a></li>
                   <li><a href='?peserta_kelas'>Peserta Kelas</a></li>
                   <li><a href='?activity&jenis=latihan'>Latihan</a></li>
                   <li><a href='?activity&jenis=challenge'>Challenges</a></li>
-                  <li class='hideit'><a href='?bertanya'>Bertanya</a></li>
-                  <li class='hideit'><a href='?my_questions'>Pertanyaan Saya</a></li>
+                  <li class=''><a href='?bertanya'>Bertanya</a></li>
+                  <li class=''><a href='?questions'>List Bertanya</a></li>
                   <li class='hideit'><a href='?chats'>Chats</a></li>
                   <li class=hideit><a href='?quiz'>Kuis PG</a></li>
-                  <li class=><a href='?presensi'>Presensi</a></li>
                   $li_manage_room
                 </ul>
               </li>

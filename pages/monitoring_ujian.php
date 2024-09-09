@@ -162,7 +162,6 @@ while ($d = mysqli_fetch_assoc($q)) {
   JOIN tb_room_kelas d ON c.kelas=d.kelas 
   WHERE 1 -- a.status=1  -- peserta aktif
   AND a.password is not null 
-  AND a.nama not like '%dummy%' 
   -- AND a.id_role=1 
   AND b.kelas='$d[kelas]' 
   AND c.status = 1 -- kelas aktif

@@ -19,7 +19,7 @@ $icon_gray = '<span class="br50 pointer" style="display:inline-block;width:20px;
 $get_kelas = $_GET['kelas'] ?? '';
 $nav_mode = "Table Mode | Show Profile | Mobile Mode";
 $nav_mode = ''; //zzz on develop
-set_h2('Rekap Presensi', $nav_mode);
+set_h2('Rekap Presensi', "<a href='?presensi'>$img_prev</a> $nav_mode");
 
 $param_awal = 'presensi_rekap';
 include 'navigasi_room_kelas.php';
@@ -40,7 +40,8 @@ a.nama as nama_sesi,
   SELECT count(1) FROM tb_sesi WHERE id=a.id 
   AND '$today' > awal_presensi) is_presensi_aktif 
 FROM tb_sesi a 
-WHERE a.id_room=$id_room";
+WHERE a.id_room=$id_room
+AND jenis=1";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $count_sesi_aktif = 0;
 if (!mysqli_num_rows($q)) {
@@ -63,6 +64,8 @@ $s = "SELECT
 a.id as id_kelas_peserta, 
 b.id as id_peserta, 
 b.nama as nama_peserta ,
+b.image,
+b.war_image,
 c.kelas,
 (
   SELECT id FROM tb_sesi 
@@ -79,7 +82,6 @@ AND b.status=1 -- peserta aktif
 AND b.id_role = 1  -- peserta only
 -- AND $sql_kelas 
 AND c.kelas = '$get_kelas'
-AND b.nama NOT LIKE '%DUMMY%' 
 ORDER BY c.shift, c.kelas, b.nama 
 ";
 // echo "<pre>$s</pre>";
@@ -87,7 +89,7 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
 $tr = '';
 if (!mysqli_num_rows($q)) {
-  // echo div_alert('danger', "Belum ada data peserta pada room ini.");
+  echo div_alert('danger', "Belum ada <a href='?peserta_kelas'>peserta pada kelas ini</a>.");
 } else {
 
   $table_tag = "<table class='table mt4'>";
@@ -97,7 +99,7 @@ if (!mysqli_num_rows($q)) {
   foreach ($rid_sesi as $no => $id_sesi) {
     $j++;
     $desktop_only_775 = $j < $count_sesi_aktif  ? 'desktop_only_775' : '';
-    $th_sesi .= "<th class=$desktop_only_775>P$no</th>";
+    $th_sesi .= "<th class=$desktop_only_775>P$j</th>";
   }
 
   $thead = "
@@ -114,6 +116,7 @@ if (!mysqli_num_rows($q)) {
   while ($d = mysqli_fetch_assoc($q)) {
     $id_kelas_peserta = $d['id_kelas_peserta'];
     $nama = ucwords(strtolower($d['nama_peserta']));
+    $d['war_image'] = $d['war_image'] ? $d['war_image'] : $d['image'];
 
     $s2 = "SELECT id as id_sesi,
     (
@@ -144,7 +147,6 @@ if (!mysqli_num_rows($q)) {
       $desktop_only_775 = $j < $count_sesi_aktif  ? 'desktop_only_775' : '';
       $td_presensi .= "<td class='$desktop_only_775'>$icon_hadir</td>";
     }
-
 
     # ==============================================================
     # FINAL OUTPUT :: SHOW IMAGE OR COMPACT
@@ -201,6 +203,7 @@ if (!mysqli_num_rows($q)) {
 
     $last_kelas = $d['kelas'];
   } // end while list peserta
+
 
   echo "
       $tr

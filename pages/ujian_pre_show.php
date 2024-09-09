@@ -31,7 +31,7 @@ $sql_kelas = $id_role == 2 ? '1' : "d.kelas='$kelas'";
 $s = "SELECT 
 a.*,
 b.nama as pembuat,
--- c.nama as nama_sesi,
+c.nama as nama_sesi,
 d.awal_ujian,
 (
   SELECT COUNT(1) FROM tb_jawabans p 
@@ -42,7 +42,7 @@ d.awal_ujian,
   SELECT COUNT(1) FROM tb_assign_soal WHERE id_paket=a.id)  jumlah_soal  
 FROM tb_paket a 
 JOIN tb_peserta b ON a.id_pembuat=b.id  
--- JOIN tb kode sesi c ON a.kode sesi=c.kode sesi 
+JOIN tb_sesi c ON a.id_sesi=c.id 
 JOIN tb_paket_kelas d ON a.id=d.id_paket   
 WHERE a.id=$id_paket 
 AND $sql_kelas";
@@ -207,7 +207,7 @@ $debug .= "<br>start:<span id=start>$start</span>";
 
 if ($selisih_hari >= 2) {
   $img = "<div class=tengah style='max-width:300px; margin:auto'><img class='img-fluid' src='assets/img/are-you-ready.png' /></div>";
-  $coming_soon = "$img<h3 class=darkblue>Comming Soon !! In $selisih_hari days.</h3>";
+  $coming_soon = "$img<h3 class=darkblue>Comming Soon !! <br>In $selisih_hari days.</h3>";
 } else if ($selisih_hari == 1) {
   $img = "<div class=tengah style='max-width:300px; margin:auto'><img class='img-fluid' src='assets/img/are-you-ready.png' /></div>";
   $coming_soon = $img . '<h1 class=darkred>Ingat! Besok Ujian</h1>';
@@ -222,7 +222,7 @@ if ($selisih > 0) { //belum mulai
     <h2>$coming_soon</h2>
     Ujian akan diselenggarakan dalam:
     <div> 
-      <div class='consolas darkblue' style='font-size:50px;' id=detik_lagi>00:00:00:00</div>
+      <div class='consolas darkblue' style='font-size:40px;' id=detik_lagi>00:00:00:00</div>
       <div class='darkblue hideit' style='margin-top: -10px'>detik lagi</div>
     </div>
   ";

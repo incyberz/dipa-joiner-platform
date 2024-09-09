@@ -1,132 +1,135 @@
 <?php
 $pertanyaan = '';
-if (isset($_POST['btn_submit'])) {
-  $pertanyaan = $_POST['pertanyaan'] ?? '';
-  $s = "INSERT INTO tb_bertanya (id_sesi,id_penanya,pertanyaan,tags) values ('$_POST[id_sesi]','$_POST[id_penanya]','$_POST[pertanyaan]','$_POST[input_tags]')";
+if (isset($_POST['btn_posting_pertanyaan'])) {
+  $pertanyaan = $_POST['pertanyaan'];
+  if (strlen($pertanyaan) < 50) {
+
+    echo 'Panjang pertanyaan kurang dari 50 huruf. Silahkan coba lagi!';
+    jsurl('', 5000);
+  }
+  $pertanyaan = addslashes($pertanyaan);
+  $s = "INSERT INTO tb_bertanya (
+    id_sesi,
+    id_room_kelas,
+    id_penanya,
+    pertanyaan,
+    tags
+  ) values (
+    '$_POST[id_sesi]',
+    $id_room_kelas,
+    '$_POST[id_penanya]',
+    '$pertanyaan',
+    '$_POST[input_tags]'
+  )";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   echo div_alert('success', 'Submit pertanyaan sukses.');
   echo '<script>location.replace("?my_questions")</script>';
   exit;
 }
 
-
-// max 3 pertanyaan per hari
-$today = date('Y-m-d');
-$today_end = date('Y-m-d') . ' 23:59:59';
-$s = "SELECT 1 FROM tb_bertanya WHERE id_penanya=$id_peserta AND tanggal >= '$today' AND tanggal < '$today_end' ";
-$qp = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$jumlah_pertanyaan_hari_ini = mysqli_num_rows($qp);
-
-$max_reached = $jumlah_pertanyaan_hari_ini >= 3
-  ? ' <span class="darkred miring">Kamu dapat mengajukan kembali pertanyaan esok hari.</span>'
-  : ' Kamu masih boleh mengajukan ' . (3 - $jumlah_pertanyaan_hari_ini) . ' pertanyaan lagi.';
-
-$jp_info = $jumlah_pertanyaan_hari_ini
-  ? "Kamu sudah mengajukan $jumlah_pertanyaan_hari_ini pertanyaan hari ini.$max_reached"
-  : 'Hari ini kamu belum bertanya. Yuk bertanya agar mendapat poin, ilmu, dan wawasan!';
-
-
-$id_sesi = $_GET['id_sesi'] ?? '';
-$info_sesi = '';
-if ($id_sesi == '') {
-  include 'include/arr_sesi.php';
-  $pilih_sesi = '';
-  foreach ($arr_sesi as $key => $sesi) {
-    $tags = $arr_tags[$key];
-    $r = explode(';', $tags);
-    sort($r);
-    $imp = $tags == '' ? '<span class=red>belum bisa mengajukan pertanyaan karena belum ada tags sesi.</span>' : implode(', ', $r);
-    $tags_show = "<div class='kecil miring abu'>Tags: $imp</div>";
-    $danger = $tags == '' ? 'danger' : 'success';
-    $href = $tags == ''
-      ? "'#' onclick='alert(\"Maaf, belum bisa mengajukan pertanyaan pada sesi ini karena instuktur belum setting tags untuk sesi ini.\")'"
-      : "'?bertanya&id_sesi=$key'";
-    $pilih_sesi .= "<a class='btn btn-$danger btn-sm mb1' href=$href>$sesi</a>$tags_show<br>";
-  }
-
-  $info_sesi = "
-    <div class=mb2>Saya ingin bertanya tentang:</div>
-    $pilih_sesi
-  ";
-  $form = '';
+# ============================================================
+# IS SEDANG BERTANYA
+# ============================================================
+$s = "SELECT 1 FROM tb_bertanya WHERE id_penanya=$id_peserta AND verif_date is null";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+$sedang_bertanya = mysqli_num_rows($q);
+if ($sedang_bertanya) {
+  $info_sesi = '';
+  $form = div_alert('info', "Maaf, pertanyaan kamu belum dijawab atau belum diverifikasi oleh instruktur. Mohon bersabar hingga pertanyaan kamu dibahas!<hr><a class='btn btn-sm btn-primary' href='?questions'>List Bertanya</a>");
 } else {
-  $s = "SELECT * FROM tb_sesi WHERE id=$id_sesi ";
-  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  if (mysqli_num_rows($q) == 0) die(erid('id_sesi (not found)'));
-  $d = mysqli_fetch_assoc($q);
-  $tags = $d['tags'];
-  $nama_sesi = $d['nama'];
-  $no_sesi = $d['no'];
-  $info_sesi = "
-    <div>Saya ingin bertanya tentang: <code>$nama_sesi</code> | <a href='?bertanya'>pilih topik lain</a></div>
-  ";
+  $id_sesi = $_GET['id_sesi'] ?? '';
+  $info_sesi = '';
+  if ($id_sesi == '') {
+    $pilih_sesi = '';
+    $s = "SELECT id,tags,nama,no FROM tb_sesi WHERE jenis=1 AND id_room=$id_room order by no";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    $i = 0;
+    while ($d = mysqli_fetch_assoc($q)) {
+      $i++;
+      $r = explode(';', $d['tags']);
+      sort($r);
+      $imp = $d['tags'] == '' ? '<span class=red>belum bisa mengajukan pertanyaan karena belum ada tags sesi.</span>' : implode(', ', $r);
+      $tags_show = "<div class='kecil miring abu'>$imp</div>";
+      $danger = $d['tags'] == '' ? 'danger' : 'success';
+      $href = $d['tags'] == ''
+        ? "'#' onclick='alert(\"Maaf, belum bisa mengajukan pertanyaan pada sesi ini karena instuktur belum setting tags untuk sesi ini.\")'"
+        : "'?bertanya&id_sesi=$d[id]'";
+      $pilih_sesi .= "<div class=wadah><a class='btn btn-$danger btn-sm mb1' href=$href>P$i $d[nama]</a>$tags_show</div>";
+    }
 
-  $form = "
-    <form method=post>
-      <input class=debug name=id_penanya value=$id_peserta>
-      <input class=debug name=id_sesi value=$id_sesi>
-      <input class=debug name=input_tags id=input_tags value=input_tags>
-      <div class=form-group>
-        <label for=pertanyaan>Pertanyaan saya:</label>
-        <textarea name=pertanyaan id=pertanyaan class=form-control rows=6>$pertanyaan</textarea>
-        <div class='small miring abu mt1' id=blok_info_tags>Pertanyaan kamu harus mengandung salah satu tags berikut: <span id=tags class=darkred>$tags</span>.</div>
-        <div class='small miring abu mt1 hideit' id=blok_my_tags>tags: <span id=my_tags class='tebal biru kecil'>my_tags</span></div>
-        <div class='red kecil miring' id=length_info></div>
+    $info_sesi = "
+      <div class=mb2>Saya ingin bertanya tentang:</div>
+      $pilih_sesi
+    ";
+    $form = '';
+  } else {
+    $s = "SELECT * FROM tb_sesi WHERE id=$id_sesi ";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    if (mysqli_num_rows($q) == 0) die(erid('id_sesi (not found)'));
+    $d = mysqli_fetch_assoc($q);
+    $tags = $d['tags'];
+    $nama_sesi = $d['nama'];
+    $no_sesi = $d['no'];
+    $img_refresh = img_icon('refresh');
+    $info_sesi = "
+      <div class='border-bottom mb2 pb2'>
+        <div class='abu f12 mb1'>Topik:</div> 
+        <div class='mb2'>$nama_sesi</div> 
+        <a href='?bertanya'>$img_refresh</a>
       </div>
+    ";
 
-      <div id=saya_menyatakan class='hideit mt2'>
-        <div class='kecil abu miring wadah'>
-          estimasi point: 
-          <ul>
-            <li>basic point: 100 LP</li>
-            <li>session point: 200 LP (jika diajukan saat sesi berlangsung)</li>
-            <li>bobot soal point: -300 s.d 500 LP (saat diverifikasi oleh instruktur)</li>
-          </ul>
-        </div>
-
+    $form = "
+      <form method=post>
+        <input class=debug name=id_penanya value=$id_peserta>
+        <input class=debug name=id_sesi value=$id_sesi>
+        <input class=debug name=input_tags id=input_tags value=input_tags>
         <div class=form-group>
-          <label>Saya menyatakan bahwa:</label>
-          <div class=wadah>
-            <label><input class='cek_syarat' type=checkbox id=cek1> Pertanyaan saya tidak asal-asalan</label>
-            <br><label><input class='cek_syarat' type=checkbox id=cek2> Pertanyaan saya sesuai dg topik sesi yang saya pilih</label>
+          <label for=pertanyaan>Pertanyaan saya:</label>
+          <textarea name=pertanyaan id=pertanyaan class='form-control mt2' rows=6>$pertanyaan</textarea>
+          <div class='small miring abu mt2 mb1' id=blok_info_tags>
+            Referensi tags: 
+            <div id=tags class=biru>$tags</div>
+            <div class='red bold mt2'>Pertanyaan kamu wajib mengandung salah satu tag diatas.</div>
+          </div>
+          <div class='small miring abu mt1 hideit' id=blok_my_tags>tags: <span id=my_tags class='tebal biru kecil'>my_tags</span></div>
+          <div class='red bold miring' id=length_info></div>
+        </div>
+  
+        <div id=saya_menyatakan class='hideit mt2'>
+          <div class='kecil abu miring wadah'>
+            estimasi point: 
+            <div class='darkblue bold f18'>-200 s.d 5.000 LP</div>
+          </div>
+  
+          <div class='form-group f14 left mb4'>
+            <label>Saya menyatakan bahwa:</label>
+            <div class=''>
+              <label><input class='cek_syarat' type=checkbox id=cek1> Pertanyaan saya tidak asal-asalan</label>
+              <br><label><input class='cek_syarat' type=checkbox id=cek2> Pertanyaan sudah sesuai dg topik</label>
+            </div>
+          </div>
+  
+          <div class=form-group>
+            <button name=btn_posting_pertanyaan id=btn_posting_pertanyaan class='btn btn-primary btn-block' disabled>Posting Pertanyaan</button>
           </div>
         </div>
-
-        <div class=form-group>
-          <button name=btn_submit id=btn_submit class='btn btn-primary btn-block' disabled>Submit</button>
-        </div>
-      </div>
-
-    </form>
-  ";
+  
+      </form>
+    ";
+  }
 }
 
 
-$jp_info = ''; //zzz suspend fitur
-$info_sesi = ''; //zzz suspend fitur
-$form = ''; //zzz suspend fitur
-?>
+set_h2('Bertanya', '<span class="green f12">Malu bertanya, sesat IPK :)</span>');
 
-<div class="section-title" data-aos="fade-up">
-  <h2>Bertanya</h2>
-  <p>Kamu boleh bertanya kapan saja, setiap pertanyaan berbobot akan mendapatkan poin. Double poin jika kamu bertanya pada saat sesi berlangsung atau instruktur sedang menerangkan!</p>
-</div>
-
-<div class="wadah gradasi-hijau" data-aos='fade-up'>
-  <div style='padding-bottom: 10px; margin-bottom: 10px; border-bottom: solid 1px #ccc; color: darkblue'>
-    <?= $jp_info ?>
-    <div class="alert alert-danger tengah">
-      Maaf, fitur ini di suspend dikarenakan sulitnya dalam proses verifikasi. | Fitur dialihkan ke <a href="?tanam_soal">Tanam Soal</a>
-      <hr>
-      <?= meme('funny') ?>
-
-    </div>
+echo "
+  <div class='wadah gradasi-hijau tengah' data-aos='fade'>
+    $info_sesi
+    $form
   </div>
-
-  <?= $info_sesi ?>
-  <?= $form ?>
-
-</div>
+";
+?>
 
 
 
@@ -189,7 +192,7 @@ $form = ''; //zzz suspend fitur
 
       let dis = cek1 && cek2 ? true : false;
 
-      $('#btn_submit').prop('disabled', !(cek1 && cek2));
+      $('#btn_posting_pertanyaan').prop('disabled', !(cek1 && cek2));
       console.log(cek1, cek2, dis);
     })
   })

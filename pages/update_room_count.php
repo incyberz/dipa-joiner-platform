@@ -2,6 +2,7 @@
 # ============================================================
 # SELECT ID_ROOM_KELAS NON INSTRUKTUR
 # ============================================================
+if (!$id_sesi_aktif) die('$id_sesi_aktif undefined.');
 $s = "SELECT *,a.id as id_room_kelas_peserta ,
 (
   SELECT COUNT(1) 
@@ -14,7 +15,16 @@ $s = "SELECT *,a.id as id_room_kelas_peserta ,
 (
   SELECT COUNT(1) 
   FROM tb_presensi p 
-  WHERE p.id_sesi=$id_sesi_aktif) count_presenter
+  JOIN tb_peserta q ON p.id_peserta=q.id -- hanya peserta di room kelas TA sekarang 
+  JOIN tb_kelas_peserta r ON q.id=r.id_peserta 
+  JOIN tb_kelas s ON r.kelas=s.kelas 
+  JOIN tb_room_kelas t ON s.kelas=t.kelas 
+
+  WHERE p.id_sesi=$id_sesi_aktif 
+  AND t.ta = $ta 
+  AND q.id_role = 1 -- hanya peserta
+  AND q.status = 1 -- hanya peserta aktif
+  ) count_presenter
 FROM tb_room_kelas a 
 WHERE a.id_room=$id_room AND a.kelas != 'INSTRUKTUR'";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -24,9 +34,6 @@ while ($d = mysqli_fetch_assoc($q)) {
   $satu_id_room_kelas_peserta = $d['id_room_kelas_peserta'];
   $arr_count_peserta_kelas .= "$d[kelas]=$d[count_presenter]=$d[count_peserta_kelas];";
 }
-echo '<pre>';
-var_dump($arr_count_peserta_kelas);
-echo '</pre>';
 
 
 # ============================================================
@@ -39,9 +46,8 @@ while ($d = mysqli_fetch_assoc($q)) {
   if ($d['Field'] == 'id_room' || $d['Field'] == 'last_update') continue;
   array_push($koloms, $d['Field']);
 }
-echo '<pre>';
-var_dump($koloms);
-echo '</pre>';
+
+$and_sudah_ujian = "AND id_room=$id_room AND awal_presensi >= '$now' limit 1";
 
 $s = "SELECT 
 (
@@ -54,7 +60,6 @@ $s = "SELECT
   AND q.status=1 -- hanya kelas aktif
   AND s.status=1 -- hanya peserta aktif
   AND s.id_role=1 -- hanya peserta
-  AND s.nama NOT LIKE '%dummy%' 
   ) count_peserta,
 
 (
@@ -98,16 +103,16 @@ $s = "SELECT
   FROM tb_sesi   
   WHERE id_room=$id_room 
   AND jenis = 1 -- sesi normal
-  ) count_presensi
+  ) count_presensi,
+( SELECT 1 FROM tb_sesi WHERE jenis=2 $and_sudah_ujian) sudah_uts,
+( SELECT 1 FROM tb_sesi WHERE jenis=3 $and_sudah_ujian) sudah_uas
 
 ";
+
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $room_count = mysqli_fetch_assoc($q);
 
 $room_count['arr_count_peserta_kelas'] = $arr_count_peserta_kelas;
-echo '<pre>';
-var_dump($room_count);
-echo '</pre>';
 
 
 $pairs = '';
@@ -124,9 +129,5 @@ foreach ($koloms as $v) {
 
 
 $s = "UPDATE tb_room_count SET $pairs, last_update=CURRENT_TIMESTAMP WHERE id_room=$id_room";
-echo '<pre>';
-var_dump($s);
-echo '</pre>';
-
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 // exit;

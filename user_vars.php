@@ -46,6 +46,11 @@ $punya_biodata = $d_peserta['punya_biodata'];
 $nik = $d_peserta['nik'];
 $kelas_show = str_replace("~$ta", '', $kelas);
 $Sebagai = ucwords($sebagai);
+$image = $d_peserta['image'];
+
+$war_image = $d_peserta['war_image'];
+$war_image = $war_image ? $war_image : $image;
+
 
 # =========================================
 # AUTO INSERT BLANKO BIODATA

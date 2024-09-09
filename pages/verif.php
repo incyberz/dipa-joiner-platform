@@ -90,6 +90,8 @@ foreach ($rjenis as $key => $jenis) {
   d.id as id_peserta,
   d.nama as nama_peserta,
   d.folder_uploads,
+  d.image,
+  d.war_image,
   e.id as id_jenis,
   e.nama as nama_jenis,
   e.*,
@@ -246,6 +248,8 @@ foreach ($rjenis as $key => $jenis) {
         $img_approve = img_icon('check');
         $img_reject = img_icon('reject');
         $icon_peserta = img_icon('mhs');
+
+        $d['war_image'] = $d['war_image'] ? $d['war_image'] : $d['image'];
 
         $src_profil = "$lokasi_profil/$d[war_image]";
         $src_profil_hi = "$lokasi_profil/$d[image]";

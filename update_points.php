@@ -120,7 +120,7 @@ if ($harus_update_poin and $id_room_kelas) {
       AND verif_date is not null) poin_bertanya,
     (
       SELECT SUM(poin) 
-      FROM tb_bertanya_reply  
+      FROM tb_bertanya  
       WHERE id_penjawab=a.id 
       AND id_room_kelas = $id_room_kelas  
       AND verif_date is not null) poin_menjawab,

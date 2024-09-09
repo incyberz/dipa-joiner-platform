@@ -59,6 +59,7 @@ a.kalimat_soal,
 a.id_status,
 b.nama as pembuat_soal,  
 b.username as username_pembuat,
+b.war_image as war_image_pembuat,
 (SELECT status FROM tb_status_soal WHERE id=a.id_status) status_soal   
 
 FROM tb_soal_peserta a 
@@ -90,6 +91,7 @@ if ($jumlah_soal) {
     $id_pembuat = $d['id_pembuat'];
     $id_status = $d['id_status'] ?? 0;
     $jawaban = $d['jawaban'];
+    $war_image_pembuat = $d['war_image_pembuat'];
     $username_pembuat = $d['username_pembuat'];
 
     $durasi = $d['durasi'] ?? $durasi_default;

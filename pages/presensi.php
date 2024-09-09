@@ -326,7 +326,7 @@ while ($d = mysqli_fetch_assoc($q)) {
             $dikurangi = '';
             $primary = 'primary';
           } else { // boleh present, tidak telat, tapi belum dibuka
-            $saya_hadir = 'Belum dibuka';
+            $saya_hadir = 'Belum opening... mohon tunggu!';
             $dikurangi = '';
             $primary = 'secondary';
           }
@@ -427,8 +427,8 @@ while ($d = mysqli_fetch_assoc($q)) {
           <div><span class='abu miring'>Jadwal Tatap Muka:</span> $jadwal_kelas_show $form_jadwal_kelas_toggle</div>
           $form_jadwal_kelas
 
-          <div><span class='abu miring'>Pembukaan:</span> $awal_presensi_show</div>
-          <div class=mb1><span class='abu miring'>Penutupan:</span> $akhir_presensi_show $form_durasi_presensi_toggle</div>
+          <div><span class='abu miring'>Opening:</span> $awal_presensi_show</div>
+          <div class=mb1><span class='abu miring'>Closing:</span> $akhir_presensi_show $form_durasi_presensi_toggle</div>
           $form_durasi_presensi
           
         </div>

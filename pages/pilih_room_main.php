@@ -57,6 +57,7 @@ a.status as status_room,
 a.id as id_room,
 b.nama as creator,
 b.id as id_creator,
+b.war_image as war_image_creator,
 ($sub_sql_my_room) my_room 
 
 FROM tb_room a 

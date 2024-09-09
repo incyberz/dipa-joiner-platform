@@ -49,6 +49,8 @@ $s = "SELECT a.*,
 a.id as id_perang,
 b.username as penjawab,
 c.id_status as id_status_soal,
+b.war_image as war_image_penjawab,
+e.war_image as war_image_pembuat,
 (SELECT username FROM tb_peserta WHERE id=a.id_pembuat) pembuat,   
 (
   SELECT p.kelas FROM tb_kelas_peserta p 
@@ -62,6 +64,7 @@ FROM tb_war a
 JOIN tb_peserta b ON a.id_penjawab=b.id 
 JOIN tb_soal_peserta c ON a.id_soal=c.id 
 JOIN tb_kelas_peserta d ON b.id=d.id_peserta 
+JOIN tb_peserta e ON a.id_pembuat=e.id 
 
 WHERE $sql_my_wars 
 AND $sql_kelas 
@@ -103,7 +106,7 @@ if (!mysqli_num_rows($q)) {
       $cermin = 'cermin';
     }
 
-    $profil2 = "$lokasi_profil/$war_image_pembuat";
+    $profil2 = "$lokasi_profil/$d[war_image_pembuat]";
     if (file_exists($profil2)) {
       $profil2 = "<img class=profil_penjawab src='$profil2' />";
     } else {
@@ -115,7 +118,7 @@ if (!mysqli_num_rows($q)) {
 
     $img_guns = "<img src='assets/img/gun/wp$r.png' style='max-width:70px' class='$cermin pt4'  />";
 
-    $src_profil_penjawab = "$lokasi_profil/$war_image_penjawab";
+    $src_profil_penjawab = "$lokasi_profil/$d[war_image_penjawab]";
     $profil_penjawab = "<img class=profil_penjawab src='$src_profil_penjawab' />";
     if (!file_exists($src_profil_penjawab)) $profil_penjawab = $no_war_profil;
 

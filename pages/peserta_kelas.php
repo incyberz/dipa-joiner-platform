@@ -68,7 +68,6 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
   AND b.status=1 
   AND b.tahun_ajar=$ta 
   AND d.status=1 
-  -- AND d.nama NOT LIKE '%dummy%'
   ORDER BY b.shift, b.prodi,d.nama";
 
   $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));

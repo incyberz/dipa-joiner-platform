@@ -21,6 +21,7 @@ function img_icon($nama, $w = 20, $h = 20)
   }
 }
 
+$img_check = img_icon('check');
 $img_edit = img_icon('edit');
 $img_add = img_icon('add', 22, 20);
 $img_detail = img_icon('detail');
