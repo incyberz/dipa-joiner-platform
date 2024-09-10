@@ -1,4 +1,4 @@
-<?php 
+<?php
 $a = $_SERVER['REQUEST_URI'];
 ?>
 <h1 class="merah tebal">404</h1>
@@ -8,5 +8,4 @@ $a = $_SERVER['REQUEST_URI'];
 <p>Jangan khawatir, sistem telah mencatatnya... :)</p>
 <hr>
 
-Broken-Link: <i><?=$a?></i> has been saved at <?=date("Y-m-d H:i:s")?>. Programmer will be soon fixed it!
-<!-- <hr><?=$link_back?>  -->
+Broken-Link: <i><?= $a ?></i> has been saved at <?= date("Y-m-d H:i:s") ?>. Programmer will be soon fixed it!

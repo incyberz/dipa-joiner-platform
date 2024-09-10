@@ -3,9 +3,11 @@
 # INFO TAHUN AJAR DAN PEKAN
 # ============================================================
 $ta_show = tahun_ajar_show($ta);
+$awal = date('M-Y', strtotime($ta_awal));
+$akhir = date('M-Y', strtotime($ta_akhir));
 echo div_alert('info tengah', "
   Tahun Ajar Aktif $ta_show
-  <div class='abu miring'>Februari - Juli 2024</div>
+  <div class='abu miring'>$awal - $akhir</div>
 ");
 
 
@@ -14,42 +16,13 @@ echo div_alert('info tengah', "
 # ============================================================
 include 'dashboard-instruktur-info_pekan.php';
 include 'dashboard-instruktur-info_presensi.php';
+include 'dashboard-instruktur-info_bertanya.php';
+include 'dashboard-instruktur-info_latihan.php';
+include 'dashboard-instruktur-info_challenge.php';
+include 'dashboard-instruktur-info_image_peserta.php';
+include 'dashboard-instruktur-info_war_image.php';
 
-
-# ============================================================
-# JADWAL SESI
-# ============================================================
-echo div_alert('success tengah', "
-  <div>23 dari 23 pertanyaan terjawab</div>
-  <div class='f12 abu mb1'>Belum ada lagi Peserta Yang Bertanya</div>
-  <div>$img_check</div>
-");
-
-# ============================================================
-# VERIFICATION - LATIHAN/CHALLENGE
-# ============================================================
-echo div_alert('warning tengah', "
-  <div class=mb1>Ada <span class='darkred f20'>12</span> Latihan/Challenge yang harus Anda verifikasi</div>
-  <div>$img_next</div>
-
-");
-
-# ============================================================
-# VERIFICATION - IMAGE PROFILE
-# ============================================================
-echo div_alert('success tengah', "
-  <div>78 profil dari 93 peserta</div>
-  <div class='f12 abu mb1'>Tidak ada Profil Image Peserta yang harus Anda verifikasi</div>
-  <div>$img_check</div>
-");
-
-# ============================================================
-# VERIFICATION - IMAGE PROFILE
-# ============================================================
-echo div_alert('success tengah', "
-  <div class='f12 abu mb1'>Tidak ada Request Reset Password dari peserta</div>
-  <div>$img_check</div>
-");
+echo "<a class='block tengah f14 text-hover-bold' href='?update_room_count'>Update Dashboard</a>";
 
 # ============================================================
 # PENILAIAN

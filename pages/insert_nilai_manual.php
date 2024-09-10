@@ -22,7 +22,7 @@ include 'insert_nilai_manual_styles.php';
 set_h2('Insert Nilai Manual', "
   Form ini digunakan untuk memasukan Nilai $PEKAN secara manual. | 
   <a href='?insert_nilai_manual&pekan=$not_pekan'>Insert Nilai $NOT_PEKAN</a>
-  <span class='hideit debug' id=pekan>$pekan</span>
+  <span class='hideit' id=pekan>$pekan</span>
 ");
 
 

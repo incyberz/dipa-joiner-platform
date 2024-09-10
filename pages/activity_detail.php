@@ -24,9 +24,13 @@ b.no as no_sesi,
 (
   SELECT COUNT(1) FROM tb_bukti_$jenis p 
   JOIN tb_assign_$jenis q ON p.id_assign_$jenis=q.id   
-  JOIN tb_peserta r ON p.id_peserta=r.id
+  JOIN tb_peserta r ON p.id_peserta=r.id 
+  JOIN tb_room_kelas s ON q.id_room_kelas=s.id 
   WHERE q.id_$jenis=a.id_$jenis
-  AND r.id_role=1) count_submiter 
+  AND r.id_role=1 
+  AND s.ta = $ta 
+
+  ) count_submiter 
 
 FROM tb_assign_$jenis a 
 JOIN tb_sesi b ON a.id_sesi=b.id 
@@ -333,7 +337,7 @@ $ontime_deadline_show = eta(strtotime($tanggal_assign) - strtotime('now') + $d_a
 # ============================================================
 # PERSEN SUBMITER
 # ============================================================
-$persen_peserta = round($count_submiter * 100 / $total_peserta, 1);
+$persen_peserta = !$total_peserta ? 0 : round($count_submiter * 100 / $total_peserta, 1);
 
 
 $admin_hint = $id_role == 2 ? " | <a href='#manage_$jenis'><span class=' darkblue'>Update $jenis Properties</span>.</a>" : '';

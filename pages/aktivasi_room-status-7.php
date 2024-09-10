@@ -15,8 +15,14 @@ if (isset($_POST['btn_reset_jadwal_kelas'])) {
 
 
 $s = "SELECT 1 FROM tb_sesi_kelas a 
-JOIN tb_sesi b ON a.id_sesi=b.id
-WHERE b.id_room=$id_room";
+JOIN tb_sesi b ON a.id_sesi=b.id 
+JOIN tb_kelas c ON a.kelas=c.kelas 
+JOIN tb_room_kelas d ON c.kelas=d.kelas 
+
+WHERE b.id_room=$id_room 
+AND d.id_room=$id_room 
+AND d.ta = $ta 
+";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $num_rows = mysqli_num_rows($q);
 if ($num_rows) {

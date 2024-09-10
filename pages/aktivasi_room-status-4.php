@@ -71,6 +71,10 @@ if (!$room['awal_sesi']) {
       ],
     ];
 
+    echo '<pre>';
+    var_dump($arr);
+    echo '</pre>';
+
     foreach ($arr as $musim => $arr_musim) {
       $nama_musim = $arr_musim['caption'];
       $jumlah_sesi = $arr_musim['jumlah_sesi'];
@@ -122,7 +126,11 @@ if (!$room['awal_sesi']) {
         }
       } else {
         // tidak ada pra-$nama_musim
-        die(div_alert('danger', "Tidak sesi untuk $nama_musim"));
+        echo '<pre>';
+        var_dump($arr_musim);
+        echo '</pre>';
+        // die(div_alert('danger', "Tidak ada sesi untuk pekan $nama_musim"));
+        echo (div_alert('danger', "Tidak ada sesi untuk pekan $nama_musim, tambahkan nanti pada Menu Manage Learning Path setelah Aktivasi Room slesai."));
       }
     }
 

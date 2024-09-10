@@ -198,9 +198,11 @@ if (isset($_POST['btn_aktivasi'])) {
         } else {
           echolog('assigning kelas');
           $s = "INSERT INTO tb_room_kelas (
+            ta,
             id_room,
             kelas
           ) VALUES (
+            $ta,
             $id_room,
             '$kelas'
           )";
@@ -209,7 +211,7 @@ if (isset($_POST['btn_aktivasi'])) {
       }
 
       // drop not checked kelas
-      $s = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR'";
+      $s = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR' AND ta=$ta";
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       while ($d = mysqli_fetch_assoc($q)) {
         // $id=$d['id'];

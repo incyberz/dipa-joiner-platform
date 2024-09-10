@@ -9,7 +9,7 @@
 <?php
 # =================================================================
 instruktur_only();
-include 'include/date_managements.php';
+
 $img_ontime = img_icon('check');
 $img_late = img_icon('check_brown');
 $img_reject = img_icon('reject');

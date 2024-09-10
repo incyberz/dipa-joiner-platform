@@ -22,7 +22,6 @@ if ($online_version) {
   $db_pass = '';
   $db_name = 'db_dipa';
 
-  // if ($dm_db) $db_name = 'db_online_dipa_mei_2024';
   $db_name = 'db_online_dipa_sep_2024';
 }
 

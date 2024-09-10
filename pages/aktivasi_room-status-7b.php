@@ -17,7 +17,7 @@ function input_radio($name, $value = '', $caption = '', $id = '', $checked = '',
 # ============================================================
 # ROOM KELAS
 # ============================================================
-$s = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR'";
+$s = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR' AND ta=$ta";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $div = '';
 $arr = [];

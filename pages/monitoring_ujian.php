@@ -60,7 +60,7 @@ $img_check = '<img src=assets/img/icon/check.png height=25px />';
 # ============================================================
 if (isset($_POST['btn_hapus_jawaban_instruktur'])) {
   $paket_kelas = $id_paket . '__INSTRUKTUR';
-  $s = "DELETE FROM tb_jawabans WHERE id_paket_kelas='$paket_kelas' AND id_peserta=$_POST[btn_hapus_jawaban_instruktur]";
+  $s = "DELETE FROM tb_jawabans WHERE paket_kelas='$paket_kelas' AND id_peserta=$_POST[btn_hapus_jawaban_instruktur]";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   echolog('Hapus jawaban instruktur sukses.');
   jsurl();

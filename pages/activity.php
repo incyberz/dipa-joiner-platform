@@ -137,7 +137,7 @@ if ($id_role == 2) {
   }
 }
 
-echo "<div class=debug>
+echo "<div class=hideit>
   jenis: <span id=jenis>$jenis</span>
   id_assign: <span id=id_assign>$id_assign</span>
 </div>";

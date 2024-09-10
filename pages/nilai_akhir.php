@@ -1,49 +1,11 @@
-<style>
-  th {
-    background: linear-gradient(#cfc, #afa)
-  }
-</style>
 <?php
 login_only();
-include 'include/date_managements.php';
+
+include 'nilai_akhir-functions.php';
 $get_save = $_GET['save'] ?? '';
 $get_show_img = $_GET['show_img'] ?? '';
 
-function gradasi($nilai)
-{
-  if ($nilai) {
-    if ($nilai >= 85) {
-      return  'hijau';
-    } elseif ($nilai >= 70) {
-      return  'toska';
-    } elseif ($nilai >= 50) {
-      return  'kuning';
-    } else {
-      return  'merah';
-    }
-  } else {
-    if ($nilai == 0 || !$nilai) {
-      return 'merah';
-    } else {
-      return '';
-    }
-  }
-}
-function konversikan($count, $total)
-{
-  if ($total == 0) {
-    return 100;
-  } elseif ($count == 0) {
-    return 0;
-  } elseif ($count == 1 and $total == 1) {
-    return 100;
-  } elseif ($count == $total) {
-    return 100;
-  } else {
-    $hasil = round(50 + ($count - 1) * ((round($total * 8 / 10, 0) / $total) * (100 / $total)), 0);
-    return $hasil > 100 ? 100 : $hasil;
-  }
-}
+
 
 $judul = 'Nilai Akhir';
 set_title($judul);
@@ -523,7 +485,7 @@ while ($d = mysqli_fetch_assoc($q)) {
 
     $sub_nilai_akhir = round(($rkonversi[$key] * $rbobot[$key]) / 100, 2);
     $nilai_akhir += $sub_nilai_akhir;
-    $gradasi = $rbobot[$key] ?  gradasi($rkonversi[$key]) : '';
+    $gradasi = $rbobot[$key] ?  gradasi_nilai($rkonversi[$key]) : '';
 
     if ($key == 'nilai_uts' and !$room_count['sudah_uts']) {
     } elseif ($key == 'nilai_uas' and !$room_count['sudah_uas']) {
@@ -566,7 +528,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   # FINAL TR
   # =======================================================
   if ($id_role == 2) {
-    $gradasi =   gradasi($nilai_akhir);
+    $gradasi =   gradasi_nilai($nilai_akhir);
 
 
     if ($get_save) {
@@ -636,7 +598,7 @@ if ($get_save) {
 
 if ($id_role == 2) {
   $blok_kelas = "
-    <table class='table'>
+    <table class='table td_trans th_toska'>
       $tr
     </table>
     <div class=mb4>

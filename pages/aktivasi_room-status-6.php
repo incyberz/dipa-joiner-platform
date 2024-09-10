@@ -208,8 +208,13 @@ $inputs = "
 <script>
   $(function() {
     let modeAdd = 0;
-    let tahun_ajar = $('#tahun_ajar').text();
+    let ta = $('#ta').text();
     let kode_kelas = '';
+
+    if (ta.length != 5) {
+      alert(`Invalid tahun ajar: ${ta}`);
+      return;
+    }
 
     // auto disabled on formload
     $('#btn_aktivasi').prop('disabled', 1);
@@ -219,7 +224,7 @@ $inputs = "
         $('#prodi').val() + '-' +
         $('#sub_kelas').val() + '-' +
         $('#shift').val() + '-SM' +
-        $('#semester').val() + '-' + tahun_ajar;
+        $('#semester').val() + '-' + ta;
 
       kode_kelas = kode_kelas.toUpperCase().replace(/-+/gim, '-');
 

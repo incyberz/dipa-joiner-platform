@@ -68,8 +68,10 @@ if ($status_room != 100) {
 # ============================================================
 # TOTAL KELAS VALIDATION
 # ============================================================
-if (!$room['total_kelas']) {
-  die(div_alert('danger', "Belum ada satupun kelas pada Room ini di TA $ta"));
+if ($id_role != 2) {
+  if (!$room['total_kelas']) {
+    die(div_alert('danger', "Belum ada satupun kelas pada Room ini di TA $ta"));
+  }
 }
 
 # ============================================================
@@ -90,19 +92,10 @@ if (!mysqli_num_rows($q)) {
   if (mysqli_num_rows($q) > 1) die(div_alert('danger', 'Terdapat multiple sesi dalam satu pekan.'));
   $sesi_aktif = mysqli_fetch_assoc($q);
 }
-$id_sesi_aktif = $sesi_aktif ? $sesi_aktif['id'] : $sesi_pertama['id'];
-
-// echo '<pre>';
-// var_dump($sesi_aktif);
-// echo '</pre>';
-
-// echo '<pre>';
-// var_dump($sesi_pertama);
-// echo '</pre>';
-
-// echo '<pre>';
-// var_dump($id_sesi_aktif);
-// echo '</pre>';
+$id_sesi_aktif = null;
+if (!(!$sesi_aktif and !$sesi_pertama)) {
+  $id_sesi_aktif = $sesi_aktif ? $sesi_aktif['id'] : $sesi_pertama['id'];
+}
 
 
 # ============================================================

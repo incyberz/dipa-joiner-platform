@@ -40,7 +40,7 @@ if (1) {
   } else {
     $inputs = '';
     $inputs .= "
-      <input class='bg-yellow' type='hiddena' name=awal_sesi id=awal_sesi required />
+      <input class='bg-yellow' type='hidden' name=awal_sesi id=awal_sesi required />
       <div class='mb1'>Senin pada Minggu Pertama tanggal:</div>
       <div class='flexy'>
         <div>

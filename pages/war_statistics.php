@@ -32,7 +32,7 @@
 <?php
 # =================================================================
 // login_only(); // it's public
-include 'include/date_managements.php';
+
 
 $link3 = "<a href='?perang_soal'>Perang Home</a>";
 $link5 = "<a href='?tanam_soal'>Tanam Soal</a>";

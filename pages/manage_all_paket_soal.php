@@ -200,7 +200,7 @@ if (!mysqli_num_rows($q)) {
         <td>
           <div class='f14 miring'>$untuk_event</div>
           <form method=post>
-            <input type=hiddena name=id_paket value=$id_paket>
+            <input type=hidden name=id_paket value=$id_paket>
             $btns
           </form>
           <div class='f16 darkblue tebal'>

@@ -100,7 +100,7 @@ if (isset($_POST['btn_submit_jawaban_ujian'])) {
   (
     id_room,
     id_peserta,
-    id_paket_kelas,
+    paket_kelas,
     nilai,
     jawabans,
     jumlah_benar,

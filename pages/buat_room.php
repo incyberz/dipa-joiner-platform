@@ -10,13 +10,13 @@ set_h2('Create Room', "
   </div>
   Welcome <u>$nama_peserta</u>! Silahkan isi form berikut untuk Pembuatan Room Baru!
 ");
-include 'include/date_managements.php';
+
 
 
 // variabel awal
 $nama_room = '';
 $singkatan_room = '';
-$ta = date('Y');
+// $ta = date('Y');
 $prodi = '';
 $jumlah_sesi = 16;
 $pukul = '08:00:00';
@@ -54,26 +54,30 @@ if (isset($_POST['btn_buat_room'])) {
       echolog('Creating room');
       $s = "INSERT INTO tb_room (
         id,
+        tahun_ajar,
         nama,
         singkatan,
         created_by
       ) VALUES (
         $new_id,
+        $ta,
         '$_POST[nama_room]',
         '$_POST[singkatan_room]',
         $id_peserta
       )";
-      // echo '<pre>';
-      // var_dump($s);
-      // echo '</pre>';
+      echo '<pre>';
+      var_dump($s);
+      echo '</pre>';
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       echo div_alert('success', 'Room berhasil dibuat.');
 
       // assign room kelas
       $s = "INSERT INTO tb_room_kelas (
+        ta,
         id_room,
         kelas
       ) VALUES (
+        $ta,
         $new_id,
         '$kelas'
       )

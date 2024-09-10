@@ -1,6 +1,5 @@
 <?php
 if ($parameter == 'login' and $is_login) die('<script>location.replace("?")</script>');
-// echo "<span class=debug>id_peserta:<span id=id_peserta>$id_peserta</span> | nama_peserta:<span id=nama_peserta>$nama_peserta</span> | </span>";
 
 if (!$status and $parameter != 'verifikasi_wa' and $is_login and $parameter != 'ubah_password') {
   echo "

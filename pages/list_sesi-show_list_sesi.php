@@ -343,7 +343,7 @@ echo "<div class='flexy flex-center'><div style=max-width:700px>$div_list</div><
 
 
 
-
+/*
 if ($manage) { ?>
   <script>
     $(function() {
@@ -402,4 +402,4 @@ if ($manage) { ?>
 
     })
   </script>
-<?php } ?>
+<?php } */ ?>

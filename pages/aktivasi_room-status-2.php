@@ -11,7 +11,29 @@ if ($jumlah_sesi) {
     FROM tb_sesi a 
     WHERE a.jenis=2 AND a.id_room=$id_room";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-    if (!mysqli_num_rows($q)) die('Tidak dapat menemukan nomor [no] sesi UTS. Silahkan tambah dahulu sesi UTS pada Room ini kemudian atur urutan sesi UTS tersebut');
+    if (!mysqli_num_rows($q)) {
+
+      $s = "SELECT MAX(no) as max_no FROM tb_sesi WHERE id_room=$id_room";
+      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+      $d = mysqli_fetch_assoc($q);
+      $max_no = $d['max_no'];
+      $max_no++;
+
+      $s = "INSERT INTO tb_sesi (
+        id_room,
+        jenis,
+        no,
+        nama
+      ) VALUES (
+        $id_room,
+        2, -- UTS
+        $max_no,
+        'UTS'
+      )";
+      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+      echo ('Tidak dapat menemukan nomor [no] sesi UTS. Inserting new sesi UTS');
+      jsurl('', 3000);
+    }
     $d = mysqli_fetch_assoc($q);
     $durasi_uts = mysqli_num_rows($q);
     $no_sesi_uts = $d['no'];

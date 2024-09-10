@@ -81,9 +81,9 @@ if ($sedang_bertanya) {
 
     $form = "
       <form method=post>
-        <input class=debug name=id_penanya value=$id_peserta>
-        <input class=debug name=id_sesi value=$id_sesi>
-        <input class=debug name=input_tags id=input_tags value=input_tags>
+        <input type=hidden name=id_penanya value=$id_peserta>
+        <input type=hidden name=id_sesi value=$id_sesi>
+        <input type=hidden name=input_tags id=input_tags value=input_tags>
         <div class=form-group>
           <label for=pertanyaan>Pertanyaan saya:</label>
           <textarea name=pertanyaan id=pertanyaan class='form-control mt2' rows=6>$pertanyaan</textarea>

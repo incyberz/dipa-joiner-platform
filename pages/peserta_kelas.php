@@ -21,7 +21,6 @@ $sql_kelas = ($id_role == 1 and $get_kelas == '') ? "a.kelas = '$kelas'" : '1';
 if ($get_mode != 'fast' and $id_role == 1) $get_mode = 'fast';
 
 // terdapat kalkulasi sesi aktif untuk mode detail
-if ($get_mode != 'fast') include 'include/date_managements.php';
 
 
 

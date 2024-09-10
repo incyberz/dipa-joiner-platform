@@ -15,18 +15,12 @@
 //   </div>");
 // }
 session_start();
-
 // session_destroy(); exit;
-// echo '<pre style="margin-top: 170px">'; var_dump($_SESSION); echo '</pre>';
 
 # ============================================================
-# TAHUN AJAR AKTIF
+# GLOBAL VARIABLE
 # ============================================================
-$ta = 20241;
-
 $dm = 0;
-$dm_db = 0;
-$is_login = null;
 $id_role = null;
 $status = null;
 $punya_profil = null;
@@ -46,14 +40,14 @@ $target_kelas = $_SESSION['target_kelas'] ?? null;
 $harus_update_poin = 0;
 
 $unset = '<span class="consolas f12 red miring">unset</span>';
-$null = '<span class="consolas f12 red miring">null</span>';
+$null_red = '<span class="consolas f12 red miring">null</span>';
+$null = '<span class="f12 miring small">--null--</span>';
 
 $lokasi_pages = 'pages';
 $lokasi_profil = 'assets/img/peserta';
 $lokasi_img = 'assets/img';
 $src_profil_na_fixed = 'assets/img/img_na.jpg';
 
-$week = intval(strtotime('now') / (7 * 24 * 60 * 60));
 $is_login_as = isset($_SESSION['dipa_master_username']) ? 1 : 0;
 
 # ============================================================
@@ -64,7 +58,15 @@ $meta_description = "Fun e-Learning Management System (LMS) berbasis Game Mechan
 $meta_keywords = "learning management system, fun lms, gamification, game mechanic, rank, leaderboard, quiz, bank soal, pembelajaran jarak jauh";
 
 
-include 'config.php';
+# ============================================================
+# DATABASE CONNECTION
+# ============================================================
+include 'conn.php';
+
+# ============================================================
+# TAHUN AJAR AKTIF
+# ============================================================
+include 'config_ta.php';
 
 # ========================================================
 # COOKIE AND LOGIN PROCESS
@@ -78,6 +80,7 @@ $dipa_cookie = 'dipa_username';
 # ========================================================
 $id_peserta = '';
 $nama_peserta = '';
+$is_login = 0;
 if (isset($_SESSION['dipa_username'])) {
   $username = $_SESSION['dipa_username'];
   include 'user_vars.php';
@@ -103,15 +106,13 @@ if ($parameter == 'logout') {
 }
 
 # ========================================================
-# INCLUDE INSHO STYLES
+# INCLUDES PURE PHP
 # ========================================================
-$insho_styles = $online_version ? 'insho_styles.php' : '../insho_styles.php';
-include $insho_styles;
-include 'dipa_styles.php';
-include 'include/meme.php';
 include 'include/insho_functions.php';
 include 'include/dipa_functions.php';
-include 'include/img_icon.php';
+include 'include/fungsi_alert.php';
+include 'include/fungsi_session_login.php';
+include 'include/date_managements.php';
 $ta_show = tahun_ajar_show($ta);
 
 
@@ -170,43 +171,22 @@ if ($username) {
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
   <script src="assets/js/jquery.min.js"></script>
-  <style>
-    .foto-ilustrasi {
-      height: 150px;
-      width: 150px;
-      object-fit: cover;
-      border: solid 1px #ccc;
-      box-shadow: 0 0 3px gray;
-      border-radius: 50%
-    }
-
-    .section-title h2 {
-      font-size: 22px !important;
-      color: #ac5807
-    }
-
-    section {
-      margin-top: 60px;
-      padding: 60px 0 !important;
-    }
-
-    .btop {
-      border-top: solid 1px #ccc
-    }
-
-    <?php if ($dm) {
-      echo '.debug{display:inline; background:yellow; color: blue}';
-    } else {
-      echo '.debug{display:none;}';
-    } ?>
-  </style>
+  <?php
+  # ============================================================
+  # INCLUDE STYLES
+  # ============================================================
+  include 'dipa_styles.php';
+  $insho_styles = $online_version ? 'insho_styles.php' : '../insho_styles.php';
+  include $insho_styles;
+  include 'include/meme.php';
+  include 'include/img_icon.php';
+  ?>
 </head>
 
 <body>
-
-  <?php // include 'pages/header.php'; 
-  ?>
+  <div class="hideit" id="ta"><?= $ta ?></div>
   <?php
+
   if (!$is_login || $id_room) include 'pages/header.php';
   ?>
   <?php if (!$is_login and $parameter == '') include 'pages/hero.php'; ?>
@@ -220,7 +200,6 @@ if ($username) {
     </section>
   </main>
   <?php include 'update_points.php'; ?>
-  <?php include 'debug.php'; ?>
   <?php include 'pages/footer.php'; ?>
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
@@ -232,7 +211,7 @@ if ($username) {
   <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
   <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
-  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <!-- <script src="assets/vendor/php-email-form/validate.js"></script> -->
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>

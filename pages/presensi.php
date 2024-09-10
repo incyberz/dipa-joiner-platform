@@ -14,7 +14,7 @@
 <?php
 # =================================================================
 login_only();
-include 'include/date_managements.php';
+
 include 'presensi_processor.php';
 
 

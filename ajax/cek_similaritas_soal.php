@@ -58,7 +58,6 @@ for ($i = 0; $i < count($rtags_soal); $i++) {
 }
 $tags_like .= ' ) ';
 
-// $tags_like = '1'; //zzz debug
 
 
 $s = "SELECT 

@@ -1,4 +1,14 @@
 <style>
+  section {
+    margin-top: 60px;
+    padding: 60px 0 !important;
+  }
+
+  .section-title h2 {
+    font-size: 22px !important;
+    color: #ac5807
+  }
+
   .hideit {
     display: none;
   }
@@ -325,5 +335,23 @@
     .desktop_only {
       display: none;
     }
+  }
+
+  .foto-ilustrasi {
+    height: 150px;
+    width: 150px;
+    object-fit: cover;
+    border: solid 1px #ccc;
+    box-shadow: 0 0 3px gray;
+    border-radius: 50%
+  }
+
+
+  .btop {
+    border-top: solid 1px #ccc
+  }
+
+  .debug {
+    display: none;
   }
 </style>

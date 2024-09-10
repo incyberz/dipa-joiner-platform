@@ -38,12 +38,13 @@ if ($id_paket == '') {
     b.kelas,
     (
       SELECT COUNT(1) FROM tb_jawabans p 
-      JOIN tb_paket_kelas q ON p.id_paket_kelas = q.paket_kelas  
+      JOIN tb_paket_kelas q ON p.paket_kelas = q.paket_kelas  
       WHERE p.id_peserta=$id_peserta 
       AND q.id_paket=a.id) jumlah_attemp  
     FROM tb_paket a 
     JOIN tb_paket_kelas b ON a.id=b.id_paket 
-    WHERE a.id_room='$id_room'";
+    JOIN tb_sesi c ON a.id_sesi=c.id 
+    WHERE c.id_room='$id_room'";
   } else {
     $s = "SELECT a.*,
     b.awal_ujian,

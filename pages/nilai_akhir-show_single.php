@@ -15,7 +15,7 @@ foreach ($rbobot as $key => $value) {
   $kolom = str_replace('uas', 'UAS', $kolom);
 
   $sub_nilai_akhir_sty = ($rbobot[$key] and !$sub_nilai_akhir) ? 'red' : 'darkblue';
-  $gradasi = $rbobot[$key] ?  gradasi($rkonversi[$key]) : 'kuning';
+  $gradasi = $rbobot[$key] ?  gradasi_nilai($rkonversi[$key]) : 'kuning';
   $count_of = $rbobot[$key] ?  $rvalue_of[$key] : '';
   $hasil_konversi = $rkonversi[$key] === null ? $null  : $rkonversi[$key];
 

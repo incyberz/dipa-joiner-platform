@@ -68,7 +68,7 @@ $s = "SELECT
 a.id as id_jawabans,
 a.id_room,
 a.id_peserta,
-a.id_paket_kelas,
+a.paket_kelas,
 a.id_paket_old,
 (
   SELECT p.kelas FROM tb_kelas_peserta p 
@@ -134,7 +134,7 @@ if (mysqli_num_rows($q)) {
       $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
 
 
-      $s2 = "UPDATE tb_jawabans SET id_paket_kelas = '$paket_kelas' 
+      $s2 = "UPDATE tb_jawabans SET paket_kelas = '$paket_kelas' 
       WHERE id=$d[id_jawabans]
       ";
       echo "<hr>$s2";
