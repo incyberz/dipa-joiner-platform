@@ -74,7 +74,7 @@ a.id_paket_old,
   SELECT p.kelas FROM tb_kelas_peserta p 
   JOIN tb_kelas q ON p.kelas=q.kelas 
   WHERE p.id_peserta=a.id_peserta 
-  AND q.tahun_ajar = 20232) kelas
+  AND q.ta = 20232) kelas
 
 
 FROM tb_jawabans a WHERE 1";

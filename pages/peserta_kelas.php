@@ -44,7 +44,7 @@ JOIN tb_kelas b ON a.kelas=b.kelas
 WHERE a.id_room=$id_room 
 AND $sql_kelas 
 AND a.kelas != 'INSTRUKTUR' 
-AND b.tahun_ajar = $ta 
+AND b.ta = $ta 
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) {
@@ -65,7 +65,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
   JOIN tb_peserta d ON a.id_peserta=d.id  
   WHERE c.id=$d[id_room_kelas] 
   AND b.status=1 
-  AND b.tahun_ajar=$ta 
+  AND b.ta=$ta 
   AND d.status=1 
   ORDER BY b.shift, b.prodi,d.nama";
 

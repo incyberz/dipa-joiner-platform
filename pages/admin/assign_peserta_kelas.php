@@ -33,7 +33,7 @@ FROM tb_kelas_peserta a
 JOIN tb_kelas b ON a.kelas=b.kelas    
 JOIN tb_peserta c ON a.id_peserta=c.id 
 WHERE b.kelas='$get_kelas' 
-AND b.tahun_ajar=$ta
+AND b.ta=$ta
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (mysqli_num_rows($q) == 0) {
@@ -66,7 +66,7 @@ a.nama as nama_peserta,
   FROM tb_kelas_peserta p 
   JOIN tb_kelas q ON p.kelas=q.kelas  
   WHERE id_peserta=a.id
-  AND q.tahun_ajar=$ta) kelas 
+  AND q.ta=$ta) kelas 
 
 FROM tb_peserta a 
 WHERE status=1 

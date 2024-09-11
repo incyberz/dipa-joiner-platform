@@ -44,15 +44,15 @@ b.*,
 (
   SELECT p.kelas FROM tb_kelas_peserta p 
   JOIN tb_kelas q ON p.kelas=q.kelas
-  WHERE p.id_peserta=b.best1 AND q.tahun_ajar=$ta) kelas_best1,
+  WHERE p.id_peserta=b.best1 AND q.ta=$ta) kelas_best1,
 (
   SELECT p.kelas FROM tb_kelas_peserta p 
   JOIN tb_kelas q ON p.kelas=q.kelas
-  WHERE p.id_peserta=b.best2 AND q.tahun_ajar=$ta) kelas_best2,
+  WHERE p.id_peserta=b.best2 AND q.ta=$ta) kelas_best2,
 (
   SELECT p.kelas FROM tb_kelas_peserta p 
   JOIN tb_kelas q ON p.kelas=q.kelas
-  WHERE p.id_peserta=b.best3 AND q.tahun_ajar=$ta) kelas_best3,
+  WHERE p.id_peserta=b.best3 AND q.ta=$ta) kelas_best3,
 (SELECT nama FROM tb_peserta WHERE id=b.best1) nama_best1,
 (SELECT nama FROM tb_peserta WHERE id=b.best2) nama_best2,
 (SELECT nama FROM tb_peserta WHERE id=b.best3) nama_best3

@@ -17,7 +17,7 @@ a.prodi,
 
 FROM tb_kelas a 
 WHERE a.status=1 
-AND a.tahun_ajar = $ta  
+AND a.ta = $ta  
 AND kelas != 'INSTRUKTUR'
 ORDER BY a.fakultas,a.prodi,a.kelas";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -170,7 +170,7 @@ $tr_tambah = "
             <tr>
               <td class='kanan'>
                 <div class='pt2 miring consolas darkblue'>Kode Grup Kelas Baru</div>
-                <input type=hidden id=kelas name=kelas[kelas] class=input_add_kelas disabled>
+                <input type=hiddena id=kelas name=kelas[kelas] class=input_add_kelas disabled>
               </td>
               <td>
                 <div class='f30 biru tebal consolas ' id=kode_kelas>...</div>
@@ -189,21 +189,42 @@ $tr_tambah = "
     </tr>
   ";
 
-$inputs = "
-  <h3 class=tr>Select Room Kelas</h3>
-  <p class=tr>Silahkan Anda pilih Grup <b class=darkblue>Kelas aktif TA. $ta</b> yang boleh mengakses Room Anda (max: 5 kelas).</p>
-  <table class='table' id=tb_kelas>
-    <thead class='tr'>
-      <th>Fakultas / Lembaga</th>
-      <th>Prodi / Jurusan</th>
-      <th>Grup Kelas</th>
-      <th>Jumlah Peserta</th>
-    </thead>
+if (isset($mode) and $mode == 'add_kelas') {
+  echo "
+    <form method=post action='?add_kelas'>
+      <h3 class=tr>Select Room Kelas</h3>
+      <p class=tr>Silahkan Anda pilih Grup <b class=darkblue>Kelas aktif TA. $ta</b> yang boleh mengakses Room Anda (max: 5 kelas).</p>
+      <table class='table' id=tb_kelas>
+        <thead class='tr'>
+          <th>Fakultas / Lembaga</th>
+          <th>Prodi / Jurusan</th>
+          <th>Grup Kelas</th>
+          <th>Jumlah Peserta</th>
+        </thead>
 
-    $tr
-    $tr_tambah
-  </table>
-";
+        $tr
+        $tr_tambah
+      </table>
+    </form>
+    
+    ";
+} else {
+  $inputs = "
+    <h3 class=tr>Select Room Kelas</h3>
+    <p class=tr>Silahkan Anda pilih Grup <b class=darkblue>Kelas aktif TA. $ta</b> yang boleh mengakses Room Anda (max: 5 kelas).</p>
+    <table class='table' id=tb_kelas>
+      <thead class='tr'>
+        <th>Fakultas / Lembaga</th>
+        <th>Prodi / Jurusan</th>
+        <th>Grup Kelas</th>
+        <th>Jumlah Peserta</th>
+      </thead>
+  
+      $tr
+      $tr_tambah
+    </table>
+  ";
+}
 ?>
 <script>
   $(function() {

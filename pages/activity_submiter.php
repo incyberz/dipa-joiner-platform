@@ -59,7 +59,7 @@ JOIN tb_peserta d ON a.id_peserta=d.id
 JOIN tb_kelas_peserta e ON e.id_peserta=d.id 
 JOIN tb_kelas f ON e.kelas=f.kelas 
 WHERE c.id=$id_jenis 
-AND f.tahun_ajar=$ta 
+AND f.ta=$ta 
 AND f.status=1 
 AND f.kelas = '$target_kelas'
 ORDER BY f.kelas, d.nama 
@@ -117,7 +117,7 @@ c.war_image
 FROM tb_kelas_peserta a 
 JOIN tb_kelas b ON a.kelas=b.kelas 
 JOIN tb_peserta c ON a.id_peserta=c.id 
-WHERE b.tahun_ajar=$ta 
+WHERE b.ta=$ta 
 AND b.status = 1 
 AND b.kelas = '$target_kelas' 
 ORDER BY b.kelas, c.nama 

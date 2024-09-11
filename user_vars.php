@@ -11,7 +11,7 @@ $undef = '<span class="red kecil miring">undefined</span>';
 # ========================================================
 # SELECT DATA PESERTA
 # ========================================================
-$sql_ta = $id_role == 2 ? 1 : "q.tahun_ajar=$ta";
+$sql_ta = $id_role == 2 ? 1 : "q.ta=$ta";
 $s = "SELECT 
 a.id as id_peserta, 
 a.*,

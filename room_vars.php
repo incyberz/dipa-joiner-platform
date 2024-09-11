@@ -357,7 +357,7 @@ $s = "SELECT
   SELECT count(1) FROM tb_kelas_peserta p  
   JOIN tb_kelas q ON p.kelas=q.kelas  
   JOIN tb_peserta r ON p.id_peserta=r.id 
-  WHERE q.tahun_ajar=$ta 
+  WHERE q.ta=$ta 
   AND r.id_role = $id_role 
   AND r.status = 1 
   AND q.kelas='$kelas') total_peserta_kelas 

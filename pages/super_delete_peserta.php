@@ -40,7 +40,7 @@ if ($keyword) {
   WHERE a.nama like '%$keyword%'
   AND a.id_role = 1 
   AND d.status=1 
-  AND d.tahun_ajar = $ta 
+  AND d.ta = $ta 
   -- AND b.id_room = $id_room 
   AND e.id_room = $id_room 
   LIMIT 50

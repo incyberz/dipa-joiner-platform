@@ -19,7 +19,7 @@ if ($id_role == 2) {
 # ====================================================
 if (isset($_POST['btn_join_kelas'])) {
   $kelas = $_POST['btn_join_kelas'];
-  $s = "SELECT 1 FROM tb_kelas_peserta a JOIN tb_kelas b ON a.kelas=b.kelas WHERE b.tahun_ajar=$ta AND id_peserta=$id_peserta";
+  $s = "SELECT 1 FROM tb_kelas_peserta a JOIN tb_kelas b ON a.kelas=b.kelas WHERE b.ta=$ta AND id_peserta=$id_peserta";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   if (!mysqli_num_rows($q)) {
     $s = "INSERT INTO tb_kelas_peserta (kelas,id_peserta) VALUES ('$kelas',$id_peserta)";

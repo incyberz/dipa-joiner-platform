@@ -45,7 +45,7 @@ $arr_s['play_quiz'] = "SELECT
   JOIN tb_room q ON p.id_room=q.id 
   WHERE p.id_penjawab=a.id
   AND q.status = 100 -- Active Room 
-  AND q.tahun_ajar=$ta 
+  AND q.ta=$ta 
 ";
 
 # ============================================================
@@ -59,7 +59,7 @@ $arr_s['ontimer'] = "SELECT
   WHERE p.id_peserta=a.id 
   AND p.is_ontime = 1 
   AND r.status = 100 -- Active Room 
-  AND r.tahun_ajar=$ta 
+  AND r.ta=$ta 
 ";
 
 
@@ -79,7 +79,7 @@ $arr_s['accuracy'] = "SELECT
   JOIN tb_room q ON p.id_room=q.id 
   WHERE p.id_penjawab=a.id
   AND q.status = 100 -- Active Room 
-  AND q.tahun_ajar=$ta 
+  AND q.ta=$ta 
   LIMIT 1
 ";
 
@@ -99,7 +99,7 @@ $arr_s['accuracy'] = "SELECT
 //   JOIN tb_room q ON p.id_room=q.id 
 //   WHERE p.id_penjawab=a.id
 //   AND q.status = 100 -- Active Room 
-//   AND q.tahun_ajar=$ta 
+//   AND q.ta=$ta 
 //   LIMIT 1
 // ";
 // $arr_s['rank_room'] = 1;
@@ -172,7 +172,7 @@ while ($d_best = mysqli_fetch_assoc($q_best)) {
       AND a.image IS NOT NULL -- Peserta punya Image
       AND c.status = 1 -- Kelas Aktif 
       AND c.kelas_non_peserta IS NULL -- Kelas Peserta Only 
-      AND c.tahun_ajar = $ta 
+      AND c.ta = $ta 
       AND c.kelas != 'INSTRUKTUR' 
       AND $sql_id_room
   
