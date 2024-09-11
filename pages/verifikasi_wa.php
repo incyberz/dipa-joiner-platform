@@ -12,9 +12,6 @@ $pesan = 'Untuk mengakses semua fitur kamu harus update dengan nomor whatsapp ya
 
 $caption = 'Verifikasi';
 
-// echo '<pre>';
-// var_dump($_GET);
-// echo '</pre>';
 
 if ($id_peserta == '') { // belum login
   $debug .= "
@@ -67,10 +64,10 @@ if ($dari == 'routing_verifikasi_wa_instruktur') {
 }
 
 if (isset($_POST['btn_submit_wa'])) {
-  // echo '<pre>';
-  // var_dump($_POST);
-  // echo '</pre>';
-  // exit;
+
+
+
+
 
   $dari = $_POST['dari'];
 
@@ -93,7 +90,7 @@ if (isset($_POST['btn_submit_wa'])) {
   }
 } else {
   // $pesan .= div_alert('danger', 'No POST request detected.');
-  // exit;
+
 }
 
 if (!$hide_form) {

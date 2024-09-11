@@ -27,10 +27,10 @@ $profil_penjawab = "<img src='$path' class=profil_penjawab>";
 
 
 $values_id_soals = '';
-foreach ($arr_id_soal as $id_soal) {
-  if (strlen($id_soal) > 0) {
-    array_push($arr_id_soal, $id_soal);
-    $values_id_soals .= " a.id=$id_soal OR";
+foreach ($arr_id_soal as $id_soal_peserta) {
+  if (strlen($id_soal_peserta) > 0) {
+    array_push($arr_id_soal, $id_soal_peserta);
+    $values_id_soals .= " a.id=$id_soal_peserta OR";
   }
 }
 $values_id_soals = "($values_id_soals)";
@@ -42,7 +42,7 @@ $values_id_soals = str_replace('OR)', ')', $values_id_soals);
 # MAIN SELECT
 # =============================================================
 $left_join_where = "
-  LEFT JOIN tb_war c ON a.id=c.id_soal AND c.id_penjawab=$id_peserta 
+  LEFT JOIN tb_war c ON a.id=c.id_soal_peserta AND c.id_penjawab=$id_peserta 
   WHERE c.id is null 
 ";
 
@@ -50,7 +50,7 @@ $left_join_where = "
 if (count($arr_id_soal)) $left_join_where = "WHERE $values_id_soals ";
 
 $s = "SELECT 
-a.id as id_soal,
+a.id as id_soal_peserta,
 a.id_pembuat,
 a.opsies,
 a.durasi,
@@ -87,7 +87,7 @@ if ($jumlah_soal) {
   $values = '';
   while ($d = mysqli_fetch_assoc($q)) {
     $i++;
-    $id_soal = $d['id_soal'];
+    $id_soal_peserta = $d['id_soal_peserta'];
     $id_pembuat = $d['id_pembuat'];
     $id_status = $d['id_status'] ?? 0;
     $jawaban = $d['jawaban'];
@@ -95,14 +95,14 @@ if ($jumlah_soal) {
     $username_pembuat = $d['username_pembuat'];
 
     $durasi = $d['durasi'] ?? $durasi_default;
-    $values .= "($id_room,$id_soal,$id_peserta,$id_pembuat),";
+    $values .= "($id_room,$id_soal_peserta,$id_peserta,$id_pembuat),";
 
-    $id_soals .= "$id_soal,";
+    $id_soals .= "$id_soal_peserta,";
 
     // salting md5 jawabans
-    $jawabans_md5 .= md5($id_soal) . ',';
+    $jawabans_md5 .= md5($id_soal_peserta) . ',';
     $jawabans_md5 .= md5($id_pembuat) . ',';
-    $jawabans_md5 .= md5("$id_soal$jawaban") . ',';
+    $jawabans_md5 .= md5("$id_soal_peserta$jawaban") . ',';
 
     $ropsies = explode('~~~', $d['opsies']);
 
@@ -112,13 +112,13 @@ if ($jumlah_soal) {
     $opsies = '';
     foreach ($rand_opsies as $key => $value) {
       if ($value == $d['jawaban']) $kj = strtoupper($abjad[$key]);
-      $id_soal__abjad = $id_soal . "__$abjad[$key]";
-      $opsies .= "<div class='opsi opsi__$id_soal unclicked' id=opsi__$id_soal__abjad>$abjad[$key]. $value</div>";
+      $id_soal__abjad = $id_soal_peserta . "__$abjad[$key]";
+      $opsies .= "<div class='opsi opsi__$id_soal_peserta unclicked' id=opsi__$id_soal__abjad>$abjad[$key]. $value</div>";
     }
 
     $status_soal = $d['status_soal'] == '' ? '<span class=darkred>unverified</span>' : "<span class='hijau tebal'>$d[status_soal]</span>";
 
-    $profil_pembuat = "<img src='$lokasi_profil/$war_image_pembuat' class=profil_pembuat id=profil_pembuat__$id_soal>";
+    $profil_pembuat = "<img src='$lokasi_profil/$war_image_pembuat' class=profil_pembuat id=profil_pembuat__$id_soal_peserta>";
 
 
 
@@ -127,24 +127,24 @@ if ($jumlah_soal) {
     # DIV SOAL
     # =====================================================================
     $blok_soal .= "
-      <div class='wadah blok_soal hideit' id=blok_soal__$id_soal>
+      <div class='wadah blok_soal hideit' id=blok_soal__$id_soal_peserta>
         <div style='display:grid; grid-template-columns:auto 60px'>
           <div>
             <div>$i <span class='kecil miring abu'>of $jumlah_soal</span></div>
             <div class='kecil miring abu mb2'>by: $d[pembuat_soal] ~ $status_soal question</div>
           </div>
           <div>
-            <img src='$lokasi_profil/$war_image_pembuat' class=profil_pembuat id=profil_pembuat__$id_soal>
+            <img src='$lokasi_profil/$war_image_pembuat' class=profil_pembuat id=profil_pembuat__$id_soal_peserta>
           </div>
         </div>
         <div class='darkblue mt2 mb2'>$d[kalimat_soal]</div>
         <div class=>$opsies</div>
         <div class=debug>
-          cidnj__$id_soal: <span id=cidnj__$id_soal></span><br>
-          username_pembuat__$id_soal: <span id=username_pembuat__$id_soal>$username_pembuat</span><br>
-          durasi__$id_soal: <span id=durasi__$id_soal>$durasi</span><br>
-          id_status__$id_soal: <span id=id_status__$id_soal>$id_status</span><br>
-          id_pembuat__$id_soal: <span id=id_pembuat__$id_soal>$id_pembuat</span><br>
+          cidnj__$id_soal_peserta: <span id=cidnj__$id_soal_peserta></span><br>
+          username_pembuat__$id_soal_peserta: <span id=username_pembuat__$id_soal_peserta>$username_pembuat</span><br>
+          durasi__$id_soal_peserta: <span id=durasi__$id_soal_peserta>$durasi</span><br>
+          id_status__$id_soal_peserta: <span id=id_status__$id_soal_peserta>$id_status</span><br>
+          id_pembuat__$id_soal_peserta: <span id=id_pembuat__$id_soal_peserta>$id_pembuat</span><br>
         </div>
       </div>
     ";
@@ -157,19 +157,19 @@ if ($jumlah_soal) {
     # =====================================================================
     $r = rand(1, 12);
     $rows_hasil .= "
-      <tr id=row_hasil__$id_soal>
+      <tr id=row_hasil__$id_soal_peserta>
         <td class='tengah'>
           $profil_penjawab
           <br>$username
           <br>
-          <span class='kecil miring abu'><span id=poin_penjawab__$id_soal>???</span> LP</span>
+          <span class='kecil miring abu'><span id=poin_penjawab__$id_soal_peserta>???</span> LP</span>
         </td>
-        <td class='tengah' width=100px valign=middle><img src='assets/img/gun/wp$r.png' width=100px id=weapon__$id_soal></td>
+        <td class='tengah' width=100px valign=middle><img src='assets/img/gun/wp$r.png' width=100px id=weapon__$id_soal_peserta></td>
         <td class='tengah'>
           $profil_pembuat
           <br>$username_pembuat
           <br>
-          <span class='kecil miring abu'><span id=poin_pembuat__$id_soal>???</span> LP</span>
+          <span class='kecil miring abu'><span id=poin_pembuat__$id_soal_peserta>???</span> LP</span>
         </td>
       </tr>
     ";
@@ -332,7 +332,7 @@ if ($jumlah_soal) {
     # =====================================================================
     # AUTO INSERT TB_PERANG
     # =====================================================================
-    $s = "INSERT INTO tb_war (id_room,id_soal,id_penjawab,id_pembuat) VALUES $values";
+    $s = "INSERT INTO tb_war (id_room,id_soal_peserta,id_penjawab,id_pembuat) VALUES $values";
     $s .= '__';
     $s = str_replace(',__', '', $s);
     // echo $s;
@@ -409,9 +409,9 @@ if ($jumlah_soal) {
     let milidetik_show = '';
     let jawaban = '';
     let cjawaban = '';
-    let cidnj = ''; // current id_soal + id_peserta + jawaban
-    let cidnjpp = 'initial value'; // current id_soal + id_peserta + jawaban + pp
-    let arr_idnj = []; //id_soal + jawaban
+    let cidnj = ''; // current id_soal_peserta + id_peserta + jawaban
+    let cidnjpp = 'initial value'; // current id_soal_peserta + id_peserta + jawaban + pp
+    let arr_idnj = []; //id_soal_peserta + jawaban
     let arr_idnjpp = []; //id + jawaban + poin penjawab + poin pembuat
     let menjawab_benar = false;
     let abjad = ['a', 'b', 'c', 'd'];
@@ -437,7 +437,7 @@ if ($jumlah_soal) {
     let rjawabans_md5 = jawabans_md5.split(',');
     $('#jawabans_md5').text('cleared'); // clear it!
 
-    // id_soal handler
+    // id_soal_peserta handler
     let rid_soal = $('#id_soals').text().split(',');
     let cid_soal = rid_soal[0];
     let durasi = parseInt($('#durasi__' + cid_soal).text());
@@ -446,7 +446,7 @@ if ($jumlah_soal) {
     // tampilkan soal pertama
     $('#blok_soal__' + rid_soal[0]).show();
 
-    // id_soal current
+    // id_soal_peserta current
     $('#cid_soal').text(rid_soal[0]);
 
     // index soal
@@ -548,16 +548,16 @@ if ($jumlah_soal) {
       } else {
         let tid = $(this).prop('id');
         let rid = tid.split('__');
-        let id_soal = rid[1];
+        let id_soal_peserta = rid[1];
         jawaban = $(this).text().slice(3);
         cjawaban = jawaban;
-        cidnj = id_soal + '~~' + id_peserta + '~~' + jawaban;
-        arr_idnj[id_soal] = cidnj;
-        let username_pembuat = $('#username_pembuat__' + id_soal).text();
+        cidnj = id_soal_peserta + '~~' + id_peserta + '~~' + jawaban;
+        arr_idnj[id_soal_peserta] = cidnj;
+        let username_pembuat = $('#username_pembuat__' + id_soal_peserta).text();
 
         // reupdate data
-        $('#cidnj__' + id_soal).text(cidnj);
-        $('#cid_soal').text(id_soal);
+        $('#cidnj__' + id_soal_peserta).text(cidnj);
+        $('#cid_soal').text(id_soal_peserta);
         $('#cjawaban').text(jawaban);
         $('#cusername_pembuat').text(username_pembuat);
 
@@ -565,8 +565,8 @@ if ($jumlah_soal) {
         // $('#username_pembuat').text(username_pembuat);
 
         // reupdate UI
-        $('.opsi__' + id_soal).removeClass('unclicked');
-        $('.opsi__' + id_soal).removeClass('clicked');
+        $('.opsi__' + id_soal_peserta).removeClass('unclicked');
+        $('.opsi__' + id_soal_peserta).removeClass('clicked');
         $(this).addClass('clicked');
         $('#btn_submit').prop('disabled', false);
 
@@ -641,12 +641,12 @@ if ($jumlah_soal) {
       timer_on = 0;
       $('#timer_on').text(timer_on);
 
-      let id_soal = $('#cid_soal').text();
-      cid_pembuat = $('#id_pembuat__' + id_soal).text();
+      let id_soal_peserta = $('#cid_soal').text();
+      cid_pembuat = $('#id_pembuat__' + id_soal_peserta).text();
       let jawaban = $('#cjawaban').text();
       $('#blok_pembahasan').slideDown();
-      $('#profil_pembuat').prop('src', $('#profil_pembuat__' + id_soal).prop('src'));
-      $('#username_pembuat').text($('#username_pembuat__' + id_soal).text());
+      $('#profil_pembuat').prop('src', $('#profil_pembuat__' + id_soal_peserta).prop('src'));
+      $('#username_pembuat').text($('#username_pembuat__' + id_soal_peserta).text());
       $('#btn_submit').prop('disabled', true);
       $('#btn_next').prop('disabled', false);
 
@@ -663,9 +663,9 @@ if ($jumlah_soal) {
         // weapon reject red at pembahasan
         $('#weapon').prop('src', 'assets/img/gun/wp0.png');
         // weapon at hasil akhir
-        $('#weapon__' + id_soal).prop('src', 'assets/img/gun/wp0.png');
+        $('#weapon__' + id_soal_peserta).prop('src', 'assets/img/gun/wp0.png');
         // update bg yellow
-        $('#row_hasil__' + id_soal).addClass('gradasi-kuning');
+        $('#row_hasil__' + id_soal_peserta).addClass('gradasi-kuning');
 
       } else {
 
@@ -689,8 +689,8 @@ if ($jumlah_soal) {
           $('#blok_pembahasan').addClass('gradasi-merah');
 
           // update UI Hasil
-          $('#weapon__' + id_soal).addClass('cermin');
-          $('#row_hasil__' + id_soal).addClass('gradasi-merah');
+          $('#weapon__' + id_soal_peserta).addClass('cermin');
+          $('#row_hasil__' + id_soal_peserta).addClass('gradasi-merah');
 
           poin_penjawab = 0;
           poin_pembuat = 8; // zzz hard code
@@ -698,7 +698,7 @@ if ($jumlah_soal) {
         } else {
 
           // tidak mereject :: Jawab Benar || Salah
-          if (rjawabans_md5.includes(md5(id_soal + jawaban))) {
+          if (rjawabans_md5.includes(md5(id_soal_peserta + jawaban))) {
             //
             $('#blok_pembahasan').addClass('gradasi-hijau');
             $('#kamu_benar').addClass('blue');
@@ -716,17 +716,17 @@ if ($jumlah_soal) {
             $('#blok_pembahasan').addClass('gradasi-merah');
 
             // update UI Hasil
-            $('#weapon__' + id_soal).addClass('cermin');
-            $('#row_hasil__' + id_soal).addClass('gradasi-merah');
+            $('#weapon__' + id_soal_peserta).addClass('cermin');
+            $('#row_hasil__' + id_soal_peserta).addClass('gradasi-merah');
           } // end if jawaban salah
         }
 
 
         // pencarian yang benar
         abjad.forEach((value, index) => {
-          let opsi = $('#opsi__' + id_soal + '__' + value).text().slice(3);
-          if (rjawabans_md5.includes(md5(id_soal + opsi))) {
-            $('#opsi__' + id_soal + '__' + value).html(value + '. ' + opsi + ' ' + img_check);
+          let opsi = $('#opsi__' + id_soal_peserta + '__' + value).text().slice(3);
+          if (rjawabans_md5.includes(md5(id_soal_peserta + opsi))) {
+            $('#opsi__' + id_soal_peserta + '__' + value).html(value + '. ' + opsi + ' ' + img_check);
           }
         })
       } // end if tidak me-reject
@@ -743,8 +743,8 @@ if ($jumlah_soal) {
       total_poin_penjawab += poin_jawab;
       $('#poin_penjawab').text(poin_jawab);
       $('#poin_pembuat').text(poin_pembuat);
-      $('#poin_penjawab__' + id_soal).text(poin_jawab);
-      $('#poin_pembuat__' + id_soal).text(poin_pembuat);
+      $('#poin_penjawab__' + id_soal_peserta).text(poin_jawab);
+      $('#poin_pembuat__' + id_soal_peserta).text(poin_pembuat);
       $('#total_poin_penjawab').text(total_poin_penjawab);
 
       // update form data
@@ -755,7 +755,7 @@ if ($jumlah_soal) {
         ' ' + d.getHours() +
         ':' + d.getMinutes() +
         ':' + d.getSeconds();
-      arr_idnjpp[id_soal] = cidnj +
+      arr_idnjpp[id_soal_peserta] = cidnj +
         '~~' + is_benar +
         '~~' + poin_jawab +
         '~~' + poin_pembuat +

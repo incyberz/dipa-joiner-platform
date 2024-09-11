@@ -3,9 +3,9 @@
 # PROCESSORS
 # ============================================================
 if (isset($_POST['btn_update_jenis'])) {
-  // echo '<pre>';
-  // var_dump($_POST);
-  // echo '</pre>';
+
+
+
 
   $id = $_POST['btn_update_jenis'];
   unset($_POST['btn_update_jenis']);
@@ -27,9 +27,9 @@ if (isset($_POST['btn_update_jenis'])) {
 }
 
 if (isset($_POST['btn_update_assign'])) {
-  // echo '<pre>';
-  // var_dump($_POST);
-  // echo '</pre>';
+
+
+
 
   foreach ($_POST['tanggal_assign'] as $id_assign => $tanggal_assign) {
     $is_wajib = $_POST['is_wajib'][$id_assign] ?? 'NULL';

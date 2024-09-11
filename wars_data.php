@@ -102,7 +102,7 @@ if ($must_update) {
 
   (
     SELECT COUNT(1) FROM tb_soal_peserta a 
-    LEFT JOIN tb_war b ON a.id=b.id_soal AND b.id_penjawab=$id_peserta 
+    LEFT JOIN tb_war b ON a.id=b.id_soal_peserta AND b.id_penjawab=$id_peserta 
     JOIN tb_sesi c ON a.id_sesi=c.id 
     WHERE (a.id_status is null OR a.id_status >= 0) 
     AND b.id is null 

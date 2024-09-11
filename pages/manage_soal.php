@@ -73,9 +73,9 @@ if (isset($_POST['btn_simpan_soal'])) {
     }
   }
 
-  // echo '<pre>';
-  // var_dump($_POST);
-  // echo '</pre>';
+
+
+
 
   // unlink gambar for proses update gambar
   $size = $_FILES['gambar_soal']['size'] ?? 0; // or zero jika memilih gambar yg ada
@@ -191,9 +191,9 @@ if (isset($_POST['btn_simpan_soal'])) {
       $gambar_soal_or_null
     )";
   }
-  // echo '<pre>';
-  // var_dump($s);
-  // echo '</pre>';
+
+
+
 
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   echo div_alert('success', 'Simpan data soal berhasil.');

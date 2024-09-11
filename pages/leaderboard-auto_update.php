@@ -145,7 +145,6 @@ while ($d_best = mysqli_fetch_assoc($q_best)) {
     } else {
       echo div_alert('info', 'Tidak bisa update rank_room dan rank_kelas karena belum login.');
     }
-    // exit;
   } else {
     if (!$arr_s[$best_code]) die(div_alert('danger', "Belum ada String SQL untuk update <b class=darkblue>$best_code</b>"));
 

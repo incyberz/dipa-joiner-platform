@@ -123,11 +123,11 @@ if (isset($_GET['id'])) {
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
 
-  // get all war where id_soal=id of soal pg
-  $s = "SELECT id as id_soal_pg FROM tb_soal_peserta WHERE id_pembuat=$id";
+  // get all war where id_soal_peserta=id of soal pg
+  $s = "SELECT id as id_soal_peserta FROM tb_soal_peserta WHERE id_pembuat=$id";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   while ($d = mysqli_fetch_assoc($q)) {
-    $s2 = "DELETE FROM tb_war WHERE id_soal=$d[id_soal_pg]";
+    $s2 = "DELETE FROM tb_war WHERE id_soal_peserta=$d[id_soal_peserta]";
     echo "<hr>-- $s2";
     $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
   }

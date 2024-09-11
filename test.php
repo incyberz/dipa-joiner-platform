@@ -49,7 +49,7 @@ include 'conn.php';
 //     )";
 //     echo "<br>$s2";
 //     $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
-//     // exit;
+//     
 //   } else {
 //     // beda
 //     $last_id_paket = $d['id_paket'];

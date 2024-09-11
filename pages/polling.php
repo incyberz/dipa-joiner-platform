@@ -86,12 +86,6 @@ if (mysqli_num_rows($q)) {
       }
     }
   }
-  // echo "<pre>";
-  // var_dump($rj);
-  // echo "</pre>";
-  // echo "<pre>";
-  // var_dump($arr_jawaban);
-  // echo "</pre>";
   $gradasi_merah = '';
   $hideit_saran = '';
   $submit_caption = 'Re-Submit';

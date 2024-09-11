@@ -111,9 +111,9 @@ AND id_sesi is null
 ORDER BY date_created 
 ";
 
-// echo '<pre>';
-// var_dump($s);
-// echo '</pre>';
+
+
+
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) {
   $tr = div_alert('danger', "Belum ada data paket soal untuk room ini.");

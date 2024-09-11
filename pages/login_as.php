@@ -8,9 +8,6 @@ instruktur_only();
 // if($id_role==1) die(erid('roles'));
 $judul = 'Login As';
 
-// echo '<pre>';
-// var_dump($_SESSION);
-// echo '</pre>';
 
 if (isset($_GET['unlog'])) {
   $_SESSION['dipa_username'] = $_SESSION['dipa_master_username'];

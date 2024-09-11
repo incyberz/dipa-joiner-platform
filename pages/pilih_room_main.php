@@ -66,9 +66,9 @@ WHERE 1 -- b.id = $id_peserta
 ORDER BY my_room DESC, a.status DESC
 ";
 
-// echo '<pre>';
-// var_dump($s);
-// echo '</pre>';
+
+
+
 
 
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));

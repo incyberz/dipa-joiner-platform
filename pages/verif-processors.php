@@ -58,9 +58,9 @@ if (isset($_POST['btn_approve'])) {
       alasan_reject = '$alasan_reject' 
       WHERE id=$id_bukti";
     }
-    // echo '<pre>';
-    // var_dump($s);
-    // echo '</pre>';
+
+
+
     // die($s);
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 

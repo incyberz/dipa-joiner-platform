@@ -14,3 +14,8 @@ function tahun_ajar_show($ta)
   $thn = substr($ta, 0, 4);
   return   "$thn/" . ($thn + 1) . " $gg";
 }
+
+function ondev()
+{
+  echo div_alert('danger', 'Page ini masih dalam tahap pengembangan. Terimakasih sudah mencoba!');
+}

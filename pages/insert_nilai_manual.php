@@ -30,9 +30,9 @@ set_h2('Insert Nilai Manual', "
 # PROCESSORS
 # ============================================================
 if (isset($_POST['btn_simpan'])) {
-  // echo '<pre>';
-  // var_dump($_POST);
-  // echo '</pre>';
+
+
+
 
   # ============================================================
   # SAVE DATA BOBOT MANUAL
@@ -62,7 +62,7 @@ if (isset($_POST['btn_simpan'])) {
 
 
 
-  // exit;
+
 
   # ============================================================
   # SAVE DATA NILAI
@@ -237,10 +237,6 @@ while ($d = mysqli_fetch_assoc($q)) {
         $gradasi[$field] = $gradasi_HM;
       }
       $value['nilai_akhir'] = $d3['nilai_akhir'];
-      // echo '<pre>';
-      // var_dump($value);
-      // echo '</pre>';
-      // exit;
     }
 
 

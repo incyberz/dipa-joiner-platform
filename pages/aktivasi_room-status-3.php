@@ -22,16 +22,15 @@ if ($jumlah_sesi) {
     $info_room .= div_alert('danger', "Awal presensi di sesi 1 masih kosong.");
   }
 
-  $w = date('w', strtotime($d['awal_presensi']));
-  $add = 0;
-  if ($w == 0) $add = 1;
-  if ($w > 1) $add = 1 - $w;
+  // $w = date('w', strtotime($d['awal_presensi']));
+  // $add = 0;
+  // if ($w == 0) $add = 1;
+  // if ($w > 1) $add = 1 - $w;
 
-  $senin_pertama = date('Y-m-d H:i', strtotime("$add day", strtotime($d['awal_presensi'])));
+  // $senin_awal_presensi = date('Y-m-d H:i', strtotime("$add day", strtotime($d['awal_presensi'])));
 
   $inputs = "
     $info_room 
-    <input type=hidden name=awal_sesi value='$senin_pertama'>
   ";
 }
 if (1) {
@@ -39,29 +38,37 @@ if (1) {
     die(div_alert('danger', "Data Room minggu_normal_uts (jumlah sesi normal sebelum UTS) belum lengkap (masih null)."));
   } else {
     $inputs = '';
+    $ta_show = tahun_ajar_show($ta);
+    $hari = hari_tanggal($senin_pertama, 1, 1, 0);
+
     $inputs .= "
-      <input class='bg-yellow' type='hidden' name=awal_sesi id=awal_sesi required />
-      <div class='mb1'>Senin pada Minggu Pertama tanggal:</div>
-      <div class='flexy'>
+      <input class='bg-yellow' type='hidden' name=awal_sesi id=awal_sesi required  value='$senin_pertama 08:00:00' />
+      <div class='mb1'>Awal TA $ta_show adalah $hari.</div>
+      <hr>
+      <div class='flexy mb2'>
+        <div>Awal Pekan untuk Room ini : </div>
         <div>
-          <input class='form-control awal_sesi_trigger' type='date' id=tgl_awal_sesi />
+          <input class='form-control awal_sesi_trigger' type='date' id=tgl_awal_sesi value='$senin_pertama' />
         </div>
+      </div>
+      
+      <div class='flexy mb2'>
+        <div>Jam mulai masuk pembelajaran : </div>
         <div>
           <input class='form-control awal_sesi_trigger' type='time' id=jam_awal_sesi min='7:00' max='22:00' value='08:00' />
         </div>
       </div>
       
-      <div class='flexy mt4'>
-        <div class='abu miring pt1'>
-          durasi tatap muka
-        </div>
+      <div class='flexy mb2'>
+        <div>Durasi tatap muka : </div>
         <div>
           <input required type=number min=30 max=240 step=5 name=durasi_tatap_muka class='form-control mb1' placeholder='Durasi tatap muka...' value=90 style='width:80px' />
         </div>
-        <div class='abu miring pt1'>
+        <div>
           menit
         </div>
       </div>
+      
 
       <hr>
       
@@ -72,7 +79,7 @@ if (1) {
       <div class='mt2 mb4'>
         <label>
           <input type=checkbox required />
-          Saya menyatakan bahwa tanggal dan jam diatas sudah benar (sesuai dengan Jadwal Pembelajaran sebenarnya).
+          Tanggal diatas adalah Awal Pekan, bukan jadwal pelajaran saya.
         </label>
       </div>
       <script>

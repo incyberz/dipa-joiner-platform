@@ -102,9 +102,9 @@ WHERE b.id_room=$id_room
 ORDER BY count_kelas, count_soal, date_created 
 ";
 
-// echo '<pre>';
-// var_dump($s);
-// echo '</pre>';
+
+
+
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) {
   $tr = div_alert('danger', "Belum ada data paket soal untuk room ini.");

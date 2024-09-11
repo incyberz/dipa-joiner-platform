@@ -115,9 +115,9 @@ foreach ($rjenis as $key => $jenis) {
   AND $sql_keyword 
   ORDER BY a.tanggal_upload, e.nama,g.kelas, d.nama, c.no 
   ";
-  // echo '<pre>';
-  // var_dump($s);
-  // echo '</pre>';
+
+
+
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $row_count = mysqli_num_rows($q);
 

@@ -7,14 +7,14 @@ $selected[2] = $gg == 2 ? 'selected' : '';
 
 $room_tahun_ajar = $room['tahun_ajar'] > 20201 ? $room['tahun_ajar'] : "$thn_ajar$gg";
 
-// echo '<pre>';
+
 // echo "
 //   <br>thn_ajar: $thn_ajar
 //   <br>tahun_ajar: $ta
 //   <br>room_tahun_ajar: $room_tahun_ajar
 //   <br>gg: $gg
 // ";
-// echo '</pre>';
+
 
 
 $ket_ta = '';

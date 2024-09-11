@@ -86,7 +86,7 @@ if (isset($_POST['btn_upload'])) {
       // echo $pesan_upload;
       // echo "<script>location.replace('?activity&jenis=$jenis&no=$no_jenis')</script>";
       // jsurl();
-      // exit;
+
     } else {
       echo div_alert('danger', 'Tidak dapat move_uploaded_file.');
     }

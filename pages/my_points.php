@@ -77,9 +77,6 @@ foreach ($rjenis as $key => $jenis) {
       } else {
         // handler pertanyaan & jawaban
         if ($jenis == 'pertanyaan') {
-          // echo '<pre>';
-          // var_dump($d);
-          // echo '</pre>';
           $poin = $d['poin'] ?? 0;
           $pertanyaan = $d['pertanyaan'];
           $nama_sesi = $d['nama_sesi'];

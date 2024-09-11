@@ -62,7 +62,7 @@ e.war_image as war_image_pembuat,
   WHERE id_peserta=a.id_pembuat AND q.tahun_ajar=$ta) kelas_pembuat    
 FROM tb_war a 
 JOIN tb_peserta b ON a.id_penjawab=b.id 
-JOIN tb_soal_peserta c ON a.id_soal=c.id 
+JOIN tb_soal_peserta c ON a.id_soal_peserta=c.id 
 JOIN tb_kelas_peserta d ON b.id=d.id_peserta 
 JOIN tb_peserta e ON a.id_pembuat=e.id 
 

@@ -218,13 +218,6 @@ while ($d = mysqli_fetch_assoc($q)) {
   ";
 } // end while penilaian
 
-// echo '<pre>';
-// var_dump($arr_multiplier);
-// echo '</pre>';
-// echo '<pre>';
-// var_dump($arr_point);
-// echo '</pre>';
-
 $total_poin_show = number_format($total_poin);
 
 if (!isset($thead)) $thead = "

@@ -1,8 +1,8 @@
 <?php
 if (isset($_POST['btn_submit_link'])) {
-  // echo '<pre>';
-  // var_dump($_POST);
-  // echo '</pre>';
+
+
+
   $arr = explode('__', $_POST['btn_submit_link']);
 
   $id_sublevel = $arr[0];

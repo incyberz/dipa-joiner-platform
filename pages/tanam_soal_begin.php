@@ -51,9 +51,9 @@ if (isset($_POST['btn_simpan'])) {
   $opsi['d'] = clean_sql($opsi['d']);
   $pembahasan = clean_sql($pembahasan);
 
-  // echo '<pre>';
-  // var_dump($_POST);
-  // echo '</pre>';
+
+
+
 
   $opsies = "$opsi[a]~~~$opsi[b]~~~$opsi[c]~~~$opsi[d]";
   $jawaban = $opsi['a'];

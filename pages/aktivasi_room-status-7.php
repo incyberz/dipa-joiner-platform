@@ -42,7 +42,7 @@ if ($num_rows) {
   </script>
 
 <?php
-  // exit;
+
 } else {
   include 'aktivasi_room-status-7b.php';
 }

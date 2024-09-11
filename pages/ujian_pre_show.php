@@ -282,9 +282,9 @@ if ($selisih > 0) { //belum mulai
       AND a.id_peserta=$id_peserta 
       ORDER BY a.tanggal_submit DESC
       ";
-      // echo '<pre>';
-      // var_dump($s);
-      // echo '</pre>';
+
+
+
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       if (!mysqli_num_rows($q)) {
         $list_jawabans = div_alert('danger', 'Kamu belum sempat mengisi Ujian dengan benar');

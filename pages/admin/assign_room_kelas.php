@@ -18,7 +18,7 @@ set_h2("Assign Room Kelas", "$nav_ta");
 // $room['status'] = 5;
 // $status_room = 5;
 // include "$lokasi_pages/aktivasi_room.php";
-// exit;
+
 
 # ====================================================
 # PROCESSOR: ASSIGN ROOM KELAS
@@ -28,7 +28,7 @@ if (isset($_POST['btn_assign_room_kelas'])) {
   $s = "SELECT 1 FROM tb_room_kelas WHERE id_room=$id_room AND kelas='$kelas'";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   if (!mysqli_num_rows($q)) {
-    $s = "INSERT INTO tb_room_kelas (kelas,id_room) VALUES ('$kelas',$id_room)";
+    $s = "INSERT INTO tb_room_kelas (kelas,id_room,ta) VALUES ('$kelas',$id_room,$ta)";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     echo div_alert('success', "Assign Room Kelas sukses.");
   } else {

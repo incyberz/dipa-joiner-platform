@@ -135,10 +135,6 @@
               }
             }
 
-            // echo '<pre>';
-            // var_dump($rkj);
-            // echo '</pre>';
-
             $s2 = "SELECT a.id as id_assign_soal,
             b.soal,
             b.pembahasan  

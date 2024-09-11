@@ -75,10 +75,11 @@ echo "
 <div data-aos=fade-up>
   <hr>  
   <h3 class='darkblue tengah'>Teaching Points</h3>
+  <div class='tengah mb2'>Pada Room <span class=darkblue>$nama_room</span></div>
   <div class='green bold p2 gradasi-toska f20 tengah mb2'>$total_poin_show TP</div>
   <div class='flexy flex-center mb4'>
-    <div class='btn_aksi' id=detail_TP__toggle>$img_detail details</div> 
-    <div ><a onclick='return confirm(`Reupdate Teaching Points minggu ini?`)' href='?dashboard-instruktur-auto_save_penilaian'>$img_refresh reupdate</a></div>
+    <div class='btn_aksi pointer text-hover-bold' id=detail_TP__toggle>$img_detail details</div> 
+    <div ><a onclick='return confirm(`Reupdate Teaching Points minggu ini?`)' href='?dashboard-instruktur-auto_save_penilaian' class=text-hover-bold>$img_refresh reupdate</a></div>
   </div> 
   <div class='hideit' id=detail_TP>
 

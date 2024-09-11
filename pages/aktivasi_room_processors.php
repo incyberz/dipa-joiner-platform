@@ -73,10 +73,10 @@ if (isset($_POST['btn_batalkan_aktivasi'])) {
 if (isset($_POST['btn_aktivasi'])) {
   echolog('Validation room data');
 
-  // echo '<pre>';
-  // var_dump($_POST);
-  // echo '</pre>';
-  // exit;
+
+
+
+
 
   // exception awal_sesi harus hari senin
   if (isset($_POST['awal_sesi'])) {
@@ -84,9 +84,6 @@ if (isset($_POST['btn_aktivasi'])) {
     if ($awal_sesi) {
       $w = date('w', strtotime($awal_sesi));
       if ($w != 1 && $room['jeda_sesi'] == 7) {
-        // echo '<pre>';
-        // var_dump($room);
-        // echo '</pre>';
         echo div_alert('danger', "Awal sesi minggu pertama harus hari Senin, Anda memilih hari $nama_hari[$w].");
         jsurl('', 2000);
         exit;
@@ -98,10 +95,10 @@ if (isset($_POST['btn_aktivasi'])) {
   unset($_POST['btn_aktivasi']);
 
   if ($_POST) {
-    // echo '<pre>';
-    // var_dump($_POST);
-    // echo '</pre>';
-    // exit;
+
+
+
+
     # ============================================================
     # EXCEPTION FOR ARRAY AWAL PRESENSI
     # ============================================================
@@ -110,10 +107,6 @@ if (isset($_POST['btn_aktivasi'])) {
       $durasi = $room['durasi_tatap_muka'] ?? 90;
       $no_sesi_normal = 0;
 
-      // echo '<pre>';
-      // var_dump($arr);
-      // echo '</pre>';
-      // exit;
       foreach ($arr as $no => $str) {
         $arr2 = explode('--', $str);
         $awal_presensi = $arr2[0];
@@ -238,10 +231,10 @@ if (isset($_POST['btn_aktivasi'])) {
 
       // unset($_POST['sesi_kelas_count']);
 
-      // echo '<pre>';
-      // var_dump($_POST);
-      // echo '</pre>';
-      // exit;
+
+
+
+
 
       $s = "SELECT id as id_sesi FROM tb_sesi WHERE id_room=$id_room";
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -336,10 +329,10 @@ if (isset($_POST['btn_aktivasi'])) {
 
 
 
-    // echo '<pre>';
-    // var_dump($_POST);
-    // echo '</pre>';
-    // exit;
+
+
+
+
 
 
 

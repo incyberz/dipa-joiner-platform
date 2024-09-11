@@ -73,11 +73,6 @@ while ($d = mysqli_fetch_assoc($q)) {
         // hanya pilihan yang di increment
         $poll[$no][$an]++;
       } else {
-        // echo 'ini isian';
-        // echo "poll_isian[$no], [$d[id_peserta], $d[nama_responden],an:$an]";
-        // echo '<pre>';
-        // var_dump($poll_isian);
-        // echo '</pre>';
         array_push($poll_isian[$no], [$d['id_untuk'], $d['nama_responden'], $an]);
       }
     }
@@ -85,17 +80,12 @@ while ($d = mysqli_fetch_assoc($q)) {
 }
 
 
-// echo '<pre>';
-// var_dump($ran);
-// echo '</pre>';
-
 
 # =========================================================
 # FOREACH POLLING ISIAN
 # =========================================================
 // $jawaban_isian = [];
 foreach ($poll_isian as $no => $arr_isians) {
-  // echo "<br>Nomor $no zzz";
 
   foreach ($arr_isians as $key => $arr_isian) {
     $responden = ucwords(strtolower($arr_isian[1]));
@@ -114,9 +104,6 @@ foreach ($poll_isian as $no => $arr_isians) {
 $count_rpolling = count($rpolling);
 $polls = "<span class=debug><span id=jumlah_jawabans>$count_rpolling</span></span>";
 
-// echo '<pre>';
-// var_dump($poll_isian);
-// echo '</pre>';
 
 foreach ($rpolling as $no => $rtanya) {
   $polls .= "<span class=debug><span class=jawabans id=jawabans__$no></span></span>";

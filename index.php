@@ -15,7 +15,8 @@
 //   </div>");
 // }
 session_start();
-// session_destroy(); exit;
+// session_destroy();
+
 
 # ============================================================
 # GLOBAL VARIABLE

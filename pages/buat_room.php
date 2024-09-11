@@ -28,9 +28,9 @@ if (isset($_POST['btn_buat_room'])) {
   foreach ($_POST as $key => $value) {
     $_POST[$key] = clean_sql($value);
   }
-  // echo '<pre>';
-  // var_dump($_POST);
-  // echo '</pre>';
+
+
+
   echolog('checking duplicate');
   $s = "SELECT 1 FROM tb_room WHERE nama LIKE '%$_POST[nama_room]%'";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -65,9 +65,6 @@ if (isset($_POST['btn_buat_room'])) {
         '$_POST[singkatan_room]',
         $id_peserta
       )";
-      echo '<pre>';
-      var_dump($s);
-      echo '</pre>';
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       echo div_alert('success', 'Room berhasil dibuat.');
 

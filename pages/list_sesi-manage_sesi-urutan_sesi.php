@@ -25,9 +25,9 @@ $select_jenis = "<select class='form-control' name=jenis>$opt</select>";
 # PROCESSORS
 # ============================================================
 if (isset($_POST['btn_move_to'])) {
-  // echo '<pre>';
-  // var_dump($_POST);
-  // echo '</pre>';
+
+
+
   $arr = explode('__', $_POST['btn_move_to']);
   $aksi = $arr[0];
   $id_sesi = $arr[1];

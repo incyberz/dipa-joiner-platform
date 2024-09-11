@@ -101,11 +101,6 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) die("Data Paket Soal tidak ditemukan.");
 $d_paket = mysqli_fetch_assoc($q);
 
-// echo '<pre>';
-// var_dump($d_paket);
-// echo '</pre>';
-
-
 
 # =======================================================
 # GET PAKET KELAS

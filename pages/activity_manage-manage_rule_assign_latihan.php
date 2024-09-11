@@ -1,7 +1,4 @@
 <?php
-// echo '<pre>';
-// var_dump($d_assign);
-// echo '</pre>';
 $s2 = "SELECT a.*, 
 a.id as id_assign,
 b.kelas,

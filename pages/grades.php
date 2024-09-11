@@ -158,11 +158,6 @@ if ($selisih >= 600 and $id_role != 3 and $is_login) {
     last_update_point=CURRENT_TIMESTAMP 
     WHERE id_peserta=$d[id_peserta] 
     AND id_room=$id_room";
-    if ($dm) {
-      echo '<pre>';
-      var_dump($s2);
-      echo '</pre>';
-    }
     $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
     if ($dm) echo "<div class='consolas f12 abu miring'>updating tb_poin success... $d[nama_peserta], total_poin: $total_poin</div>";
   }

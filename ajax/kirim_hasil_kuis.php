@@ -38,14 +38,10 @@ foreach ($rdata as $value) {
   }
 }
 
-// echo '<pre>';
-// var_dump($arr_data);
-// echo '</pre>';
-
 
 $values = '';
 foreach ($arr_data as $d) {
-  $id_soal = $d[0];
+  $id_soal_peserta = $d[0];
   $id_penjawab = $d[1];
   $jawaban = $d[2];
   $is_benar = $d[3];
@@ -56,12 +52,12 @@ foreach ($arr_data as $d) {
 
   $jawaban = strtoupper($jawaban) == 'NULL' ? 'NULL' : "'$jawaban'";
 
-  $s = "SELECT id FROM tb_war WHERE id_soal=$id_soal AND id_penjawab=$id_penjawab AND id_room=$id_room";
+  $s = "SELECT id FROM tb_war WHERE id_soal_peserta=$id_soal_peserta AND id_penjawab=$id_penjawab AND id_room=$id_room";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   if (mysqli_num_rows($q) == 0) {
     $values .= "(
       '$id_room',
-      '$id_soal',
+      '$id_soal_peserta',
       '$id_penjawab',
       '$id_pembuat',
       $jawaban,
@@ -73,26 +69,26 @@ foreach ($arr_data as $d) {
     // update status soal
     if ($is_benar == -1) {
       // banned jika ada 5 rejecter
-      $s = "SELECT 1 FROM tb_war WHERE is_benar=-1 AND id_soal=$id_soal AND id_room=$id_room";
+      $s = "SELECT 1 FROM tb_war WHERE is_benar=-1 AND id_soal_peserta=$id_soal_peserta AND id_room=$id_room";
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       if (mysqli_num_rows($q) >= 4) {
         // do banned
         $do_banned = 1;
-        $s = "UPDATE tb_soal_peserta SET id_status=-1 WHERE id=$id_soal";
+        $s = "UPDATE tb_soal_peserta SET id_status=-1 WHERE id=$id_soal_peserta";
         $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
         // set 0 to passive point
         // add 200k to each rejecter
-        $s = "UPDATE tb_war SET poin_penjawab=200,poin_pembuat=0 WHERE id=$id_soal";
+        $s = "UPDATE tb_war SET poin_penjawab=200,poin_pembuat=0 WHERE id=$id_soal_peserta";
         $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       }
     } else {
       // verifikasi jika ada 10 penjawab
-      $s = "SELECT 1 FROM tb_war WHERE is_benar!=-1 AND id_soal=$id_soal";
+      $s = "SELECT 1 FROM tb_war WHERE is_benar!=-1 AND id_soal_peserta=$id_soal_peserta";
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       if (mysqli_num_rows($q) >= 9) {
         // do verified
-        $s = "UPDATE tb_soal_peserta SET id_status=1 WHERE id=$id_soal";
+        $s = "UPDATE tb_soal_peserta SET id_status=1 WHERE id=$id_soal_peserta";
         $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       }
     }
@@ -103,7 +99,7 @@ foreach ($arr_data as $d) {
     $id_perang = $d['id'];
 
     $s = "UPDATE tb_war SET 
-      id_soal = '$id_soal',
+      id_soal_peserta = '$id_soal_peserta',
       id_penjawab = '$id_penjawab',
       id_pembuat = '$id_pembuat',
       jawaban = $jawaban,
@@ -126,7 +122,7 @@ if ($values) {
   //id_room belum zzz debug
   $s = "INSERT INTO tb_war (
   id_room,
-  id_soal,
+  id_soal_peserta,
   id_penjawab,
   id_pembuat,
   jawaban,

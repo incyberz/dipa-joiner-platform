@@ -18,7 +18,7 @@ echo "
 ";
 
 $s = "SELECT a.*,
-(SELECT SUM(poin_pembuat) FROM tb_war WHERE id_soal=a.id AND id_pembuat=$id_peserta) earned_points, 
+(SELECT SUM(poin_pembuat) FROM tb_war WHERE id_soal_peserta=a.id AND id_pembuat=$id_peserta) earned_points, 
 (SELECT status FROM tb_status_soal WHERE id=a.id_status) status_soal 
 FROM tb_soal_peserta a 
 JOIN tb_sesi b ON a.id_sesi=b.id 

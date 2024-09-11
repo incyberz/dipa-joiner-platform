@@ -8,3 +8,4 @@ $d = mysqli_fetch_assoc($q);
 $ta = $d['ta'];
 $ta_awal = $d['awal'];
 $ta_akhir = $d['akhir'];
+$senin_pertama = $d['senin_pertama'];

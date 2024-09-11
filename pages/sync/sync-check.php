@@ -55,14 +55,6 @@ foreach ($arr as $key => $index) {
   }
 }
 
-// echo '<pre>';
-// var_dump($colType[1]);
-// echo '</pre>';
-// echo '<pre>';
-// var_dump($colType[2]);
-// echo '</pre>';
-// exit;
-
 $tr = '';
 $i = 0;
 $img_reject = "<span class=img_reject>$img_reject</span>";
