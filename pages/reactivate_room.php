@@ -10,7 +10,7 @@ if (!$id_room) die(erid('id_room'));
 # PROCESSORS
 # ============================================================
 if (isset($_POST['btn_reactivate_room'])) {
-  $s = "UPDATE tb_room SET status=NULL, tahun_ajar = $_POST[ta]";
+  $s = "UPDATE tb_room SET status=NULL, ta = $_POST[ta]";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   jsurl();
 }
@@ -18,7 +18,7 @@ if (isset($_POST['btn_reactivate_room'])) {
 # ============================================================
 # SELECT TA AVAILABLE 
 # ============================================================
-$s = "SELECT * FROM tb_ta WHERE ta > $room[tahun_ajar]";
+$s = "SELECT * FROM tb_ta WHERE ta > $room[ta]";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $count_available = mysqli_num_rows($q);
 $radios = '';
@@ -50,7 +50,7 @@ echo "
       </tr>
       <tr>
         <td>Tahun Ajar</td>
-        <td>$room[tahun_ajar]</td>
+        <td>$room[ta]</td>
       </tr>
       <tr>
         <td>Aktifkan Room untuk TA</td>

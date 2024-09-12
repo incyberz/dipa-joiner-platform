@@ -1,16 +1,16 @@
 <?php
-$thn_ajar = $room['tahun_ajar'] ? substr($room['tahun_ajar'], 0, 4) : date('Y');
+$thn_ajar = $room['ta'] ? substr($room['ta'], 0, 4) : date('Y');
 $gg_year = date('m') >= 7 ? 1 : 2;
-$gg = $room['tahun_ajar'] ? substr($room['tahun_ajar'], 4, 1) : $gg_year;
+$gg = $room['ta'] ? substr($room['ta'], 4, 1) : $gg_year;
 $selected[1] = $gg == 1 ? 'selected' : '';
 $selected[2] = $gg == 2 ? 'selected' : '';
 
-$room_tahun_ajar = $room['tahun_ajar'] > 20201 ? $room['tahun_ajar'] : "$thn_ajar$gg";
+$room_tahun_ajar = $room['ta'] > 20201 ? $room['ta'] : "$thn_ajar$gg";
 
 
 // echo "
 //   <br>thn_ajar: $thn_ajar
-//   <br>tahun_ajar: $ta
+//   <br>ta: $ta
 //   <br>room_tahun_ajar: $room_tahun_ajar
 //   <br>gg: $gg
 // ";
@@ -18,12 +18,12 @@ $room_tahun_ajar = $room['tahun_ajar'] > 20201 ? $room['tahun_ajar'] : "$thn_aja
 
 
 $ket_ta = '';
-if ($room['tahun_ajar']) {
-  $ket_ta = "<div class='green bold wadah'>Tahun Ajar Room sudah di set ke TA. $room[tahun_ajar]</div>";
+if ($room['ta']) {
+  $ket_ta = "<div class='green bold wadah'>Tahun Ajar Room sudah di set ke TA. $room[ta]</div>";
 }
 
 $inputs = "
-  <input class='bg-yellow' required type=hidden id=tahun_ajar name=tahun_ajar min=20231 max=20282 value='$room_tahun_ajar'>
+  <input class='bg-yellow' required type=hidden id=ta name=ta min=20231 max=20282 value='$room_tahun_ajar'>
   <div class='mb1'>Tahun Ajar</div>
   <div class='flexy'>
     <div>
@@ -47,7 +47,7 @@ $inputs = "
 <script>
   $(function() {
     $('.tahun_ajar_trigger').change(function() {
-      $('#tahun_ajar').val(
+      $('#ta').val(
         $('#thn_ajar').val() + $('#gg').val()
       )
     })

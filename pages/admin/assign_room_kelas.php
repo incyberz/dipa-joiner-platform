@@ -74,7 +74,7 @@ while ($d = mysqli_fetch_assoc($q)) {
           <ol>
             <?php
 
-            $s = "SELECT * FROM tb_kelas WHERE tahun_ajar=$get_ta ORDER BY status DESC,fakultas,semester,prodi,shift";
+            $s = "SELECT * FROM tb_kelas WHERE ta=$get_ta ORDER BY status DESC,fakultas,semester,prodi,shift";
             $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
             while ($d = mysqli_fetch_assoc($q)) {

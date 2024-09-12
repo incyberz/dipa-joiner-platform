@@ -2,7 +2,7 @@
 $id_role = $_SESSION['dipa_id_role'];
 if ($is_login_as) $id_role = 1;
 if (!$id_role) die(erid('id_role at user_vars'));
-if (!$ta) die(erid('tahun_ajar at user_vars'));
+if (!$ta) die(erid('ta at user_vars'));
 if ($dm) echo "<div style='height:50px'>.</div>DEBUG MODE ON<hr>";
 
 $today = date('Y-m-d');

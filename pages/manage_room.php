@@ -55,7 +55,7 @@ if (mysqli_num_rows($q)) {
         $value = hari_tanggal($value) . ' | ' . eta2($value);
       } elseif ($key == 'status_room') {
         $value = $value == 'Active' ? "<span class=green>Active $img_check</span>" : "$value $img_warning";
-      } elseif ($key == 'tahun_ajar') {
+      } elseif ($key == 'ta') {
         $value = tahun_ajar_show($value);
       } elseif ($key == 'nama_room') {
         $value = "<input required minlength=5 maxlength=30 name=nama value='$value' class='form-control'>";

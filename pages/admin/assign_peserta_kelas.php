@@ -3,7 +3,7 @@
 # HEADER ASSIGN PESERTA KELAS
 # ============================================================
 $get_kelas = $_GET['kelas'] ?? die(erid('kelas'));
-if (!$ta) die(erid('tahun_ajar'));
+if (!$ta) die(erid('ta'));
 set_h2(
   'Assign Peserta Kelas',
   "Proses memasukan peserta ke Grup Kelas 

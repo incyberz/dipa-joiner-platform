@@ -44,7 +44,7 @@ while ($d = mysqli_fetch_assoc($q)) {
             $checked
           > 
           $d[kelas]
-        </label>
+        </label> | <span class='text-hover'>Copy</span>
       </td>
       <td>$d[jumlah_peserta]</td>
     </tr>
@@ -205,6 +205,7 @@ if (isset($mode) and $mode == 'add_kelas') {
         $tr
         $tr_tambah
       </table>
+      <button >Assign Kelas ke Room ini ZZZ</button>
     </form>
     
     ";

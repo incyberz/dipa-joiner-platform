@@ -34,7 +34,7 @@ if (isset($_POST['btn_join_kelas'])) {
 
 $and_inst = $id_role == 2 ? "AND prodi='INST'" : '';
 
-$s = "SELECT * FROM tb_kelas WHERE tahun_ajar=$ta $and_inst ORDER BY fakultas,prodi,shift";
+$s = "SELECT * FROM tb_kelas WHERE ta=$ta $and_inst ORDER BY fakultas,prodi,shift";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
 $li = '';

@@ -54,7 +54,7 @@ if (isset($_POST['btn_buat_room'])) {
       echolog('Creating room');
       $s = "INSERT INTO tb_room (
         id,
-        tahun_ajar,
+        ta,
         nama,
         singkatan,
         created_by

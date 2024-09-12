@@ -194,7 +194,7 @@ if (!$as) {
   # SELECTED AS
   # ===========================================================
   if ($as == 'peserta') {
-    $s = "SELECT kelas FROM tb_kelas WHERE tahun_ajar=$ta AND status=1  ";
+    $s = "SELECT kelas FROM tb_kelas WHERE ta=$ta AND status=1  ";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     $option_kelas = '';
     while ($d = mysqli_fetch_assoc($q)) {
