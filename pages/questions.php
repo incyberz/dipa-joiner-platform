@@ -160,6 +160,11 @@ if (isset($_POST['btn_submit_jawaban'])) {
 
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   jsurl();
+} elseif (isset($_POST['btn_delete_bertanya'])) {
+  $id = $_POST['btn_delete_bertanya'];
+  $s = "DELETE FROM tb_bertanya WHERE id='$id'";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  jsurl();
 }
 
 
@@ -207,9 +212,11 @@ FROM tb_bertanya a
 JOIN tb_sesi b ON a.id_sesi=b.id 
 JOIN tb_peserta c ON a.id_penanya=c.id
 WHERE $sql_id_peserta 
+AND b.id_room = $id_room 
 ORDER BY a.tanggal desc";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $i = 0;
+if (!mysqli_num_rows($q)) echo div_alert('info', 'Belum ada peserta yang bertanya pada room ini.');
 while ($d = mysqli_fetch_assoc($q)) {
   $i++;
   $id = $d['id'];
@@ -271,6 +278,22 @@ while ($d = mysqli_fetch_assoc($q)) {
     $verified_by = '';
   }
 
+  # ============================================================
+  # DELETE BERTANYA
+  # ============================================================
+  if ($id_role == 1 and $d['jawaban']) {
+    $form_delete_bertanya = ''; // peserta tidak bisa menghapus pertanyaan yg sudah dijawab
+  } else {
+    $form_delete_bertanya = "
+      <form method=post style=display:inline>
+        <button class='btn-transparan' onclick='return confirm(`Delete pertanyaan ini?`)' name=btn_delete_bertanya value=$id>
+          $img_delete
+        </button>
+      </form>
+    ";
+  }
+
+
   if ($d['jawaban']) {
     $form_jawab = "
       <div style='display: grid; grid-template-columns: 35px auto; grid-gap: 5px;'>
@@ -287,7 +310,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   } else {
 
     if ($is_mine) {
-      $form_jawab = "<div class='f14 miring abu mt1'>menunggu dijawab...</div>";
+      $form_jawab = "<div class='f14 miring abu mt1'>menunggu dijawab... </div>";
     } else {
       $range_poin = $id_role != 2 ? '' : "
         <div class='wadah mt2'>
@@ -332,7 +355,7 @@ while ($d = mysqli_fetch_assoc($q)) {
       <div class='blok_pertanyaan blok_grid darkblue' style='display: grid; grid-template-columns: 20px auto; grid-gap: 5px;'>
         <div class='smallsd kanan'>$i.</div>
         <div>
-          $d[pertanyaan]
+          $d[pertanyaan] $form_delete_bertanya 
           $form_jawab
         </div>
       </div>

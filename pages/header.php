@@ -98,7 +98,6 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
               </li>
               <li class='dropdown'><a  href='#'><span class='tebal darkblue'>$singkatan_room</span> <i class='bi bi-chevron-down'></i></a>
                 <ul>
-                  <li><a href='?pilih_room'>Pilih Room</a></li>
                   <li><a href='?list_sesi'>Learning Path</a></li>
                   <li class=><a href='?presensi'>Presensi</a></li>
                   <li><a href='?peserta_kelas'>Peserta Kelas</a></li>
@@ -108,6 +107,7 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
                   <li class=''><a href='?questions'>List Bertanya</a></li>
                   <li class='hideit'><a href='?chats'>Chats</a></li>
                   <li class=hideit><a href='?quiz'>Kuis PG</a></li>
+                  <li><a href='?pilih_room'>Pilih Room</a></li>
                   $li_manage_room
                 </ul>
               </li>

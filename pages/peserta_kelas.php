@@ -81,21 +81,19 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
   while ($d2 = mysqli_fetch_assoc($q2)) {
     $nama = ucwords(strtolower($d2['nama']));
     $jumlah_peserta++;
-    $img_src = "$lokasi_profil/$d2[image]";
-    $war_src = "$lokasi_profil/$d2[war_image]";
+    $d2['war_image'] = $d2['war_image'] ? $d2['war_image'] : $d2['image'];
+
+    $src = "$lokasi_profil/$d2[war_image]";
+    $src = file_exists($src) ? $src : 'assets/img/img_na.jpg';
+
 
     if ($get_mode == 'fast') {
       $sty = '';
       $link_super_delete = '';
-      if (file_exists($war_src) and $d2['war_image']) {
-        // do nothing
-        $src = $war_src;
-      } elseif (file_exists($img_src) and $d2['image']) {
+      if ($d2['war_image'] == $d2['image']) {
         // profil ada tapi belum jadi profil wars
         $sty = 'border:solid 3px blue';
-        $src = $img_src;
       } else {
-        $src = 'assets/img/img_na.jpg';
         $link_super_delete = $id_role == 2 ? "<a href='?super_delete_peserta&keyword=$d2[nama]'>$img_delete</a>" : '';
       }
       $list_peserta .= "

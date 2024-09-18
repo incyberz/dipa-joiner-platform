@@ -26,6 +26,9 @@ while ($d = mysqli_fetch_assoc($q)) {
   $my_room_kelas = $d['my_room_kelas'] ? 'biru bg-yellow bold' : '';
   $checked = $d['my_room_kelas'] ? 'checked' : '';
 
+  $copy = '';
+  if ($username == 'abi') $copy = " | <span class='text-hover'>Copy</span>";
+
   # ============================================================
   # FINAL TR
   # ============================================================
@@ -44,7 +47,7 @@ while ($d = mysqli_fetch_assoc($q)) {
             $checked
           > 
           $d[kelas]
-        </label> | <span class='text-hover'>Copy</span>
+        </label>$copy
       </td>
       <td>$d[jumlah_peserta]</td>
     </tr>
@@ -170,7 +173,7 @@ $tr_tambah = "
             <tr>
               <td class='kanan'>
                 <div class='pt2 miring consolas darkblue'>Kode Grup Kelas Baru</div>
-                <input type=hiddena id=kelas name=kelas[kelas] class=input_add_kelas disabled>
+                <input type=hidden id=kelas name=kelas[kelas] class=input_add_kelas disabled>
               </td>
               <td>
                 <div class='f30 biru tebal consolas ' id=kode_kelas>...</div>

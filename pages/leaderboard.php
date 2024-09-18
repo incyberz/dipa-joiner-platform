@@ -73,7 +73,10 @@ if ($get_update) {
   include 'leaderboard-auto_update.php';
   exit;
 } else {
-  if (!mysqli_num_rows($q)) die(div_alert('danger', "Data untuk BEST [$get_best] tidak ditemukan"));
+  if (!mysqli_num_rows($q)) {
+    // die(div_alert('danger', "Data untuk BEST [$get_best] tidak ditemukan"));
+    echo (div_alert('danger', "Data untuk BEST [$get_best] tidak ditemukan"));
+  }
   $tr_best = '';
   if ($get_best) { // single best
     # ============================================================

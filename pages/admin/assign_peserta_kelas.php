@@ -1,8 +1,27 @@
 <?php
+$from_kelas = $_GET['from_kelas'] ?? '';
+$get_kelas = $_GET['kelas'] ?? die(erid('kelas'));
+# ============================================================
+# PROCESSORS FILTER 
+# ============================================================
+if (isset($_POST['btn_filter_kelas'])) {
+  echo '<pre>';
+  var_dump($_POST);
+  echo '</pre>';
+  jsurl("?assign_peserta_kelas&kelas=$get_kelas&from_kelas=$_POST[select_from_kelas]");
+}
+
+
+
+
+
+
+
+
+
 # ============================================================
 # HEADER ASSIGN PESERTA KELAS
 # ============================================================
-$get_kelas = $_GET['kelas'] ?? die(erid('kelas'));
 if (!$ta) die(erid('ta'));
 set_h2(
   'Assign Peserta Kelas',
@@ -18,6 +37,21 @@ set_h2(
   "
 );
 instruktur_only();
+
+
+# ==================================================
+# SELECT FROM KELAS TERDAHULU
+# ==================================================
+$s = "SELECT * FROM tb_kelas WHERE ta < $ta";
+$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+$opt = '<option value=0>--Pilih--</option>';
+$opt .= '<option value=all>Semua Kelas</option>';
+while ($d = mysqli_fetch_assoc($q)) {
+  $selected = $d['kelas'] == $from_kelas ? 'selected' : '';
+  $opt .= "<option value='$d[kelas]' $selected>$d[kelas] ~ TA.$d[ta]</option>";
+}
+$select_from_kelas = "<select class='form-control' name=select_from_kelas>$opt</select>";
+
 
 
 # ==================================================
@@ -58,6 +92,12 @@ if (mysqli_num_rows($q) == 0) {
 # ==================================================
 # PESERTA ALL 
 # ==================================================
+$join_from_kelas = !$from_kelas ? 'WHERE 1' : "
+  JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
+  WHERE b.kelas = '$from_kelas'
+";
+
+
 $s = "SELECT 
 a.id as id_peserta, 
 a.nama as nama_peserta, 
@@ -69,11 +109,13 @@ a.nama as nama_peserta,
   AND q.ta=$ta) kelas 
 
 FROM tb_peserta a 
-WHERE status=1 
+-- JOIN tb_kelas_peserta
+$join_from_kelas 
+AND status=1 
 AND id_role=1
 ORDER BY kelas,a.nama    
 ";
-$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+$q = mysqli_query($cn, $s) or die("$s<hr>" . mysqli_error($cn));
 if (mysqli_num_rows($q) == 0) {
   $tr_peserta_all = div_alert('danger', "Belum ada peserta pada database.");
 } else {
@@ -96,11 +138,18 @@ if (mysqli_num_rows($q) == 0) {
 # ==================================================
 # FINAL OUTPUT 
 # ==================================================
+$Semua_Peserta = $from_kelas ? "Dari kelas: $from_kelas" : "Semua Kelas";
 echo "
   <div class='row'>
     <div class='col-6'>
       <div class=wadah>
-        <h2>Semua Peserta</h2>
+        <h2>$Semua_Peserta</h2>
+        <form method=post>
+          <div class='flexy '>
+            <div>$select_from_kelas</div>
+            <div><button class='btn btn-sm btn-info' name=btn_filter_kelas>Filter</button></div>
+          </div>
+        </form>
         <table class='table'>
           <thead>
             <th>No</th>
@@ -114,7 +163,7 @@ echo "
 
     <div class='col-6'>
       <div class=wadah>
-        <h2>Peserta Kelas $get_kelas </h2>
+        <h2>Peserta Kelas <span id=get_kelas>$get_kelas</span> </h2>
         <table class='table'>
           <thead>
             <th>No</th>

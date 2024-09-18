@@ -27,6 +27,7 @@ if ($keyword) {
   # ============================================================
   $s = "SELECT a.id,
   a.nama,
+  a.username,
   -- b.akumulasi_poin,
   d.kelas,
   (SELECT akumulasi_poin FROM tb_poin WHERE id_peserta=a.id and id_room=$id_room) akumulasi_poin,  
@@ -59,7 +60,7 @@ if ($keyword) {
     $tr .= "
       <tr>
         <td>
-          $d[nama] | $d[kelas] | $d[akumulasi_poin] LP | Wars: $d[count_wars] | Ujian: $d[count_ujian] | count_kelas_peserta: $d[count_kelas_peserta]
+          $d[nama] | $d[username] | $d[kelas] | $d[akumulasi_poin] LP | Wars: $d[count_wars] | Ujian: $d[count_ujian] | count_kelas_peserta: $d[count_kelas_peserta]
         </td>
         <td>
           $super_delete
@@ -178,4 +179,17 @@ if (isset($_GET['id'])) {
   </form>
 
   <?= $tb ?>
-<?php } ?>
+<?php }
+
+
+# ============================================================
+# SELECT CONSTRAIN
+# ============================================================
+$s = "SELECT 
+  TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME
+FROM
+  INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+WHERE
+  REFERENCED_TABLE_SCHEMA = 'db_online_dipa_sep_2024' AND
+  REFERENCED_TABLE_NAME = 'tb_peserta'
+";
