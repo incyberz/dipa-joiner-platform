@@ -27,7 +27,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     <tr>
       <td>$i</td>
       <td>
-        <div class='mb2'>Sesi: <b class=darkblue>$d[nama]</b></div>
+        <div><input class='form-control input_editable mb1' name=nama id=nama__$d[id] value='$d[nama]' /></div>
         <div class='mb1 f12 mt4 miring'>Tags:</div>
         <div><input class='form-control input_editable mb1' name=tags id=tags__$d[id] value='$d[tags]' /></div>
         <div class='mb1 f12 mt4 miring'>Deskripsi:</div>
