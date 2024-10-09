@@ -36,7 +36,7 @@ if ($get_mode != 'fast' and $id_role == 1) $get_mode = 'fast';
 
 
 # ================================================================
-# MAIN SELECT
+# MAIN SELECT ROOM KELAS
 # ================================================================
 $s = "SELECT a.kelas, a.id as id_room_kelas 
 FROM tb_room_kelas a 
@@ -52,6 +52,9 @@ if (!mysqli_num_rows($q)) {
 }
 while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
 
+  # ============================================================
+  # SUB SELECT PESERTA KELAS
+  # ============================================================
   $s2 = "SELECT 
   d.id as id_peserta,
   d.nama,
@@ -78,7 +81,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
   }
 
   $no = 0;
-  while ($d2 = mysqli_fetch_assoc($q2)) {
+  while ($d2 = mysqli_fetch_assoc($q2)) { // LOOP PESERTA KELAS
     $nama = ucwords(strtolower($d2['nama']));
     $jumlah_peserta++;
     $d2['war_image'] = $d2['war_image'] ? $d2['war_image'] : $d2['image'];
@@ -90,7 +93,11 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
     if ($get_mode == 'fast') {
       $sty = '';
       $link_super_delete = '';
-      if ($d2['war_image'] == $d2['image']) {
+      if (!$d2['war_image'] and !$d2['image']) {
+        // profil dan war profil belum ada
+        $sty = 'border:solid 3px red';
+        $src = 'assets/img/peserta/belum_upload.jpg';
+      } else if ($d2['war_image'] == $d2['image']) {
         // profil ada tapi belum jadi profil wars
         $sty = 'border:solid 3px blue';
       } else {

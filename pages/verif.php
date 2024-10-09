@@ -81,8 +81,10 @@ $sql_keyword = $keyword ? "(e.nama LIKE '%$keyword%' OR d.nama LIKE '%$keyword%'
 $jumlah_verif = 0;
 $rjenis = ['latihan', 'challenge'];
 foreach ($rjenis as $key => $jenis) {
+  $sql_image_bukti = $jenis == 'latihan' ? 'a.image as image_bukti' : '1';
   $s = "SELECT 
   a.id as id_bukti,
+  $sql_image_bukti,
   a.*,
   b.id as id_assign,
   c.no as no_sesi,
@@ -148,7 +150,7 @@ foreach ($rjenis as $key => $jenis) {
         $id_all .= "$id_bukti,";
 
         if ($jenis == 'latihan') {
-          $href = "uploads/$d[folder_uploads]/$d[image]";
+          $href = "uploads/$d[folder_uploads]/$d[image_bukti]";
           if (file_exists($href)) {
             if ($show_img) {
               $img_caption = "<img src='$href' style=max-width=300px class='img-thumbnail' />";

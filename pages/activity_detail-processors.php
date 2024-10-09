@@ -82,11 +82,18 @@ if (isset($_POST['btn_upload'])) {
 
   if (isset($_FILES['bukti'])) {
     if (move_uploaded_file($_FILES['bukti']['tmp_name'], $target_bukti) && $jenis != 'challenge') {
-      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-      // echo $pesan_upload;
-      // echo "<script>location.replace('?activity&jenis=$jenis&no=$no_jenis')</script>";
-      // jsurl();
 
+      # ============================================================
+      # RESIZE IMAGE
+      # ============================================================
+      echolog("resize_img(target_bukti)");
+      include_once 'include/resize_img.php';
+      resize_img($target_bukti);
+
+      # ============================================================
+      # EXECUTE INSERT OR UPDATE BUKTI LATIHAN
+      # ============================================================
+      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     } else {
       echo div_alert('danger', 'Tidak dapat move_uploaded_file.');
     }
@@ -106,6 +113,23 @@ if (isset($_POST['btn_upload'])) {
 # HAPUS BUKTI
 # ============================================================
 if (isset($_POST['btn_hapus_bukti'])) {
+
+  # ============================================================
+  # DELETE FILE BUKTI LATIHAN
+  # ============================================================
+  if ($jenis == 'latihan') {
+    $d_bukti = mysqli_fetch_assoc(mysqli_query($cn, "SELECT image FROM tb_bukti_$jenis WHERE id=$_POST[btn_hapus_bukti]"));
+    // unlink
+    $src = "uploads/$folder_uploads/$d_bukti[image]";
+    echolog("unlink $src");
+    if (!unlink($src)) {
+      die(div_alert('danger', "Tidak dapat unlink file: $src"));
+    }
+  }
+
+  # ============================================================
+  # DELETE BUKTI LATIHAN
+  # ============================================================
   $s = "DELETE FROM tb_bukti_$jenis WHERE id=$_POST[btn_hapus_bukti]";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   jsurl();

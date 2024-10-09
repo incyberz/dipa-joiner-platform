@@ -1,22 +1,57 @@
 <?php
-if (isset($_POST['btn_upload'])) {
+if (isset($_POST['btn_upload_cropped_image'])) {
+
+  include 'include/resize_img.php';
   echo '<pre>';
   var_dump($_FILES);
   echo '</pre>';
 
-  exit;
+  $id_target_peserta = $_POST['btn_upload_cropped_image'];
 
-  // $id_peserta = $_POST['id_peserta'];
-  $target = "$lokasi_profil/$_POST[war_image]";
-  if (move_uploaded_file($_FILES['war_profil']['tmp_name'], $target)) {
-    echo div_alert('success', 'Upload Success');
-    rename('zzz', 'xxx');
+  // select war image
+  $s = "SELECT war_image,nama FROM tb_peserta WHERE id=$_POST[btn_upload_cropped_image]";
+  echo '<pre>';
+  var_dump($s);
+  echo '</pre>';
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  $d = mysqli_fetch_assoc($q);
+  $path_unverified_war_image = "$lokasi_profil/$d[war_image]";
+
+
+  // new war_image
+  $nama = $d['nama'];
+  $date = date('ymdHis');
+  $nama2 = strtolower(str_replace(' ', '_', trim($nama)));
+  $new_war_image = "$id_target_peserta-war-$nama2-$date.jpg";
+
+
+  // replace with new war_image
+  if (move_uploaded_file($_FILES['war_profil']['tmp_name'], "$lokasi_profil/$new_war_image")) {
+    echolog('move_uploaded_file sukses');
+
+    // resize new war_image
+    resize_img($new_war_image, '', 150, 150);
+
+    // delete old war image
+    echolog('delete old-unverified war image');
+    unlink($path_unverified_war_image);
+
+    echolog('update db with new war_image');
+    $s = "UPDATE tb_peserta SET war_image='$new_war_image' WHERE id=$id_target_peserta";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    echo div_alert('success', 'Verified Success');
   }
+
+  jsurl();
 } elseif (isset($_POST['btn_approve_war_image'])) {
   $tmp = explode('__', $_POST['btn_approve_war_image']);
   $id = $tmp[0];
   $is_approve = $tmp[1];
   $target = "$lokasi_profil/$_POST[war_image]";
+
+  echo '<pre>';
+  var_dump($_POST);
+  echo '</pre>';
 
   if ($is_approve === '0') {
     # ============================================================
@@ -29,7 +64,7 @@ if (isset($_POST['btn_upload'])) {
       $s = "UPDATE tb_peserta SET war_image='war_image_rejected.jpg' WHERE id=$id";
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       echo div_alert('success', 'Reject Success');
-      jsurl();
+      // jsurl();
     }
   } elseif ($is_approve === '1') {
     # ============================================================
@@ -61,7 +96,29 @@ if (isset($_POST['btn_upload'])) {
   // rename("$lokasi_profil/war-$_POST[id_peserta].jpg", "$lokasi_profil/war-$_POST[id_peserta]-reject.jpg");
 }
 
-$s = "SELECT id,war_image,nama FROM tb_peserta WHERE status=1 AND war_image LIKE '%war_unverified%'";
+
+# ============================================================
+# MAIN SELECT
+# ============================================================
+$s = "SELECT 
+a.id,
+a.war_image,
+a.nama 
+FROM tb_peserta a 
+JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
+JOIN tb_kelas c ON b.kelas=c.kelas 
+JOIN tb_room_kelas d ON c.kelas=d.kelas 
+WHERE a.status=1 
+AND a.war_image LIKE '%war_unverified%' 
+AND d.id_room='$id_room'
+";
+
+# ============================================================
+# EXCEPTION FOR ABI
+# ============================================================
+// if ($username == 'abi') {
+//   $s = "SELECT id,war_image,nama FROM tb_peserta WHERE status=1 AND war_image LIKE '%war_unverified%'";
+// }
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $divs = '';
 while ($d = mysqli_fetch_assoc($q)) {
@@ -81,7 +138,7 @@ while ($d = mysqli_fetch_assoc($q)) {
           <div class='border-bottom f12 mb2 pb1'>Crop dan Re-upload: <a target=_blank class=help href='?help&q=crop-dan-reupload-war-image'>See how</a></div>
           <input type=hidden name=id_peserta value=$id />
           <input type=file name=war_profil accept='.jpg' />
-          <button class='btn btn-secondary btn-sm' name=btn_upload>Upload</button>
+          <button class='btn btn-secondary btn-sm' name=btn_upload_cropped_image value=$id>Upload</button>
         </form>
       </div>
     </div>
@@ -97,4 +154,4 @@ while ($d = mysqli_fetch_assoc($q)) {
   }
 }
 
-echo "<div class='flexy flex-center'>$divs</div>";
+echo "<div class='flexysaasd flexas-center'>$divs</div>";

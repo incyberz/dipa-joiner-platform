@@ -8,7 +8,7 @@ function resize_img($img_asal, $img_resized = '', $max_width = 1000, $max_height
   $height_orig = $image_info[1];
 
   if ($width_orig < $min_width || $height_orig < $min_height) {
-    jsurl("Resolusi image terlalu kecil. Silahkan pilih gambar dengan min-size $min_width x $min_height pixel !", 3000);
+    $pesan = "Resolusi image terlalu kecil. Silahkan pilih gambar dengan min-size $min_width x $min_height pixel !";
   } else if ($width_orig > $max_width || $height_orig > $max_height) {
     if ($width_orig > $height_orig) {
       $width = $max_width;
@@ -26,7 +26,7 @@ function resize_img($img_asal, $img_resized = '', $max_width = 1000, $max_height
     imagejpeg($target_img, $img_output, 80);
   } else {
     if ($img_asal == $img_resized || $img_resized == '') {
-      $pesan .= '<br>No need to be resized.';
+      $pesan .= "<br>No need to be resized. Original size: $width_orig x $height_orig";
     } else {
       copy($img_asal, $img_resized);
       $pesan .= '<br>No need to be resized. Just copy to the Image Resized.';
