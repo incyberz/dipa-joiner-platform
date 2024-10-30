@@ -45,7 +45,8 @@ $s = "SELECT
 b.kelas,
 d.id as id_peserta,
 d.nama as nama_peserta,
-(SELECT COUNT(1) FROM tb_kelas_peserta WHERE kelas=c.kelas) count_peserta 
+(SELECT COUNT(1) FROM tb_kelas_peserta WHERE kelas=c.kelas) count_peserta,
+(SELECT ) poin_chal 
 FROM tb_assign_challenge a 
 JOIN tb_room_kelas b ON a.id_room_kelas=b.id 
 JOIN tb_kelas_peserta c ON b.kelas=c.kelas 
