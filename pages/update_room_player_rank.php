@@ -31,6 +31,7 @@ WHERE a.id_room='$id_room'
 AND b.status = 1 -- peserta aktif 
 AND b.id_role = 1 -- peserta only 
 AND e.id_room = $id_room 
+AND e.ta =  $ta 
 
 ORDER BY a.akumulasi_poin DESC
 ";
@@ -70,6 +71,7 @@ if (mysqli_num_rows($q)) {
 
 
     $s2 = "UPDATE tb_poin SET rank_room=$room_rank, rank_kelas=$rank_kelas WHERE id_peserta=$d[id_peserta] AND id_room=$id_room";
+    echo "<br>$s2";
     $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
   }
 }

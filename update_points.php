@@ -1,5 +1,5 @@
 <?php
-if ($harus_update_poin and $id_room_kelas) {
+if ($harus_update_poin and $id_room_kelas and !$_POST) {
   echo '<div class="consolas f12 abu">Updating Points... please wait!<hr>';
   # ========================================================
   # HITUNG MY RANK KELAS

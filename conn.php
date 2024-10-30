@@ -23,6 +23,7 @@ if ($online_version) {
   $db_name = 'db_dipa';
 
   $db_name = 'db_online_dipa_sep_2024';
+  $db_name = 'db_online_dipa_oct_2024';
   // $db_name = 'tb_dipa_destroyed';
 }
 

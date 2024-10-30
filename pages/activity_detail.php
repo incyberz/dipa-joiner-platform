@@ -39,7 +39,7 @@ WHERE a.id=$id_assign
 ";
 
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-if (!mysqli_num_rows($q)) die(section(div_alert('danger', "Maaf, data $jenis tidak ditemukan.<hr><a class=proper href='?activity&jenis=$jenis'>Pilih $jenis</a>")));
+if (!mysqli_num_rows($q)) die(div_alert('danger', "Maaf, data $jenis tidak ditemukan.<hr><a class=proper href='?activity&jenis=$jenis'>Pilih $jenis</a>"));
 $d_assign = mysqli_fetch_assoc($q);
 # ============================================================
 # EXTRACTED D_ASSIGN
@@ -465,6 +465,18 @@ if ($id_role == 2) {
     }
   }
   include 'activity_manage.php';
+
+  if ($jenis == 'challenge') {
+    # ============================================================
+    # CHALLENGE TO UTS
+    # ============================================================
+    echo "
+      <div class='wadah gradasi-kuning'>
+        <a class='btn btn-primary mb2' href='?challenge_to_ujian&id_challenge=$id_jenis'>Challenge to Ujian</a>
+        <p>Jika ingin mengkonversi Learning Point pada challenge ini menjadi nilai UH, UTS, atau UAS</p>
+      </div>
+    ";
+  }
 }
 ?>
 

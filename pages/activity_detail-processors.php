@@ -159,4 +159,5 @@ if (isset($_POST['btn_add_sublevel'])) {
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     echo div_alert('success', "Tambah sublevel baru sukses.");
   }
+  jsurl();
 }
