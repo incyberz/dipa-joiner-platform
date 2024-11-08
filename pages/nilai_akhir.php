@@ -504,6 +504,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   }
   if ($nilai_akhir > 100) $nilai_akhir = 100;
   $nilai_akhir = round($nilai_akhir * $total_bobot / $bobot_penyesuaian, 2);
+  $nilai_akhir = $nilai_akhir > 100 ? 100 : $nilai_akhir;
 
 
 
@@ -633,6 +634,7 @@ $jumlah_peserta_show = $id_role == 1 ? '' : "<div class=mb2>Jumlah Peserta: $tot
 echo "
   <div data-aos=fade>
     $jumlah_peserta_show
+    <div>$room[info_ujian]</div>
     $blok_kelas
   </div>
 ";

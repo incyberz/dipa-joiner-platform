@@ -12,7 +12,7 @@
       }
 
 
-      $s9 = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR'";
+      $s9 = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR' AND ta=$ta";
       $q9 = mysqli_query($cn, $s9) or die(mysqli_error($cn));
       if (!mysqli_num_rows($q9)) {
         echo div_alert('danger', 'Belum terdapat room-kelas pada room ini.');

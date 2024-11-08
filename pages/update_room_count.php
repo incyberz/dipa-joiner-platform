@@ -48,7 +48,12 @@ if ($room['status'] == 100) {
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $koloms = [];
   while ($d = mysqli_fetch_assoc($q)) {
-    if ($d['Field'] == 'id_room' || $d['Field'] == 'last_update') continue;
+    if (
+      $d['Field'] == 'id_room'
+      || $d['Field'] == 'last_update'
+      || $d['Field'] == 'sudah_uts'
+      || $d['Field'] == 'sudah_uas'
+    ) continue;
     array_push($koloms, $d['Field']);
   }
 

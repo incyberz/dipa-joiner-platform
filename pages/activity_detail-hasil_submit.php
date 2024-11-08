@@ -1,6 +1,10 @@
 <?php
-$meme = meme('dont-have');
-$hasil_submit = "<div class='kecil miring merah tengah p2'>kamu belum mengerjakan.<div class=mt2>$meme</div></div>";
+if ($id_role == 1) {
+  $meme = meme('dont-have');
+  $hasil_submit = "<div class='kecil miring merah tengah p2'>kamu belum mengerjakan.<div class=mt2>$meme</div></div>";
+} else {
+  $hasil_submit = '<i class=abu>INSTRUKTUR tidak perlu submit.</i>';
+}
 if ($id_bukti) {
   $s2 = "SELECT a.*,b.no as no_lat, 
   (

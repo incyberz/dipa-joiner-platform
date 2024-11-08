@@ -122,6 +122,21 @@ if (isset($_POST["btn_close_$jenis"]) || isset($_POST["btn_open_$jenis"])) {
 }
 
 
+# ======================================================
+# PROCESSOR :: CLOSE / OPEN ALL
+# ======================================================
+if (isset($_POST['btn_set_all'])) {
+  $status = $_POST['btn_set_all'];
+  $s = "UPDATE tb_$jenis SET status=$status WHERE id_room=$id_room";
+  echo '<pre>';
+  var_dump($s);
+  echo '</pre>';
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  echo "<div class='wadah gradasi-hijau'>Set All Status of $jenis ... OK</div>";
+  jsurl();
+}
+
+
 if (isset($_POST['btn_add_activity'])) {
   $s = "SELECT 1 FROM tb_$jenis WHERE nama='$_POST[nama]' and id_room=$id_room";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -333,6 +348,11 @@ echo "
       </div>
     </div>
     <div class='abu f12 mt2'>)* Setelah membuat $jenis baru, silahkan Anda assign! Dan untuk editing properti silahkan klik pada salah satu list assigned-$jenis di paling atas</div>
+  </form>
+  <form method=post class='wadah mt4'>
+    <div class='proper mb2'>Close/Open All $jenis</div>
+    <button class='btn btn-danger btn-sm' name=btn_set_all value=-1>Close All</button>
+    <button class='btn btn-warning btn-sm' name=btn_set_all value=1>Open All</button>
   </form>
 
   $grup_kelas_pengakses

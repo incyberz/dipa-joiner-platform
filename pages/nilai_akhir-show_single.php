@@ -45,7 +45,6 @@ foreach ($rbobot as $key => $value) {
 
 $nilai_akhir = $nilai_akhir > 100 ? 100 : $nilai_akhir;
 
-
 // penyesuaian nilai akhir jika belum UTS | UAS
 $nilai_akhir_penyesuaian = round($nilai_akhir * $total_bobot / $bobot_penyesuaian, 2);
 if ($room_count['sudah_uas']) {
@@ -61,6 +60,8 @@ if ($room_count['sudah_uas']) {
   ";
   $nilai_akhir = $nilai_akhir_penyesuaian;
 }
+
+$nilai_akhir = $nilai_akhir > 100 ? 100 : $nilai_akhir;
 
 $blok_kelas .= "
   <div class=wadah>

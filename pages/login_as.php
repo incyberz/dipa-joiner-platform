@@ -45,10 +45,6 @@ if ($id_role == 2 || isset($_SESSION['dipa_master_username'])) {
 
 
 
-// if(isset($_SESSION['dipa_master_username'])){
-//   echo "<a href='?login_as&unlog'>Back to Master Username</a>";
-// }
-
 
 
 

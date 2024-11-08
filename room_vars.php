@@ -372,3 +372,14 @@ $d = mysqli_fetch_assoc($q);
 $sudah_polling_uts = $d['sudah_polling_uts'];
 $sudah_polling_uas = $d['sudah_polling_uas'];
 $total_peserta_kelas = $d['total_peserta_kelas'];
+
+
+
+
+
+# ============================================================
+# ROOM INFO UJIAN
+# ============================================================
+$info_uts = $room_count['sudah_uts'] ? 'Room ini Sudah UTS' : '<i class=abu>Belum UTS</i>';
+$info_uas = $room_count['sudah_uas'] ? 'Room ini Sudah UAS' : '<i class=abu>Belum UAS</i>';
+$room['info_ujian'] = "<div class='flexy f10 blue '><div>$info_uts</div><div>$info_uas</div></div>";

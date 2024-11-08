@@ -1,7 +1,17 @@
-<h1>Challenge to Ujian</h1>
-<hr>
 <?php
-$id_challenge = $_GET['id_challenge'] ?? die(erid('id_challenge'));
+$img_next = img_icon('next');
+// $img_prev = img_icon('prev');
+
+echo $room['info_ujian'];
+
+$id_challenge = $_GET['id_challenge'] ?? '';
+if (!$id_challenge) {
+  echo "
+    <h2>Silahkan Pilih dari salah satu Challenge ! </h2>
+    <a href='?activity&jenis=challenge' class='btn btn-primary'>$img_prev List Challenge</a>
+  ";
+  exit;
+}
 
 # ============================================================
 # GET PEKAN UJIAN
@@ -14,7 +24,12 @@ $arr_pekan = [
   'remed_uas' => 'Remed UAS'
 ]; // diambil dari tb_poin
 if (!$get_pekan) {
-  echo "<h2>Untuk Pekan Ujian: </h2>";
+  echo "
+    <h2>Untuk Pekan Ujian: </h2>
+    <div class='f12 mb4'>
+      <a href='?activity&jenis=challenge' >$img_prev List Challenge</a>
+    </div>
+  ";
 
   $select_sesi = '';
   foreach ($arr_pekan as $pekan => $title) {
@@ -30,8 +45,14 @@ if (!$get_pekan) {
 # ============================================================
 $get_kelas = $_GET['kelas'] ?? '';
 if (!$get_kelas) {
-  echo "<h2>$arr_pekan[$get_pekan] untuk Kelas : </h2>";
-  $s = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR'";
+  echo "
+    <h2>$arr_pekan[$get_pekan] untuk Kelas : </h2>
+    <div class='f12 mb4'>
+      <a href='?activity&jenis=challenge' >$img_prev List Challenge</a> | 
+      <a href='?challenge_to_ujian&id_challenge=$id_challenge' >Ubah Pekan</a> 
+    </div>
+  ";
+  $s = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR' AND ta = $ta";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   while ($d = mysqli_fetch_assoc($q)) {
     echo "<a class='btn btn-primary' href='?challenge_to_ujian&id_challenge=$id_challenge&pekan=$get_pekan&kelas=$d[kelas]'>$d[kelas]</a> ";
@@ -43,9 +64,17 @@ if (!$get_kelas) {
 # ============================================================
 # MAIN PROCESS
 # ============================================================
+set_title("Challenge to Ujian | $arr_pekan[$get_pekan] | $get_kelas");
+echo "
+  <h1>$arr_pekan[$get_pekan] untuk Kelas $get_kelas </h1>
+  <div class='f12 mb4'>
+    <a href='?activity&jenis=challenge' >$img_prev List Challenge</a> | 
+    <a href='?challenge_to_ujian&id_challenge=$id_challenge' >Ubah Pekan</a> |
+    <a href='?challenge_to_ujian&id_challenge=$id_challenge&pekan=$get_pekan' >Ubah Kelas</a> 
+  </div>
+";
 include 'challenge_to_ujian_process.php';
 
-$img_next = img_icon('next');
 
 # ============================================================
 # CHALLENGE PROPERTIES
@@ -97,7 +126,12 @@ d.nama as nama_peserta,
   JOIN tb_assign_challenge q ON p.id_assign_challenge=q.id 
   WHERE q.id_challenge = $id_challenge 
   AND p.id_peserta=d.id
-) poin_chal 
+) poin_chal,
+-- nilai sebelumnya pada tb_poin
+(
+  SELECT $get_pekan FROM tb_poin WHERE id_peserta=d.id AND id_room=$id_room 
+) nilai_sebelumnya
+
 FROM tb_assign_challenge a 
 JOIN tb_room_kelas b ON a.id_room_kelas=b.id 
 JOIN tb_kelas_peserta c ON b.kelas=c.kelas 
@@ -134,20 +168,22 @@ while ($d = mysqli_fetch_assoc($q)) {
   $i++;
   $poin_chal = $d['poin_chal'] ? number_format($d['poin_chal'], 0) : '-';
   $cid_peserta = $d['id_peserta'];
+  $nilai_sebelumnya = $d['nilai_sebelumnya'] ?? '-';
 
   $tr .= "
     <tr>
       <td>$i</td>
-      <td>$d[nama_peserta]</td>
+      <td>$d[nama_peserta] <a href='?login_as&id_peserta=$d[id_peserta]'>$img_login_as</a></td>
       <td>
         <div class='flexy'>
-          <div>$poin_chal</div>
+          <div id=poin_chal__$i>$poin_chal</div>
           $info
         </div>
       </td>
       <td>
         <input type=number min=0 max=100 step=0.1 class='form-control konversi' id=konversi__$d[kelas]__$i name=konversi[$cid_peserta] />
       </td>
+      <td class=tengah>$nilai_sebelumnya</td>
     </tr>
   ";
   $last_kelas = $d['kelas'];
@@ -164,17 +200,24 @@ echo "
         </td>
         <td>
           <div class='f12 mb1'>Batas Nilai Terendah</div>
-          <input type=number min=1 max=90 class='form-control batas batas__$get_kelas' id='batas__$get_kelas" . "__awal' value=70 />
+          <input type=number min=1 max=80 class='form-control batas batas__$get_kelas' id='batas__$get_kelas" . "__awal' value=70 />
         </td>
         <td>
           <div class='f12 mb1'>Batas Nilai Tertinggi</div>
-          <input type=number min=70 max=100 class='form-control batas batas__$get_kelas' id='batas__$get_kelas" . "__akhir' value=100 />
+          <input type=number min=70 max=105 class='form-control batas batas__$get_kelas' id='batas__$get_kelas" . "__akhir' value=100 />
         </td>
       </tr>
     </table>
     <hr>
     <h2>Dikerjakan Oleh</h2>
     <table class='table table-striped'>
+      <tr class='gradasi-toska '>
+        <td>No</td>
+        <td>Nama Peserta</td>
+        <td>Challenge Points</td>
+        <td>Konversi Nilai</td>
+        <td class=tengah>Nilai $arr_pekan[$get_pekan] Sebelumnya</td>
+      </tr>
       $tr
       <tr class='gradasi-toska'>
         <td colspan=100%>
@@ -230,8 +273,14 @@ echo "
             // console.log(aksi, kelas, bagian, total_peserta);
 
             for (let i = 1; i <= total_peserta; i++) {
-              konversi = batas_awal + interval * (total_peserta - i + 1);
-              konversi = konversi > 100 ? 100 : konversi;
+
+              if ($("#poin_chal__" + i).text() == '-') {
+                konversi = 0;
+              } else {
+                konversi = batas_awal + interval * (total_peserta - i + 1);
+                konversi = konversi > 100 ? 100 : konversi;
+              }
+
               $('#konversi__' + kelas + '__' + i).val(Math.round(konversi));
 
             }
