@@ -27,9 +27,9 @@ $arr_part = [
     'desc' => 'Penentuan minggu efektif bagi sesi pembelajaran di room ini',
     'image' => 'weekly.png',
   ],
-  'jadwal' => [
-    'title' => 'Jadwal Sesi',
-    'desc' => 'Penentuan hari dan jam untuk tiap sesi pembelajaran di room ini',
+  'jadwal_kelas' => [
+    'title' => 'Jadwal Kelas',
+    'desc' => 'Penentuan hari dan jam untuk tiap kelas per sesi',
     'image' => 'calendar.png',
   ],
   'rps' => [

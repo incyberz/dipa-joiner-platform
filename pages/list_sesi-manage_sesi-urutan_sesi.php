@@ -21,12 +21,32 @@ while ($d = mysqli_fetch_assoc($q)) {
 $select_jenis = "<select class='form-control' name=jenis>$opt</select>";
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # ============================================================
 # PROCESSORS
 # ============================================================
 if (isset($_POST['btn_move_to'])) {
-
-
 
   $arr = explode('__', $_POST['btn_move_to']);
   $aksi = $arr[0];
@@ -68,6 +88,46 @@ if (isset($_POST['btn_add_sesi'])) {
 }
 
 
+if (isset($_POST['btn_delete_sesi'])) {
+
+  $id = $_POST['btn_delete_sesi'];
+  if ($id > 0) {
+
+    $s = "SELECT jenis FROM tb_sesi WHERE id=$id";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    $d = mysqli_fetch_assoc($q);
+
+    if ($d['jenis'] !== '1') { // sesi tenang
+      echo '<hr>SESI TENANG | UTS | UAS';
+      $s = "DELETE FROM tb_sesi_kelas WHERE id_sesi=$id";
+      echo "<hr>$s";
+      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    }
+
+
+    $s = "DELETE FROM tb_sesi WHERE id=$_POST[btn_delete_sesi]";
+    echo "<hr>$s";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+
+    $s = "SELECT * FROM tb_sesi WHERE id_room=$id_room ORDER BY no";
+    echo "<hr>$s";
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    $jumlah_sesi = mysqli_num_rows($q);
+    $i = 0;
+    while ($d = mysqli_fetch_assoc($q)) {
+      $i++;
+      $s2 = "UPDATE tb_sesi SET no=$i WHERE id=$d[id]";
+      echo "<hr>$s2";
+      $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+    }
+  }
+
+  echo div_alert('success', 'Hapus sesi sukses.');
+  jsurl('', 1000);
+  exit;
+}
+
+
 
 
 
@@ -97,7 +157,7 @@ if (isset($_POST['btn_add_sesi'])) {
 # ============================================================
 # LIST ALL SESI
 # ============================================================
-$s = "SELECT a.*
+$s = "SELECT a.* 
 FROM tb_sesi a WHERE id_room=$id_room 
 ORDER BY a.no";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -118,8 +178,6 @@ while ($d = mysqli_fetch_assoc($q)) {
   }
 
   $btn_up = $d['no'] == 1 ? $img_gray : "<button class=btn-transparan name=btn_move_to value=up__$d[id]__$d[no]>$img_up</button>";
-  $btn_down = $i == $total_sesi ? $img_gray : "<button class=btn-transparan name=btn_move_to value=down__$d[id]__$d[no]>$img_down</button>";
-  $btn_down = '';
 
   if ($d['jenis'] == 1) {
     # ============================================================
@@ -156,7 +214,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     $input_nama = "<div class='tengah p2 abu miring'>$input_nama</div>";
   }
 
-
+  $info_id_sesi = $username == 'abi' ? "<span class='f10 abu miring'>id: $d[id]</span>" : '';
 
   $tr .= "
     <tr class='$gradasi'>
@@ -167,7 +225,10 @@ while ($d = mysqli_fetch_assoc($q)) {
       <td>
         $btn_up 
         <span class='f14 abu'>$d[no]</span>
-        $btn_down
+        <form method=post style='display:inline-block'>
+          <button class='btn-transparan' onclick='return confirm(`Yakin hapus sesi ini?`)' name=btn_delete_sesi value=$d[id]>$img_delete</button>
+        </form> 
+        $info_id_sesi
       </td>
     </tr>
   ";
@@ -182,6 +243,11 @@ echo "
   <form method=post>
     <input type=hidden name=new_no value=$total_sesi>
     <table class=table>
+      <thead>
+        <th>P</th>
+        <th>Sesi</th>
+        <th>Manage</th>
+      </thead>
       $tr
       <tr>
         <td>$img_add</td>

@@ -77,7 +77,7 @@ if ($id_role != 2) {
 # ============================================================
 # SESI AKTIF ATAU SESI PERTAMA VALIDATION
 # ============================================================
-$s = "SELECT * FROM tb_sesi WHERE awal_presensi >= '$now' AND akhir_presensi < '$now' AND id_room=$id_room";
+$s = "SELECT * FROM tb_sesi WHERE awal_presensi <= '$now' AND akhir_presensi > '$now' AND id_room=$id_room";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $sesi_aktif = [];
 $sesi_pertama = [];
