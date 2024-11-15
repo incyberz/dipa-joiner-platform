@@ -1,6 +1,14 @@
-<h1>Super Delete Room Kelas</h1>
 <?php
+# ============================================================
+# SUPER DELETE KELAS
+# ============================================================
+instruktur_only();
+only_user('abi');
+
 $get_kelas = $_GET['kelas'];
+set_h2('SUPER DELETE KELAS');
+
+
 
 
 exit;

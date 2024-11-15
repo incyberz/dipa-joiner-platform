@@ -77,7 +77,15 @@ if ($id_role != 2) {
 # ============================================================
 # SESI AKTIF ATAU SESI PERTAMA VALIDATION
 # ============================================================
-$s = "SELECT * FROM tb_sesi WHERE awal_presensi <= '$now' AND akhir_presensi > '$now' AND id_room=$id_room";
+$kondisi = "id_room=$id_room AND awal_presensi <= '$now' ";
+
+$s = "SELECT *,
+(
+  SELECT COUNT(1) FROM tb_sesi 
+  WHERE jenis=1 
+  AND $kondisi
+  ) sesi_normal_count 
+FROM tb_sesi WHERE $kondisi AND akhir_presensi > '$now'";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $sesi_aktif = [];
 $sesi_pertama = [];
@@ -157,6 +165,9 @@ if (!$id_room_kelas) {
     "));
   }
 }
+
+
+$select_all_from_tb_room_kelas = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR' AND ta=$ta";
 
 
 

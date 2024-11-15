@@ -6,7 +6,7 @@
 <div data-aos=fade>
   <form method=post>
     <?php
-    if(isset($_POST['btn_set_target_kelas'])){
+    if (isset($_POST['btn_set_target_kelas'])) {
       $_SESSION['target_kelas'] = $_POST['btn_set_target_kelas'];
       $target_kelas = $_SESSION['target_kelas'];
     }
@@ -19,18 +19,18 @@
       <div class=mb2>Set target kelas ke:</div>
     ";
 
-    $s = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room";
-    $q = mysqli_query($cn,$s) or die(mysqli_error($cn));
-    if(!mysqli_num_rows($q)){
-      echo div_alert('danger','Belum terdapat room-kelas pada room ini.');
-    }else{
-      while($d=mysqli_fetch_assoc($q)){
-        $secondary = $d['kelas']==$target_kelas ? 'primary' : 'secondary';
+    $s = $select_all_from_tb_room_kelas;
+    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+    if (!mysqli_num_rows($q)) {
+      echo div_alert('danger', 'Belum terdapat room-kelas pada room ini.');
+    } else {
+      while ($d = mysqli_fetch_assoc($q)) {
+        $secondary = $d['kelas'] == $target_kelas ? 'primary' : 'secondary';
         echo "<div><button class='btn btn-$secondary mb2' name=btn_set_target_kelas value='$d[kelas]'>$d[kelas]</button></div>";
       }
     }
-  
-  
+
+
     ?>
   </form>
 

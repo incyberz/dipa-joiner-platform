@@ -264,7 +264,7 @@ if ($get_update) {
         ];
       }
 
-      $arr_room_kelas = [
+      $arr_rank = [
         'rank_room' => [
           'title' => 'THE BEST ROOM PLAYER',
           'desc' => "Player Terbaik di Room <b class=darkblue>$nama_room</b>",
@@ -277,7 +277,7 @@ if ($get_update) {
         ]
       ];
 
-      foreach ($arr_room_kelas as $best_code => $v) {
+      foreach ($arr_rank as $best_code => $v) {
         $div_peserta = '';
         if ($best_code == 'rank_kelas' and $kelas == 'INSTRUKTUR') {
           $div_peserta .= div_alert('info', 'Leaderboard INSTRUKTUR terdapat di <a href="?">Dashboard</a>');

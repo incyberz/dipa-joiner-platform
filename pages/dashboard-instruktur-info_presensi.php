@@ -1,8 +1,8 @@
 <?php
-if ($room_count['count_presensi_aktif'] > 1) {
+if (!$room_count['count_presensi_aktif'] > 1) {
   $info_presensi = div_alert('danger', 'Belum ada kalkulasi [INFO-presensi] untuk P2');
 } else {
-  $no_sesi = 1;
+  $no_sesi = $room_count['count_presensi_aktif'];
 
   $tmp = explode(';', $room_count['arr_count_peserta_kelas']);
   $progres = '';

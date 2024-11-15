@@ -348,7 +348,7 @@ if ($id_role == 2 and !$total_data) {
 # =======================================================
 if ($id_role == 2) {
   $arr_kelas = [];
-  $s2 = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room";
+  $s2 = $select_all_from_tb_room_kelas;
   $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
   while ($d2 = mysqli_fetch_assoc($q2)) {
     $arr_kelas[$d2['kelas']] = $d2['id'];

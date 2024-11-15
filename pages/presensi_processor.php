@@ -28,7 +28,9 @@ if (isset($_POST['btn_update_jadwal_kelas'])) {
     echo "<br>get no of this sesi... no_sesi: $no_sesi";
 
     // get all next sesi
-    $s = "SELECT id as id_sesi FROM tb_sesi WHERE no>$no_sesi AND id_room=$id_room";
+    $s = "SELECT id as id_sesi, nama as nama_sesi,no,jenis 
+    FROM tb_sesi WHERE no>$no_sesi AND id_room=$id_room 
+    ORDER BY no";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     echo "<br>get all next sesi... sesi count: " . mysqli_num_rows($q);
     $i = 0;
@@ -46,16 +48,13 @@ if (isset($_POST['btn_update_jadwal_kelas'])) {
       } else {
         $s2 = "INSERT INTO tb_sesi_kelas (id_sesi,kelas,jadwal_kelas) VALUES ($d2[id_sesi],'$ckelas','$new_jadwal_kelas')";
       }
-      echo "<br>executing... $s2";
+      echo "<br>updating Sesi-$d2[no] - <span class='darkblue'>[ $d2[nama_sesi] ]</span> - tipe $d2[jenis]<div class=f10>executing... $s2</div>";
       $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
-      echo "... success";
     }
   }
-  echo "<hr>All command... success | <a href='?presensi'>Back to Presensi</a>";
-  exit;
-  // echo $s;
+  echo ("All command... success | <a href='?presensi'>Back to Presensi</a>");
   // jsurl();
-
+  exit;
 }
 
 if (isset($_POST['btn_update_durasi_presensi'])) {
@@ -85,7 +84,9 @@ if (isset($_POST['btn_update_durasi_presensi'])) {
     echo "<br>get no of this sesi... no_sesi: $no_sesi";
 
     // get all next sesi
-    $s = "SELECT id as id_sesi FROM tb_sesi WHERE no>$no_sesi AND id_room=$id_room";
+    $s = "SELECT id as id_sesi, nama as nama_sesi,no,jenis 
+    FROM tb_sesi WHERE no>$no_sesi AND id_room=$id_room 
+    ORDER BY no";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     echo "<br>get all next sesi... sesi count: " . mysqli_num_rows($q);
     $i = 0;
@@ -100,14 +101,12 @@ if (isset($_POST['btn_update_durasi_presensi'])) {
       akhir_presensi='$new_akhir_presensi' 
       WHERE id=$d2[id_sesi] ";
 
-      echo "<br>executing... $s2";
+      echo "<br>updating Sesi-$d2[no] - <span class='darkblue'>[ $d2[nama_sesi] ]</span> - tipe $d2[jenis]<div class=f10>executing... $s2</div>";
       $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
-      echo "... success";
     }
   }
 
   echo "<hr>All command... success | <a href='?presensi'>Back to Presensi</a>";
-  exit;
   // jsurl();
-
+  exit;
 }

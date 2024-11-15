@@ -1,4 +1,5 @@
 <?php
+$at_kelas = ($id_role == 2 && $_SESSION['target_kelas']) ? "<div class='f8 pointer' onclick='alert(`Saat ini Anda sedang berada di kelas $_SESSION[target_kelas]. \n\nSet target kelas untuk mengubahnya.`)'>$_SESSION[target_kelas]</div>" : '';
 $jumlah_verif = 0;
 $rjenis = ['latihan', 'challenge'];
 if ($id_room) {
@@ -130,7 +131,7 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
                   <li><a href='?logout' onclick='return confirm(\"Yakin untuk Logout?\")' class=red>Logout</a></li>
                 </ul>
               </li>
-              <li class='darkred f10 tengah' style='margin-left:10px'>$kelas_show</li>
+              <li class='darkred f10 tengah' style='margin-left:10px'>$kelas_show$at_kelas</li>
               $unlog_link
             ";
           } elseif ($id_role == 4) {

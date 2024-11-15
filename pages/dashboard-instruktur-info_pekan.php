@@ -1,11 +1,8 @@
 <?php
-// debug ZZZ
-$sesi_aktif['jenis'] = '1';
-$now = '2024-12-17';
-$s = "SELECT * FROM tb_sesi WHERE awal_presensi <= '$now' AND akhir_presensi > '$now' AND id_room=$id_room";
-echo $s;
-$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$sesi_aktif = mysqli_fetch_assoc($q);
+if (!$sesi_aktif) {
+  echo div_alert('danger', "Tidak ada sesi aktif untuk hari ini.<hr>Silahkan <a href='?presensi'>Manage Penanggalan Presensi</a>");
+  exit;
+}
 
 
 if ($room_count['count_presensi_aktif'] > 1) {
@@ -24,10 +21,6 @@ if ($room_count['count_presensi_aktif'] > 1) {
     $info_pekan = "Sesi UAS";
   } elseif ($sesi_aktif['jenis'] === '1') { // pekan UTS 
 
-    echo '<pre>';
-    var_dump($sesi_aktif);
-    echo '</pre>';
-
     $s = "SELECT * 
     FROM tb_room_kelas a  
     -- JOIN tb_sesi_kelas b ON a.kelas=b.kelas -- terdapat Room lama yang belum set jadwal kuliah
@@ -41,46 +34,27 @@ if ($room_count['count_presensi_aktif'] > 1) {
     $info_kelas = '';
     while ($d = mysqli_fetch_assoc($q)) {
       $s2 = "SELECT jadwal_kelas, is_terlaksana FROM tb_sesi_kelas WHERE kelas='$d[kelas]' AND id_sesi=$sesi_aktif[id]";
-      echo "<hr>$s2 ZZZ HERE";
+      // echo "<hr>$s2 ZZZ HERE";
       $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
       $d2 = mysqli_fetch_assoc($q2);
 
-      // echo '<pre>';
-      // var_dump($d2);
-      // echo '</pre>';
       $eta = eta2($d2['jadwal_kelas']);
       $hari = hari_tanggal($d2['jadwal_kelas'], 1, 0);
-      $info_kelas .= "<li>$d[kelas] - $hari - $eta</li>";
+      $info_kelas .= "<div>$d[kelas] - $hari - $eta <a target=_blank href='?set_jadwal_kelas&kelas=$d[kelas]'>$img_edit</a></div>";
     }
 
 
 
     $info_pekan = "
-      <div>Pertemuan ke-$sesi_aktif[no] $sesi_aktif[nama]</div>
-      <ul>$info_kelas</ul>
+      <div>Pertemuan ke-$sesi_aktif[sesi_normal_count] $sesi_aktif[nama]</div>
+      <div class='f12 mt2'>$info_kelas</div>
     ";
   } else {
-    die('Invalid jenis sesi.');
+    echo '<pre>';
+    var_dump($sesi_aktif);
+    echo '</pre>';
+    die('<hr>Invalid jenis sesi.');
   }
-
-  // $s = "SELECT * FROM tb_sesi WHERE id_room=$id_room AND awal_presensi <= '$now' AND akhir_presensi > '$now' LIMIT 1";
-  // $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  // $d = mysqli_fetch_assoc($q);
-  // $nama = $d['nama'];
-
-  // if ($d == $sesi_aktif) {
-  //   echo 'SAMA';
-  //   echo 'SAMA';
-  // } else {
-  //   echo 'BEDA';
-  // }
-
-  // echo '<pre>';
-  // var_dump($sesi_aktif);
-  // echo '</pre>';
-  // echo '<pre>';
-  // var_dump($room_count);
-  // echo '</pre>';
 } else {
   $nama_sesi = "Siap-siap untuk Pertemuan Pertama!";
   $mode = 'Tatap Muka';

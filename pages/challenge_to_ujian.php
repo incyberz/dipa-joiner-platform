@@ -52,7 +52,7 @@ if (!$get_kelas) {
       <a href='?challenge_to_ujian&id_challenge=$id_challenge' >Ubah Pekan</a> 
     </div>
   ";
-  $s = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR' AND ta = $ta";
+  $s = $select_all_from_tb_room_kelas;
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   while ($d = mysqli_fetch_assoc($q)) {
     echo "<a class='btn btn-primary' href='?challenge_to_ujian&id_challenge=$id_challenge&pekan=$get_pekan&kelas=$d[kelas]'>$d[kelas]</a> ";

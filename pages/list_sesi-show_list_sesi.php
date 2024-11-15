@@ -126,23 +126,34 @@ ORDER BY a.no
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $total_count_sesi = mysqli_num_rows($q);
-$div_list = '';
+$div_lp = '';
+$nav_lp = '';
 $no_sesi = 0;
 $count_file = [];
+$warna = [
+  0 => 'kuning',
+  1 => 'hijau',
+  2 => 'pink',
+  3 => 'pink',
+];
 while ($sesi = mysqli_fetch_assoc($q)) {
-  if ($sesi['jenis'] === '0') {
-    $div_list .= "<div class='alert alert-info tengah' data-aos='fade'>Minggu tenang</div>";
-  } elseif ($sesi['jenis'] == 2) {
-    $div_list .= "<div class='alert alert-danger tengah' data-aos='fade'>Pekan UTS</div>";
-  } elseif ($sesi['jenis'] == 3) {
-    $div_list .= "<div class='alert alert-danger tengah' data-aos='fade'>Pekan UAS</div>";
-  } elseif ($sesi['jenis'] == 1) {
+  $kode_jenis = $sesi['jenis'];
+  $count_sesi[$kode_jenis]++;
+
+  $hide_lp = $sesi['id'] == $sesi_aktif['id'] ? '' : 'hideit';
+
+  if ($kode_jenis === '0') {
+    $div_lp .= "<div id=div_lp__$sesi[id] class='div_lp $hide_lp alert alert-info tengah' data-aos='fade'>Minggu tenang</div>";
+  } elseif ($kode_jenis == 2) {
+    $div_lp .= "<div id=div_lp__$sesi[id] class='div_lp $hide_lp alert alert-danger tengah' data-aos='fade'>Pekan UTS</div>";
+  } elseif ($kode_jenis == 3) {
+    $div_lp .= "<div id=div_lp__$sesi[id] class='div_lp $hide_lp alert alert-danger tengah' data-aos='fade'>Pekan UAS</div>";
+  } elseif ($kode_jenis == 1) {
 
     $no_sesi++;
     $id_sesi = $sesi['id_sesi'];
     $nama_sesi = $sesi['nama_sesi'];
-    $jenis = $sesi['jenis'];
-    $count_sesi[$jenis]++;
+    // $count_sesi[$kode_jenis]++;
 
     $count_file['bahan_ajar'] = $sesi['count_ba'];
     $count_file['file_ppt'] = $sesi['count_fp'];
@@ -160,6 +171,7 @@ while ($sesi = mysqli_fetch_assoc($q)) {
         $str_fiturs .= "<div class='abu miring f12 mb1 bordered br5 p1'>belum bisa $k</div>";
       } elseif ($k == 'challenge' || $k == 'latihan') {
         $title = '';
+        $tambah = $id_role == 2 ? "<a href='?tambah_activity&p=$k&id_sesi=$id_sesi' target=_blank>$img_add</a>" : '';
         $sub_fitur = "<div class='abu miring f12'>belum ada $k</div>";
 
         if (isset($arr_data_act[$k][$id_sesi])) {
@@ -172,7 +184,7 @@ while ($sesi = mysqli_fetch_assoc($q)) {
             $sub_fitur .= "<a href='?activity&jenis=$k&id_assign=$v2[id]' class='btn $btn_info btn-sm mb1 w-100' onclick='return confirm(`Menuju laman $k?`)'>$j. $v2[nama_act]</a> ";
           }
         }
-        $str_fiturs .= "<div class='bordered br5 p1 mb1'>$title $sub_fitur</div>";
+        $str_fiturs .= "<div class='bordered br5 p1 mb1'>$title $sub_fitur $tambah</div>";
       } else {
         # ============================================================
         # BAHAN AJAR, PPT, VIDEO, FILE LAIN
@@ -234,43 +246,59 @@ while ($sesi = mysqli_fetch_assoc($q)) {
     $opening = eta2($sesi['awal_presensi']);
     $closing = eta2($sesi['akhir_presensi']);
 
-    $div_list .= "
-      <div class='wadah gradasi-hijau blok_list_sesi' data-aos='fade'>
-        <div class='text-center wadah bg-white'>
-          sesi 
-          <div class='no_sesi f40 darkred'>$no_sesi</div>
-        </div>
-        <div>
-          <div class='flexy flex-between desktop_only mb2'>
-            <div class='f10 abu'>id. $id_sesi</div>
-            <div class='f10 abu'>
-              <a href='?list_sesi&mode=edit'>$img_edit</a>
-            </div>
+    # ============================================================
+    # DIV LP LOOP
+    # ============================================================
+    $div_lp .= "
+      <div class='$hide_lp div_lp' id=div_lp__$sesi[id]>
+        <div class='wadah gradasi-hijau blok_list_sesi' data-aos='fade'>
+          <div class='text-center wadah bg-white'>
+            sesi 
+            <div class='no_sesi f40 darkred'>$no_sesi</div>
           </div>
-
-          <div class='nama_sesi f14 bold darkblue tengah'>$nama_show</div>
-          <div class='kecil miring abu tengah'>$ket_show</div>
-
-          <div class='kecil miring abu mt3 mb1 tengah'>Tag-tag materi</div>
-          <div class='mb3 tengah'>$tags_show</div>
-
-          <div class='kecil miring abu mb1 mt4 f10 tengah'>Opening: $opening</div>
-          <div class='kecil miring abu tengah'><span class=darkblue>$awal_presensi_show <br>s.d <br>$akhir_presensi_show</span></div>
-          <div class='kecil miring abu mb4 f10 tengah'>Closing: $closing</div>
-
-          <div class='mt1 tengah wadah'>
-            <div class='kecil miring abu mb1 f10 tengah'>Di sesi ini kamu dapat:</div>
-            <div class='flexy flex-center str_fiturs'>
-              $str_fiturs
+          <div>
+            <div class='flexy flex-between desktop_only mb2'>
+              <div class='f10 abu'>id. $id_sesi</div>
+              <div class='f10 abu'>
+                <a href='?list_sesi&mode=edit'>$img_edit</a>
+              </div>
             </div>
+
+            <div class='nama_sesi f14 bold darkblue tengah'>$nama_show</div>
+            <div class='kecil miring abu tengah'>$ket_show</div>
+
+            <div class='kecil miring abu mt3 mb1 tengah'>Tag-tag materi</div>
+            <div class='mb3 tengah'>$tags_show</div>
+
+            <div class=wadah>
+              <div class='kecil miring abu mb1 f10 tengah'>Opening: $opening</div>
+              <div class='kecil miring abu tengah'><span class=darkblue>$awal_presensi_show <br>s.d <br>$akhir_presensi_show</span></div>
+              <div class='kecil miring abu f10 tengah'>Closing: $closing</div>
+            </div>
+
+            <div class='mt1 tengah wadah'>
+              <div class='kecil miring abu mb1 f10 tengah'>Di sesi ini kamu dapat:</div>
+              <div class='flexy flex-center str_fiturs'>
+                $str_fiturs
+              </div>
+            </div>
+            <div class='mt1 tengah f10 abu'>Status: $pelaksanaan</div>
           </div>
-          <div class='mt1 tengah f10 abu'>Status: $pelaksanaan</div>
         </div>
       </div>
     ";
   } else {
     die(div_alert('danger', "Jenis sesi: $sesi[jenis], belum terdefinisi."));
   }
+
+  # ============================================================
+  # NAV LP LOOP
+  # ============================================================
+  $caption = $kode_jenis == 1 ? $count_sesi[1] : 'U';
+  $caption = $kode_jenis ? $caption : 'T';
+  $nav_lp_selected = $hide_lp ? '' : 'nav_lp_selected';
+  $nav_lp_active = $hide_lp ? '' : 'nav_lp_active';
+  $nav_lp .= "<div class='gradasi-$warna[$kode_jenis] p1 pl2 pr2 br5 pointer nav_lp $nav_lp_selected $nav_lp_active' id=nav_lp__$sesi[id]>$caption</div>";
 }
 
 
@@ -296,20 +324,17 @@ $form_tambah_sesi = $id_role != 2 ? '' : "
 
 
 set_h2('Learning Path', "
-  List Sesi Pembelajaran (Learning Path) 
+  Room 
   <span class=darkblue>$nama_room</span> 
-  <div class='desktop_only f12 abu'>
-    $count_sesi[1] sesi normal | 
-    $count_sesi[0] minggu tenang | 
-    $count_sesi[2] pekan UTS | 
-    $count_sesi[3] pekan UAS
+  <div class='f10 flexy flex-center mt2' style=gap:1px>
+    $nav_lp
   </div>
 ");
 
 # ============================================================
 # FINAL ECHO
 # ============================================================
-echo "<div class='flexy flex-center'><div style=max-width:700px>$div_list</div></div>";
+echo "<div class='flexy flex-center'><div style=max-width:700px>$div_lp</div></div>";
 
 
 
@@ -402,4 +427,21 @@ if ($manage) { ?>
 
     })
   </script>
-<?php } */ ?>
+<?php } */
+?>
+<script>
+  $(function() {
+    $('.nav_lp').click(function() {
+      let tid = $(this).prop('id');
+      let rid = tid.split('__');
+      let aksi = rid[0];
+      let id = rid[1];
+      console.log(aksi, id);
+
+      $('.div_lp').hide();
+      $('#div_lp__' + id).fadeIn();
+      $('.nav_lp').removeClass("nav_lp_selected");
+      $('#nav_lp__' + id).addClass("nav_lp_selected");
+    })
+  });
+</script>

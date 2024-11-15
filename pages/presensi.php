@@ -14,6 +14,7 @@
 <?php
 # =================================================================
 login_only();
+set_title("Presensi $target_kelas");
 
 include 'presensi_processor.php';
 
@@ -175,7 +176,8 @@ a.id as id_sesi,
 
 FROM tb_sesi a 
 WHERE a.id_room=$id_room 
-AND jenis = 1 -- sesi normal
+-- AND jenis = 1 -- sesi normal 
+ORDER BY no
 ";
 // echo "<pre>$s</pre>";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -186,261 +188,316 @@ while ($d = mysqli_fetch_assoc($q)) {
 
   // $d['play_count'] = 999; //debug var
   // $d['jumlah_soal'] = 999; //debug var
-  $i++;
+  if ($d['jenis'] == 1) {
 
-  $id_sesi = $d['id_sesi'];
-  $sudah_presensi = $d['sudah_presensi'];
+    $i++;
 
-  $jadwal_kelas = $d['jadwal_kelas'];
-  $awal_presensi = $d['awal_presensi'];
-  $akhir_presensi = $d['akhir_presensi'];
+    $id_sesi = $d['id_sesi'];
+    $sudah_presensi = $d['sudah_presensi'];
 
-  $tnow = strtotime('now');
-  $tawal = strtotime($awal_presensi);
-  $takhir = strtotime($akhir_presensi);
+    $jadwal_kelas = $d['jadwal_kelas'];
+    $awal_presensi = $d['awal_presensi'];
+    $akhir_presensi = $d['akhir_presensi'];
 
-  # ===============================================================
-  # MINGGU SEKARANG
-  # ===============================================================
-  $is_ontime_now = 0;
-  $is_telat_now = 0;
-  $sudah_dibuka = $tnow >= $tawal ? 1 : 0;
-  $belum_ditutup = $tnow < $takhir ? 1 : 0;
-  $sedang_berlangsung = $sudah_dibuka && $belum_ditutup ? 1 : 0;
+    $tnow = strtotime('now');
+    $tawal = strtotime($awal_presensi);
+    $takhir = strtotime($akhir_presensi);
 
-  $sesi_aktif++;
-  $ris_ontime[$id_sesi] = 0;
-  if ($sudah_dibuka) { // sudah dibuka
-    // $rpresenters_kelas[$id_sesi] = $d['count_yg_hadir'];
-    $presenters_kelas_last_active_sesi = $d['count_yg_hadir'];
+    # ===============================================================
+    # MINGGU SEKARANG
+    # ===============================================================
+    $is_ontime_now = 0;
+    $is_telat_now = 0;
+    $sudah_dibuka = $tnow >= $tawal ? 1 : 0;
+    $belum_ditutup = $tnow < $takhir ? 1 : 0;
+    $sedang_berlangsung = $sudah_dibuka && $belum_ditutup ? 1 : 0;
 
-    if ($belum_ditutup) { // berlangsung
-      $is_ontime_now = 1;
-      $ris_ontime[$id_sesi] = 1;
-    } else { // sudah dibuka, dan sudah ditutup (lampau, telat presensi)
-      $is_telat_now = 1;
+    $sesi_aktif++;
+    $ris_ontime[$id_sesi] = 0;
+    if ($sudah_dibuka) { // sudah dibuka
+      // $rpresenters_kelas[$id_sesi] = $d['count_yg_hadir'];
+      $presenters_kelas_last_active_sesi = $d['count_yg_hadir'];
+
+      if ($belum_ditutup) { // berlangsung
+        $is_ontime_now = 1;
+        $ris_ontime[$id_sesi] = 1;
+      } else { // sudah dibuka, dan sudah ditutup (lampau, telat presensi)
+        $is_telat_now = 1;
+      }
+    } else { // belum dibuka
+      $sesi_aktif--;
     }
-  } else { // belum dibuka
-    $sesi_aktif--;
-  }
 
 
-  if ($jadwal_kelas) {
-    $jadwal_kelas_show = date('D, M d, H:i', strtotime($jadwal_kelas));
-    $jadwal_kelas_show .= ' ~ <span class=abu>' . eta(-$tnow + strtotime($d['jadwal_kelas'])) . '</span>';
-  } else {
-    $jadwal_kelas_show = $unset;
-  }
-
-  if ($awal_presensi) {
-    $awal_presensi_show = date('M d, Y, H:i', $tawal);
-    $awal_presensi_show .= ' ~ <span class=abu>' . eta(-$tnow + $tawal) . '</span>';
-  } else {
-    $awal_presensi_show = $unset;
-  }
-
-  if ($akhir_presensi) {
-    $akhir_presensi_show = date('M d, Y, H:i', $takhir);
-    $akhir_presensi_show .= ' ~ <span class=abu>' . eta(-$tnow + $takhir) . '</span>';
-  } else {
-    $akhir_presensi_show = $unset;
-  }
-
-
-  $akhir_presensi_show = $is_telat_now ? "<span class=red>$akhir_presensi_show</span>" : $akhir_presensi_show;
-
-
-  if ($sudah_presensi) {
-    $s2 = "SELECT * FROM tb_presensi WHERE id_peserta=$id_peserta AND id_sesi=$id_sesi";
-    $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
-    $d2 = mysqli_fetch_assoc($q2);
-
-    $poin = number_format($d2['poin'], 0);
-    $tgl = date('D, M d, H:i:s', strtotime($d2['tanggal']));
-
-    $img_ontime = '<img src="assets/img/icon/ontime.png" height=50px />';
-    $img_late = '<img src="assets/img/icon/late.png" height=50px />';
-    $img = $d2['is_ontime'] ? $img_ontime : $img_late;
-    $sudah_presensi = $d2['is_ontime'] ? '<span class="biru tebal">Ontime</span>' : '<span class="darkred">Telat Presensi</span>';
-
-    $btn_presensi = "
-      <div >
-        <div>$img</div>
-        <div>$sudah_presensi <span class='miring abu'>at $tgl</span></div>
-        <div>$poin LP</div>
-      </div>
-    ";
-
-    $syarat_presensi = "
-      <div class=mb2>Soal saya: $d[jumlah_soal] | <a href='?tanam_soal&id_sesi=$id_sesi'>Tanam Lagi</a></div> 
-    ";
-  } else { //belum presensi
-
-    $jumlah_soal = $d['jumlah_soal'];
-    $play_count = $d['play_count'];
-    $syarat_soal = "$jumlah_soal of $syarat_soal_count";
-    $syarat_play = "$play_count of $syarat_play_count";
-
-    $my_latihan_wajib_count = $d['my_latihan_wajib_count'];
-    $latihan_wajib_count = $d['latihan_wajib_count'];
-    $syarat_latihan_wajib = "$my_latihan_wajib_count of $latihan_wajib_count";
-
-
-    if ($jumlah_soal < $syarat_soal_count) {
-      $syarat_soal = "<span class=red>$syarat_soal</span> | <a href='?tanam_soal&id_sesi=$id_sesi'>Tanam</a>";
+    if ($jadwal_kelas) {
+      $jadwal_kelas_show = date('D, M d, H:i', strtotime($jadwal_kelas));
+      $jadwal_kelas_show .= ' ~ <span class=abu>' . eta(-$tnow + strtotime($d['jadwal_kelas'])) . '</span>';
     } else {
-      $syarat_soal = "<span class=green>$syarat_soal</span> <img src='assets/img/icon/check.png' height=20px />";
+      $jadwal_kelas_show = $unset;
     }
 
-    if ($play_count < $syarat_play_count) {
-      $syarat_play = "<span class=red>$syarat_play</span> | <a href='?perang_soal&mode=random'>Play</a>";
+    if ($awal_presensi) {
+      $awal_presensi_show = date('M d, Y, H:i', $tawal);
+      $awal_presensi_show .= ' ~ <span class=abu>' . eta(-$tnow + $tawal) . '</span>';
     } else {
-      $syarat_play = "<span class=green>$syarat_play</span> <img src='assets/img/icon/check.png' height=20px />";
+      $awal_presensi_show = $unset;
     }
 
-    if ($latihan_wajib_count) {
-      if ($my_latihan_wajib_count < $latihan_wajib_count) {
-        $syarat_latihan_wajib = "<span class=red>$syarat_latihan_wajib</span> | <a href='?activity&jenis=latihan'>Kerjakan</a>";
+    if ($akhir_presensi) {
+      $akhir_presensi_show = date('M d, Y, H:i', $takhir);
+      $akhir_presensi_show .= ' ~ <span class=abu>' . eta(-$tnow + $takhir) . '</span>';
+    } else {
+      $akhir_presensi_show = $unset;
+    }
+
+    $akhir_presensi_show = $is_telat_now ? "<span class=red>$akhir_presensi_show</span>" : $akhir_presensi_show;
+
+    if ($sudah_presensi) {
+      $s2 = "SELECT * FROM tb_presensi WHERE id_peserta=$id_peserta AND id_sesi=$id_sesi";
+      $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+      $d2 = mysqli_fetch_assoc($q2);
+
+      $poin = number_format($d2['poin'], 0);
+      $tgl = date('D, M d, H:i:s', strtotime($d2['tanggal']));
+
+      $img_ontime = '<img src="assets/img/icon/ontime.png" height=50px />';
+      $img_late = '<img src="assets/img/icon/late.png" height=50px />';
+      $img = $d2['is_ontime'] ? $img_ontime : $img_late;
+      $sudah_presensi = $d2['is_ontime'] ? '<span class="biru tebal">Ontime</span>' : '<span class="darkred">Telat Presensi</span>';
+
+      $btn_presensi = "
+        <div >
+          <div>$img</div>
+          <div>$sudah_presensi <span class='miring abu'>at $tgl</span></div>
+          <div>$poin LP</div>
+        </div>
+      ";
+
+      $syarat_presensi = "
+        <div class=mb2>Soal saya: $d[jumlah_soal] | <a href='?tanam_soal&id_sesi=$id_sesi'>Tanam Lagi</a></div> 
+      ";
+    } else { //belum presensi
+
+      $jumlah_soal = $d['jumlah_soal'];
+      $play_count = $d['play_count'];
+      $syarat_soal = "$jumlah_soal of $syarat_soal_count";
+      $syarat_play = "$play_count of $syarat_play_count";
+
+      $my_latihan_wajib_count = $d['my_latihan_wajib_count'];
+      $latihan_wajib_count = $d['latihan_wajib_count'];
+      $syarat_latihan_wajib = "$my_latihan_wajib_count of $latihan_wajib_count";
+
+
+      if ($jumlah_soal < $syarat_soal_count) {
+        $syarat_soal = "<span class=red>$syarat_soal</span> | <a href='?tanam_soal&id_sesi=$id_sesi'>Tanam</a>";
       } else {
-        $syarat_latihan_wajib = "<span class=green>$syarat_latihan_wajib</span> <img src='assets/img/icon/check.png' height=20px />";
+        $syarat_soal = "<span class=green>$syarat_soal</span> <img src='assets/img/icon/check.png' height=20px />";
       }
-      $syarat_latihan_wajib = "<div class=mb2>Latihan wajib: $syarat_latihan_wajib</div>";
-    } else {
-      $syarat_latihan_wajib = '';
-    }
 
-    $dikurangi = '';
-    if ($awal_presensi and $akhir_presensi) { // batasan presensi OK
-      if ($jumlah_soal >= $syarat_soal_count and $play_count >= $syarat_play_count) { // boleh present
-        if ($is_telat_now) {
-          $saya_hadir = 'Saya Hadir Telat';
-          $durasi_hari = $akhir_presensi ? durasi_hari($now, $akhir_presensi) : 0;
-          $dikurangi_persen -= $durasi_hari;
-          if ($dikurangi_persen > 90) $dikurangi_persen = 90;
-          $lp = round($dikurangi_persen * $basic_point / 100, 0);
-          $dikurangi = "<span class=red>Poin dikurangi $lp LP | <span id=dikurangi_persen>$dikurangi_persen</span>%</span>";
-          $primary = 'warning';
-        } else { // boleh present dan di sesi ini tidak telat
-          if ($sudah_dibuka) {
-            $saya_hadir = 'Set Saya Hadir';
-            $dikurangi = '';
-            $primary = 'primary';
-          } else { // boleh present, tidak telat, tapi belum dibuka
-            $saya_hadir = 'Belum opening... mohon tunggu!';
-            $dikurangi = '';
-            $primary = 'secondary';
-          }
+      if ($play_count < $syarat_play_count) {
+        $syarat_play = "<span class=red>$syarat_play</span> | <a href='?perang_soal&mode=random'>Play</a>";
+      } else {
+        $syarat_play = "<span class=green>$syarat_play</span> <img src='assets/img/icon/check.png' height=20px />";
+      }
+
+      if ($latihan_wajib_count) {
+        if ($my_latihan_wajib_count < $latihan_wajib_count) {
+          $syarat_latihan_wajib = "<span class=red>$syarat_latihan_wajib</span> | <a href='?activity&jenis=latihan'>Kerjakan</a>";
+        } else {
+          $syarat_latihan_wajib = "<span class=green>$syarat_latihan_wajib</span> <img src='assets/img/icon/check.png' height=20px />";
         }
-
-
-        $btn_presensi = $sudah_dibuka ? "
-          <form method=post>
-            <button class='btn btn-$primary btn-sm btn-block' value=$id_sesi name=btn_saya_hadir><span class=f12>$saya_hadir</span></button>
-            $dikurangi
-          </form>
-        " :
-          "<button class='btn btn-$primary btn-sm btn-block' disabled><span class=f12>$saya_hadir</span></button>";
-      } else { // syarat kurang
-        $btn_presensi = "
-          <button class='btn btn-secondary btn-sm btn-block' onclick='alert(\"Maaf, kamu belum memenuhi syarat presensi, periksalah yang bertanda merah.\")'><span class=f12>Set Saya Hadir</span></button>
-        ";
+        $syarat_latihan_wajib = "<div class=mb2>Latihan wajib: $syarat_latihan_wajib</div>";
+      } else {
+        $syarat_latihan_wajib = '';
       }
+
+      $dikurangi = '';
+      if ($awal_presensi and $akhir_presensi) { // batasan presensi OK
+        if ($jumlah_soal >= $syarat_soal_count and $play_count >= $syarat_play_count) { // boleh present
+          if ($is_telat_now) {
+            $saya_hadir = 'Saya Hadir Telat';
+            $durasi_hari = $akhir_presensi ? durasi_hari($now, $akhir_presensi) : 0;
+            $dikurangi_persen -= $durasi_hari;
+            if ($dikurangi_persen > 90) $dikurangi_persen = 90;
+            $lp = round($dikurangi_persen * $basic_point / 100, 0);
+            $dikurangi = "<span class=red>Poin dikurangi $lp LP | <span id=dikurangi_persen>$dikurangi_persen</span>%</span>";
+            $primary = 'warning';
+          } else { // boleh present dan di sesi ini tidak telat
+            if ($sudah_dibuka) {
+              $saya_hadir = 'Set Saya Hadir';
+              $dikurangi = '';
+              $primary = 'primary';
+            } else { // boleh present, tidak telat, tapi belum dibuka
+              $saya_hadir = 'Belum opening... mohon tunggu!';
+              $dikurangi = '';
+              $primary = 'secondary';
+            }
+          }
+
+
+          $btn_presensi = $sudah_dibuka ? "
+            <form method=post>
+              <button class='btn btn-$primary btn-sm btn-block' value=$id_sesi name=btn_saya_hadir><span class=f12>$saya_hadir</span></button>
+              $dikurangi
+            </form>
+          " :
+            "<button class='btn btn-$primary btn-sm btn-block' disabled><span class=f12>$saya_hadir</span></button>";
+        } else { // syarat kurang
+          $btn_presensi = "
+            <button class='btn btn-secondary btn-sm btn-block' onclick='alert(\"Maaf, kamu belum memenuhi syarat presensi, periksalah yang bertanda merah.\")'><span class=f12>Set Saya Hadir</span></button>
+          ";
+        }
+      } else {
+        $btn_presensi = '<span class=red>Batasan Presensi Unset.</span> <div class="kecil darkblue mt1">Segera lapor ke instruktur!</div>';
+      }
+
+
+      $syarat_presensi = "
+        <div class='abu miring'>Syarat presensi:</div> 
+        <div class=mb1>Soal saya: $syarat_soal</div> 
+        <div class=mb1>Play count: $syarat_play</div>
+        $syarat_latihan_wajib
+      ";
+    } // end belum presensi
+
+    $border_blue = $is_ontime_now ? 'border_blue' : '';
+    $border_blue = $is_telat_now ? 'border_red' : $border_blue;
+    $border_blue = $sudah_presensi ? 'border_green' : $border_blue;
+    $hijau = $is_ontime_now ? 'hijau' : '';
+
+
+    if ($id_role == 2) {
+      $id_sesi_kelas = $id_sesi . "__$target_kelas_presensi";
+      $img_edit = img_icon('edit');
+
+      $form_jadwal_kelas_toggle = "<span class='btn_aksi' id=form_jadwal_kelas$id_sesi" . "__toggle>$img_edit</span>";
+      $tanggal_sesi = $jadwal_kelas ? date('Y-m-d', strtotime($jadwal_kelas)) : '';
+      $jam_sesi = $jadwal_kelas ? date('H:i', strtotime($jadwal_kelas)) : '';
+      $form_jadwal_kelas = "
+        <div class='hideit wadah gradasi-kuning mt2' id=form_jadwal_kelas$id_sesi>
+          <h3 class=f14>Jadwal untuk Kelas <b class=blue>$target_kelas_presensi</b></h3>
+          <form method=post>
+            Tanggal sesi
+            <input type=date required class='form-control form-control-sm mb2' name=tanggal_sesi value='$tanggal_sesi'>
+            Jam sesi
+            <input type=time required class='form-control form-control-sm mb2' name=jam_sesi value='$jam_sesi'>
+            <div class=mb2>
+              <label>
+                <input type=checkbox checked name=update_next_week> 
+                Update pula Jadwal Kelas berikutnya
+              </label>
+            </div>
+            <button class='btn btn-primary btn-sm' name=btn_update_jadwal_kelas value=$id_sesi_kelas>Update Jadwal Kelas</button>
+          </form>
+        </div>
+      ";
+
+      $form_durasi_presensi_toggle = "<span class='btn_aksi' id=form_durasi_presensi$id_sesi" . "__toggle>$img_edit</span>";
+      $form_durasi_presensi = "
+        <div class='hideit wadah gradasi-kuning' id=form_durasi_presensi$id_sesi>
+          <form method=post>
+            <div class='mb2 darkblue'>)* Durasi Presensi berlaku untuk seluruh kelas pada room ini</div>
+            Pembukaan
+            <input required class='form-control form-control-sm mb2' name=awal_presensi value='$awal_presensi' placeholder='Format YYYY-MM-DD HH:MM'>
+            Penutupan
+            <input required class='form-control form-control-sm mb2' name=akhir_presensi value='$akhir_presensi' placeholder='Format YYYY-MM-DD HH:MM'>
+            <div class=mb2>
+              <label>
+                <input type=checkbox checked name=update_next_week> 
+                Update pula untuk sesi minggu berikutnya (sesuai dg jadwal sesi ini)
+              </label>
+            </div>
+            <button class='btn btn-primary btn-sm' name=btn_update_durasi_presensi value=$id_sesi>Update Durasi Presensi :: id-$id_sesi</button>
+          </form>
+        </div>
+      ";
     } else {
-      $btn_presensi = '<span class=red>Batasan Presensi Unset.</span> <div class="kecil darkblue mt1">Segera lapor ke instruktur!</div>';
+      $form_jadwal_kelas = '';
+      $form_durasi_presensi = '';
+      $form_jadwal_kelas_toggle = '';
+      $form_durasi_presensi_toggle = '';
     }
-
-
-    $syarat_presensi = "
-      <div class='abu miring'>Syarat presensi:</div> 
-      <div class=mb1>Soal saya: $syarat_soal</div> 
-      <div class=mb1>Play count: $syarat_play</div>
-      $syarat_latihan_wajib
-    ";
-  }
-
-  $border_blue = $is_ontime_now ? 'border_blue' : '';
-  $border_blue = $is_telat_now ? 'border_red' : $border_blue;
-  $border_blue = $sudah_presensi ? 'border_green' : $border_blue;
-  $hijau = $is_ontime_now ? 'hijau' : '';
-
-
-  if ($id_role == 2) {
-    $id_sesi_kelas = $id_sesi . "__$target_kelas_presensi";
-    $img_edit = img_icon('edit');
-
-    $form_jadwal_kelas_toggle = "<span class='btn_aksi' id=form_jadwal_kelas$id_sesi" . "__toggle>$img_edit</span>";
-    $tanggal_sesi = $jadwal_kelas ? date('Y-m-d', strtotime($jadwal_kelas)) : '';
-    $jam_sesi = $jadwal_kelas ? date('H:i', strtotime($jadwal_kelas)) : '';
-    $form_jadwal_kelas = "
-      <div class='hideit wadah gradasi-kuning' id=form_jadwal_kelas$id_sesi>
-        <form method=post>
-          Tanggal sesi
-          <input type=date required class='form-control form-control-sm mb2' name=tanggal_sesi value='$tanggal_sesi'>
-          Jam sesi
-          <input type=time required class='form-control form-control-sm mb2' name=jam_sesi value='$jam_sesi'>
-          <div class=mb2>
-            <label>
-              <input type=checkbox checked name=update_next_week> 
-              Update pula untuk sesi minggu berikutnya (sesuai dg jadwal sesi ini)
-            </label>
+    $div .= "
+      <div class='gradasi-$hijau mb2 bordered br5 p2 f12 $border_blue' id='row_presensi__$id_sesi'>
+        <div class='row'>
+          <div class='col-lg-3'>
+            <div class='mb1 darkblue tebal'>P$i $d[nama]</div>
+            <div class='mb1 abu miring'>$d[count_yg_hadir] of $total_peserta_presensi sudah hadir</div>
           </div>
-          <button class='btn btn-primary btn-sm' name=btn_update_jadwal_kelas value=$id_sesi_kelas>Update Jadwal Tatap Muka :: $target_kelas_presensi</button>
-        </form>
-      </div>
-    ";
-
-    $form_durasi_presensi_toggle = "<span class='btn_aksi' id=form_durasi_presensi$id_sesi" . "__toggle>$img_edit</span>";
-    $form_durasi_presensi = "
-      <div class='hideit wadah gradasi-kuning' id=form_durasi_presensi$id_sesi>
-        <form method=post>
-          <div class='mb2 darkblue'>)* Durasi Presensi berlaku untuk seluruh kelas pada room ini</div>
-          Pembukaan
-          <input required class='form-control form-control-sm mb2' name=awal_presensi value='$awal_presensi' placeholder='Format YYYY-MM-DD HH:MM'>
-          Penutupan
-          <input required class='form-control form-control-sm mb2' name=akhir_presensi value='$akhir_presensi' placeholder='Format YYYY-MM-DD HH:MM'>
-          <div class=mb2>
-            <label>
-              <input type=checkbox checked name=update_next_week> 
-              Update pula untuk sesi minggu berikutnya (sesuai dg jadwal sesi ini)
-            </label>
+          <div class='col-lg-4'>
+            <div><span class='abu miring'>Jadwal Tatap Muka:</span> $jadwal_kelas_show $form_jadwal_kelas_toggle</div>
+            $form_jadwal_kelas
+  
+            <div><span class='abu miring'>Opening:</span> $awal_presensi_show</div>
+            <div class=mb1><span class='abu miring'>Closing:</span> $akhir_presensi_show $form_durasi_presensi_toggle</div>
+            $form_durasi_presensi
+            
           </div>
-          <button class='btn btn-primary btn-sm' name=btn_update_durasi_presensi value=$id_sesi>Update Durasi Presensi :: id-$id_sesi</button>
-        </form>
+          <div class='col-lg-2'>
+            $syarat_presensi
+          </div>
+          <div class='col-lg-3'>
+            $btn_presensi
+          </div>
+        </div>
       </div>
     ";
   } else {
-    $form_jadwal_kelas = '';
-    $form_durasi_presensi = '';
-    $form_jadwal_kelas_toggle = '';
-    $form_durasi_presensi_toggle = '';
+
+    # ============================================================
+    # COUNT YANG UTS/UAS DIAMBIL DARI MANUAL ATAU CHALLENGE
+    # ============================================================
+    // $d['count_yg_hadir'] = 'from manual';
+
+    # ============================================================
+    # OUTPUT NON SESI NORMAL
+    # ============================================================
+    $pink = $d['jenis'] ? 'pink' : 'kuning';
+    if ($d['jenis']) { // sesi UTS/UAS
+      $jadwal_kelas_show = $d['jadwal_kelas'] ? hari_tanggal($d['jadwal_kelas']) : 'belum ditentukan';
+
+      $div .= "
+        <div class='gradasi-pink mb2 bordered br5 p2 f12' id='row_presensi__$id_sesi'>
+          <div class='row'>
+            <div class='col-lg-3'>
+              <div class='mb1 darkblue tebal'>$d[nama]</div>
+              <div class='mb1 abu miring'>$d[count_yg_hadir] of $total_peserta_presensi sudah $d[nama]</div>
+            </div>
+            <div class='col-lg-4'>
+              <div><span class='abu miring'>Jadwal $d[nama]:</span> $jadwal_kelas_show $form_jadwal_kelas_toggle</div>
+              $form_jadwal_kelas
+    
+              <div><span class='abu miring'>Opening:</span> $awal_presensi_show</div>
+              <div class=mb1><span class='abu miring'>Closing:</span> $akhir_presensi_show $form_durasi_presensi_toggle</div>
+              $form_durasi_presensi
+              
+            </div>
+            <div class='col-lg-2'>
+              Syarat $d[nama] : -
+            </div>
+            <div class='col-lg-3'>
+              Status Kehadiran : -
+            </div>
+          </div>
+        </div>
+      ";
+    } else { // sesi tenang
+      $div .= "
+        <div class='gradasi-kuning mb2 bordered br5 p2 f12' id='row_presensi__$id_sesi'>
+          <div class='row'>
+            <div class='col-lg-3'>
+              <div class='mb1 darkblue tebal'>$d[nama]</div>
+            </div>
+            <div class='col-lg-4'>
+              <div><span class='abu miring'>$d[nama]</span></div>
+              <div><span class='abu miring'>Opening:</span> $awal_presensi_show</div>
+              <div class=mb1><span class='abu miring'>Closing:</span> $akhir_presensi_show $form_durasi_presensi_toggle</div>
+            </div>
+          </div>
+        </div>
+      ";
+    }
   }
-
-  $j = 0;
-  $div .= "
-    <div class='gradasi-$hijau mb2 bordered br5 p2 f12 $border_blue' id='row_presensi__$id_sesi'>
-      <div class='row'>
-        <div class='col-lg-3'>
-          <div class='mb1 darkblue tebal'>P$i $d[nama]</div>
-          <div class='mb1 abu miring'>$d[count_yg_hadir] of $total_peserta_presensi sudah hadir</div>
-        </div>
-        <div class='col-lg-4'>
-          <div><span class='abu miring'>Jadwal Tatap Muka:</span> $jadwal_kelas_show $form_jadwal_kelas_toggle</div>
-          $form_jadwal_kelas
-
-          <div><span class='abu miring'>Opening:</span> $awal_presensi_show</div>
-          <div class=mb1><span class='abu miring'>Closing:</span> $akhir_presensi_show $form_durasi_presensi_toggle</div>
-          $form_durasi_presensi
-          
-        </div>
-        <div class='col-lg-2'>
-          $syarat_presensi
-        </div>
-        <div class='col-lg-3'>
-          $btn_presensi
-        </div>
-      </div>
-    </div>
-  ";
 }
 
 
