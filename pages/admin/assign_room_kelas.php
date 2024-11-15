@@ -40,24 +40,31 @@ if (isset($_POST['btn_assign_room_kelas'])) {
 # PROCESSOR: DROP ROOM KELAS
 # ====================================================
 if (isset($_POST['btn_drop_room_kelas'])) {
+
+  echo div_alert('danger', "DROPPING ROOM KELAS dapat berhasil jika dan hanya jika tidak ada peserta yang terdaftar pada kelas ini.<hr>Hubungi Master Instruktur (Developer) Jika ingin menghapus kelas aktif (yang sudah berjalan) dari room ini.");
+
   $s = "DELETE FROM tb_room_kelas WHERE id_room=$id_room AND kelas='$_POST[btn_drop_room_kelas]'";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   echo div_alert('success', "Drop Room Kelas sukses.");
 }
 
-$s = "SELECT a.id as id_room_kelas,a.kelas,b.fakultas FROM tb_room_kelas a JOIN tb_kelas b ON a.kelas=b.kelas WHERE a.id_room=$id_room";
+$s = "SELECT a.id as id_room_kelas,a.kelas,b.fakultas 
+FROM tb_room_kelas a JOIN tb_kelas b ON a.kelas=b.kelas 
+WHERE a.id_room=$id_room 
+AND a.kelas != 'INSTRUKTUR'
+";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
 $li_assigned = '';
 $arr_assigned_kelas = [];
 while ($d = mysqli_fetch_assoc($q)) {
-  $btn = "<button class='mb2' name=btn_drop_room_kelas value='$d[kelas]' >Drop</button>";
+  $btn = "<button class='btn btn-danger btn-sm mb2' name=btn_drop_room_kelas value='$d[kelas]' >Drop</button>";
   $li_assigned .= "
     <li class=''>
       $d[fakultas] ~ 
-      $d[kelas] ~ 
-      $btn ~ 
-      <a href='?assign_peserta_kelas&kelas=$d[kelas]'>Assign Peserta Kelas</a>  ~ 
+      $d[kelas] | 
+      $btn 
+      <a class='btn btn-info btn-sm' href='?assign_peserta_kelas&kelas=$d[kelas]'>+Peserta</a> 
     </li>
   ";
   array_push($arr_assigned_kelas, $d['kelas']);
@@ -74,14 +81,17 @@ while ($d = mysqli_fetch_assoc($q)) {
           <ol>
             <?php
 
-            $s = "SELECT * FROM tb_kelas WHERE ta=$get_ta ORDER BY status DESC,fakultas,semester,prodi,shift";
+            $s = "SELECT * FROM tb_kelas 
+            WHERE ta=$get_ta 
+            AND kelas != 'INSTRUKTUR'
+            ORDER BY status DESC,fakultas,semester,prodi,shift";
             $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
             while ($d = mysqli_fetch_assoc($q)) {
               if (in_array($d['kelas'], $arr_assigned_kelas)) continue;
               $color = $d['shift'] == 'P' ? 'blue' : 'darkred';
               $color = $d['status'] ? $color : 'abu miring';
-              $btn = $d['status'] ? "<button class='mb2' name=btn_assign_room_kelas value='$d[kelas]' >Assign</button>" : '<span class="f10 abu miring consolas">kelas tidak aktif</span>';
+              $btn = $d['status'] ? "<button class='btn btn-primary btn-sm mb2' name=btn_assign_room_kelas value='$d[kelas]' >Assign</button>" : '<span class="f10 abu miring consolas">kelas tidak aktif</span>';
               echo "<li class='$color'>$d[fakultas] ~ $d[kelas] $d[shift] ~ $btn</li>";
             }
             ?>
@@ -90,7 +100,7 @@ while ($d = mysqli_fetch_assoc($q)) {
       </div>
     </td>
     <td valign=top>
-      <div class="wadah">
+      <div class="wadah ml2">
         <div>Assigned Kelas pada Room <?= $singkatan_room ?> :</div>
         <form method=post>
           <?php

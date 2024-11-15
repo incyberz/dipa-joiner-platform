@@ -22,10 +22,10 @@ if ($room['status'] == 100) {
     JOIN tb_kelas s ON r.kelas=s.kelas 
     JOIN tb_room_kelas t ON s.kelas=t.kelas 
   
-    WHERE p.id_sesi=$id_sesi_aktif 
-    AND t.ta = $ta 
+    WHERE p.id_sesi=$id_sesi_aktif -- di sesi aktif
     AND q.id_role = 1 -- hanya peserta
-    AND q.status = 1 -- hanya peserta aktif
+    AND q.status = 1 -- hanya peserta aktif 
+    AND t.id=a.id -- di room kelas ini saja
     ) count_presenter
   FROM tb_room_kelas a 
   WHERE a.id_room=$id_room 

@@ -4,6 +4,10 @@ if (!$room_count['count_presensi_aktif'] > 1) {
 } else {
   $no_sesi = $room_count['count_presensi_aktif'];
 
+  echo '<pre>';
+  var_dump($room_count);
+  echo '</pre>';
+
   $tmp = explode(';', $room_count['arr_count_peserta_kelas']);
   $progres = '';
   foreach ($tmp as $k => $v) {
