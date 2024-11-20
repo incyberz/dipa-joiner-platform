@@ -101,6 +101,9 @@ echo "
     <div class='flexy'>
       $divs
     </div>
+
+    <button class='btn btn-primary'>Masukan ke Presensi Offline</button>
+    <button class='btn btn-info'>Masukan ke Presensi Online</button>
   </div>
 ";
 

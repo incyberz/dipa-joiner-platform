@@ -97,7 +97,11 @@ if (!mysqli_num_rows($q)) {
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $sesi_pertama = mysqli_fetch_assoc($q);
 } else {
-  if (mysqli_num_rows($q) > 1) die(div_alert('danger', 'Terdapat multiple sesi dalam satu pekan.'));
+  // if (mysqli_num_rows($q) > 1) die(div_alert('danger', 'Terdapat multiple sesi dalam satu pekan.'));
+  if (mysqli_num_rows($q) > 1) {
+    echo (div_alert('danger', 'Terdapat multiple sesi dalam satu pekan.'));
+    echo (div_alert('danger', 'Skipped by system.'));
+  }
   $sesi_aktif = mysqli_fetch_assoc($q);
 }
 $id_sesi_aktif = null;

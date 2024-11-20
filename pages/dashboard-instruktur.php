@@ -16,13 +16,13 @@ echo div_alert('info tengah', "
 # ============================================================
 include 'dashboard-instruktur-info_pekan.php';
 include 'dashboard-instruktur-info_presensi.php';
-include 'dashboard-instruktur-info_bertanya.php';
+// include 'dashboard-instruktur-info_bertanya.php';
 include 'dashboard-instruktur-info_latihan.php';
 include 'dashboard-instruktur-info_challenge.php';
 include 'dashboard-instruktur-info_image_peserta.php';
 include 'dashboard-instruktur-info_war_image.php';
 
-echo "<a class='block tengah f14 text-hover-bold' href='?update_room_count'>Update Dashboard</a>";
+echo "<div class=tengah><a class='f14 text-hover-bold' href='?update_room_count'>Update Dashboard</a></div>";
 
 # ============================================================
 # PENILAIAN

@@ -41,19 +41,24 @@ JOIN tb_kelas_peserta b ON a.id=b.id_peserta
 JOIN tb_kelas c ON b.kelas=c.kelas 
 JOIN tb_room_kelas d ON c.kelas=d.kelas 
 WHERE a.status=1 
-AND c.ta = $ta  
-AND d.id_room=$id_room 
-AND $sql_id_peserta  
+AND c.ta = $ta  -- tahun ajar saat ini
+AND d.id_room=$id_room -- di room ini
+AND $sql_id_peserta  -- untuk peserta ini atau semua (admin)
 AND $sql_profil_ok   
 AND c.kelas != 'INSTRUKTUR' 
 ";
+
+// echo '<pre>';
+// echo $s;
+// echo '</pre>';
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) {
-  $divs = div_alert('info', "Belum ada profil peserta yang harus Anda verifikasi."); // ('<span class=red>Data tidak ditemukan</span>');
+  $divs = div_alert('info', "Belum ada profil peserta yang harus Anda verifikasi.");
 } else {
   $divs = '';
   $batas = 20;
   while ($d = mysqli_fetch_assoc($q)) {
+    if (!$d['image']) continue;
     $id = $d['id_peserta'];
     $path = "$lokasi_profil/$d[image]";
     if (file_exists($path)) {

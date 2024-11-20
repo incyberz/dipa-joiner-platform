@@ -21,7 +21,7 @@ if (!$room_count['count_bukti_challenge']) {
 }
 echo div_alert("$notif_type tengah", "
   <a href='?verif'>
-    <div>$room_count[count_bukti_challenge_verified] dari $room_count[count_bukti_challenge] bukti challenge terperiksa</div>
     $ui_check
+    <div class='mt4 f10'>$room_count[count_bukti_challenge_verified] bukti challenge terperiksa</div>
   </a>
 ");

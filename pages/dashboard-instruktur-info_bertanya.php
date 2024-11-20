@@ -13,15 +13,15 @@ if (!$room_count['count_bertanya']) {
   $notif_type = 'success';
 } else {
   $ui_check = "
-    <div class='f12 abu mb1'>Masih ada " .
+    <div class='f12 abu mb1'>Masih ada <span class='f20 darkred'>" .
     ($room_count['count_bertanya'] - $room_count['count_bertanya_verified']) .
-    " pertanyaan harus Anda bahas bersama</div><div>$img_warning</div>
+    "</span> pertanyaan harus Anda bahas bersama</div><div>$img_warning</div>
   ";
   $notif_type = 'danger';
 }
 echo div_alert("$notif_type tengah", "
   <a href='?questions'>
-    <div>$room_count[count_bertanya_verified] dari $room_count[count_bertanya] pertanyaan terjawab</div>
+    <div>$room_count[count_bertanya_verified] pertanyaan terjawab</div>
     $ui_check
   </a>
 ");

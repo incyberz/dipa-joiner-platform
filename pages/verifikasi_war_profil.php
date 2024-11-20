@@ -102,6 +102,7 @@ if (isset($_POST['btn_upload_cropped_image'])) {
 # ============================================================
 $s = "SELECT 
 a.id,
+a.image,
 a.war_image,
 a.nama 
 FROM tb_peserta a 
@@ -128,18 +129,24 @@ while ($d = mysqli_fetch_assoc($q)) {
     $divs .= "
     <div class=tengah>
       <div class=wadah>
-        <form method=post class=wadah>
-          <img src='$src' style='max-width: 400px'>
-          <input readonly name=war_image class='form-control form-control-sm mt1 mb2 f12 tengah' value='$d[war_image]' />
-          <button class='btn btn-success w-100 mb2' name=btn_approve_war_image value=$d[id]__1>Approve War Image</button>
-          <button class='btn btn-danger w-100 mb2' name=btn_approve_war_image value=$d[id]__0>Reject</button>
-        </form>
-        <form method=post enctype='multipart/form-data' class=wadah>
-          <div class='border-bottom f12 mb2 pb1'>Crop dan Re-upload: <a target=_blank class=help href='?help&q=crop-dan-reupload-war-image'>See how</a></div>
-          <input type=hidden name=id_peserta value=$id />
-          <input type=file name=war_profil accept='.jpg' />
-          <button class='btn btn-secondary btn-sm' name=btn_upload_cropped_image value=$id>Upload</button>
-        </form>
+        <div class=row>
+          <div class='col-md-6'>
+            <form method=post class=wadah>
+              <img src='$src' class='img-fluid' />
+              <input readonly name=war_image class='form-control form-control-sm mt1 mb2 f12 tengah' value='$d[war_image]' />
+              <button class='btn btn-success w-100 mb2' name=btn_approve_war_image value=$d[id]__1>Approve War Image</button>
+              <button class='btn btn-danger w-100 mb2' name=btn_approve_war_image value=$d[id]__0>Reject</button>
+            </form>
+          </div>
+          <div class='col-md-6'>
+            <form method=post enctype='multipart/form-data' class=wadah>
+              <div class='border-bottom f12 mb2 pb1'>Crop dan Re-upload: <a target=_blank class=help href='?help&q=crop-dan-reupload-war-image'>See how</a></div>
+              <input type=hidden name=id_peserta value=$id />
+              <input type=file name=war_profil accept='.jpg' />
+              <button class='btn btn-secondary btn-sm' name=btn_upload_cropped_image value=$id>Upload</button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
     ";
