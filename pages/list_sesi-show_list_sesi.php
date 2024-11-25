@@ -171,7 +171,7 @@ while ($sesi = mysqli_fetch_assoc($q)) {
         $str_fiturs .= "<div class='abu miring f12 mb1 bordered br5 p1'>belum bisa $k</div>";
       } elseif ($k == 'challenge' || $k == 'latihan') {
         $title = '';
-        $tambah = $id_role == 2 ? "<a href='?tambah_activity&p=$k&id_sesi=$id_sesi' target=_blank>$img_add</a>" : '';
+        $tambah = $id_role == 2 ? "<a href='?tambah_activity&p=$k&id_sesi=$id_sesi'>$img_add</a>" : '';
         $sub_fitur = "<div class='abu miring f12'>belum ada $k</div>";
 
         if (isset($arr_data_act[$k][$id_sesi])) {
@@ -181,7 +181,7 @@ while ($sesi = mysqli_fetch_assoc($q)) {
           foreach ($arr_data_act[$k][$id_sesi] as $k2 => $v2) {
             $j++;
             $btn_info = $v2['ket'] ? 'btn-info' : 'btn-secondary';
-            $sub_fitur .= "<a href='?activity&jenis=$k&id_assign=$v2[id]' class='btn $btn_info btn-sm mb1 w-100' onclick='return confirm(`Menuju laman $k?`)'>$j. $v2[nama_act]</a> ";
+            $sub_fitur .= "<a href='?activity&jenis=$k&id_assign=$v2[id]' class='btn $btn_info btn-sm mb1 w-100'>$j. $v2[nama_act]</a> ";
           }
         }
         $str_fiturs .= "<div class='bordered br5 p1 mb1'>$title $sub_fitur $tambah</div>";

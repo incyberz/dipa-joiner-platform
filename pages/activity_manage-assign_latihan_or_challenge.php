@@ -335,20 +335,10 @@ echo "
       $tr
     </table>
   </form>
-  <form method=post>
-    <div class=flexy>
-      <div>
-        <span onclick='alert(\"Untuk membuat $jenis baru silahkan input nama $jenis lalu klik tombol Tambah.\")'>$img_add</span>        
-      </div>
-      <div>
-        <input required minlength=5 maxlength=100 class='form-control form-control-sm' name=nama placeholder='nama $jenis'>
-      </div>
-      <div>
-        <button class='btn btn-success btn-sm' name=btn_add_activity >Tambah</button>
-      </div>
-    </div>
-    <div class='abu f12 mt2'>)* Setelah membuat $jenis baru, silahkan Anda assign! Dan untuk editing properti silahkan klik pada salah satu list assigned-$jenis di paling atas</div>
-  </form>
+  
+  
+  <a class='btn btn-success btn-sm' href='?list_sesi' >Tambah $jenis via Learning Path</a>
+  
   <form method=post class='wadah mt4'>
     <div class='proper mb2'>Close/Open All $jenis</div>
     <button class='btn btn-danger btn-sm' name=btn_set_all value=-1>Close All</button>

@@ -264,6 +264,7 @@ if ($id_bukti) {
         $link_akses = urlencode($_SERVER['REQUEST_URI']);
         $text_wa = "Yth. Instruktur ($instruktur[nama]),%0a%0aPak/Bu $jenis nya belum disetting. Segera ya Pak/Bu, mau saya kerjakan :) %0a%0aLink akses:%0a$link_akses";
         $href = "https://api.whatsapp.com/?send&phone=$instruktur[no_wa]&text=$text_wa";
+        $img_wa = img_icon('wa');
         $link_wa = "<a href='$href' target=_blank>Hubungi Instruktur $img_wa</a>";
       } else {
         $link_wa = div_alert('danger', "Instruktur belum mempunyai nomor whatsapp, silahkan hubungi via manual.");
