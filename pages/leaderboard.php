@@ -90,6 +90,10 @@ if ($get_update) {
     );
   } else { // selain rank room | rank kelas
     if (!mysqli_num_rows($q)) {
+      // echo $s;
+      echo '<pre>';
+      var_dump($s);
+      echo '</pre>';
       die(div_alert('danger', "Data untuk BEST [$get_best] tidak ditemukan"));
       // echo (div_alert('danger', "Data untuk BEST [$get_best] tidak ditemukan"));
     }
