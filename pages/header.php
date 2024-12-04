@@ -104,6 +104,7 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
                   <li><a href='?peserta_kelas'>Peserta Kelas</a></li>
                   <li><a href='?activity&jenis=latihan'>Latihan</a></li>
                   <li><a href='?activity&jenis=challenge'>Challenges</a></li>
+                  <li><a href='?proyek_akhir'>Proyek Akhir</a></li>
                   <li class=''><a href='?bertanya'>Bertanya</a></li>
                   <li class=''><a href='?questions'>List Bertanya</a></li>
                   <li class='hideit'><a href='?chats'>Chats</a></li>

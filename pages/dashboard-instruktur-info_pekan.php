@@ -40,13 +40,18 @@ if ($room_count['count_presensi_aktif'] > 1) {
 
       $eta = eta2($d2['jadwal_kelas']);
       $hari = hari_tanggal($d2['jadwal_kelas'], 1, 0);
-      $info_kelas .= "<div>$d[kelas] - $hari - $eta <a target=_blank href='?set_jadwal_kelas&kelas=$d[kelas]'>$img_edit</a></div>";
+      $info_kelas .= "
+        <div>
+          $d[kelas] - $hari - $eta 
+          <a target=_blank href='?set_jadwal_kelas&kelas=$d[kelas]'>$img_edit</a>
+        </div>
+      ";
     }
 
 
 
     $info_pekan = "
-      <div>Pertemuan ke-$sesi_aktif[sesi_normal_count] $sesi_aktif[nama]</div>
+      <div><a href='?list_sesi'>Pertemuan ke-$sesi_aktif[sesi_normal_count] $sesi_aktif[nama]</a></div>
       <div class='f12 mt2'>$info_kelas</div>
     ";
   } else {
@@ -77,7 +82,12 @@ if ($room_count['count_presensi_aktif'] > 1) {
     $kelas_pertama = $d['kelas_pertama'];
     $hari = hari_tanggal($jadwal_kelas_pertama, 1, 1, 0);
     $eta = eta2($jadwal_kelas_pertama);
-    $info_pekan = "<div><a onclick='return confirm(`Menuju Learning Path?`)' href='?list_sesi'>$nama_sesi</a></div><div class='f12 abu mb1'>$mode di Kelas $kelas_pertama pada $hari | $eta</div>";
+    $info_pekan = "
+      <div>$nama_sesi</div>
+      <div class='f12 abu mb1'>
+        $mode di Kelas $kelas_pertama pada $hari | $eta
+      </div>
+    ";
   } else {
     $info_pekan = '<span class=red>no data sesi pertemuan 1 atau sesi kelas belum ada</span><hr>';
   }
