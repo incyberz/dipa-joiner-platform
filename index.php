@@ -109,11 +109,11 @@ if ($parameter == 'logout') {
 # ========================================================
 # INCLUDES PURE PHP
 # ========================================================
-include 'include/insho_functions.php';
-include 'include/dipa_functions.php';
-include 'include/fungsi_alert.php';
-include 'include/fungsi_session_login.php';
-include 'include/date_managements.php';
+include 'includes/insho_functions.php';
+include 'includes/dipa_functions.php';
+include 'includes/fungsi_alert.php';
+include 'includes/fungsi_session_login.php';
+include 'includes/date_managements.php';
 $ta_show = tahun_ajar_show($ta);
 
 
@@ -177,10 +177,10 @@ if ($username) {
   # INCLUDE STYLES
   # ============================================================
   include 'dipa_styles.php';
-  $insho_styles = $online_version ? 'insho_styles.php' : '../insho_styles.php';
+  $insho_styles = $online_version ? 'includes/insho_styles.php' : '../includes/insho_styles.php';
   include $insho_styles;
-  include 'include/meme.php';
-  include 'include/img_icon.php';
+  include 'includes/meme.php';
+  include 'includes/img_icon.php';
   ?>
 </head>
 
@@ -194,8 +194,6 @@ if ($username) {
   <main id="main">
     <section>
       <div class="container">
-        <?php //if ($dm_db and !$online_version) echo '<div class="red bg-yellow">Mode Online DB</div>'; 
-        ?>
         <?php include 'routing.php'; ?>
       </div>
     </section>
@@ -221,4 +219,4 @@ if ($username) {
 
 </html>
 
-<?php include 'include/js_btn_aksi.php'; ?>
+<?php include 'includes/js_btn_aksi.php'; ?>

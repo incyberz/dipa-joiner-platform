@@ -13,9 +13,13 @@ if ($online_version) {
   $db_pass = "hq'qC3D}+Hzj@TT";
   $db_name = 'pesc7881_dipa';
 
-  $db_user = 'iotikain_insho';
-  $db_pass = "hq'qC3D}+Hzj@TT";
+  $db_user = 'iotikain_adm';
+  $db_pass = "hq'qC3D}+Hzj@sTT";
   $db_name = 'iotikain_dipa';
+
+  $db_user = "mmcclini_admin";
+  $db_pass = "MMC-Clinic2024";
+  $db_name = "mmcclini_dipa";
 } else {
   $db_server = 'localhost';
   $db_user = 'root';
@@ -35,10 +39,7 @@ if ($cn->connect_errno) {
 
 date_default_timezone_set("Asia/Jakarta");
 
-function erid($a)
-{
-  return "Error, index [$a] belum terdefinisi.";
-}
+
 
 function clean_sql($a)
 {

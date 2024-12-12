@@ -1,7 +1,7 @@
 <?php
 # =================================================================
 login_only();
-include 'include/arr_kelas.php';
+include 'includes/arr_kelas.php';
 $no_war_profil = "<img class=profil_penjawab src='assets/img/no_war_profil.jpg' />";
 
 $all_wars = isset($_GET['all_wars']) ? 1 : 0;

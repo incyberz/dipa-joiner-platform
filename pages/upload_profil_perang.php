@@ -52,7 +52,7 @@ if (isset($_POST['btn_upload'])) {
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     echo '<br>updating with unverified war image<br>';
 
-    include 'include/resize_img.php';
+    include 'includes/resize_img.php';
     resize_img($target, '', 1000, 1000); // resize ke 150 saat verified
     echo div_alert('success mt2', 'Upload Profil sukses.');
     jsurl('', 2000);

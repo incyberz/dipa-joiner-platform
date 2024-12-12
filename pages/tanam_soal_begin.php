@@ -106,7 +106,7 @@ $id_sesi = $_GET['id_sesi'] ?? '';
 $info_sesi = '';
 $pilih_sesi = '';
 if ($id_sesi == '') {
-  // include 'include/arr_sesi.php';
+  // include 'includes/arr_sesi.php';
   $s = "SELECT a.*, a.id as id_sesi,
   (
     SELECT count(1) FROM tb_soal_peserta p 

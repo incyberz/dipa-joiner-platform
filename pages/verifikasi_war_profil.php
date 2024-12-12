@@ -1,7 +1,7 @@
 <?php
 if (isset($_POST['btn_upload_cropped_image'])) {
 
-  include 'include/resize_img.php';
+  include 'includes/resize_img.php';
   echo '<pre>';
   var_dump($_FILES);
   echo '</pre>';
@@ -70,7 +70,7 @@ if (isset($_POST['btn_upload_cropped_image'])) {
     # ============================================================
     # RESIZE UNVERIFIED WAR IMAGE TO 150PX
     # ============================================================
-    include 'include/resize_img.php';
+    include 'includes/resize_img.php';
     resize_img($target, '', 150, 150);
 
     # ============================================================

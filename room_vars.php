@@ -230,8 +230,15 @@ if (!$room['last_update']) {
   # ============================================================
   # UPDATE ROOM COUNT IF STATUS ROOM = 100
   # ============================================================
-  include "$lokasi_pages/update_room_count.php";
-  jsurl();
+  if ($_POST) {
+    // skip update  room count ketika ada post request
+    $room_count = [];
+    $room_count['sudah_uts'] = null;
+    $room_count['sudah_uas'] = null;
+  } else {
+    include "$lokasi_pages/update_room_count.php";
+    jsurl();
+  }
 } else {
   # ============================================================
   # ACCESS ROOM COUNT

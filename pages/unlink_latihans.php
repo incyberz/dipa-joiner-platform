@@ -1,6 +1,6 @@
 <h1>UNLINK LATIHAN</h1>
 <?php
-include 'include/resize_img.php';
+include 'includes/resize_img.php';
 
 $s = "SELECT id,nama,folder_uploads FROM tb_peserta ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));

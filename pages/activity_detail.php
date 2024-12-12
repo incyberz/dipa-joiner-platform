@@ -460,7 +460,7 @@ echo "
 if ($id_role == 2) {
   echo '<hr class="mt4 mb4"><h3 class="tebal darkred tengah mb4">Fitur Khusus Instruktur</h3>';
   if (!$ket_kosong) {
-    include 'include/form_target_kelas.php';
+    include 'includes/form_target_kelas.php';
     if ($target_kelas) {
       include 'activity_submiter.php';
     }

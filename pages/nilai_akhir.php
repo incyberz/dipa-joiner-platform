@@ -599,7 +599,7 @@ if ($get_save) {
 
 if ($id_role == 2) {
   $blok_kelas = "
-    <table class='table td_trans th_toska'>
+    <table class='table td_transZZZ th_toska'>
       $tr
     </table>
     <div class=mb4>

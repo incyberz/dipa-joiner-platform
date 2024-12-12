@@ -2,7 +2,7 @@
 // echo div_alert('info tengah', "Mode Random Selected.");
 $start = $_GET['start'] ?? '';
 
-include 'include/update_available_question.php';
+include 'includes/update_available_question.php';
 
 $max_soal = $available_questions > 10 ? 10 : $available_questions;
 

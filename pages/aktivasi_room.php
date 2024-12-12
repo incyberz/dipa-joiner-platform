@@ -13,7 +13,7 @@ include 'aktivasi_room_processors.php';
 # ============================================================
 # ARRAY STATUS ROOM 
 # ============================================================
-include 'include/arr_status_room.php';
+include 'includes/arr_status_room.php';
 
 # ============================================================
 # SET HEADER

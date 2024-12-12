@@ -12,7 +12,7 @@ $img_login_as = '<img src="assets/img/icon/login_as.png" height=20px class=zoom>
 $show_img = isset($_GET['show_img']) ? $_GET['show_img'] : 0;
 
 if ($kelas != 'all') {
-  include 'include/arr_kelas.php';
+  include 'includes/arr_kelas.php';
   foreach ($arr_kelas as $kls => $jml) {
     $arr_rank_kelas[$kls] = 0;
     $jumlah_peserta_kelas[$kls] = $jml;

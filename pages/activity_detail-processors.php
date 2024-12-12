@@ -87,7 +87,7 @@ if (isset($_POST['btn_upload'])) {
       # RESIZE IMAGE
       # ============================================================
       echolog("resize_img(target_bukti)");
-      include_once 'include/resize_img.php';
+      include_once 'includes/resize_img.php';
       resize_img($target_bukti);
 
       # ============================================================

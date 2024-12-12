@@ -11,15 +11,16 @@ $nama = $_GET['nama'] ?? '';
 # PROCESSORS 
 # ============================================================
 if (isset($_POST['btn_add'])) {
-  echo '<pre>';
-  var_dump($_POST);
-  echo '</pre>';
+  // echo '<pre>';
+  // var_dump($_POST);
+  // echo '</pre>';
 
   $nama = trim($_POST['nama']);
   $is_wajib = $_POST['is_wajib'] == 'on' ? 1 : 'NULL';
 
   // select nama latihan similar
   $s = "SELECT 1 FROM tb_$p WHERE nama like '%$nama%'";
+  echolog($s);
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   if (mysqli_num_rows($q)) {
     div_alert('danger', "$p ini sudah ada di database, silahkan pakai nama lainnya!");
@@ -85,7 +86,7 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) die(div_alert('danger', 'Invalid sesi.'));
 $csesi = mysqli_fetch_assoc($q);
 
-$s = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room AND ta=$ta";
+$s = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room -- AND ta=$ta";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) die(div_alert('danger', 'Belum ada Room Kelas.'));
 
@@ -93,9 +94,16 @@ $untuk_kelas = '';
 while ($d = mysqli_fetch_assoc($q)) {
   $id = $d['id'];
   $k = $d['kelas'];
-  $hideit = $k == 'INSTRUKTUR' ? 'hideit' : '';
-  $untuk_kelas .= "<div class='kiri $hideit'><label><input type=checkbox checked name=untuk_kelas[$id]> $k</label></div>";
+  if ($k == 'INSTRUKTUR') {
+    $ada_room_kelas_instruktur = 1;
+    $untuk_kelas .= "<div class='kiri hideit'><label><input type=checkbox checked name=untuk_kelas[$id]> $k</label></div>";
+    $untuk_kelas .= "<div class='kiri'><label><input type=checkbox checked disabled> $k</label></div>";
+  } else {
+    if ($d['ta'] != $ta) continue;
+    $untuk_kelas .= "<div class='kiri'><label><input type=checkbox checked name=untuk_kelas[$id]> $k</label></div>";
+  }
 }
+
 
 $not_p = $p == 'latihan' ? 'challenge' : 'latihan';
 

@@ -115,6 +115,7 @@ $input = "<input class='form-control edit_nama_proyek'>";
 while ($d = mysqli_fetch_assoc($q)) {
   $i++;
   $nama = strtoupper($d['nama_peserta']);
+  $login_as = $id_role == 2 ? "LOGIN AS $d[username] ZZZ" : '';
   $status = '<div class="f12 miring abu">belum diverifikasi</div>';
   $judul_proyek = $d['judul_proyek'];
   $input = "<input class='form-control edit_nama_proyek' id=edit_nama_proyek__$d[id_peserta] value='$d[judul_proyek]'>";

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../include/insho_functions.php';
+include '../includes/insho_functions.php';
 include '../conn.php';
 include '../../insho_styles.php';
 set_h2('Destroy Room');
