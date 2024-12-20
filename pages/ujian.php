@@ -59,9 +59,9 @@ if ($id_paket == '') {
   }
 
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  $list_paket = div_alert('danger', "Maaf, belum ada Paket Soal untuk kelas $kelas.");
+  $list_paket = '';
   if (mysqli_num_rows($q)) {
-    $list_paket = '';
+    $list_paket = "<div class='mb2 darkblue bold'>Silahkan pilih Paket Soal yang tersedia:</div> ";
     while ($d = mysqli_fetch_assoc($q)) {
 
       $jumlah_attemp = $d['jumlah_attemp'] ?? 0;
@@ -150,7 +150,28 @@ if ($id_paket == '') {
       </a>
       ";
     } // end while
-  } // num_rows
+    $list_paket .= "<hr><div class='tengah' style='max-width: 300px; margin: auto'>$meme</div>";
+  } else {
+    echo '<pre>';
+    var_dump($trainer);
+    echo '</pre>';
+    $img_wa = img_icon('wa');
+    $Bapak = '';
+    if (strtolower($trainer['gender']) == 'l') $Bapak = 'Bapak';
+    if (strtolower($trainer['gender']) == 'p') $Bapak = 'Ibu';
+    $datetime = date('d F, Y, H:i:s');
+
+    $link_encoded = urlencode($_SERVER['REQUEST_URI']);
+    $text_wa = "Yth. $Bapak $trainer[nama], saya $user[nama] ingin meminta Paket Ujian untuk Room $room[nama] karena sebentar lagi akan memasuki sesi ujian. Terimakasih.%0a%0aLink:%0a$link_encoded%0a%0aFrom: DIPA Joiner System, $datetime";
+    $link_wa = "https://api.whatsapp.com/send?phone=$trainer[no_wa]&text=$text_wa";
+
+    $list_paket = div_alert('danger tengah', "
+      Maaf, belum ada Paket Soal untuk kelas $kelas.
+      <hr>
+      Mintalah ke $trainer_title kamu untuk membuatnya jika sebentar lagi memasuki sesi ujian.
+      <a class='btn btn-success w-100 mt4' href='$link_wa' onclick='return confirm(`Minta Paket Soal via whatsapp?`)'>$img_wa Minta Paket Soal</a>
+    ");
+  } // end jika ada data paket 
 
   # ============================================================
   # FITUR INSTRUKTUR
@@ -171,10 +192,8 @@ if ($id_paket == '') {
   <section>
     <div class=container>
       $fitur_instruktur
-      <div class='mb2 darkblue bold'>Silahkan pilih Paket Soal yang tersedia:</div> 
       $list_paket
-      <hr>
-      <div class='tengah' style='max-width: 300px; margin: auto'>$meme</div>
+      $room[info_ujian]
     </div>
   </section>";
 } else {

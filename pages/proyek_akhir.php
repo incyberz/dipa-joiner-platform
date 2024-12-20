@@ -102,8 +102,8 @@ JOIN tb_peserta d ON c.id_peserta=d.id
 
 WHERE a.id_room = $id_room 
 AND a.ta = $ta 
-AND d.status = 1 -- peserta aktif
--- AND d.id_role = 1 -- peserta 
+AND d.status = 1 -- _peserta aktif
+-- AND d.id_role = 1 -- _peserta 
 AND $sql_target_kelas
 ORDER BY b.kelas, d.nama  
 ";

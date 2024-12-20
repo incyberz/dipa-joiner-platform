@@ -17,9 +17,9 @@ if (isset($_POST['btn_upload'])) {
   # ============================================================
   # HAPUS FILE LAMA
   # ============================================================
-  echo "$d_peserta[image] > $image";
-  $src = "$lokasi_profil/$d_peserta[image]";
-  if (file_exists($src) and $d_peserta['image']) {
+  echo "$user[image] > $image";
+  $src = "$lokasi_profil/$user[image]";
+  if (file_exists($src) and $user['image']) {
     if (!unlink($src)) {
       die(div_alert('danger', "Tidak bisa menghapus file profile lama."));
     }
@@ -83,7 +83,7 @@ if ($sudah_upload) {
     $status_ket = 'Wah! Tolong pakai profil lain ya!';
   } else {
     $status = '<span class="darkred">Belum diverifikasi</span>';
-    $status_ket = 'Dikarenakan banyaknya peserta, mohon bersabar untuk menunggu verifikasi dari instruktur! Silahkan hubungi beliau saat jam kantor!';
+    $status_ket = "Dikarenakan banyaknya $peserta_title, mohon bersabar untuk menunggu verifikasi dari instruktur! Silahkan hubungi beliau saat jam kantor!";
   }
 } else {
   $status = '<span class="darkred">Belum upload</span>';

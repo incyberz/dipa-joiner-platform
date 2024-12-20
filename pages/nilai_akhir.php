@@ -286,10 +286,10 @@ FROM tb_peserta a
 JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
 JOIN tb_kelas c ON b.kelas=c.kelas 
 JOIN tb_room_kelas d ON c.kelas=d.kelas 
--- WHERE a.status=1 -- peserta aktif only
-WHERE 1 -- peserta aktif/nonaktif
-AND password is not null -- peserta aktif pasti sudah ganti pass
-AND a.id_role=1 -- peserta only tidak GM
+-- WHERE a.status=1 -- _peserta aktif only
+WHERE 1 -- _peserta aktif/nonaktif
+AND password is not null -- _peserta aktif pasti sudah ganti pass
+AND a.id_role=1 -- _peserta only tidak GM
 AND $sql_id_peserta -- SWITCH VIEW PESERTA | GM
 AND c.ta = $ta 
 AND d.id_room = $id_room 
@@ -299,9 +299,9 @@ ORDER BY b.kelas, a.nama
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $total_data = mysqli_num_rows($q);
-if (mysqli_num_rows($q) > 1 and $id_role == 1) die('Duplicate result ditemukan untuk setiap peserta');
+if (mysqli_num_rows($q) > 1 and $id_role == 1) die("Duplicate result ditemukan untuk setiap $peserta_title");
 if ($id_role == 2 and !$total_data) {
-  echo div_alert('danger', "Belum ada peserta pada room ini. | <a href='?peserta_kelas'>Peserta Kelas</a>");
+  echo div_alert('danger', "Belum ada $peserta_title pada room ini. | <a href='?peserta_kelas'>Peserta Kelas</a>");
   jsurl('?peserta_kelas', 5000);
   exit;
 }
@@ -592,7 +592,7 @@ if ($id_role != 1) {
 
 // return to normal view
 if ($get_save) {
-  echo div_alert('success', "Data Nilai Akhir untuk $d[total_peserta] peserta sudah tersimpan.<hr><a class='btn btn-primary' href='?nilai_akhir'>Kembali ke Mode View Nilai Akhir</a>");
+  echo div_alert('success', "Data Nilai Akhir untuk $d[total_peserta] $peserta_title sudah tersimpan.<hr><a class='btn btn-primary' href='?nilai_akhir'>Kembali ke Mode View Nilai Akhir</a>");
   exit;
 }
 
@@ -603,7 +603,7 @@ if ($id_role == 2) {
       $tr
     </table>
     <div class=mb4>
-      <a href='?nilai_akhir&save=1' class='btn btn-primary ' onclick='alert(\"Setelah Anda menyimpan data Nilai Akhir sebaiknya Anda mengumumkan kepada para peserta.\")'>Simpan Data Nilai Akhir untuk $total_data Peserta</a>
+      <a href='?nilai_akhir&save=1' class='btn btn-primary ' onclick='alert(\"Setelah Anda menyimpan data Nilai Akhir sebaiknya Anda mengumumkan kepada para $peserta_title.\")'>Simpan Data Nilai Akhir untuk $total_data Peserta</a>
     </div>
     <div class=wadah style='max-width:450px'>
       <div class=row>
@@ -630,7 +630,7 @@ if ($id_role == 2) {
 
 
 
-$jumlah_peserta_show = $id_role == 1 ? '' : "<div class=mb2>Jumlah Peserta: $total_data peserta</div>";
+$jumlah_peserta_show = $id_role == 1 ? '' : "<div class=mb2>Jumlah Peserta: $total_data $peserta_title</div>";
 echo "
   <div data-aos=fade>
     $jumlah_peserta_show

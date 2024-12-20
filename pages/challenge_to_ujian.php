@@ -138,7 +138,7 @@ JOIN tb_kelas_peserta c ON b.kelas=c.kelas
 JOIN tb_peserta d ON c.id_peserta=d.id
 WHERE a.id_challenge = $id_challenge 
 AND b.kelas = '$get_kelas'
-AND d.id_role = 1 -- peserta only 
+AND d.id_role = 1 -- _peserta only 
 ORDER BY b.kelas, poin_chal desc, d.nama  
 ";
 

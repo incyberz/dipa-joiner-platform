@@ -34,7 +34,7 @@ if (isset($_POST['btn_pilih'])) {
 # MAIN SELECT ROOM
 # ============================================================
 if ($id_role == 1) {
-  // room kelas peserta
+  // room kelas _peserta
   $sub_sql_my_room = "SELECT 1  
   FROM tb_room_kelas p 
   JOIN tb_kelas q ON p.kelas=q.kelas  

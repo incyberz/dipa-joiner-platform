@@ -1,5 +1,5 @@
 <?php
-// echo "d_peserta[pass]: $d_peserta[password] post[password]: $_POST[password]";
+// echo "d_peserta[pass]: $user[password] post[password]: $_POST[password]";
 $hideit = '';
 $password = '';
 $cpassword = '';

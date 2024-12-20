@@ -6,16 +6,29 @@ $img_next = img_icon('next');
 $null_red = '<span class="red consolas miring">null</span>';
 
 
-$welcome_kelas = $id_role == 1 ? "kelas <span class='tebal darkblue'>$kelas </span> pada Room <span class='tebal darkblue'>$nama_room</span>" : '';
+$welcome_kelas = $id_role == 1 ? "<li>Kelas <span class='tebal darkblue'>$kelas </span></li>" : '';
 $login_as_info = $is_login_as ? '<span class="darkred bold">[login_as]</span>' : '';
 $welcome = "
   <div>
-    Welcome
-    <span class='tebal darkblue'>$nama_peserta!</span>
-  </div>
-  Anda login $login_as_info sebagai
-  <span class='tebal darkblue'>$Sebagai</span> 
-  $welcome_kelas
+    <ul class='left mx-auto' style='max-width: 400px'>
+      <li>
+        Welcome
+        <span class='tebal darkblue'>$nama_peserta!</span>
+      </li>
+      <li>
+        Anda login $login_as_info sebagai
+        <span class='tebal darkblue'>$Sebagai</span>
+      </li> 
+      $welcome_kelas 
+      <li> 
+        Room <span class='tebal darkblue'>$nama_room</span>
+      </li> 
+    </ul> 
+    <div class='tengah border-top blue f14 miring pt1'>
+      Silahkan klik Menu di pojok-kanan-atas untuk menuju ke halaman lain.
+    </div> 
+
+  </div> 
 ";
 set_h2("Dashboard", $welcome);
 $link_reactivate = $id_role != 2 ? '' : "<a href='?reactivate_room&id_room=$id_room'>Reactivate</a>";

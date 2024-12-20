@@ -20,7 +20,7 @@ while ($d = mysqli_fetch_array($q)) {
     copy($src, "$lokasi_profil/$new_war_image");
     echolog("to: $new_war_image");
 
-    // update data peserta
+    // update data _peserta
     $s2 = "UPDATE tb_peserta SET war_image='$new_war_image' WHERE id=$d[id]";
     echolog($s2);
     $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));

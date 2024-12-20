@@ -207,7 +207,7 @@ $select_all_from_tb_room_kelas = "SELECT * FROM tb_room_kelas WHERE id_room=$id_
 $s = "SELECT id,nama,folder_uploads,username,no_wa,gender,image,war_image FROM tb_peserta WHERE id=$room[created_by] AND id_role=2 AND status=1";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) die(div_alert('danger', 'Data Instruktur untuk Room ini tidak ditemukan (atau inactive)'));
-$instruktur = mysqli_fetch_assoc($q);
+$trainer = mysqli_fetch_assoc($q);
 
 # =======================================================
 # ROOM COUNT

@@ -39,8 +39,8 @@ while ($d = mysqli_fetch_assoc($q)) {
     AND a.status = 100 -- active room 
     AND a.id = $id_room
     AND c.status = 1 -- kelas aktif 
-    AND e.status = 1 -- peserta aktif
-    AND e.id_role = 1 -- peserta only
+    AND e.status = 1 -- _peserta aktif
+    AND e.id_role = 1 -- _peserta only
     ";
   } elseif ($penilaian == 'count_latihan') {
     $s2 = "SELECT 1 FROM tb_room a 

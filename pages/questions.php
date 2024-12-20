@@ -216,7 +216,7 @@ AND b.id_room = $id_room
 ORDER BY a.tanggal desc";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $i = 0;
-if (!mysqli_num_rows($q)) echo div_alert('info', 'Belum ada peserta yang bertanya pada room ini.');
+if (!mysqli_num_rows($q)) echo div_alert('info', "Belum ada $peserta_title yang bertanya pada room ini.");
 while ($d = mysqli_fetch_assoc($q)) {
   $i++;
   $id = $d['id'];
@@ -282,7 +282,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   # DELETE BERTANYA
   # ============================================================
   if ($id_role == 1 and $d['jawaban']) {
-    $form_delete_bertanya = ''; // peserta tidak bisa menghapus pertanyaan yg sudah dijawab
+    $form_delete_bertanya = ''; // _peserta tidak bisa menghapus pertanyaan yg sudah dijawab
   } else {
     $form_delete_bertanya = "
       <form method=post style=display:inline>

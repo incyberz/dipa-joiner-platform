@@ -9,11 +9,11 @@ while ($d = mysqli_fetch_assoc($q)) {
   $s2 = "SELECT * FROM tb_peserta WHERE kelas='$d[kelas]' ORDER BY nama";
   $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
 
-  $peserta = '';
+  $list_peserta = '';
   while ($d2 = mysqli_fetch_assoc($q2)) {
     $nama = ucwords(strtolower($d2['nama']));
 
-    $peserta .= "
+    $list_peserta .= "
     <div class='kecil tengah abu'>
       <img src='$lokasi_profil/$d2[war_image]' class='foto_profil'>
       <div>$nama</div>
@@ -25,7 +25,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     <div class='wadah content' data-aos='fade-up' data-aos-delay='150'>
       $d[kelas]
       <div class='wadah flexy'>
-        $peserta
+        $list_peserta
       </div>      
     </div>
   ";

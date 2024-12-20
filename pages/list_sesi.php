@@ -54,7 +54,7 @@ $arr_part = [
   ],
   'awal_presensi' => [
     'title' => 'Rule Presensi',
-    'desc' => 'Editing Rule (Aturan) kapan peserta dapat Presensi Online pada sesi ini',
+    'desc' => "Editing Rule (Aturan) kapan $peserta_title dapat Presensi Online pada sesi ini",
     'image' => 'presensi.png',
   ],
   'durasi' => [

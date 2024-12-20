@@ -28,8 +28,8 @@ JOIN tb_kelas_peserta c ON c.id_peserta=b.id
 JOIN tb_kelas d ON c.kelas=d.kelas  
 JOIN tb_room_kelas e ON e.kelas=d.kelas  
 WHERE a.id_room='$id_room' 
-AND b.status = 1 -- peserta aktif 
-AND b.id_role = 1 -- peserta only 
+AND b.status = 1 -- _peserta aktif 
+AND b.id_role = 1 -- _peserta only 
 AND e.id_room = $id_room 
 AND e.ta =  $ta 
 

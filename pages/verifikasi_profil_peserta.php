@@ -8,7 +8,7 @@
 </style>
 <div class="section-title" data-aos="fade">
   <h2>Profil Peserta</h2>
-  <p><?php if ($id_role == 2) echo "Berikut adalah profil peserta yang harus diverifikasi. | 
+  <p><?php if ($id_role == 2) echo "Berikut adalah profil $peserta_title yang harus diverifikasi. | 
         <a href='?verifikasi_profil_peserta'>Unverified</a> | 
         <a href='?verifikasi_profil_peserta&profil_ok=1'>Accepted</a> | 
         <a href='?verifikasi_profil_peserta&profil_ok=-1'>Rejected</a>";
@@ -43,7 +43,7 @@ JOIN tb_room_kelas d ON c.kelas=d.kelas
 WHERE a.status=1 
 AND c.ta = $ta  -- tahun ajar saat ini
 AND d.id_room=$id_room -- di room ini
-AND $sql_id_peserta  -- untuk peserta ini atau semua (admin)
+AND $sql_id_peserta  -- untuk _peserta ini atau semua (admin)
 AND $sql_profil_ok   
 AND c.kelas != 'INSTRUKTUR' 
 ";
@@ -53,7 +53,7 @@ AND c.kelas != 'INSTRUKTUR'
 // echo '</pre>';
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) {
-  $divs = div_alert('info', "Belum ada profil peserta yang harus Anda verifikasi.");
+  $divs = div_alert('info', "Belum ada profil $peserta_title yang harus Anda verifikasi.");
 } else {
   $divs = '';
   $batas = 20;

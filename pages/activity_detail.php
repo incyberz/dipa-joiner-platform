@@ -260,10 +260,10 @@ if ($id_bukti) {
       }
     } else {
 
-      if ($instruktur['no_wa']) {
+      if ($trainer['no_wa']) {
         $link_akses = urlencode($_SERVER['REQUEST_URI']);
-        $text_wa = "Yth. Instruktur ($instruktur[nama]),%0a%0aPak/Bu $jenis nya belum disetting. Segera ya Pak/Bu, mau saya kerjakan :) %0a%0aLink akses:%0a$link_akses";
-        $href = "https://api.whatsapp.com/?send&phone=$instruktur[no_wa]&text=$text_wa";
+        $text_wa = "Yth. Instruktur ($trainer[nama]),%0a%0aPak/Bu $jenis nya belum disetting. Segera ya Pak/Bu, mau saya kerjakan :) %0a%0aLink akses:%0a$link_akses";
+        $href = "https://api.whatsapp.com/?send&phone=$trainer[no_wa]&text=$text_wa";
         $img_wa = img_icon('wa');
         $link_wa = "<a href='$href' target=_blank>Hubungi Instruktur $img_wa</a>";
       } else {
@@ -400,7 +400,7 @@ if (!$d_assign['ket']) {
     </table>
   
     <div class='wadah darkblue tengah f12 bg-white'>
-      Dikerjakan oleh $count_submiter of $total_peserta peserta ($persen_peserta%)
+      Dikerjakan oleh $count_submiter of $total_peserta $peserta_title ($persen_peserta%)
       <div class='progress mt1'>
         <div class='progress-bar' style='width:$persen_peserta%'>
         </div>

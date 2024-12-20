@@ -17,6 +17,21 @@
 session_start();
 // session_destroy();
 
+$file_config_institusi = 'mu'; // .php
+$is_custom = false;
+# ============================================================
+# INSTITUSI VARIABLE
+# ============================================================
+$institusi = null;
+$peserta_title = 'peserta';
+$trainer_title = 'instruktur';
+$join_title = 'join';
+$room_title = 'room';
+
+if (file_exists("$file_config_institusi.php")) {
+  include "$file_config_institusi.php";
+  $is_custom = true;
+}
 
 # ============================================================
 # GLOBAL VARIABLE
@@ -114,6 +129,7 @@ include 'includes/dipa_functions.php';
 include 'includes/fungsi_alert.php';
 include 'includes/fungsi_session_login.php';
 include 'includes/date_managements.php';
+include 'includes/link_wa.php';
 $ta_show = tahun_ajar_show($ta);
 
 
@@ -189,8 +205,10 @@ if ($username) {
   <?php
 
   if (!$is_login || $id_room) include 'pages/header.php';
+  if (!$is_login and $parameter == '') {
+    include $institusi ? "pages/hero-$file_config_institusi.php" : 'pages/hero.php';
+  }
   ?>
-  <?php if (!$is_login and $parameter == '') include 'pages/hero.php'; ?>
   <main id="main">
     <section>
       <div class="container">

@@ -5,6 +5,6 @@ if (isset($_SESSION['dipa_username'])) {
 }
 ?>
 <?php
-include 'about.php';
+// include 'about.php';
 // include 'teams.php';
-include 'leaderboard.php';
+// include 'leaderboard.php';

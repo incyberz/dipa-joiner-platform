@@ -1,6 +1,6 @@
 <?php
 $img_home = img_icon('home');
-set_h2('Join', "<a href='?'>$img_home</a> <a href='?login'>$img_login_as</a> ");
+set_h2($join_title, "<a href='?'>$img_home</a> <a href='?login'>$img_login_as</a> ");
 $as = $_GET['as'] ?? '';
 $as = strtolower($as);
 
@@ -133,13 +133,14 @@ if (!$as) {
   $blok_joins = '';
   foreach ($arr_as as $key => $value) {
     $time_anim = ($key + 1) * 150;
+    $value_title = $institusi ? $custom[$value] : $value;
     $blok_joins .= "
     <div class='col-lg-3' data-aos='fade-up' data-aos-delay='$time_anim'>
       <div class='wadah gradasi-$arr_gradasi[$key]'>
         <div class='text-center p-4'>
           <img src='assets/img/icon/$value.png' alt='as $value' class='foto-ilustrasi'>
         </div>
-        <a href='?join&as=$value' class='btn btn-primary btn-block proper'>Sebagai $value</a>
+        <a href='?join&as=$value' class='btn btn-primary btn-block proper'>Sebagai $value_title</a>
         <div class='tengah kecil abu mt1'>$arr_ket[$key]</div>
       </div>
     </div>
@@ -212,10 +213,11 @@ if (!$as) {
   }
 
   $hideit_btn_join = ($nama != '' and $username != '' and $select_kelas != '0') ? '' : 'hideit';
+  $as_title = $custom[$as] ?? 'Peserta';
 
   echo "
   <div class='section-title' data-aos='fade-up'>
-    <p><a href='?join'>Back</a> | Silahkan Anda Join sebagai <span class=proper>$as</span></p>
+    <p><a href='?join'>Back</a> | Silahkan Anda $join_title sebagai <span class=proper>$as_title</span></p>
     <div class='mt3 mb4'>
       <img src='assets/img/icon/$as.png' alt='img-as-$as' class='foto-ilustrasi'>
     </div>
@@ -223,6 +225,23 @@ if (!$as) {
   </div>
   
   ";
+
+  $input_username = '';
+  if (!$file_config_institusi) {
+    $input_username = "
+          <label for='username'>Username</label>
+          <input type='text' required maxlength=20 minlength=3 class='form-control input_isian mt1' id='username' name='username'  value='$username'>
+          <div class='f12 miring mt1'>Usahakan agar username adalah nama depan atau nama panggilan!</div>
+    ";
+  } elseif ($file_config_institusi == 'mu') {
+    $input_username = "
+      <label for='username'>Username (NIM)</label>
+      <input type='text' required maxlength=9 minlength=9 class='form-control input_isian mt1'  id='username' name='username'  value='$username'>
+      <div class='f12 miring mt1'>NIM 9 digit angka</div>
+    ";
+  } else {
+    die("File config [ $file_config_institusi ] institusi tidak ditemukan");
+  }
 
   echo "
     <div class='wadah gradasi-hijau' data-aos='fade-up' data-aos-delay='150' style='max-width:500px; margin:auto'>
@@ -232,9 +251,7 @@ if (!$as) {
           <input class='form-control input_isian mt1' type='text' id='nama' name='nama' required maxlength=50 minlength=3 value='$nama'>
         </div>
         <div class='form-group'>
-          <label for='username'>Username</label>
-          <input class='form-control input_isian mt1' type='text' id='username' name='username' required maxlength=20 minlength=3 value='$username'>
-          <div class='f12 miring mt1'>Usahakan agar username adalah nama depan atau nama panggilan!</div>
+          $input_username
         </div>
         <div class='form-group'>
           <label for='select_kelas'>Kelas Aktif <span class='f12 abu'>pada TA $ta</span></label>

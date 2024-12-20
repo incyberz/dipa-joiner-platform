@@ -11,20 +11,20 @@ if ($room['status'] == 100) {
     FROM tb_kelas_peserta p 
     JOIN tb_peserta q ON p.id_peserta=q.id  
     WHERE p.kelas=a.kelas 
-    AND q.status=1 -- hanya peserta aktif
-    AND q.id_role=1 -- hanya peserta
+    AND q.status=1 -- hanya _peserta aktif
+    AND q.id_role=1 -- hanya _peserta
     ) count_peserta_kelas, 
   (
     SELECT COUNT(1) 
     FROM tb_presensi p 
-    JOIN tb_peserta q ON p.id_peserta=q.id -- hanya peserta di room kelas TA sekarang 
+    JOIN tb_peserta q ON p.id_peserta=q.id -- hanya _peserta di room kelas TA sekarang 
     JOIN tb_kelas_peserta r ON q.id=r.id_peserta 
     JOIN tb_kelas s ON r.kelas=s.kelas 
     JOIN tb_room_kelas t ON s.kelas=t.kelas 
   
     WHERE p.id_sesi=$id_sesi_aktif -- di sesi aktif
-    AND q.id_role = 1 -- hanya peserta
-    AND q.status = 1 -- hanya peserta aktif 
+    AND q.id_role = 1 -- hanya _peserta
+    AND q.status = 1 -- hanya _peserta aktif 
     AND t.id=a.id -- di room kelas ini saja
     ) count_presenter
   FROM tb_room_kelas a 
@@ -69,8 +69,8 @@ if ($room['status'] == 100) {
     JOIN tb_peserta s ON p.id_peserta=s.id  
     WHERE r.id_room=$id_room 
     AND q.status=1 -- hanya kelas aktif
-    AND s.status=1 -- hanya peserta aktif
-    AND s.id_role=1 -- hanya peserta
+    AND s.status=1 -- hanya _peserta aktif
+    AND s.id_role=1 -- hanya _peserta
     AND r.ta=$ta -- hanya di TA sekarang
     ) count_peserta,
   (
@@ -81,8 +81,8 @@ if ($room['status'] == 100) {
     JOIN tb_peserta s ON p.id_peserta=s.id  
     WHERE r.id_room=$id_room 
     AND q.status=1 -- hanya kelas aktif
-    AND s.status=1 -- hanya peserta aktif
-    AND s.id_role=1 -- hanya peserta
+    AND s.status=1 -- hanya _peserta aktif
+    AND s.id_role=1 -- hanya _peserta
     AND r.ta=$ta -- hanya di TA sekarang
     AND s.image is not null 
     AND s.profil_ok = 1  
@@ -95,8 +95,8 @@ if ($room['status'] == 100) {
     JOIN tb_peserta s ON p.id_peserta=s.id  
     WHERE r.id_room=$id_room 
     AND q.status=1 -- hanya kelas aktif
-    AND s.status=1 -- hanya peserta aktif
-    AND s.id_role=1 -- hanya peserta
+    AND s.status=1 -- hanya _peserta aktif
+    AND s.id_role=1 -- hanya _peserta
     AND r.ta=$ta -- hanya di TA sekarang
     AND s.war_image is not null 
     ) count_peserta_war_image_ok,

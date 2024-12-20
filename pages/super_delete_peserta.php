@@ -2,7 +2,7 @@
 instruktur_only();
 set_h2(
   'SUPER DELETE PESERTA',
-  "<span class='tebal red'>Perhatian! Super Delete digunakan untuk menghapus peserta dan seluruh kegiatan aktifitas belajarnya. <br>Aktifitas Presensi, Latihan, Challenge, Create Soal, Play Kuis, dan aktifitas lainnya juga akan terhapus.</span>"
+  "<span class='tebal red'>Perhatian! Super Delete digunakan untuk menghapus $peserta_title dan seluruh kegiatan aktifitas belajarnya. <br>Aktifitas Presensi, Latihan, Challenge, Create Soal, Play Kuis, dan aktifitas lainnya juga akan terhapus.</span>"
 );
 
 $tb = 'Silahkan search!';
@@ -51,12 +51,12 @@ if ($keyword) {
 
   $tr = '';
   if (!mysqli_num_rows($q)) {
-    $tr = '<tr><td>' . div_alert('danger', "Data peserta tidak ditemukan pada room ini  | keyword: <b>$keyword</b>") . '</td></tr>';
+    $tr = '<tr><td>' . div_alert('danger', "Data $peserta_title tidak ditemukan pada room ini  | keyword: <b>$keyword</b>") . '</td></tr>';
   }
 
   while ($d = mysqli_fetch_assoc($q)) {
     $id = $d['id'];
-    $super_delete = $d['count_ujian'] ? '' : "<a href='?super_delete_peserta&id=$id' class='btn btn-danger' onclick='return confirm(`Perform Super Delete?\n\nPerhatian! Seluruh data aktifitas dari peserta ini juga akan terhapus.`)'>Super Delete</a>";
+    $super_delete = $d['count_ujian'] ? '' : "<a href='?super_delete_peserta&id=$id' class='btn btn-danger' onclick='return confirm(`Perform Super Delete?\n\nPerhatian! Seluruh data aktifitas dari $peserta_title ini juga akan terhapus.`)'>Super Delete</a>";
     $tr .= "
       <tr>
         <td>
@@ -67,7 +67,7 @@ if ($keyword) {
         </td>
         <td>
           <form method=post>
-            <button class='btn btn-danger ' name=btn_reset_password value=$id onclick='return confirm(`Yakin untuk reset password?\n\nPassword akan kembali NULL, sehingga untuk login peserta, password  adalah sama dengan username-nya.`)'>Reset Password</button>
+            <button class='btn btn-danger ' name=btn_reset_password value=$id onclick='return confirm(`Yakin untuk reset password?\n\nPassword akan kembali NULL, sehingga untuk login $peserta_title, password  adalah sama dengan username-nya.`)'>Reset Password</button>
           </form>
         </td>
 

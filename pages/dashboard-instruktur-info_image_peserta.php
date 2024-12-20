@@ -20,7 +20,7 @@ if (!$room_count['count_peserta']) {
   JOIN tb_room_kelas d ON c.kelas=d.kelas 
   WHERE a.status=1 
   AND a.profil_ok is null   -- belum diperiksa
-  AND a.image is not null   -- peserta sudah upload
+  AND a.image is not null   -- _peserta sudah upload
   AND c.ta = $ta  -- tahun ajar saat ini
   AND c.kelas != 'INSTRUKTUR'
   AND d.id_room=$id_room -- di room ini

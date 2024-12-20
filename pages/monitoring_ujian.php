@@ -155,7 +155,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
   JOIN tb_kelas c ON b.kelas=c.kelas 
   JOIN tb_room_kelas d ON c.kelas=d.kelas 
-  WHERE 1 -- a.status=1  -- peserta aktif
+  WHERE 1 -- a.status=1  -- _peserta aktif
   AND a.password is not null 
   -- AND a.id_role=1 
   AND b.kelas='$d[kelas]' 
@@ -278,7 +278,7 @@ while ($d = mysqli_fetch_assoc($q)) {
 
       // for sub judul kelas
       $last_kelas = $d2['kelas'];
-    } // end while list peserta
+    } // end while list _peserta
 
     fputcsv($file, [' ']);
     fputcsv($file, ['', '', 'JUMLAH HADIR: ', $jumlah_hadir]);
@@ -305,7 +305,7 @@ while ($d = mysqli_fetch_assoc($q)) {
         <hr>
       ";
     }
-  } else { // tanpa peserta yang menjawab, mungkin submitter lama
+  } else { // tanpa _peserta yang menjawab, mungkin submitter lama
     $s2 = "SELECT *,
     c.nama as penjawab  
     FROM tb_jawabans a 

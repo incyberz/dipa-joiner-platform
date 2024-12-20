@@ -17,7 +17,7 @@ AND d.id_room=$id_room
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) {
-  echo div_alert('danger', "Belum ada data peserta.");
+  echo div_alert('danger', "Belum ada data $peserta_title.");
 } else {
   while ($d = mysqli_fetch_assoc($q)) {
     $from_perang = "FROM tb_war p WHERE p.id_penjawab=$d[id_peserta] and p.id_room=$id_room";
@@ -123,7 +123,7 @@ if (!mysqli_num_rows($q)) {
     JOIN tb_peserta b ON a.id_peserta=b.id 
     WHERE id_room=$id_room 
     AND b.status=1 
-    AND b.id_role = 1  -- peserta only
+    AND b.id_role = 1  -- _peserta only
     ORDER BY a.war_points DESC";
     $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
     $i = 1;

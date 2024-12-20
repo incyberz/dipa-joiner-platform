@@ -14,10 +14,10 @@ $get_mode = $_GET['mode'] ?? 'fast';
 $jumlah_peserta = 0;
 // mode untuk instruktur: detail || full
 
-// peserta hanya bisa melihat kelas nya saja
+// _peserta hanya bisa melihat kelas nya saja
 $sql_kelas = ($id_role == 1 and $get_kelas == '') ? "a.kelas = '$kelas'" : '1';
 
-// peserta hanya mode fast only
+// _peserta hanya mode fast only
 if ($get_mode != 'fast' and $id_role == 1) $get_mode = 'fast';
 
 // terdapat kalkulasi sesi aktif untuk mode detail
@@ -77,7 +77,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
   if (mysqli_num_rows($q2)) {
     $list_peserta = '';
   } else {
-    $list_peserta = div_alert('danger', "Tidak ada peserta pada kelas $d[kelas]. <hr>Untuk mahasiswa baru silahkan umumkan di Grup Whatsapp agar mhs Join ke kelas ini. <br>Jika mhs sudah ada silahkan Assign Peserta <hr> <a href='?assign_peserta_kelas&kelas=$d[kelas]'>$img_add Assign</a>");
+    $list_peserta = div_alert('danger', "Tidak ada $peserta_title pada kelas $d[kelas]. <hr>Untuk mahasiswa baru silahkan umumkan di Grup Whatsapp agar mhs Join ke kelas ini. <br>Jika mhs sudah ada silahkan Assign Peserta <hr> <a href='?assign_peserta_kelas&kelas=$d[kelas]'>$img_add Assign</a>");
   }
 
   $no = 0;
@@ -125,7 +125,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
           $d_poin_show .= "<div><span class='abu miring'>$key:</span> $value</div>";
         }
       } else {
-        $d_poin_show = "<span class=red>Belum ada data poin untuk peserta ini</span>";
+        $d_poin_show = "<span class=red>Belum ada data poin untuk $peserta_title ini</span>";
       }
 
       # ================================================================
@@ -151,7 +151,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
         $q3 = mysqli_query($cn, $s3) or die(mysqli_error($cn));
         $presenters_kelas_last_active_sesi = 0;
         $sesi_aktif = 0;
-        $count_presensi = 0; // jumlah_presensi tiap peserta
+        $count_presensi = 0; // jumlah_presensi tiap _peserta
         $count_presensi_ontime = 0; // yang ontime saja
         while ($d3 = mysqli_fetch_assoc($q3)) {
           $sudah_presensi = $d3['sudah_presensi'];
@@ -270,7 +270,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
       $src = file_exists($src) ? $src : $src_na;
 
       $boleh_delete = 0;
-      $btn_delete = $boleh_delete ? "<a href='#'>$img_delete</a>" : "<span onclick='alert(`Tidak bisa menghapus peserta ini karena sudah pernah melaksanakan aktifitas belajar.`)'>$img_delete_disabled</span>";
+      $btn_delete = $boleh_delete ? "<a href='#'>$img_delete</a>" : "<span onclick='alert(`Tidak bisa menghapus $peserta_title ini karena sudah pernah melaksanakan aktifitas belajar.`)'>$img_delete_disabled</span>";
 
       $list_peserta .= "
         <tr>
@@ -362,5 +362,5 @@ if ($id_role == 2) {
 }
 
 
-set_h2($judul, "Peserta Kelas MK $singkatan_room :: $jumlah_peserta peserta $pilih_mode");
+set_h2($judul, "Peserta Kelas MK $singkatan_room :: $jumlah_peserta $peserta_title $pilih_mode");
 echo $blok_kelas;

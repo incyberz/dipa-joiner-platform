@@ -41,7 +41,7 @@ if (isset($_POST['btn_assign_room_kelas'])) {
 # ====================================================
 if (isset($_POST['btn_drop_room_kelas'])) {
 
-  echo div_alert('danger', "DROPPING ROOM KELAS dapat berhasil jika dan hanya jika tidak ada peserta yang terdaftar pada kelas ini.<hr>Hubungi Master Instruktur (Developer) Jika ingin menghapus kelas aktif (yang sudah berjalan) dari room ini.");
+  echo div_alert('danger', "DROPPING ROOM KELAS dapat berhasil jika dan hanya jika tidak ada $peserta_title yang terdaftar pada kelas ini.<hr>Hubungi Master Instruktur (Developer) Jika ingin menghapus kelas aktif (yang sudah berjalan) dari room ini.");
 
   $s = "DELETE FROM tb_room_kelas WHERE id_room=$id_room AND kelas='$_POST[btn_drop_room_kelas]'";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));

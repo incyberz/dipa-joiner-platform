@@ -17,7 +17,7 @@ if (isset($_POST['btn_super_delete_kelas'])) {
   # ============================================================
   # DELETE SUB-DATA
   # ============================================================
-  // delete kelas peserta
+  // delete kelas _peserta
   $s = "DELETE FROM tb_kelas_peserta WHERE kelas='$ckelas'";
   echolog($s);
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -116,7 +116,7 @@ if (!$get_kelas) {
     $tr .= "
       <tr>
         <td>$d[kelas]</td>
-        <td>$d[jumlah_peserta] peserta</td>
+        <td>$d[jumlah_peserta] $peserta_title</td>
         <td>
           <form method=post>
             <button 

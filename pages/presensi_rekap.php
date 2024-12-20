@@ -78,8 +78,8 @@ JOIN tb_peserta b ON a.id_peserta=b.id
 JOIN tb_kelas c ON a.kelas=c.kelas  
 JOIN tb_room_kelas d ON c.kelas=d.kelas 
 WHERE d.id_room=$id_room 
-AND b.status=1 -- peserta aktif
-AND b.id_role = 1  -- peserta only
+AND b.status=1 -- _peserta aktif
+AND b.id_role = 1  -- _peserta only
 -- AND $sql_kelas 
 AND c.kelas = '$get_kelas'
 ORDER BY c.shift, c.kelas, b.nama 
@@ -89,7 +89,7 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
 $tr = '';
 if (!mysqli_num_rows($q)) {
-  echo div_alert('danger', "Belum ada <a href='?peserta_kelas'>peserta pada kelas ini</a>.");
+  echo div_alert('danger', "Belum ada <a href='?peserta_kelas'>$peserta_title pada kelas ini</a>.");
 } else {
 
   $table_tag = "<table class='table mt4'>";
@@ -202,7 +202,7 @@ if (!mysqli_num_rows($q)) {
 
 
     $last_kelas = $d['kelas'];
-  } // end while list peserta
+  } // end while list _peserta
 
 
   echo "

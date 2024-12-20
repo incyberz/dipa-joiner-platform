@@ -25,7 +25,7 @@ $sql_best = $get_best ? "a.best = '$get_best'" : 1;
 
 $bulan_tahun = $nama_bulan[intval(date('m')) - 1] . ' ' . date('Y');
 $Leaderboard = $id_room ? 'Room Leaderboard' : 'Leaderboard';
-$Leaderboard = $parameter ? $Leaderboard : $meta_title;
+$Leaderboard = $parameter ? $Leaderboard : 'Leaderboard';
 $nama_room_show = $id_room ? " - <span class=darkblue>$nama_room</span> " : '';
 set_h2($Leaderboard, "Peserta Terbaik minggu ini - $bulan_tahun $nama_room_show - <i>all time</i>");
 include 'leaderboard-functions.php';
@@ -91,11 +91,12 @@ if ($get_update) {
   } else { // selain rank room | rank kelas
     if (!mysqli_num_rows($q)) {
       // echo $s;
-      echo '<pre>';
-      var_dump($s);
-      echo '</pre>';
-      die(div_alert('danger', "Data untuk BEST [$get_best] tidak ditemukan"));
-      // echo (div_alert('danger', "Data untuk BEST [$get_best] tidak ditemukan"));
+      // echo '<pre>';
+      // var_dump($s);
+      // echo '</pre>';
+      // die(div_alert('danger', "Data untuk BEST [$get_best] tidak ditemukan"));
+      echo (div_alert('danger', "Data untuk BEST [$get_best] tidak ditemukan"));
+      echo (div_alert('info', "Mencoba Update Leaderboard untuk minggu ini."));
     }
     $tr_best = '';
     if ($get_best) { // single best
@@ -253,8 +254,8 @@ if ($get_update) {
         WHERE a.id_room=$id_room 
         AND a.rank_kelas <= 10 
         AND e.id_room = $id_room  
-        AND b.status = 1 -- peserta aktif
-        AND b.id_role = 1 -- peserta only 
+        AND b.status = 1 -- _peserta aktif
+        AND b.id_role = 1 -- _peserta only 
         ORDER BY a.akumulasi_poin DESC
         ";
 

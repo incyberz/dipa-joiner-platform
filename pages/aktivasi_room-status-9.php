@@ -10,11 +10,11 @@
 $arr = [
   'count_presensi_offline' => [
     'default' => 5,
-    'desc' => 'Jumlah Presensi Manual dicek oleh instruktur ke tiap peserta',
+    'desc' => "Jumlah Presensi Manual dicek oleh instruktur ke tiap $peserta_title",
   ],
   'count_presensi_online' => [
     'default' => 5,
-    'desc' => 'Jumlah Presensi Online bagi peserta yang sudah memenuhi seluruh Syarat Presensi',
+    'desc' => "Jumlah Presensi Online bagi $peserta_title yang sudah memenuhi seluruh Syarat Presensi",
   ],
   'count_ontime' => [
     'default' => 10,

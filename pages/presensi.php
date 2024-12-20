@@ -25,8 +25,8 @@ FROM tb_kelas_peserta a
 JOIN tb_peserta b ON a.id_peserta=b.id 
 JOIN tb_kelas c ON a.kelas=c.kelas
 JOIN tb_room_kelas d ON c.kelas=d.kelas
-WHERE b.status = 1 -- peserta aktif
-AND b.id_role = 1 -- peserta only
+WHERE b.status = 1 -- _peserta aktif
+AND b.id_role = 1 -- _peserta only
 AND $sql_target_kelas 
 AND d.id_room = $id_room 
 ";

@@ -15,7 +15,7 @@ $sql_ta = $id_role == 2 ? 1 : "q.ta=$ta";
 $s = "SELECT 
 a.id as id_peserta, 
 a.*,
-b.*,
+b.sebagai,
 (SELECT 1 FROM tb_biodata WHERE id=a.id) punya_biodata,
 (SELECT nik FROM tb_biodata WHERE id=a.id) nik,
 (
@@ -31,24 +31,24 @@ WHERE a.username='$username'
 
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) die('Username tidak ditemukan.');
-$d_peserta = mysqli_fetch_assoc($q);
-$id_peserta = $d_peserta['id_peserta'];
-$nama_peserta = ucwords(strtolower($d_peserta['nama']));
-$no_wa = $d_peserta['no_wa'] ?? '';
+$user = mysqli_fetch_assoc($q);
+$id_peserta = $user['id_peserta'];
+$nama_peserta = ucwords(strtolower($user['nama']));
+$no_wa = $user['no_wa'] ?? '';
 $no_wa_show = !$no_wa ? $undef : substr($no_wa, 0, 4) . '***' . substr($no_wa, strlen($no_wa) - 3, 3);
-$password = $d_peserta['password'];
+$password = $user['password'];
 $is_depas = !$password ? 1 : 0;
-$status = $d_peserta['status'];
-$profil_ok = $d_peserta['profil_ok'];
-$kelas = $d_peserta['kelas'];
-$sebagai = $d_peserta['sebagai'];
-$punya_biodata = $d_peserta['punya_biodata'];
-$nik = $d_peserta['nik'];
+$status = $user['status'];
+$profil_ok = $user['profil_ok'];
+$kelas = $user['kelas'];
+$sebagai = $user['sebagai'];
+$punya_biodata = $user['punya_biodata'];
+$nik = $user['nik'];
 $kelas_show = str_replace("~$ta", '', $kelas);
-$Sebagai = ucwords($sebagai);
-$image = $d_peserta['image'];
+$Sebagai = $custom[$sebagai] ?? ucwords($sebagai);
+$image = $user['image'];
 
-$war_image = $d_peserta['war_image'];
+$war_image = $user['war_image'];
 $war_image = $war_image ? $war_image : $image;
 
 
@@ -63,12 +63,12 @@ if (!$punya_biodata) {
 # ========================================================
 # FOLDER UPLOADS HANDLER
 # ========================================================
-$folder_uploads = $d_peserta['folder_uploads'];
+$folder_uploads = $user['folder_uploads'];
 if (!$folder_uploads) {
   # ========================================================
   # AUTO-CREATE FOLDER UPLOADS
   # ========================================================
-  $a = '_' . strtolower($d_peserta['nama']);
+  $a = '_' . strtolower($user['nama']);
   $a = str_replace(' ', '', $a);
   $a = str_replace('.', '', $a);
   $a = str_replace(',', '', $a);
@@ -90,8 +90,8 @@ $src_profil_na = "assets/img/no_profile$rand.jpg";
 $punya_profil = false;
 $src_profil = $src_profil_na;
 
-if ($d_peserta['image']) {
-  $src = "$lokasi_profil/$d_peserta[image]";
+if ($user['image']) {
+  $src = "$lokasi_profil/$user[image]";
   if (file_exists($src)) {
     $src_profil = $src;
     $punya_profil = true;
@@ -106,8 +106,8 @@ if ($d_peserta['image']) {
 $punya_profil_perang = false;
 $src_profil_perang_na = "assets/img/no_war_profil.jpg";
 $src_profil_perang = $src_profil_perang_na;
-if ($d_peserta['war_image']) {
-  $src = "$lokasi_profil/$d_peserta[war_image]";
+if ($user['war_image']) {
+  $src = "$lokasi_profil/$user[war_image]";
   if (file_exists($src)) {
     $src_profil_perang = $src;
     $punya_profil_perang = true;

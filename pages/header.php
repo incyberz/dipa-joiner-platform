@@ -34,7 +34,7 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
     </div>
 
     <div class="logo">
-      <img src="assets/img/dipa-logo.png" alt="dipa-logo" class="img-fluid">
+      <img src="assets/img/<?= $file_config_institusi ?>dipa-logo.png" alt="<?= $file_config_institusi ?>dipa-logo" class="img-fluid">
     </div>
 
     <nav id="navbar" class="navbar">

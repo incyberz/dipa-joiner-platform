@@ -30,7 +30,7 @@ if (isset($_COOKIE[$dipa_cookie])) {
   }
 }
 
-
+$slogan = $custom['slogan'] ?? 'Memadukan Dunia Industri, Praktisi, dan Akademisi dalam kebaikan';
 
 ?>
 <style>
@@ -60,9 +60,9 @@ if (isset($_COOKIE[$dipa_cookie])) {
     </p>
     <hr>
     <div class="tengah">
-      <img src="assets/img/dipa-logo.png" alt="dipa-logo">
-      <div class="hijau">
-        Memadukan Dunia Industri, Praktisi, dan Akademisi dalam kebaikan
+      <img src="assets/img/<?= $file_config_institusi ?>dipa-logo.png" alt="dipa-logo">
+      <div class="hijau p2">
+        <?= $slogan ?>
       </div>
 
     </div>
@@ -81,7 +81,7 @@ if (isset($_COOKIE[$dipa_cookie])) {
       </div>
     </form>
 
-    <div class="tengah mt3">Belum punya akun? Silahkan <a href="?join"><b>Join</b></a></div>
+    <div class="tengah mt3">Belum punya akun? Silahkan <a href="?join"><b class="proper"><?= $join_title ?></b></a></div>
     <div class="tengah mt3">Lupa password? <a href="?reset_password"><b>Reset Password</b></a></div>
 
     <hr>

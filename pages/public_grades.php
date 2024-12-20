@@ -13,11 +13,11 @@ JOIN tb_kelas c ON b.kelas=c.kelas
 JOIN tb_poin d ON a.id=d.id_peserta  
 WHERE c.ta = $ta  
 AND c.status = 1 -- kelas aktif 
-AND a.status = 1 -- peserta aktif
+AND a.status = 1 -- _peserta aktif
 ORDER BY d.akumulasi_poin DESC LIMIT 10";
 
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$tb = div_alert('danger', 'Belum ada data peserta.');
+$tb = div_alert('danger', "Belum ada data $peserta_title.");
 if (mysqli_num_rows($q)) {
   $tr = '';
   $i = 0;
