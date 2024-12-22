@@ -130,6 +130,7 @@ include 'includes/fungsi_alert.php';
 include 'includes/fungsi_session_login.php';
 include 'includes/date_managements.php';
 include 'includes/link_wa.php';
+include 'includes/get_current_url.php';
 $ta_show = tahun_ajar_show($ta);
 
 

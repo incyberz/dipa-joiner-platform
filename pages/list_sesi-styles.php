@@ -9,14 +9,6 @@
     .blok_list_sesi {
       display: block;
     }
-
-    .str_fiturs {
-      display: block;
-    }
-
-    .str_fiturs div {
-      width: 100%;
-    }
   }
 
   .nav_lp {
@@ -41,5 +33,29 @@
     border: solid 3px lightskyblue;
     font-weight: bold;
     color: blue;
+  }
+
+  .editable {
+    background: white;
+  }
+
+  .ui_edit {
+    display: none;
+  }
+
+  .icon_bahan_ajar_disabled {
+    opacity: 20%;
+    -webkit-filter: grayscale();
+  }
+
+  .icon_bahan_ajar {
+    height: 50px;
+    width: 50px;
+    object-fit: cover;
+    transition: .2s;
+  }
+
+  .icon_bahan_ajar:hover {
+    transform: scale(1.1)
   }
 </style>

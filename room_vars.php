@@ -77,15 +77,17 @@ if ($id_role != 2) {
 # ============================================================
 # SESI AKTIF ATAU SESI PERTAMA VALIDATION
 # ============================================================
-$kondisi = "id_room=$id_room AND awal_presensi <= '$now' ";
-
 $s = "SELECT *,
 (
   SELECT COUNT(1) FROM tb_sesi 
   WHERE jenis=1 
-  AND $kondisi
+  AND id_room=$id_room 
+  AND awal_presensi <= '$now'
   ) sesi_normal_count 
-FROM tb_sesi WHERE $kondisi AND akhir_presensi > '$now'";
+FROM tb_sesi WHERE id_room=$id_room AND awal_presensi < '$now' 
+ORDER BY no DESC LIMIT 1
+";
+
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $sesi_aktif = [];
 $sesi_pertama = [];

@@ -261,7 +261,7 @@ if ($id_bukti) {
     } else {
 
       if ($trainer['no_wa']) {
-        $link_akses = urlencode($_SERVER['REQUEST_URI']);
+        $link_akses = urlencode(get_current_url());
         $text_wa = "Yth. Instruktur ($trainer[nama]),%0a%0aPak/Bu $jenis nya belum disetting. Segera ya Pak/Bu, mau saya kerjakan :) %0a%0aLink akses:%0a$link_akses";
         $href = "https://api.whatsapp.com/?send&phone=$trainer[no_wa]&text=$text_wa";
         $img_wa = img_icon('wa');

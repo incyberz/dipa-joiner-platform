@@ -152,16 +152,16 @@ if ($id_paket == '') {
     } // end while
     $list_paket .= "<hr><div class='tengah' style='max-width: 300px; margin: auto'>$meme</div>";
   } else {
-    echo '<pre>';
-    var_dump($trainer);
-    echo '</pre>';
+    // echo '<pre>';
+    // var_dump($_SERVER);
+    // echo '</pre>';
     $img_wa = img_icon('wa');
     $Bapak = '';
     if (strtolower($trainer['gender']) == 'l') $Bapak = 'Bapak';
     if (strtolower($trainer['gender']) == 'p') $Bapak = 'Ibu';
     $datetime = date('d F, Y, H:i:s');
 
-    $link_encoded = urlencode($_SERVER['REQUEST_URI']);
+    $link_encoded = urlencode(get_current_url());
     $text_wa = "Yth. $Bapak $trainer[nama], saya $user[nama] ingin meminta Paket Ujian untuk Room $room[nama] karena sebentar lagi akan memasuki sesi ujian. Terimakasih.%0a%0aLink:%0a$link_encoded%0a%0aFrom: DIPA Joiner System, $datetime";
     $link_wa = "https://api.whatsapp.com/send?phone=$trainer[no_wa]&text=$text_wa";
 
@@ -189,13 +189,16 @@ if ($id_paket == '') {
   }
   $meme = meme('funny');
   echo "
-  <section>
-    <div class=container>
+  <div>
+    <div class=mx-auto style=max-width:600px>
       $fitur_instruktur
       $list_paket
+      <hr class=mt4>
+      <div class='abu f12'>Room info:</div>
       $room[info_ujian]
     </div>
-  </section>";
+  </div>
+  ";
 } else {
   include 'ujian_pre_show.php';
 }

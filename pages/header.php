@@ -41,7 +41,7 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
       <ul>
         <?php
 
-        $nickname_show = isset($_SESSION['dipa_master_username']) ? "Login As $username | $my_points LP" : "$username | $my_points LP";
+        $nickname_show = isset($_SESSION['dipa_master_username']) ? "Login As $username" : $username;
         $unlog_link = isset($_SESSION['dipa_master_username']) ? "<li><a href='?login_as&unlog'>Unlog</a></li>" : '';
 
         if ($id_role != 4) {
@@ -77,6 +77,8 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
             ";
           }
 
+          $Peserta_Kelas = $id_role == 1 ? 'Teman Sekelas' : 'Peserta Room ini';
+
 
           if ($id_role == 1 || $id_role == 2) {
             echo "
@@ -97,30 +99,27 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
                   <li><a href='?upload_profil_perang'>Reupload Profil Perang</a></li>
                 </ul>
               </li>
-              <li class='dropdown'><a  href='#'><span class='tebal darkblue'>$singkatan_room</span> <i class='bi bi-chevron-down'></i></a>
+              <li class='dropdown'><a  href='#'><span class='tebal darkblue'>Belajar</span> <i class='bi bi-chevron-down'></i></a>
                 <ul>
                   <li><a href='?list_sesi'>Learning Path</a></li>
                   <li class=><a href='?presensi'>Presensi</a></li>
-                  <li><a href='?peserta_kelas'>Peserta Kelas</a></li>
-                  <li><a href='?activity&jenis=latihan'>Latihan</a></li>
-                  <li><a href='?activity&jenis=challenge'>Challenges</a></li>
-                  <li><a href='?proyek_akhir'>Proyek Akhir</a></li>
-                  <li class=''><a href='?bertanya'>Bertanya</a></li>
+                  <li><a href='?activity&jenis=latihan'>Tugas Latihan</a></li>
+                  <li><a href='?activity&jenis=challenge'>Tugas Challenges</a></li>
+                  <li><a href='?proyek_akhir'>Tugas Akhir</a></li>
+                  <li class=''><a href='?bertanya'>Fitur Bertanya</a></li>
                   <li class=''><a href='?questions'>List Bertanya</a></li>
-                  <li class='hideit'><a href='?chats'>Chats</a></li>
-                  <li class=hideit><a href='?quiz'>Kuis PG</a></li>
-                  <li><a href='?pilih_room'>Pilih Room</a></li>
+                  <li class=''><a href='?ujian'>Ujian Mid/Akhir</a></li>
+                  <li class=''><a href='?nilai_akhir'>Nilai Akhir</a></li>
+                  <li><a href='?pilih_room'>Ganti Room</a></li>
                   $li_manage_room
                 </ul>
               </li>
 
-              <li><a href='?ujian'>Ujian</a></li>
 
               <li class='dropdown'><a class=getstarted href='#'><span>$nickname_show</span> <i class='bi bi-chevron-down'></i></a>
                 <ul>
                   <li><a href='?get_point'>Dapatkan Poin</a></li>
-                  <li><a href='?my_points'>My Points</a></li>
-                  <li><a href='?nilai_akhir'>Nilai Akhir</a></li>
+                  <li><a href='?peserta_kelas'>$Peserta_Kelas</a></li>
                   <li><a href='?upload_profil'>My Profile</a></li>
                   <li><a href='?biodata'>My Biodata</a></li>
                   <li><a href='?verifikasi_profil_peserta'>Verifikasi Profil Peserta</a></li>
@@ -132,7 +131,7 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
                   <li><a href='?logout' onclick='return confirm(\"Yakin untuk Logout?\")' class=red>Logout</a></li>
                 </ul>
               </li>
-              <li class='darkred f10 tengah' style='margin-left:10px'>$kelas_show$at_kelas</li>
+              <li class='darkred f10 tengah' style='margin-left:10px'>$singkatan_room$at_kelas</li>
               $unlog_link
             ";
           } elseif ($id_role == 4) {

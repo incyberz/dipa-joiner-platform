@@ -1,5 +1,5 @@
 <?php
-function link_wa($phone, $text_wa, $header_info, $monospace = false, $all_bold = false)
+function href_wa($phone, $text_wa, $header_info = null, $monospace = false, $all_bold = false)
 {
   if ($header_info) {
     $text_wa = "=======================%0a$header_info%0a=======================%0a$text_wa";
