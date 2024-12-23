@@ -9,8 +9,10 @@ $get_username = $_GET['username'] ?? die($fkhusus);
 $get_kelas = $_GET['kelas'] ?? die($fkhusus);
 $get_no_wa = $_GET['no_wa'] ?? die($fkhusus);
 
-if ($get_kelas == 'MITRA' || $get_kelas == 'INSTRUKTUR') {
-  div_alert('danger', 'Belum ada handler untuk kelas MITRA atau INSTRUKTUR');
+if ($get_kelas == 'MITRA') {
+  echo div_alert('danger', "Belum ada handler untuk kelas $get_kelas");
+} elseif ($get_kelas == 'INSTRUKTUR') {
+  echo div_alert('danger', "Belum ada handler untuk kelas $get_kelas");
 } elseif (!isset($id_role) || $id_role != 2) {
   echo $fkhusus;
 } else {

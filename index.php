@@ -17,6 +17,9 @@
 session_start();
 // session_destroy();
 
+$path_custom = 'custom';
+$file_custom = "$path_custom/custom.php";
+
 $file_config_institusi = 'custom'; // .php
 $is_custom = false;
 # ============================================================
@@ -34,8 +37,9 @@ $devs = [
   'email' => 'isholihin87@gmail.com',
 ];
 
-if (file_exists("$file_config_institusi.php")) {
-  include "$file_config_institusi.php";
+
+if (file_exists($file_custom)) {
+  include $file_custom;
   $is_custom = true;
 }
 
@@ -213,7 +217,7 @@ if ($username) {
 
   if (!$is_login || $id_room) include 'pages/header.php';
   if (!$is_login and $parameter == '') {
-    include $institusi ? "pages/hero-$file_config_institusi.php" : 'pages/hero.php';
+    include $institusi ? "$path_custom/custom-hero.php" : 'pages/hero.php';
   }
   ?>
   <main id="main">
