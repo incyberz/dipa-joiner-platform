@@ -4,6 +4,7 @@ include 'list_sesi-processors.php';
 include 'list_sesi-styles.php';
 include 'list_sesi-functions.php';
 
+$img_wa = img_icon('wa');
 $img_ask = img_icon('ask');
 $img_play_kuis = img_icon('gray');
 $img_tanam_soal = img_icon('gray');
@@ -122,6 +123,7 @@ while ($sesi = mysqli_fetch_assoc($q)) {
     $ui_nama = create_ui('nama', $sesi['nama'], $id_sesi, '', 'f18 bold darkblue');
     $ui_deskripsi = create_ui('deskripsi', $sesi['deskripsi'], $id_sesi, '', null, true);
     $ui_tags = create_ui('tags', $sesi['tags'], $id_sesi, 'Tags Materi', 'darkblue f14', true);
+    if (!$sesi['tags']) include 'list_sesi-laporkan_no_tags.php';
 
     # ============================================================
     # DIV LP LOOP
@@ -318,6 +320,9 @@ if ($id_role == 2) { ?>
               $('#belum_ada__' + field + '__' + id_sesi).hide();
               $('#' + field + '__' + id_sesi).val(isi_baru); // update for tags
               $('#' + tid).slideUp();
+              if (field == 'tags') {
+                $('#belum_ada_tags__' + id_sesi).slideUp();
+              }
             } else {
               alert(a)
             }

@@ -1,17 +1,30 @@
 <?php
 if ($parameter == 'login' and $is_login) die('<script>location.replace("?")</script>');
 
+
+if ($parameter != 'ubah_password') {
+  if ($is_login and $password == '') {
+    if (!isset($_SESSION['dipa_master_username'])) {
+      echo '<script>location.replace("?ubah_password")</script>';
+      exit;
+    }
+  }
+}
+
+
 if (!$status and $parameter != 'verifikasi_wa' and $is_login and $parameter != 'ubah_password') {
+  $custom_sebagai = $custom[$sebagai] ?? $sebagai;
+  $custom_kelas = $custom[$kelas] ?? $kelas;
   echo "
-    <section>
-      <div class='wadah gradasi-kuning small miring  p4'>
+    <section id=section_routing>
+      <div class='wadah gradasi-kuning p4'>
         <div class=sub_form>Routing Exceptions - Unverified Status as Instruktur</div>
         <p>Halo $nama_peserta!</p>
-        <p>Kamu sudah tercatat sebagai <u>$sebagai</u> pada kelas <u>$kelas</u>. Untuk $sebagai baru wajib diverifikasi oleh Master Instruktur yaitu Dev-Team (Bapak Iin Sholihin, dan tim)</p>
+        <p>Kamu sudah tercatat sebagai <u>$custom_sebagai</u> pada kelas <u>$custom_kelas</u>. </p><p>Untuk $custom_sebagai baru wajib diverifikasi oleh Master Instruktur yaitu Dev-Team (Bapak Iin Sholihin, dan tim)</p>
         <hr>
         <div class='alert alert-danger'>
-          Status <i class=darkblue>Akun $sebagai</i> Anda belum terverifikasi. | 
-          <a href='?verifikasi_wa&dari=routing_verifikasi_wa_instruktur'>Verifikasi Whatsapp $sebagai</a>
+          Status <i class=darkblue>Akun $custom_sebagai</i> Anda belum terverifikasi.  
+          <a class='btn btn-primary w-100 mt2' href='?verifikasi_wa&dari=routing_verifikasi_wa_instruktur'>Verifikasi Whatsapp</a>
         </div>
       </div>
       <a href='?logout'>Logout</a>
@@ -61,14 +74,5 @@ if (!file_exists($konten)) {
     include 'pages/join_kelas.php';
   } else {
     include $konten;
-  }
-}
-
-if ($parameter != 'ubah_password') {
-  if ($is_login and $password == '') {
-    if (!isset($_SESSION['dipa_master_username'])) {
-      echo '<script>location.replace("?ubah_password")</script>';
-      exit;
-    }
   }
 }

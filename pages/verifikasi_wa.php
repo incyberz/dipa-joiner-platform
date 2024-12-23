@@ -81,7 +81,6 @@ if (isset($_POST['btn_submit_wa'])) {
     $hide_section = 1;
   } elseif ($_POST['dari'] == 'routing_verifikasi_wa_instruktur') {
     include 'verifikasi_wa_instruktur_baru.php';
-    echo 'VERIFIKASI WHATSAPP INSTRUKTUR';
     exit;
   } else {
     // verifikasi normal
@@ -95,7 +94,7 @@ if (isset($_POST['btn_submit_wa'])) {
 
 if (!$hide_form) {
   $form = "
-  <form method=post>
+  <form method=post id=form_verifikasi_wa>
     <input class=debug name=nama value='$nama_peserta'>
     <input class=debug name=dari value='$dari'>
     <input class=debug name=username_reset value='$username'>
@@ -103,7 +102,7 @@ if (!$hide_form) {
     <div class='wadah gradasi-hijau' data-aos='fade-up' data-aos-delay='200'>
       <label for='no_wa' class='tengah mb1'>Nomor WhatsApp <span class='kecil abu miring'>* yang aktif</span></label>
       <input type='text' class='form-control tengah' minlength=11 maxlength=14 id=no_wa autocomplete=off style='color:gray' name=no_wa required value='$no_wa'>
-      <div class='tengah consolas' style='font-size:30px' id=no_wa2>628X-XXX-XXX-XXX</div>
+      <div class='tengah consolas f30' id=no_wa2>628X-XXX-XXX-XXX</div>
       <div class='tengah consolas red' style='font-size:10px' id=no_wa_invalid>awali dg '08...' atau '62...'</div>
       <div>
         <button class='btn btn-primary btn-block' id=btn_verifikasi name=btn_submit_wa>$caption</button>

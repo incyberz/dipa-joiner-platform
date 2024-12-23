@@ -31,13 +31,8 @@ if (isset($_POST['btn_ubah_password'])) {
 
 $hideit = $password ? '' : 'hideit';
 
+set_h2('Ubah Password', $depas_note);
 ?>
-
-<div class="section-title">
-  <h2>Ubah Password</h2>
-  <p><?= $depas_note ?></p>
-</div>
-
 <div class="wadah">
   <form method="post">
     <div class="form-group">

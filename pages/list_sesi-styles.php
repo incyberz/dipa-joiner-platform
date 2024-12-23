@@ -58,4 +58,22 @@
   .icon_bahan_ajar:hover {
     transform: scale(1.1)
   }
+
+  #laporkan_error__toggle {
+    transition: .2s;
+  }
+
+  #laporkan_error__toggle:hover {
+    color: red;
+    letter-spacing: .5px;
+  }
+
+  #form_add__toggle {
+    transition: .2s;
+  }
+
+  #form_add__toggle:hover {
+    color: green;
+    letter-spacing: .5px;
+  }
 </style>

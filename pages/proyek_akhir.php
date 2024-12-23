@@ -1,8 +1,23 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+<style>
+  .bg-putih {
+    background-color: #fff;
+  }
+
+  .bg-abu {
+    background-color: #f2f2f2;
+  }
+
+  .border-mine {
+    border: solid 3px blue;
+  }
+</style>
 <?php
 $lokasi_proyek = "uploads/__proyek";
+if (!is_dir($lokasi_proyek)) mkdir($lokasi_proyek);
 $target_kelas = $id_role == 1 ? $kelas : $target_kelas;
+$img_loading =  "<img src='assets/img/gif/loading.gif' style='width: 20px;'>";
 
 # ============================================================
 # PROCESSORS 
@@ -10,18 +25,44 @@ $target_kelas = $id_role == 1 ? $kelas : $target_kelas;
 if (isset($_POST['btn_upload'])) {
   $id_sub_proyek = $_POST['btn_upload'];
 
-  # ============================================================
-  # DELETE OLD FILE
-  # ============================================================
-  $s = "SELECT bukti FROM tb_bukti_proyek WHERE id_peserta=$id_peserta AND id_sub_proyek=$id_sub_proyek";
-  // ZZZ HERE
-
   foreach ($_FILES as $fitur => $arr) {
     $tmp_name = $arr['tmp_name'];
     $date = date('YmdHis');
     $unique = "$id_peserta-$id_room-$fitur";
     $new_name = "$username-$fitur-$date.jpg";
-    if (move_uploaded_file($tmp_name, "$lokasi_proyek/$new_name")) {
+    $target_path = "$lokasi_proyek/$new_name";
+    if (move_uploaded_file($tmp_name, $target_path)) {
+
+      # ============================================================
+      # DELETE OLD FILE
+      # ============================================================
+      $s = "SELECT bukti FROM tb_bukti_proyek WHERE kode = '$unique'";
+      echolog($s);
+      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+      $d = mysqli_fetch_assoc($q);
+      $bukti_lama = $d['bukti'] ?? null;
+      if ($bukti_lama) {
+        echolog('UNLINK OLD FILE');
+        unlink("$lokasi_proyek/$bukti_lama");
+        unlink("$lokasi_proyek/thumb-$bukti_lama");
+      }
+
+
+      include_once 'includes/resize_img.php';
+      # ============================================================
+      echolog('RESIZE IMAGE IF NECESSARY');
+      # ============================================================
+      resize_img($target_path);
+
+      # ============================================================
+      echolog('CREATE THUMB');
+      # ============================================================
+      $thumb = "$lokasi_proyek/thumb-$new_name";
+      resize_img($target_path, $thumb, 100, 100);
+
+      # ============================================================
+      echolog('INSERT BUKTI PROYEK');
+      # ============================================================
       $s = "INSERT INTO tb_bukti_proyek (
         kode,
         id_peserta,
@@ -55,6 +96,7 @@ if (isset($_POST['btn_upload'])) {
 # MAIN SELECT
 # ============================================================
 set_h2('Proyek Akhir', $target_kelas);
+if ($id_role == 2) include 'proyek_akhir-manage.php';
 $img_next = img_icon('next');
 $img_reject = img_icon('reject');
 
@@ -111,14 +153,15 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
 $tr = '';
 $i = 0;
-$input = "<input class='form-control edit_nama_proyek'>";
+$input_nama_proyek = '';
 while ($d = mysqli_fetch_assoc($q)) {
   $i++;
+  $bg_ganjil = $i % 2 == 0 ? 'bg-putih' : 'bg-abu';
   $nama = strtoupper($d['nama_peserta']);
-  $login_as = $id_role == 2 ? "LOGIN AS $d[username] ZZZ" : '';
+  $login_as = $id_role == 2 ? "<a target=_blank href='?login_as&username=$d[username]'>$img_login_as</a>" : '';
   $status = '<div class="f12 miring abu">belum diverifikasi</div>';
-  $judul_proyek = $d['judul_proyek'];
-  $input = "<input class='form-control edit_nama_proyek' id=edit_nama_proyek__$d[id_peserta] value='$d[judul_proyek]'>";
+
+  $input_nama_proyek = "<input class='form-control edit_nama_proyek mt2' id=edit_nama_proyek__$d[id_peserta] value='$d[judul_proyek]'>";
 
 
 
@@ -134,44 +177,82 @@ while ($d = mysqli_fetch_assoc($q)) {
     }
   }
 
-
-
   # ============================================================
-  # INPUT PROGRES
+  # PERSEN PROGRESS
   # ============================================================
-  $input_progres = '';
-  foreach ($arr_fitur as $id_sub_proyek => $arr) {
-
-    $gambar_bukti = '';
-    $unique = "$id_peserta-$id_room-$arr[fitur]";
-
-
-    if (isset($arr_bukti[$unique])) {
-      $bukti = $arr_bukti[$unique]['bukti'];
-      $gambar_bukti = "<img src='$lokasi_proyek/$bukti' class='w100'>";
-    }
-    $input_progres .= "
-      <div class='wadah mt2'>
-        <div class='f14 abu mb1 mt1'>$arr[label]:</div>
-        $gambar_bukti
-        <form method=post class='flexy' enctype='multipart/form-data'>
-          <div>
-            <input required type=file class='form-control' name=$arr[fitur] accept='.jpg,.jpeg'>
-          </div>
-          <div>
-            <button class='btn btn-primary btn-sm' name=btn_upload value=$id_sub_proyek>Upload</button>
-          </div>
-        </form>
+  $count_fitur = count($arr_fitur);
+  $persen = $d['count_bukti'] ? round(($d['count_bukti'] / $count_fitur) * 100) : 0;
+  $icon = $d['count_bukti'] == $count_fitur ? img_icon('check') : $img_loading;
+  $progress_of = $d['count_bukti'] ? "$d[count_bukti] of $count_fitur $icon" : '<i class=abu>belom</i>';
+  $div_progress = "
+    <div class='d-flex'>
+      <div class='progress bordered' style='min-width: 150px;'>
+        <div class='progress-bar bg-success' role='progressbar' style='width: $persen%' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100'></div>
       </div>
-    ";
-  }
-
+      <div class='ml2 f12 abu'>
+        $progress_of
+      </div>
+    </div>
+  ";
 
   # ============================================================
   # PROYEK SAYA
   # ============================================================
   if ($id_peserta == $d['id_peserta']) {
-    $judul_proyek = $judul_proyek ? "$input$input_progres" : $input;
+    # ============================================================
+    # INPUT PROGRES
+    # ============================================================
+    $bg_ganjil = '';
+    $border_mine = 'border-mine gradasi-kuning';
+    $input_progres = '';
+    $j = 0;
+    if ($arr_fitur) {
+
+      foreach ($arr_fitur as $id_sub_proyek => $arr) {
+        $j++;
+        $gambar_bukti = '';
+        $link_thumb_bukti = '';
+        $gradasi = 'merah';
+        $unique = "$id_peserta-$id_room-$arr[fitur]";
+
+
+        if (isset($arr_bukti[$unique])) {
+          $bukti = $arr_bukti[$unique]['bukti'];
+          $gambar_bukti = "<img src='$lokasi_proyek/$bukti' class='w100'>";
+          $link_thumb_bukti = "
+            <a target=_blank onclick='return confirm(`Buka gambar?`)' href='$lokasi_proyek/$bukti'>
+              <img src='$lokasi_proyek/thumb-$bukti' class='w100'>
+            </a>
+          ";
+          $gradasi = 'hijau';
+        }
+        $input_progres .= "
+          <div class='wadah mt2 gradasi-$gradasi'>
+            <div class='f14 abu mb1 mt1'>$j. $arr[label]:</div>
+            $link_thumb_bukti
+            <form method=post class='flexy' enctype='multipart/form-data'>
+              <div>
+                <input required type=file class='form-control mt1' name=$arr[fitur] accept='.jpg,.jpeg'>
+              </div>
+              <div>
+                <button class='btn btn-primary btn-sm mt1' name=btn_upload value=$id_sub_proyek>Upload</button>
+              </div>
+            </form>
+          </div>
+        ";
+      }
+      $blok_proyek = $blok_proyek ? "$input_nama_proyek$input_progres" : $input_nama_proyek;
+    } else {
+      $blok_proyek = div_alert('danger', "Tidak ada [ Sub Proyek ] yang diminta dari $trainer_title. Silahkan hubungi beliau untuk kejelasannya!");
+    }
+  } else {
+    # ============================================================
+    # PROYEK PESERTA LAIN
+    # ============================================================
+    $border_mine = '';
+    $blok_proyek = "
+      $d[judul_proyek]
+    ";
   }
 
   # ============================================================
@@ -185,34 +266,29 @@ while ($d = mysqli_fetch_assoc($q)) {
     ";
   }
 
-
-
   $tr .= "
-    <tr>
-      <td>$i</td>
-      <td>$d[kelas]</td>
-      <td>$nama</td>
-      <td>
-        $judul_proyek
-      </td>
-      <td>
-        $status
-      </td>
-    </tr>
+    <div class=''>
+      <div class='row $bg_ganjil pt4 pb4 $border_mine'>
+        <div class='col-md-4'>
+          $i. $nama $login_as
+          <div class='f12 abu miring'>$d[kelas]</div>
+        </div>
+        <div class='col-md-4'>
+          <div class='mt2'>
+            $div_progress
+          </div>
+          $blok_proyek
+        </div>
+        <div class='col-md-4 f12'>
+          <b>Status:</b> $status
+        </div>
+      </div>
+    </div>
   ";
 }
 
 echo "
-  <table id=myTableZZZ class='table table-striped table-hover'>
-    <thead>
-      <th>No</th>
-      <th>Kelas</th>
-      <th>Nama</th>
-      <th>Judul Proyek</th>
-      <th>Status Proyek</th>
-    </thead>
-    $tr
-  </table>
+  $tr
 ";
 
 

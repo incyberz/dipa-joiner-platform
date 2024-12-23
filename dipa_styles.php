@@ -9,6 +9,26 @@
     color: #ac5807
   }
 
+  @media (max-width:400px) {
+    .section-title h2 {
+      font-size: 16px !important;
+    }
+
+    #section_routing {
+      text-align: center;
+    }
+
+    #form_verifikasi_wa #no_wa2 {
+      font-size: 25px;
+    }
+  }
+
+  @media (max-width:300px) {
+    #form_verifikasi_wa #no_wa2 {
+      font-size: 18px;
+    }
+  }
+
   .hideit {
     display: none;
   }

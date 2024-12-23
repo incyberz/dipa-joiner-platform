@@ -37,10 +37,24 @@ foreach ($arr_fitur_sesi as $fitur => $arr_fitur) {
         </a>
       ";
     } else {
+      $ingin = "ingin *Request $arr_fitur[title]* untuk P-$sesi[no]";
+      $href_wa = href_wa(
+        $trainer['no_wa'],
+        $ingin,
+        'REQUEST LMS',
+        false,
+        false,
+        $trainer['nama'],
+        $trainer['gender'],
+        $user['nama']
+      );
       $str_fiturs = "
-        <span onclick='return confirm(`$arr_fitur[title] pada sesi ini belum tersedia.`)'>
-          <img src='assets/img/ilustrasi/$fitur.png' class='icon_bahan_ajar icon_bahan_ajar_disabled' >
-          <div class='f12 abu mt1'>$arr_fitur[title]</div>
+        <span>
+          <img src='assets/img/ilustrasi/$fitur.png' class='icon_bahan_ajar icon_bahan_ajar_disabled' onclick='return confirm(`$arr_fitur[title] pada sesi ini belum tersedia.\n\nSilahkan request!`)'>
+          <div class='f12 abu mt1 btn_aksi pointer' id=request$fitur$id_sesi" . "__toggle>Request</div>
+          <div class='mt2 hideit border-top pt2' id=request$fitur$id_sesi>
+            <a target=_blank class='btn btn-sm btn-success w-100 ' href='$href_wa' onclick='return confirm(`Request $arr_fitur[title]?`)'>$img_wa Request</a>
+          </div>
         </span>
       ";
     }
@@ -60,7 +74,7 @@ $cols_ba = '';
 foreach ($arr_bahan_ajar as $ba) {
   $ui_edit[$ba] = create_ui($ba, $sesi[$ba], $id_sesi, '');
   $cols_ba .= "
-    <div class='mt2 col-6 col-md-3'>
+    <div class='mt2 mb3 col-6 col-md-3'>
       $fiturs[$ba]
       $ui_edit[$ba]
     </div>

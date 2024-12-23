@@ -125,6 +125,7 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
                   <li><a href='?verifikasi_profil_peserta'>Verifikasi Profil Peserta</a></li>
                   <li><a href='?polling'>Polling UTS</a></li>
                   <li><a href='?polling&u=uas'>Polling UAS</a></li>
+                  <li><a href='?room_info'>Room Info</a></li>
                   <li class='hideit'><a href='?my_testimony'>My Testimony</a></li>
                   <li class=hideit><a href='?my_biodata'>My Biodata</a></li>
                   <li><a href='?ubah_password'>Ubah Password</a></li>

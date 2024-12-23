@@ -233,7 +233,7 @@ if (!$as) {
           <input type='text' required maxlength=20 minlength=3 class='form-control input_isian mt1' id='username' name='username'  value='$username'>
           <div class='f12 miring mt1'>Usahakan agar username adalah nama depan atau nama panggilan!</div>
     ";
-  } elseif ($file_config_institusi == 'mu') {
+  } elseif ($file_config_institusi == 'custom') {
     $input_username = "
       <label for='username'>Username (NIM)</label>
       <input type='text' required maxlength=9 minlength=9 class='form-control input_isian mt1'  id='username' name='username'  value='$username'>

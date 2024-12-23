@@ -17,7 +17,7 @@
 session_start();
 // session_destroy();
 
-$file_config_institusi = 'mu'; // .php
+$file_config_institusi = 'custom'; // .php
 $is_custom = false;
 # ============================================================
 # INSTITUSI VARIABLE
@@ -27,6 +27,12 @@ $peserta_title = 'peserta';
 $trainer_title = 'instruktur';
 $join_title = 'join';
 $room_title = 'room';
+$devs = [
+  'nama' => 'Iin Sholihin',
+  'username' => 'abi',
+  'whatsapp' => '6287729007318',
+  'email' => 'isholihin87@gmail.com',
+];
 
 if (file_exists("$file_config_institusi.php")) {
   include "$file_config_institusi.php";

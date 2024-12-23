@@ -26,6 +26,9 @@ function create_ui($field, $value, $id_sesi, $field_title = null, $value_class =
   ];
   $ket = $kets[$field] ?? '';
 
+  # ============================================================
+  # BELUM ADA
+  # ============================================================
   $belum_ada = $value ? '' : "
     <div class='red kecil miring mb4' id=belum_ada__$field" . "__$id_sesi>belum ada $field</div>
   ";
@@ -47,6 +50,7 @@ function create_ui($field, $value, $id_sesi, $field_title = null, $value_class =
       </div>
     ";
   } else {
+
     return "
       <div class='create_ui tengah'>
         <div class=ui_view>
