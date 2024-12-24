@@ -16,8 +16,8 @@ $field_id = $_GET['field_id'] ?? 'id'; // default field id
 # ================================================
 # CRUD HANDLER
 # ================================================
-if ($aksi == 'hapus') {
-  $s = "DELETE FROM tb_sesi WHERE id=$id";
+if ($aksi == 'hapus' || $aksi == 'delete') {
+  $s = "DELETE FROM tb_sesi WHERE $field_id=$field_id_value";
 } elseif ($aksi == 'ubah') {
   $field_target = $_GET['field_target'] ?? udef('field_target');
   $isi_baru = $_GET['isi_baru'] ?? udef('isi_baru');
@@ -27,6 +27,8 @@ if ($aksi == 'hapus') {
 } else {
   die("aksi $aksi belum terdapat handler.");
 }
+
+// die($s);
 
 $q = mysqli_query($cn, $s) or die(`Error @CRUD-AJAX:\n\n` . mysqli_error($cn));
 die('sukses');

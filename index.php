@@ -30,18 +30,13 @@ $peserta_title = 'peserta';
 $trainer_title = 'instruktur';
 $join_title = 'join';
 $room_title = 'room';
-$devs = [
+$ops = [
   'nama' => 'Iin Sholihin',
   'username' => 'abi',
   'whatsapp' => '6287729007318',
   'email' => 'isholihin87@gmail.com',
 ];
 
-
-if (file_exists($file_custom)) {
-  include $file_custom;
-  $is_custom = true;
-}
 
 # ============================================================
 # GLOBAL VARIABLE
@@ -83,6 +78,13 @@ $meta_title = "DIPA Joiner Gamified LMS - Fun Learning Management System bagi Mi
 $meta_description = "Fun e-Learning Management System (LMS) berbasis Game Mechanics (Gamification) bagi Mitra (Dunia Industri), Praktisi, dan Akademisi. Dengan Rank System, Leaderboard, Play Quiz, dan Tanam Soal, menjadikan Pembelajaran seindah permainan.";
 $meta_keywords = "learning management system, fun lms, gamification, game mechanic, rank, leaderboard, quiz, bank soal, pembelajaran jarak jauh";
 
+# ============================================================
+# APPLY CUSTOM
+# ============================================================
+if (file_exists($file_custom)) {
+  include $file_custom;
+  $is_custom = true;
+}
 
 # ============================================================
 # DATABASE CONNECTION
@@ -139,7 +141,7 @@ include 'includes/dipa_functions.php';
 include 'includes/fungsi_alert.php';
 include 'includes/fungsi_session_login.php';
 include 'includes/date_managements.php';
-include 'includes/link_wa.php';
+include 'includes/href_wa.php';
 include 'includes/get_current_url.php';
 $ta_show = tahun_ajar_show($ta);
 

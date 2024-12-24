@@ -1,8 +1,8 @@
 <?php
 $img_home = img_icon('home');
-$pesan_login = 'Silahkan masukan Username dan password Anda.';
-$username = '';
-$password = '';
+$pesan_login = 'Masukan Username dan password Anda.';
+$username = $_GET['username'] ?? '';
+$password = $_GET['password'] ?? '';
 
 include 'login_process.php';
 
@@ -60,7 +60,7 @@ $slogan = $custom['slogan'] ?? 'Memadukan Dunia Industri, Praktisi, dan Akademis
     </p>
     <hr>
     <div class="tengah">
-      <img src="assets/img/<?= $file_config_institusi ?>dipa-logo.png" alt="dipa-logo">
+      <img src="<?= $header_logo ?>" alt="header-logo">
       <div class="hijau p2">
         <?= $slogan ?>
       </div>

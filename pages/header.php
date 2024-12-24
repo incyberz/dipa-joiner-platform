@@ -1,5 +1,8 @@
 <?php
-$at_kelas = ($id_role == 2 && $_SESSION['target_kelas']) ? "<div class='f8 pointer' onclick='alert(`Saat ini Anda sedang berada di kelas $_SESSION[target_kelas]. \n\nSet target kelas untuk mengubahnya.`)'>$_SESSION[target_kelas]</div>" : '';
+$at_kelas = '';
+if ($id_role == 2 and isset($_SESSION['target_kelas'])) {
+  $at_kelas = $_SESSION['target_kelas'] ? "<div class='f8 pointer' onclick='alert(`Saat ini Anda sedang berada di kelas $_SESSION[target_kelas]. \n\nSet target kelas untuk mengubahnya.`)'>$_SESSION[target_kelas]</div>" : '';
+}
 $jumlah_verif = 0;
 $rjenis = ['latihan', 'challenge'];
 if ($id_room) {
@@ -24,6 +27,7 @@ $red = $available_questions ? 'red' : 'green';
 $available_question_show = "<span class='count_badge badge_$red' id='available_questions'>$available_questions</span>";
 
 $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
+$header_logo = $is_custom ? "$path_custom/custom-logo.png" : 'assets/img/dipa-logo.png';
 ?>
 <header id="header" class="fixed-top d-flex align-items-center">
   <div class="container d-flex align-items-center justify-content-between">
@@ -34,7 +38,7 @@ $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
     </div>
 
     <div class="logo">
-      <img src="assets/img/<?= $file_config_institusi ?>dipa-logo.png" alt="<?= $file_config_institusi ?>dipa-logo" class="img-fluid">
+      <img src="<?= $header_logo ?>" alt="lms-logo" class="img-fluid">
     </div>
 
     <nav id="navbar" class="navbar">

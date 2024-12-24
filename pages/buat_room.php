@@ -4,11 +4,12 @@ if ($id_role != 2) {
   jsurl('?', 3000);
 }
 instruktur_only();
+$info = div_alert('info mt2', 'Room adalah nama lain dari Course atau Mata Kuliah, digunakan untuk mewadahi kegiatan belajar Anda dengan multiple-kelas dan dapat dipakai kembali (reusable) di setiap Tahun Ajar.');
 set_h2('Create Room', "
   <div class='tengah mb2'>
     <a href='?pilih_room'>$img_prev</a>
   </div>
-  Welcome <u>$nama_peserta</u>! Silahkan isi form berikut untuk Pembuatan Room Baru!
+  Welcome <u>$nama_peserta</u>! Silahkan isi form berikut untuk Pembuatan Room Baru! $info
 ");
 
 
