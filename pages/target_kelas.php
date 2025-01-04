@@ -22,7 +22,7 @@
     $s = $select_all_from_tb_room_kelas;
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     if (!mysqli_num_rows($q)) {
-      echo div_alert('danger', 'Belum terdapat room-kelas pada room ini.');
+      echo div_alert('danger', "Belum terdapat $Room-kelas pada $Room ini.");
     } else {
       while ($d = mysqli_fetch_assoc($q)) {
         $secondary = $d['kelas'] == $target_kelas ? 'primary' : 'secondary';

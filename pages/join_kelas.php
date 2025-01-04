@@ -2,7 +2,7 @@
 if ($status_room == -1 and $id_room) echo div_alert('info', meme('closed', 6) . '<hr>Room ini sudah ditutup.');
 
 set_h2('Join Kelas', "Sepertinya kamu belum punya kelas pada tahun ajar <b class=darkblue>$ta_show</b>. 
-Silahkan join class atau hubungi Instruktur jika ada kesulitan!
+Silahkan join class atau hubungi $Trainer jika ada kesulitan!
 ");
 
 if ($id_role == 2) {
@@ -41,7 +41,7 @@ $li = '';
 if (mysqli_num_rows($q)) {
   while ($d = mysqli_fetch_assoc($q)) {
     $color = $d['shift'] ? 'green' : 'darkblue';
-    $btn = $d['fakultas'] == 'ZDEV' ? '<span class="btn btn-secondary btn-sm" onclick="alert(\'Hubungi developer via whatsapp untuk bergabung menjadi DevOps.\')">Developer Only</span>' : "<button class='btn btn-success btn-sm mb2' name=btn_join_kelas value='$d[kelas]' onclick='return confirm(\"Kesempatan hanya 1x. Yakin untuk gabung? \")'>Join</button>";
+    $btn = $d['fakultas'] == 'ZDEV' ? '<span class="btn btn-secondary btn-sm" onclick="alert(\'Hubungi developer via whatsapp untuk bergabung menjadi DevOps.\')">Developer Only</span>' : "<button class='btn btn-success btn-sm mb2' name=btn_join_kelas value='$d[kelas]' onclick='return confirm(`Kesempatan hanya 1x. Yakin untuk gabung? `)'>Join</button>";
     $li .= "<li class='$color'>$d[fakultas] ~ $d[kelas] ~ $btn</li>";
   }
 }

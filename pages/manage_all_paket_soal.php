@@ -116,7 +116,7 @@ ORDER BY date_created
 
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) {
-  $tr = div_alert('danger', "Belum ada data paket soal untuk room ini.");
+  $tr = div_alert('danger', "Belum ada data paket soal untuk $Room ini.");
 } else {
   $tr = '';
   $no = 0;
@@ -136,7 +136,7 @@ if (!mysqli_num_rows($q)) {
 
     $btn_delete = ($count_soal  || $count_submit) ? "<span onclick='alert(`Tidak bisa menghapus Paket Soal jika pada paket tersebut sudah ada soal atau jumlah submit.`)'>$img_delete_disabled</span>" : "
       <form method=post style='display:inline'>
-        <button class='p0 m0' name=btn_delete_paket_soal style='display:inline; background:none; border:none' onclick='return confirm(\"Yakin untuk hapus paket ini?\")' value=$id_paket>$img_delete</button>
+        <button class='p0 m0' name=btn_delete_paket_soal style='display:inline; background:none; border:none' onclick='return confirm(`Yakin untuk hapus paket ini?`)' value=$id_paket>$img_delete</button>
       </form>
     ";
 

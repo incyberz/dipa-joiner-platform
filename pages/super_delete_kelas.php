@@ -27,7 +27,7 @@ if (isset($_POST['btn_super_delete_kelas'])) {
   echolog($s);
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
-  // select room kelas
+  // select $Room kelas
   $s = "SELECT id as id_room_kelas FROM tb_room_kelas WHERE kelas='$ckelas'";
   echolog($s);
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -70,9 +70,9 @@ if (isset($_POST['btn_super_delete_kelas'])) {
     $s2 = "DELETE FROM tb_bertanya WHERE id_room_kelas='$d[id_room_kelas]'";
     echolog("-- $s2");
     $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
-  } // end while room kelas
+  } // end while $Room kelas
 
-  // delete room kelas
+  // delete $Room kelas
   $s = "DELETE FROM tb_room_kelas WHERE kelas='$ckelas'";
   echolog($s);
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -116,7 +116,7 @@ if (!$get_kelas) {
     $tr .= "
       <tr>
         <td>$d[kelas]</td>
-        <td>$d[jumlah_peserta] $peserta_title</td>
+        <td>$d[jumlah_peserta] $Peserta</td>
         <td>
           <form method=post>
             <button 

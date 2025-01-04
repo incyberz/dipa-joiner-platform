@@ -125,7 +125,7 @@ if ($id_sesi == '') {
     $my_soal_count = $d['my_soal_count'];
 
     if ($id_role != 1) {
-      // instruktur only
+      // $Trainer only
       $s2 = "SELECT 1 FROM tb_soal_peserta WHERE id_sesi=$id_sesi AND (id_status is null OR id_status >= 0)";
       $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
       $jumlah_soal = mysqli_num_rows($q2);
@@ -146,7 +146,7 @@ if ($id_sesi == '') {
     $tags_show = "<div class='kecil miring abu'>Tags: $imp</div>";
     $danger = $tags == '' ? 'danger' : 'success';
     $href = $tags == ''
-      ? "'#' onclick='alert(\"Maaf, belum bisa mengajukan kalimat_soal pada sesi ini karena instuktur belum setting tags untuk sesi ini.\")'"
+      ? "'#' onclick='alert(`Maaf, belum bisa mengajukan kalimat_soal pada sesi ini karena instuktur belum setting tags untuk sesi ini.`)'"
       : "'?tanam_soal&id_sesi=$id_sesi'";
     $pilih_sesi .= "
       <div class='col-md-4 mb2'>

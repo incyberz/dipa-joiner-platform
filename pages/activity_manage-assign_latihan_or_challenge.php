@@ -28,7 +28,7 @@ $grup_kelas_pengakses = "
   <h3 class='darkblue'>Grup Kelas Pengakses $Jenis</h3>
   <p>$Jenis yang Anda buat akan dapat diakses oleh kelas:</p>
   <ol>$li</ol>
-  <div class='ml2 pl1 f14'>Opsi: <a href='?assign_room_kelas'>Assign Room Kelas</a></div>
+  <div class='ml2 pl1 f14'>Opsi: <a href='?assign_room_kelas'>Assign $Room Kelas</a></div>
   <hr>
 ";
 
@@ -141,7 +141,7 @@ if (isset($_POST['btn_add_activity'])) {
   $s = "SELECT 1 FROM tb_$jenis WHERE nama='$_POST[nama]' and id_room=$id_room";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   if (mysqli_num_rows($q)) {
-    echo div_alert('danger', "Nama Challenge sudah ada pada room ini.");
+    echo div_alert('danger', "Nama Challenge sudah ada pada $Room ini.");
   } else {
     $s = "INSERT INTO tb_$jenis (nama,id_room) VALUES ('$_POST[nama]',$id_room)";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -320,7 +320,7 @@ $img_add = img_icon('add');
 # ============================================================
 echo "
 <div class='wadah gradasi-kuning'>
-  <div class='f14 consolas tebal red mb2'>Form Khusus Instruktur</div>
+  <div class='f14 consolas tebal red mb2'>Form Khusus $Trainer</div>
   
   <form method=post>
     <h3 class=darkblue>Manage Assign $Jenis</h3>

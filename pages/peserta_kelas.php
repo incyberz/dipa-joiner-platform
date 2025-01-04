@@ -12,7 +12,7 @@ $get_kelas = $_GET['kelas'] ?? '';
 $get_keyword = $_GET['keyword'] ?? '';
 $get_mode = $_GET['mode'] ?? 'fast';
 $jumlah_peserta = 0;
-// mode untuk instruktur: detail || full
+// mode untuk $Trainer: detail || full
 
 // _peserta hanya bisa melihat kelas nya saja
 $sql_kelas = ($id_role == 1 and $get_kelas == '') ? "a.kelas = '$kelas'" : '1';
@@ -48,9 +48,9 @@ AND b.ta = $ta
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) {
-  $blok_kelas = div_alert('danger', "Belum ada Grup Kelas pada Room ini untuk TA $ta_show");
+  $blok_kelas = div_alert('danger', "Belum ada Grup Kelas pada $Room ini untuk TA $ta_show");
 }
-while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
+while ($d = mysqli_fetch_assoc($q)) { // loop $Room kelas
 
   # ============================================================
   # SUB SELECT PESERTA KELAS
@@ -77,7 +77,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
   if (mysqli_num_rows($q2)) {
     $list_peserta = '';
   } else {
-    $list_peserta = div_alert('danger', "Tidak ada $peserta_title pada kelas $d[kelas]. <hr>Untuk mahasiswa baru silahkan umumkan di Grup Whatsapp agar mhs Join ke kelas ini. <br>Jika mhs sudah ada silahkan Assign Peserta <hr> <a href='?assign_peserta_kelas&kelas=$d[kelas]'>$img_add Assign</a>");
+    $list_peserta = div_alert('danger', "Tidak ada $Peserta pada kelas $d[kelas]. <hr>Untuk mahasiswa baru silahkan umumkan di Grup Whatsapp agar mhs Join ke kelas ini. <br>Jika mhs sudah ada silahkan Assign Peserta <hr> <a href='?assign_peserta_kelas&kelas=$d[kelas]'>$img_add Assign</a>");
   }
 
   $no = 0;
@@ -125,7 +125,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
           $d_poin_show .= "<div><span class='abu miring'>$key:</span> $value</div>";
         }
       } else {
-        $d_poin_show = "<span class=red>Belum ada data poin untuk $peserta_title ini</span>";
+        $d_poin_show = "<span class=red>Belum ada data poin untuk $Peserta ini</span>";
       }
 
       # ================================================================
@@ -226,7 +226,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
         $count_latihan_wajib = 0;
         $count_sudah_mengerjakan = 0;
         if (!$count_latihan) {
-          $data_jenis[$jenis] .= div_alert('danger', "Belum ada $jenis pada room ini. ~ <a href='?activity&jenis=$jenis'>$img_add </a>");
+          $data_jenis[$jenis] .= div_alert('danger', "Belum ada $jenis pada $Room ini. ~ <a href='?activity&jenis=$jenis'>$img_add </a>");
         } else {
           $rno = '';
           while ($d3 = mysqli_fetch_assoc($q3)) {
@@ -270,7 +270,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop room kelas
       $src = file_exists($src) ? $src : $src_na;
 
       $boleh_delete = 0;
-      $btn_delete = $boleh_delete ? "<a href='#'>$img_delete</a>" : "<span onclick='alert(`Tidak bisa menghapus $peserta_title ini karena sudah pernah melaksanakan aktifitas belajar.`)'>$img_delete_disabled</span>";
+      $btn_delete = $boleh_delete ? "<a href='#'>$img_delete</a>" : "<span onclick='alert(`Tidak bisa menghapus $Peserta ini karena sudah pernah melaksanakan aktifitas belajar.`)'>$img_delete_disabled</span>";
 
       $list_peserta .= "
         <tr>
@@ -362,5 +362,5 @@ if ($id_role == 2) {
 }
 
 
-set_h2($judul, "Peserta Kelas MK $singkatan_room :: $jumlah_peserta $peserta_title $pilih_mode");
+set_h2($judul, "Peserta Kelas MK $singkatan_room :: $jumlah_peserta $Peserta $pilih_mode");
 echo $blok_kelas;

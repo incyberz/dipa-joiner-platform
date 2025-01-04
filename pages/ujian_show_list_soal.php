@@ -67,7 +67,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   if ($d['gambar_soal']) {
     $src = "assets/img/gambar_soal/$d[gambar_soal].jpg";
     if (!file_exists($src)) {
-      die("Terdapat gambar soal yang hilang. Segera hubungi Instruktur!<hr>id_soal: $id_soal");
+      die("Terdapat gambar soal yang hilang. Segera hubungi $Trainer!<hr>id_soal: $id_soal");
     } else {
       $gambar_soal = "<img src='$src' class='img-fluid'>";
     }

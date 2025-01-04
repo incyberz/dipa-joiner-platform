@@ -44,7 +44,7 @@ if ($id_bukti) {
 
   $form_hapus = "
     <form method=post>
-      <button class='btn btn-danger btn-block proper' name=btn_hapus_bukti onclick='return confirm(\"Yakin untuk menghapus dan upload kembali bukti $jenis?\")' value='$id_bukti'>Hapus bukti $jenis</button>
+      <button class='btn btn-danger btn-block proper' name=btn_hapus_bukti onclick='return confirm(`Yakin untuk menghapus dan upload kembali bukti $jenis?`)' value='$id_bukti'>Hapus bukti $jenis</button>
     </form>
   ";
 
@@ -64,7 +64,7 @@ if ($id_bukti) {
     $src = "uploads/$folder_uploads/$d_bukti[image]";
     $image_bukti = "
       <div class=mb2>
-        <a href='$src' target=_blank onclick='return confirm(\"Buka gambar di Tab baru?\")'>
+        <a href='$src' target=_blank onclick='return confirm(`Buka gambar di Tab baru?`)'>
           <img src='$src' class='img-fluid'>
         </a>
         <div class=mt2>$verif_opsi</div>
@@ -113,7 +113,7 @@ $btn_hapus_bukti = '';
 if ($status == -1 and $jenis == 'challenge') {
   $btn_hapus_bukti = "
   <form method=post>
-    <button class='btn btn-danger btn-sm' name=btn_hapus_bukti  id=challenge__$id_assign_jenis onclick='return confirm(\"Yakin untuk hapus Challenge dan Reupload kembali?\")' value='$id_bukti'>Hapus dan Reupload</button>
+    <button class='btn btn-danger btn-sm' name=btn_hapus_bukti  id=challenge__$id_assign_jenis onclick='return confirm(`Yakin untuk hapus Challenge dan Reupload kembali?`)' value='$id_bukti'>Hapus dan Reupload</button>
   </form>
   ";
 }

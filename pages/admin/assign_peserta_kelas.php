@@ -25,7 +25,7 @@ if (isset($_POST['btn_filter_kelas'])) {
 if (!$ta) die(erid('ta'));
 set_h2(
   'Assign Peserta Kelas',
-  "Proses memasukan $peserta_title ke Grup Kelas 
+  "Proses memasukan $Peserta ke Grup Kelas 
   <b class=darkblue>$get_kelas</b>
   pada TA. 
   <b class=darkblue>$ta</b>
@@ -71,7 +71,7 @@ AND b.ta=$ta
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (mysqli_num_rows($q) == 0) {
-  $tr_peserta_kelas = div_alert('danger', "Belum ada $peserta_title dari kelas $get_kelas.");
+  $tr_peserta_kelas = div_alert('danger', "Belum ada $Peserta dari kelas $get_kelas.");
 } else {
   $i = 0;
   $tr_peserta_kelas = '';
@@ -117,7 +117,7 @@ ORDER BY kelas,a.nama
 ";
 $q = mysqli_query($cn, $s) or die("$s<hr>" . mysqli_error($cn));
 if (mysqli_num_rows($q) == 0) {
-  $tr_peserta_all = div_alert('danger', "Belum ada $peserta_title pada database.");
+  $tr_peserta_all = div_alert('danger', "Belum ada $Peserta pada database.");
 } else {
   $i = 0;
   $tr_peserta_all = '';

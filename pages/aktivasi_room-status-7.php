@@ -27,7 +27,7 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $num_rows = mysqli_num_rows($q);
 if ($num_rows) {
   $inputs = div_alert('danger', "
-    Sudah ada $num_rows item jadwal kelas pada room ini, data jadwal kelas harus di-reset terlebih dahulu.
+    Sudah ada $num_rows item jadwal kelas pada $Room ini, data jadwal kelas harus di-reset terlebih dahulu.
     <hr>
     <form method=post>
       <button name=btn_reset_jadwal_kelas class='btn btn-danger'>Reset Jadwal Kelas</button>

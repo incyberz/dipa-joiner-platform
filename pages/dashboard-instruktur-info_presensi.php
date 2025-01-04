@@ -16,7 +16,7 @@ if (!$room_count['count_presensi_aktif'] > 1) {
       $jumlah_presenter = $jumlah_peserta_kelas;
       if ($jumlah_presenter == $jumlah_peserta_kelas) {
         $persen = 100;
-        $info_persen = "$jumlah_presenter peserta (100%) <i style='display:inline-block;margin: 0 0 5px 25px'>$img_check</i>";
+        $info_persen = "$jumlah_presenter $Peserta (100%) <i style='display:inline-block;margin: 0 0 5px 25px'>$img_check</i>";
       } else {
         $persen = $jumlah_peserta_kelas ? round($jumlah_presenter * 100 / $jumlah_peserta_kelas) : 0;
         $info_persen = "<span class=f20>$jumlah_presenter</span> of $jumlah_peserta_kelas ($persen%)";
@@ -34,6 +34,6 @@ if (!$room_count['count_presensi_aktif'] > 1) {
       ";
     }
   }
-  $info_presensi = "<div class='mb2'>Presensi P$no_sesi ($room_count[count_peserta] peserta) <a href='?update_room_count'>" . img_icon('refresh') . "</a></div>$progres";
+  $info_presensi = "<div class='mb2'>Presensi P$no_sesi ($room_count[count_peserta] $Peserta) <a href='?update_room_count'>" . img_icon('refresh') . "</a></div>$progres";
 }
 echo div_alert('info tengah', $info_presensi);

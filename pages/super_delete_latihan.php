@@ -1,4 +1,4 @@
-<h1>Super Delete Room Kelas</h1>
+<h1>Super Delete Latihan</h1>
 <?php
 $get_kelas = $_GET['kelas'];
 

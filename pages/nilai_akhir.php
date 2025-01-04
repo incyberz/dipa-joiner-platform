@@ -299,9 +299,9 @@ ORDER BY b.kelas, a.nama
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $total_data = mysqli_num_rows($q);
-if (mysqli_num_rows($q) > 1 and $id_role == 1) die("Duplicate result ditemukan untuk setiap $peserta_title");
+if (mysqli_num_rows($q) > 1 and $id_role == 1) die("Duplicate result ditemukan untuk setiap $Peserta");
 if ($id_role == 2 and !$total_data) {
-  echo div_alert('danger', "Belum ada $peserta_title pada room ini. | <a href='?peserta_kelas'>Peserta Kelas</a>");
+  echo div_alert('danger', "Belum ada $Peserta pada $Room ini. | <a href='?peserta_kelas'>Peserta Kelas</a>");
   jsurl('?peserta_kelas', 5000);
   exit;
 }
@@ -389,7 +389,7 @@ while ($d = mysqli_fetch_assoc($q)) {
       $data_csv[$kelas_ini] .= "Prodi,$d[jenjang] - $d[nama_prodi] - $reguler\n";
       $data_csv[$kelas_ini] .= "Mata Ajar,Matematika Informatika\n";
       $data_csv[$kelas_ini] .= "Semester / Kelas,$d[semester] / $d[sub_kelas]\n";
-      $data_csv[$kelas_ini] .= "Instruktur,Iin S.T. M.Kom\n\n";
+      $data_csv[$kelas_ini] .= "$Trainer,Iin S.T. M.Kom\n\n";
       $data_csv[$kelas_ini] .= "NO,NAMA,NIM,TIMESTAMP KEHADIRAN,NILAI TUGAS,NILAI UTS,KETERANGAN\n";
     }
   }
@@ -592,7 +592,7 @@ if ($id_role != 1) {
 
 // return to normal view
 if ($get_save) {
-  echo div_alert('success', "Data Nilai Akhir untuk $d[total_peserta] $peserta_title sudah tersimpan.<hr><a class='btn btn-primary' href='?nilai_akhir'>Kembali ke Mode View Nilai Akhir</a>");
+  echo div_alert('success', "Data Nilai Akhir untuk $d[total_peserta] $Peserta sudah tersimpan.<hr><a class='btn btn-primary' href='?nilai_akhir'>Kembali ke Mode View Nilai Akhir</a>");
   exit;
 }
 
@@ -603,7 +603,7 @@ if ($id_role == 2) {
       $tr
     </table>
     <div class=mb4>
-      <a href='?nilai_akhir&save=1' class='btn btn-primary ' onclick='alert(\"Setelah Anda menyimpan data Nilai Akhir sebaiknya Anda mengumumkan kepada para $peserta_title.\")'>Simpan Data Nilai Akhir untuk $total_data Peserta</a>
+      <a href='?nilai_akhir&save=1' class='btn btn-primary ' onclick='alert(`Setelah Anda menyimpan data Nilai Akhir sebaiknya Anda mengumumkan kepada para $Peserta.`)'>Simpan Data Nilai Akhir untuk $total_data Peserta</a>
     </div>
     <div class=wadah style='max-width:450px'>
       <div class=row>
@@ -630,7 +630,7 @@ if ($id_role == 2) {
 
 
 
-$jumlah_peserta_show = $id_role == 1 ? '' : "<div class=mb2>Jumlah Peserta: $total_data $peserta_title</div>";
+$jumlah_peserta_show = $id_role == 1 ? '' : "<div class=mb2>Jumlah Peserta: $total_data $Peserta</div>";
 echo "
   <div data-aos=fade>
     $jumlah_peserta_show

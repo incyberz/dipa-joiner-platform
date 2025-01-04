@@ -12,7 +12,7 @@ if ($aktivasi_room) {
 } elseif ($daftar_ke_room) {
   include 'daftar_anggota.php';
 } else {
-  set_h2('Pilih Room', "Welcome <u>$nama_peserta</u>! Kamu berada di kelas <u>$kelas</u>. Silahkan Pilih Room!");
+  set_h2("Pilih $Room", "Welcome <u>$nama_peserta</u>! Kamu berada di kelas <u>$kelas</u>. Silahkan Pilih $Room!");
   include 'includes/arr_status_room.php';
   include 'pilih_room_main.php';
 }

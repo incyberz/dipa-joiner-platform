@@ -38,7 +38,7 @@ if ($d) {
     </table>
   ";
 } else {
-  $tb_room_count = div_alert('info', 'Belum ada Room Statistic untuk room ini.');
+  $tb_room_count = div_alert('info', "Belum ada $Room Statistic untuk $Room ini.");
 }
 
 echo "
@@ -53,7 +53,7 @@ echo "
 
   <div class='col-xl-4' data-zzz-aos=fade-up data-zzz-aos-delay=300>
     <div class='wadah' style='max-width:400px'>
-      <h2 class='mb2 f20 darkblue'>Instruktur</h2>
+      <h2 class='mb2 f20 darkblue'>$Trainer</h2>
       <div class='wadah tengah'>
         $profil_instruktur
         <div>$nama_instruktur</div>

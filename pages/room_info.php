@@ -30,5 +30,5 @@ $tb = $tr ? "
   <table class=table>
     $tr
   </table>
-" : div_alert('danger', "Data room tidak ditemukan.");
+" : div_alert('danger', "Data $Room tidak ditemukan.");
 echo "$tb";

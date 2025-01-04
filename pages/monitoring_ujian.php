@@ -62,7 +62,7 @@ if (isset($_POST['btn_hapus_jawaban_instruktur'])) {
   $paket_kelas = $id_paket . '__INSTRUKTUR';
   $s = "DELETE FROM tb_jawabans WHERE paket_kelas='$paket_kelas' AND id_peserta=$_POST[btn_hapus_jawaban_instruktur]";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  echolog('Hapus jawaban instruktur sukses.');
+  echolog("Hapus jawaban $Trainer sukses.");
   jsurl();
 
 
@@ -206,7 +206,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     while ($d2 = mysqli_fetch_assoc($q2)) {
 
       // jika INSTRUKTUR (trial)
-      if ($d2['id_role'] == 2 and !$d2['jumlah_attemp']) continue; // skip jika instruktur dan belum submit
+      if ($d2['id_role'] == 2 and !$d2['jumlah_attemp']) continue; // skip jika $Trainer dan belum submit
       $delete_jawaban = '';
       if ($d2['id_role'] == 2) {
         // jawaban trial dari INSTRUKTUR boleh dihapus
@@ -292,7 +292,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     fclose($file);
 
     if ($d['kelas'] == 'INSTRUKTUR' and !$jumlah_hadir) {
-      // skip UI jika tidak ada instruktur yang menjawab
+      // skip UI jika tidak ada $Trainer yang menjawab
     } else {
       echo "
         <h2 class='f20 darkblue mt4'>Kelas $last_kelas</h2>

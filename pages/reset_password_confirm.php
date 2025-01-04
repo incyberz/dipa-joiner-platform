@@ -1,7 +1,7 @@
 <?php
 $tanggal =  date('D, M d, Y, H:i:s');
 $link_encoded = urlencode("https://iotikaindonesia.com/dipa/?verifikasi_wa_for_instruktur&username=$username&kelas=$kelas&no_wa=$no_wa");
-$text_wa = "*REQUEST RESET PASSWORD*%0a%0aYt. Instruktur DIPA Joiner,%0aSaya $nama, mengajukan Request Reset Password atas username: *$username* kelas *$kelas* dengan nomor-wa-aktif: *$no_wa*. Mohon untuk segera diverifikasi. Terimakasih.%0a%0aLink untuk Instruktur:%0a$link_encoded %0a%0a [DIPA Joiner Apps, $tanggal]
+$text_wa = "*REQUEST RESET PASSWORD*%0a%0aYt. $Trainer DIPA Joiner,%0aSaya $nama, mengajukan Request Reset Password atas username: *$username* kelas *$kelas* dengan nomor-wa-aktif: *$no_wa*. Mohon untuk segera diverifikasi. Terimakasih.%0a%0aLink untuk $Trainer:%0a$link_encoded %0a%0a [DIPA Joiner Apps, $tanggal]
 ";
 $text_wa_show = str_replace('%0a', ' ', $text_wa);
 ?>

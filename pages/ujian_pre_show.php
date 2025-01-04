@@ -17,7 +17,7 @@ $start = $_GET['start'] ?? '';
 if ($id_role == 2) {
   $fitur_dosen = "
   <div class='wadah gradasi-merah mt2'>
-    Fitur Instruktur: <a href='?monitoring_ujian&id_paket=$id_paket'>Monitoring Ujian</a>
+    Fitur $Trainer: <a href='?monitoring_ujian&id_paket=$id_paket'>Monitoring Ujian</a>
   </div>
   ";
 }
@@ -26,7 +26,7 @@ if ($id_role == 2) {
 # =======================================================
 # GET PROPERTIES PAKET UJIAN
 # =======================================================
-// untuk instruktur tampilkan walaupun berbeda kelas
+// untuk $Trainer tampilkan walaupun berbeda kelas
 $sql_kelas = $id_role == 2 ? '1' : "d.kelas='$kelas'";
 $s = "SELECT 
 a.*,
@@ -267,7 +267,7 @@ if ($selisih > 0) { //belum mulai
       echo "<br>untuk:<span id=untuk>$untuk</span>";
       echo "<br>sudah_polling_uas:<span id=sudah_polling_uas>$sudah_polling_uas</span>";
     } elseif (!$profil_ok and false) {
-      $list_jawabans = div_alert('danger', "Sepertinya kamu belum Upload Foto Profil, atau mungkin profil kamu tidak terbaca oleh instruktur (corrupt).<hr><p class='biru tebal'>Silahkan upload dahulu foto profilnya agar instruktur mengetahui bahwa itu adalah kamu.</p><hr> <a class='btn btn-primary mt2 w-100' href='?upload_profil'>Upload/Reupload Profil</a>. <hr><span class='abu kecil'>Silahkan upload profil dahulu agar kamu dapat melihat hasil ujian.</span>");
+      $list_jawabans = div_alert('danger', "Sepertinya kamu belum Upload Foto Profil, atau mungkin profil kamu tidak terbaca oleh $Trainer (corrupt).<hr><p class='biru tebal'>Silahkan upload dahulu foto profilnya agar $Trainer mengetahui bahwa itu adalah kamu.</p><hr> <a class='btn btn-primary mt2 w-100' href='?upload_profil'>Upload/Reupload Profil</a>. <hr><span class='abu kecil'>Silahkan upload profil dahulu agar kamu dapat melihat hasil ujian.</span>");
     } else { // boleh lihat hasil ujian
       $s = "SELECT a.*, b.tmp_jumlah_soal,b.tanggal_pembahasan,
       (
@@ -329,7 +329,7 @@ if ($selisih > 0) { //belum mulai
 # SHOW START
 # =======================================================
 if (($selisih <= 0 && $selisih_akhir > 0 && $jumlah_attemp < $max_attemp && !$start) || ($id_role == 2 && !$start)) {
-  $by_pass_notif = $id_role != 2 ? '' : div_alert('danger', "By pass UI dengan Login Instruktur");
+  $by_pass_notif = $id_role != 2 ? '' : div_alert('danger', "By pass UI dengan Login $Trainer");
   $blok_timer .= $by_pass_notif;
   $rand = rand(1, 9);
   if ($jumlah_attemp) {
@@ -370,7 +370,7 @@ if (
   ($selisih <= 0 and $selisih_akhir >= 0 and $jumlah_attemp < $max_attemp and $start)
   || ($id_role == 2 && $start)
 ) {
-  $by_pass_notif = $id_role != 2 ? '' : div_alert('danger', "By Pass UI - Ujian Show List Soal by Login Instruktur");
+  $by_pass_notif = $id_role != 2 ? '' : div_alert('danger', "By Pass UI - Ujian Show List Soal by Login $Trainer");
   echo $by_pass_notif;
   include 'ujian_show_list_soal.php';
 }

@@ -254,7 +254,7 @@ if ($id_paket) {
     $d_paket = mysqli_fetch_assoc($q);
 
     if ($d_paket['count_submit']) {
-      echo div_alert('danger', "Paket soal ini tidak bisa lagi diedit karena sudah ada $d_paket[count_submit] peserta yang submit jawaban");
+      echo div_alert('danger', "Paket soal ini tidak bisa lagi diedit karena sudah ada $d_paket[count_submit] $Peserta yang submit jawaban");
       echo "
         <script>
           $(function(){
@@ -327,7 +327,7 @@ FROM tb_room_kelas a
 JOIN tb_kelas b ON a.kelas=b.kelas
 WHERE id_room=$id_room ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$opt = '<option value=all>Untuk Semua Kelas pada Room ini</option>';
+$opt = "<option value=all>Untuk Semua Kelas pada $Room ini</option>";
 $info_prodi = '';
 $info_semester = '';
 $tr_kelas = '';
@@ -355,7 +355,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   $eta = $awal_ujian ? eta2($awal_ujian) : '';
 
   $input_mulai_ujian = $d['kelas'] == 'INSTRUKTUR' ? "
-    <div class='f12 miring abu'>Instruktur dapat mengakses paket ini seterusnya</div>
+    <div class='f12 miring abu'>$Trainer dapat mengakses paket ini seterusnya</div>
   " : "
     <div class='flexy'>
       <div>
@@ -613,7 +613,7 @@ echo "
 
       <textarea 
         class='form-control mb2' 
-        placeholder='Enter kisi-kisi ujian (opsional)... akan bisa dilihat oleh peserta sebelum ujian berlangsung.' 
+        placeholder='Enter kisi-kisi ujian (opsional)... akan bisa dilihat oleh $Peserta sebelum ujian berlangsung.' 
         rows=4 
         name=kisi_kisi
       >$kisi_kisi</textarea>

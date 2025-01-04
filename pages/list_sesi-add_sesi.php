@@ -14,7 +14,7 @@ $add_sesi = $id_role != 2 ? '' : "
     </select>
 
     <div id=div_btn class=hideit>
-      <button class='btn btn-success mt2 w-100' onclick='return confirm(`Add Sesi untuk Room ini?`)' name=btn_add_sesi>Add Sesi</button>
+      <button class='btn btn-success mt2 w-100' onclick='return confirm(`Add Sesi untuk $Room ini?`)' name=btn_add_sesi>Add Sesi</button>
     </div>
   </form>
 </div>

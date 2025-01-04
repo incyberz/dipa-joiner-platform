@@ -1,6 +1,6 @@
 <div class="tab-pane fade profile-overview pt-3" id="profile-overview" role="tabpanel">
   <div class="alert alert-danger">
-    Maaf, page ini masih dalam tahap pengembangan.
+    Maaf, page ini in development.
   </div>
 
   <h5 class="card-title">About</h5>

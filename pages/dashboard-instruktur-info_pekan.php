@@ -23,7 +23,7 @@ if ($room_count['count_presensi_aktif'] > 1) {
 
     $s = "SELECT * 
     FROM tb_room_kelas a  
-    -- JOIN tb_sesi_kelas b ON a.kelas=b.kelas -- terdapat Room lama yang belum set jadwal kuliah
+    -- JOIN tb_sesi_kelas b ON a.kelas=b.kelas -- terdapat $Room lama yang belum set jadwal kuliah
     WHERE a.id_room=$id_room 
     AND a.kelas!= 'INSTRUKTUR' 
     AND a.ta=$ta 

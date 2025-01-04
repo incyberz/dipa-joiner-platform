@@ -17,5 +17,5 @@ foreach ($arr_act as $act) {
   }
 }
 
-$arr_latihan = $arr_data_act['latihan'];
-$arr_challenge = $arr_data_act['challenge'];
+$arr_latihan = $arr_data_act['latihan'] ?? [];
+$arr_challenge = $arr_data_act['challenge'] ?? [];

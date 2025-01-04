@@ -352,7 +352,7 @@ foreach ($rjenis as $key => $jenis) {
 
     echo "
     <div class='$hide' id=blok_$jenis>
-      <h2 class='proper f18 mt4 darkblue gradasi-biru p2'>$h2_history Bukti $jenis | <a href='?$href_show_img' onclick='return confirm(\"Show All Image? Ini akan memakan bandwith internet yang lumayan besar.\")'>$img_mhs</a> | $not_jenis</h2>
+      <h2 class='proper f18 mt4 darkblue gradasi-biru p2'>$h2_history Bukti $jenis | <a href='?$href_show_img' onclick='return confirm(`Show All Image? Ini akan memakan bandwith internet yang lumayan besar.`)'>$img_mhs</a> | $not_jenis</h2>
       <table class=table>
         <thead>
           <th>No</th>

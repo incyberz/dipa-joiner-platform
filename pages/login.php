@@ -30,8 +30,6 @@ if (isset($_COOKIE[$dipa_cookie])) {
   }
 }
 
-$slogan = $custom['slogan'] ?? 'Memadukan Dunia Industri, Praktisi, dan Akademisi dalam kebaikan';
-
 ?>
 <style>
   .full {
@@ -61,10 +59,6 @@ $slogan = $custom['slogan'] ?? 'Memadukan Dunia Industri, Praktisi, dan Akademis
     <hr>
     <div class="tengah">
       <img src="<?= $header_logo ?>" alt="header-logo">
-      <div class="hijau p2">
-        <?= $slogan ?>
-      </div>
-
     </div>
     <hr>
     <form method="post">
@@ -81,7 +75,7 @@ $slogan = $custom['slogan'] ?? 'Memadukan Dunia Industri, Praktisi, dan Akademis
       </div>
     </form>
 
-    <div class="tengah mt3">Belum punya akun? Silahkan <a href="?join"><b class="proper"><?= $join_title ?></b></a></div>
+    <div class="tengah mt3">Belum punya akun? Silahkan <a href="?join"><b class="proper"><?= $Join ?></b></a></div>
     <div class="tengah mt3">Lupa password? <a href="?reset_password"><b>Reset Password</b></a></div>
 
     <hr>

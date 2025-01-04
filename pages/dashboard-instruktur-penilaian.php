@@ -17,7 +17,7 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $thead = "
   <thead class='gradasi-toska'>
     <th>No</th>
-    <th>Detail Penilaian Instruktur</th>
+    <th>Detail Penilaian $Trainer</th>
     <th class='tengah desktop_only'>Basic Poin</th>
     <th class='desktop_only'>My Multiplier Info</th>
     <th class=kanan>Teaching Points</th>
@@ -75,7 +75,7 @@ echo "
 <div data-aos=fade-up>
   <hr>  
   <h3 class='darkblue tengah'>Teaching Points</h3>
-  <div class='tengah mb2'>Pada Room <span class=darkblue>$nama_room</span></div>
+  <div class='tengah mb2'>Pada $Room <span class=darkblue>$nama_room</span></div>
   <div class='green bold p2 gradasi-toska f20 tengah mb2'>$total_poin_show TP</div>
   <div class='flexy flex-center mb4'>
     <div class='btn_aksi pointer text-hover-bold' id=detail_TP__toggle>$img_detail details</div> 
@@ -83,7 +83,7 @@ echo "
   </div> 
   <div class='hideit' id=detail_TP>
 
-    <p class=tengah>Detail Rekap mingguan Teaching Point dari seluruh Room Anda</p>
+    <p class=tengah>Detail Rekap mingguan Teaching Point dari seluruh $Room Anda</p>
     <table class='table table-hover table-striped'>
       $thead
       $tr

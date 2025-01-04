@@ -17,5 +17,5 @@ function tahun_ajar_show($ta)
 
 function ondev()
 {
-  echo div_alert('danger', 'Page ini masih dalam tahap pengembangan. Terimakasih sudah mencoba!');
+  echo div_alert('danger', 'Page ini in development. Terimakasih sudah mencoba!');
 }

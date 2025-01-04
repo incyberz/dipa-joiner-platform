@@ -17,7 +17,7 @@ AND d.id_room=$id_room
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) {
-  echo div_alert('danger', "Belum ada data $peserta_title.");
+  echo div_alert('danger', "Belum ada data $Peserta.");
 } else {
   while ($d = mysqli_fetch_assoc($q)) {
     $from_perang = "FROM tb_war p WHERE p.id_penjawab=$d[id_peserta] and p.id_room=$id_room";

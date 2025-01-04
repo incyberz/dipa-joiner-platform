@@ -38,9 +38,9 @@ if (mysqli_num_rows($q2) == 0) {
     $nama_challenge = $d2['nama_challenge'];
     $objective = $d2['objective'];
 
-    $hubungi_instruktur = $id_role == 2 ? '' : '<div class="darkred mt1 f12 miring">Silahkan hubungi instruktur agar segera melengkapi data sublevel.</div>';
+    $hubungi_instruktur = $id_role == 2 ? '' : "<div class='darkred mt1 f12 miring'>Silahkan hubungi $Trainer agar segera melengkapi data sublevel.</div>";
     if ($closed) {
-      $btn_submit = "<span class='btn btn-secondary btn-sm' onclick='alert(\"Challenge ini sudah closed.\")'>Closed</span>";
+      $btn_submit = "<span class='btn btn-secondary btn-sm' onclick='`$Room Challenge ini sudah closed.`)'>Closed</span>";
     } else {
       $btn_submit = ($d2['objective'] && $d2['poin']) ? "<a href='$params&id_sublevel=$id_sublevel&no_sublevel=$no_sublevel' class='btn btn-primary btn-sm' name=btn_submit_sublevel value=$id_sublevel>Submit</a>"
         : "<button disabled class='btn btn-secondary btn-sm'>Can`t Submit</button>$hubungi_instruktur";

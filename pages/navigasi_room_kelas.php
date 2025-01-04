@@ -10,7 +10,7 @@ AND b.status = 1 -- kelas aktif
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) {
-  die('Room ini belum punya room kelas.');
+  die("$Room ini belum punya $Room-kelas.");
 } else {
   $li = '';
   $btn_class = $get_kelas ? '' : 'btn btn-success';

@@ -69,7 +69,7 @@ if (isset($_POST['btn_upload'])) {
 
 $sudah_upload = file_exists($src_profil) ? 1 : 0;
 
-$onclick = $sudah_upload ? 'Foto ini hanya terlihat oleh kamu dan instruktur.' : 'Masak sihh kamu ga punya foto,, gak percaya!!';
+$onclick = $sudah_upload ? "Foto ini hanya terlihat oleh kamu dan $Trainer." : 'Masak sihh kamu ga punya foto,, gak percaya!!';
 
 if ($sudah_upload) {
   $btn_reupload = '<span class="btn btn-secondary btn-sm btn_aksi" id=blok_upload__toggle>Reupload</span>';
@@ -77,13 +77,13 @@ if ($sudah_upload) {
 
   if ($profil_ok == 1) {
     $status = '<span class="green">Accepted</span>';
-    $status_ket = 'Selamat! Profil kamu sudah diterima oleh instruktur.';
+    $status_ket = "Selamat! Profil kamu sudah diterima oleh $Trainer.";
   } elseif ($profil_ok == -1) {
     $status = '<span class="red">Rejected</span>';
     $status_ket = 'Wah! Tolong pakai profil lain ya!';
   } else {
     $status = '<span class="darkred">Belum diverifikasi</span>';
-    $status_ket = "Dikarenakan banyaknya $peserta_title, mohon bersabar untuk menunggu verifikasi dari instruktur! Silahkan hubungi beliau saat jam kantor!";
+    $status_ket = "Dikarenakan banyaknya $Peserta, mohon bersabar untuk menunggu verifikasi dari $Trainer! Silahkan hubungi beliau saat jam kantor!";
   }
 } else {
   $status = '<span class="darkred">Belum upload</span>';

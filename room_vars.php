@@ -43,7 +43,7 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
 if (!mysqli_num_rows($q)) {
   unset($_SESSION['dipa_id_room']);
-  die(div_alert('danger', "Room tidak ditemukan. id_room: $id_room"));
+  die(div_alert('danger', "$Room tidak ditemukan. id_room: $id_room"));
 }
 
 $room = mysqli_fetch_assoc($q);
@@ -56,10 +56,10 @@ $nama_instruktur = $room['nama_instruktur'];
 if ($status_room != 100) {
   if ($parameter != 'aktivasi_room') {
     if ($id_role == 2) {
-      echo div_alert('danger', "Status Room tidak 100% ... Anda harus reactivate!");
+      echo div_alert('danger', "Status $Room tidak 100% ... Anda harus reactivate!");
       jsurl('?aktivasi_room', 2000);
     } else {
-      die(div_alert('danger', "Statu Room ini belum siap untuk digunakan.<hr>Silahkan hubungi Instruktur [ $nama_instruktur ]  "));
+      die(div_alert('danger', "Status $Room ini belum siap untuk digunakan.<hr>Silahkan hubungi $Trainer [ $nama_instruktur ]  "));
     }
   }
 }
@@ -70,7 +70,7 @@ if ($status_room != 100) {
 # ============================================================
 if ($id_role != 2) {
   if (!$room['total_kelas']) {
-    die(div_alert('danger', "Belum ada satupun kelas pada Room ini di TA $ta"));
+    die(div_alert('danger', "Belum ada satupun kelas pada $Room ini di TA $ta"));
   }
 }
 
@@ -138,32 +138,32 @@ if (!$id_room_kelas) {
 
   if ($parameter != 'assign_room_kelas') {
 
-    $assign_room_kelas = '<a href="?pilih_room">Pilih Room lainnya</a>';
+    $assign_room_kelas = "<a href='?pilih_room'>Pilih $Room lainnya</a>";
     if ($id_role == 2) {
       if ($id_instruktur == $id_peserta) {
-        $assign_room_kelas = "<a href='?assign_room_kelas'>Assign Room Kelas</a>";
-        $pesan = "Anda adalah pemilik room ini. Silahkan Assign kelas ini ke Room Anda.";
+        $assign_room_kelas = "<a href='?assign_room_kelas'>Assign $Room Kelas</a>";
+        $pesan = "Anda adalah pemilik $Room ini. Silahkan Assign kelas ini ke $Room Anda.";
 
-        // auto-assign kelas sendiri ke room ini
+        // auto-assign kelas sendiri ke $Room ini
         $s = "INSERT INTO tb_room_kelas (id_room,kelas,ta) VALUES ($id_room,'$kelas',$ta)";
         $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
         jsurl();
       } else {
         unset($_SESSION['dipa_id_room']);
-        $pesan = "Silahkan hubungi beliau jika Kelas <u>$kelas</u> adalah benar anggota room tersebut.";
+        $pesan = "Silahkan hubungi beliau jika Kelas <u>$kelas</u> adalah benar anggota $Room tersebut.";
       }
     } else {
       unset($_SESSION['dipa_id_room']);
-      echo '<hr>Unsetting selected room... success. Silahkan Anda pilih room lainnya!';
+      echo "<hr>Unsetting selected $Room... success. Silahkan Anda pilih $Room lainnya!";
     }
 
     die(div_alert('danger', "
       <hr>
-      <b style=color:red>Kelas <u>$kelas</u> belum di-assign ke room <u>$singkatan_room</u>.</b> 
+      <b style=color:red>Kelas <u>$kelas</u> belum di-assign ke $Room <u>$singkatan_room</u>.</b> 
       <hr>
-      Room ini dimiliki oleh:
+      $Room ini dimiliki oleh:
       <ul>
-        <li>Nama Instruktur: $nama_instruktur</li>
+        <li>Nama $Trainer: $nama_instruktur</li>
         <li>$pesan</li>
       </ul>
       <hr>
@@ -208,7 +208,7 @@ $select_all_from_tb_room_kelas = "SELECT * FROM tb_room_kelas WHERE id_room=$id_
 # ========================================================
 $s = "SELECT id,nama,folder_uploads,username,no_wa,gender,image,war_image FROM tb_peserta WHERE id=$room[created_by] AND id_role=2 AND status=1";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-if (!mysqli_num_rows($q)) die(div_alert('danger', 'Data Instruktur untuk Room ini tidak ditemukan (atau inactive)'));
+if (!mysqli_num_rows($q)) die(div_alert('danger', "Data $Trainer untuk $Room ini tidak ditemukan (atau inactive)"));
 $trainer = mysqli_fetch_assoc($q);
 
 # =======================================================
@@ -233,7 +233,7 @@ if (!$room['last_update']) {
   # UPDATE ROOM COUNT IF STATUS ROOM = 100
   # ============================================================
   if ($_POST) {
-    // skip update  room count ketika ada post request
+    // skip update  $Room count ketika ada post request
     $room_count = [];
     $room_count['sudah_uts'] = null;
     $room_count['sudah_uas'] = null;

@@ -98,8 +98,8 @@ while ($d = mysqli_fetch_assoc($q)) {
 $inputs = "
   $div
   <div class=wadah>
-    <a href='?aktivasi_room&aksi=reset_room_kelas' class='btn btn-danger btn-sm mb2' onclick='return confirm(`Ingin memilih ulang anggota kelas untuk room ini?\n\nPerhatian! Setingan kelas-kelas diatas akan hilang.`)'>Reset Room Kelas</a>
-    <div class='mb4 abu f14 miring'>Reset Room Kelas digunakan untuk memilih ulang anggota kelas pada Room ini</div>
+    <a href='?aktivasi_room&aksi=reset_room_kelas' class='btn btn-danger btn-sm mb2' onclick='return confirm(`Ingin memilih ulang anggota kelas untuk $Room ini?\n\nPerhatian! Setingan kelas-kelas diatas akan hilang.`)'>Reset $Room Kelas</a>
+    <div class='mb4 abu f14 miring'>Reset $Room Kelas digunakan untuk memilih ulang anggota kelas pada $Room ini</div>
   </div>
 ";
 ?>

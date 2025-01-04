@@ -216,7 +216,7 @@ AND b.id_room = $id_room
 ORDER BY a.tanggal desc";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $i = 0;
-if (!mysqli_num_rows($q)) echo div_alert('info', "Belum ada $peserta_title yang bertanya pada room ini.");
+if (!mysqli_num_rows($q)) echo div_alert('info', "Belum ada $Peserta yang bertanya pada $Room ini.");
 while ($d = mysqli_fetch_assoc($q)) {
   $i++;
   $id = $d['id'];
@@ -321,7 +321,7 @@ while ($d = mysqli_fetch_assoc($q)) {
 
       $dan_verifikasi = $id_role == 2 ? ' dan Verifikasi' : '';
       $w_100 = $id_role == 2 ? ' w-100' : '';
-      $kamu = $id_role == 2 ? 'instruktur' : 'kamu';
+      $kamu = $id_role == 2 ? $Trainer : 'kamu';
 
       $form_jawab = "
         <form method=post>

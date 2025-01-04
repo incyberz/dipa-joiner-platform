@@ -127,7 +127,7 @@ $arr = [
     'minlength' => 5,
     'maxlength' => 30,
     'placeholder' => 'Nama Grup Kelas...',
-    'info' => 'Contoh: TI-Reg-SM2, artinya Kelas TI Reguler Semester 2. <br>Buatlah nama grup kelas yang unik dan jelas karena mungkin dapat sama dengan yang dibuat instruktur lainnya!',
+    'info' => "Contoh: TI-Reg-SM2, artinya Kelas TI Reguler Semester 2. <br>Buatlah nama grup kelas yang unik dan jelas karena mungkin dapat sama dengan yang dibuat $Trainer lainnya!",
   ],
 ];
 
@@ -195,8 +195,8 @@ $tr_tambah = "
 if (isset($mode) and $mode == 'add_kelas') {
   echo "
     <form method=post action='?add_kelas'>
-      <h3 class=tr>Select Room Kelas</h3>
-      <p class=tr>Silahkan Anda pilih Grup <b class=darkblue>Kelas aktif TA. $ta</b> yang boleh mengakses Room Anda (max: 5 kelas).</p>
+      <h3 class=tr>Select $Room Kelas</h3>
+      <p class=tr>Silahkan Anda pilih Grup <b class=darkblue>Kelas aktif TA. $ta</b> yang boleh mengakses $Room Anda (max: 5 kelas).</p>
       <table class='table' id=tb_kelas>
         <thead class='tr'>
           <th>Fakultas / Lembaga</th>
@@ -208,14 +208,14 @@ if (isset($mode) and $mode == 'add_kelas') {
         $tr
         $tr_tambah
       </table>
-      <button >Assign Kelas ke Room ini ZZZ</button>
+      <button >Assign Kelas ke $Room ini ZZZ</button>
     </form>
     
     ";
 } else {
   $inputs = "
-    <h3 class=tr>Select Room Kelas</h3>
-    <p class=tr>Silahkan Anda pilih Grup <b class=darkblue>Kelas aktif TA. $ta</b> yang boleh mengakses Room Anda (max: 5 kelas).</p>
+    <h3 class=tr>Select $Room Kelas</h3>
+    <p class=tr>Silahkan Anda pilih Grup <b class=darkblue>Kelas aktif TA. $ta</b> yang boleh mengakses $Room Anda (max: 5 kelas).</p>
     <table class='table' id=tb_kelas>
       <thead class='tr'>
         <th>Fakultas / Lembaga</th>

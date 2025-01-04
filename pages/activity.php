@@ -14,7 +14,7 @@ if ($jenis == '') {
 }
 
 $ryaitu = [
-  'latihan' => 'Yaitu praktikum yang persis dicontohkan oleh instruktur atau materi yang sudah disampaikan. Kamu wajib mengerjakannya.',
+  'latihan' => "Yaitu praktikum yang persis dicontohkan oleh $Trainer atau materi yang sudah disampaikan. Kamu wajib mengerjakannya.",
   'challenge' => 'Yaitu pembuktian bahwa kamu sudah siap terjun ke Dunia Usaha dan Industri (DUDI). Kamu wajib membangun salah satu portfolio system yang berhasil kamu buat.'
 ];
 $yaitu = $ryaitu[$jenis];
@@ -23,7 +23,7 @@ $closed = 0;
 $Jenis = ucwords($jenis);
 $cara_pengumpulan_default = $jenis == 'latihan'
   ? "Kerjakan latihan di Buku Catatan kalian atau di komputer/HP, kemudian foto/screenshot, lalu upload di latihan ini"
-  : "Kerjakan Challenge sesuai dengan Sub Level Challenge yang kalian pilih, khusus untuk MK Pemrograman Web maka wajib dihostingkan, untuk Challenge Video maka wajib diupload ke Youtube, dan untuk Room lainnya upload ke GDrive semua hasil pekerjaan. Dapatkan link-nya dan paste-kan link-nya di Challenge ini agar instruktur dapat memeriksanya via online";
+  : "Kerjakan Challenge sesuai dengan Sub Level Challenge yang kalian pilih, khusus untuk MK Pemrograman Web maka wajib dihostingkan, untuk Challenge Video maka wajib diupload ke Youtube, dan untuk $Room lainnya upload ke GDrive semua hasil pekerjaan. Dapatkan link-nya dan paste-kan link-nya di Challenge ini agar $Trainer dapat memeriksanya via online";
 
 set_h2(
   $Jenis,
@@ -58,7 +58,7 @@ if (!$id_assign) {
     if ($d['assigned']) continue;
     $list .= "<li>$d[nama]</li>";
   }
-  echo $list ? "<div class='wadah gradasi-kuning'>List $jenis yang belum bisa dikerjakan: <ol>$list</ol><div class='f12 biru miring'>Hubungi instruktur agar $jenis ini di-assign ke kelas kamu.</div></div>" : '';
+  echo $list ? "<div class='wadah gradasi-kuning'>List $jenis yang belum bisa dikerjakan: <ol>$list</ol><div class='f12 biru miring'>Hubungi $Trainer agar $jenis ini di-assign ke kelas kamu.</div></div>" : '';
 
   $s = "SELECT a.id as id_assign, 
   a.is_wajib,
@@ -85,9 +85,9 @@ if (!$id_assign) {
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   if (!mysqli_num_rows($q)) {
     if ($count_jenis) {
-      echo div_alert('danger', "Terdapat $count_jenis $jenis yang belum di-assign oleh instruktur untuk kelas $kelas");
+      echo div_alert('danger', "Terdapat $count_jenis $jenis yang belum di-assign oleh $Trainer untuk kelas $kelas");
     } else {
-      echo div_alert('danger', "Maaf, belum ada satupun $jenis pada room $singkatan_room. Beritahukan hal ini kepada instruktur!");
+      echo div_alert('danger', "Maaf, belum ada satupun $jenis pada $Room ini. Beritahukan hal ini kepada $Trainer!");
     }
   } else {
     $list_jenis = '';

@@ -30,7 +30,7 @@
       </div>
       <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="fade-left" data-aos-delay="200" style='position:relative'>
         <!-- <div style='background:red; position:absolute; height: 50px; width: 50px; top:0; z-index:99'>zzz</div> -->
-        <img src="assets/img/<?= $file_config_institusi ?>hero_img.png" class="img-fluid animated" alt="">
+        <img src="custom/custom-hero.png" class="img-fluid animated" alt="">
       </div>
     </div>
   </div>

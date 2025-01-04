@@ -14,7 +14,7 @@ while ($d = mysqli_fetch_assoc($q)) {
 }
 
 
-set_h2("Assign Room Kelas", "$nav_ta");
+set_h2("Assign $Room Kelas", "$nav_ta");
 // $room['status'] = 5;
 // $status_room = 5;
 // include "$lokasi_pages/aktivasi_room.php";
@@ -30,9 +30,9 @@ if (isset($_POST['btn_assign_room_kelas'])) {
   if (!mysqli_num_rows($q)) {
     $s = "INSERT INTO tb_room_kelas (kelas,id_room,ta) VALUES ('$kelas',$id_room,$ta)";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-    echo div_alert('success', "Assign Room Kelas sukses.");
+    echo div_alert('success', "Assign $Room Kelas sukses.");
   } else {
-    echo div_alert('danger', "Kelas sudah terdaftar pada room ini.");
+    echo div_alert('danger', "Kelas sudah terdaftar pada $Room ini.");
   }
 }
 
@@ -41,11 +41,11 @@ if (isset($_POST['btn_assign_room_kelas'])) {
 # ====================================================
 if (isset($_POST['btn_drop_room_kelas'])) {
 
-  echo div_alert('danger', "DROPPING ROOM KELAS dapat berhasil jika dan hanya jika tidak ada $peserta_title yang terdaftar pada kelas ini.<hr>Hubungi Master Instruktur (Developer) Jika ingin menghapus kelas aktif (yang sudah berjalan) dari room ini.");
+  echo div_alert('danger', "DROPPING ROOM KELAS dapat berhasil jika dan hanya jika tidak ada $Peserta yang terdaftar pada kelas ini.<hr>Hubungi Master $Trainer (Developer) Jika ingin menghapus kelas aktif (yang sudah berjalan) dari $Room ini.");
 
   $s = "DELETE FROM tb_room_kelas WHERE id_room=$id_room AND kelas='$_POST[btn_drop_room_kelas]'";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  echo div_alert('success', "Drop Room Kelas sukses.");
+  echo div_alert('success', "Drop $Room Kelas sukses.");
 }
 
 $s = "SELECT a.id as id_room_kelas,a.kelas,b.fakultas 
@@ -101,10 +101,10 @@ while ($d = mysqli_fetch_assoc($q)) {
     </td>
     <td valign=top>
       <div class="wadah ml2">
-        <div>Assigned Kelas pada Room <?= $singkatan_room ?> :</div>
+        <div>Assigned Kelas pada <?= $Room ?> <?= $singkatan_room ?> :</div>
         <form method=post>
           <?php
-          echo $li_assigned ? "<ol>$li_assigned</ol>" : '<div class="red mt2 f12 consolas miring">Belum ada kelas pada Room ini.</div>';
+          echo $li_assigned ? "<ol>$li_assigned</ol>" : "<div class='red mt2 f12 consolas miring'>Belum ada kelas pada $Room ini.</div>";
           ?>
         </form>
       </div>

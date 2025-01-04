@@ -1,6 +1,6 @@
 <div class="wadah p0 p2 gradasi-kuning tengah">
   <form method=post class=m0>
-    <!-- <div class='f14 bold red consolas mb1'>Form Khusus Instruktur</div> -->
+    <!-- <div class='f14 bold red consolas mb1'>Form Khusus $Trainer</div> -->
     <div class='f14 abu consolas mb2 mt2'>Saat ini saya sedang berada pada kelas:</div>
     <div class='flexy flex-center'>
 
@@ -15,7 +15,7 @@
       $s9 = $select_all_from_tb_room_kelas;
       $q9 = mysqli_query($cn, $s9) or die(mysqli_error($cn));
       if (!mysqli_num_rows($q9)) {
-        echo div_alert('danger', 'Belum terdapat room-kelas pada room ini.');
+        echo div_alert('danger', "Belum terdapat-- active $room-kelas pada $Room ini.");
       } else {
         while ($d9 = mysqli_fetch_assoc($q9)) {
           $secondary = $d9['kelas'] == $target_kelas ? 'primary' : 'secondary';

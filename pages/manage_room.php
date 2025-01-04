@@ -1,6 +1,6 @@
 <?php
 instruktur_only();
-$judul = 'Manage Room';
+$judul = "Manage $Room";
 set_h2($judul);
 
 # ============================================================
@@ -20,7 +20,7 @@ if (isset($_POST['btn_save_room'])) {
 
   $s = "UPDATE tb_room SET $pairs WHERE id=$id_room";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  echo div_alert('success', "Update room sukses.");
+  echo div_alert('success', "Update $Room sukses.");
   jsurl('', 2000);
 }
 
@@ -81,20 +81,22 @@ $tb = $tr ? "
   <table class='table gradasi-hijau td_trans'>
     $tr
   </table>
-" : div_alert('danger', "Data room tidak ditemukan.");
+" : div_alert('danger', "Data $Room tidak ditemukan.");
 echo "
   <form method=post>
     $tb
-    <button class='btn btn-primary' name=btn_save_room>Save Room</button>
+    <button class='btn btn-primary' name=btn_save_room>Save $Room</button>
   </form>
 
 ";
 
-?>
-<hr>
-<div class="wadah">
-  <a href="?destroy_room" class="btn btn-danger" onclick='return confirm(`Destroy Room?`)'>Destroy Room</a>
+echo "
+  <hr>
+  <div class='wadah'>
+    <a href='?destroy_room' class='btn btn-danger' onclick='return confirm(`Destroy $Room?`)'>Destroy $Room</a>
 
-  <div class="alert alert-danger mt2">Fitur ini masih dalam tahap pengembangan. Terimakasih sudah mencoba.</div>
+    <div class='alert alert-danger mt2'>Fitur ini in development. Terimakasih sudah mencoba.</div>
 
-</div>
+  </div>
+
+";

@@ -1,5 +1,5 @@
 <?php
-echo div_alert('info', 'Belum ada penilaian instruktur pada minggu ini<hr>Perform Auto-calculations... please wait');
+echo div_alert('info', "Belum ada penilaian $Trainer pada minggu ini<hr>Perform Auto-calculations... please wait");
 
 $s = "SELECT * FROM tb_penilaian_instruktur";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -25,7 +25,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     FROM tb_sesi a 
     JOIN tb_room b ON a.id_room=b.id 
     WHERE a.jenis=1 -- sesi normal
-    AND b.status = 100 -- active room
+    AND b.status = 100 -- active $room
     AND b.created_by = $id_peserta -- milik sendiri 
     AND b.id = $id_room 
     ";
@@ -36,7 +36,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     JOIN tb_kelas_peserta d ON c.kelas=d.kelas 
     JOIN tb_peserta e ON d.id_peserta=e.id 
     WHERE a.created_by = $id_peserta -- milik sendiri 
-    AND a.status = 100 -- active room 
+    AND a.status = 100 -- active $Room 
     AND a.id = $id_room
     AND c.status = 1 -- kelas aktif 
     AND e.status = 1 -- _peserta aktif
@@ -46,7 +46,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     $s2 = "SELECT 1 FROM tb_room a 
     JOIN tb_latihan b ON a.id=b.id_room 
     WHERE a.created_by = $id_peserta -- milik sendiri  
-    AND a.status = 100 -- active room
+    AND a.status = 100 -- active $room
     AND b.ket is not null -- prosedur latihan sudah di update 
     AND a.id=$id_room 
     ";
@@ -54,7 +54,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     $s2 = "SELECT 1 FROM tb_room a 
     JOIN tb_challenge b ON a.id=b.id_room 
     WHERE a.created_by = $id_peserta -- milik sendiri  
-    AND a.status = 100 -- active room
+    AND a.status = 100 -- active $room
     AND b.ket is not null -- prosedur challenge sudah di update
     AND a.id = $id_room
     ";
@@ -63,7 +63,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     JOIN tb_challenge b ON a.id=b.id_room 
     JOIN tb_sublevel_challenge c ON b.id=c.id_challenge 
     WHERE a.created_by = $id_peserta -- milik sendiri  
-    AND a.status = 100 -- active room
+    AND a.status = 100 -- active $room
     AND b.ket is not null -- prosedur challenge sudah di update
     AND c.objective is not null -- sublevel sudah di update
     AND a.id = $id_room
@@ -74,7 +74,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     JOIN tb_assign_latihan c ON b.id=c.id_sesi  
     JOIN tb_bukti_latihan d ON c.id=d.id_assign_latihan   
     WHERE a.created_by = $id_peserta -- milik sendiri  
-    AND a.status = 100 -- active room
+    AND a.status = 100 -- active $room
     AND d.tanggal_verifikasi is not null 
     AND a.id = $id_room
     ";
@@ -84,7 +84,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     JOIN tb_assign_challenge c ON b.id=c.id_sesi  
     JOIN tb_bukti_challenge d ON c.id=d.id_assign_challenge   
     WHERE a.created_by = $id_peserta -- milik sendiri  
-    AND a.status = 100 -- active room
+    AND a.status = 100 -- active $room
     AND d.tanggal_verifikasi is not null 
     AND a.id = $id_room
     ";
@@ -93,7 +93,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     JOIN tb_sesi b ON a.id=b.id_room 
     JOIN tb_presensi c ON c.id_sesi=b.id 
     WHERE a.created_by = $id_peserta -- milik sendiri  
-    AND a.status = 100 -- active room
+    AND a.status = 100 -- active $room
     AND c.is_ontime = 1 
     AND a.id = $id_room
     ";
@@ -102,7 +102,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     JOIN tb_sesi b ON a.id=b.id_room 
     JOIN tb_presensi_offline c ON c.id_sesi=b.id 
     WHERE a.created_by = $id_peserta -- milik sendiri  
-    AND a.status = 100 -- active room
+    AND a.status = 100 -- active $room
     AND a.id = $id_room
     ";
   } elseif ($penilaian == 'count_tanam_soal') {
@@ -110,7 +110,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     JOIN tb_sesi b ON a.id=b.id_room 
     JOIN tb_soal_peserta c ON c.id_sesi=b.id 
     WHERE a.created_by = $id_peserta -- milik sendiri  
-    AND a.status = 100 -- active room
+    AND a.status = 100 -- active $room
     AND (c.id_status IS NULL OR c.id_status >= 0)
     AND a.id = $id_room
     ";
@@ -118,7 +118,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     $s2 = "SELECT 1 FROM tb_room a 
     JOIN tb_war b ON a.id=b.id_room 
     WHERE a.created_by = $id_peserta -- milik sendiri  
-    AND a.status = 100 -- active room
+    AND a.status = 100 -- active $room
     AND b.id_penjawab != $id_peserta -- bukan dirinya 
     AND a.id = $id_room
     ";
@@ -127,7 +127,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     JOIN tb_room_kelas b ON a.id=b.id_room 
     JOIN tb_bertanya c ON b.id=c.id_room_kelas 
     WHERE a.created_by = $id_peserta -- milik sendiri  
-    AND a.status = 100 -- active room
+    AND a.status = 100 -- active $room
     -- AND (c.verif_status is null OR verif_status != -1) -- bukan dirinya 
     AND a.id = $id_room
     ";
@@ -135,7 +135,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     $s2 = "SELECT 1 FROM tb_room a 
     JOIN tb_soal b ON a.id=b.id_room 
     WHERE a.created_by = $id_peserta -- milik sendiri  
-    AND a.status = 100 -- active room
+    AND a.status = 100 -- active $room
     AND a.id = $id_room
     ";
   } elseif ($penilaian == 'count_paket_soal') {
@@ -143,7 +143,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     JOIN tb_sesi s ON a.id=s.id_room 
     JOIN tb_paket b ON b.id=b.id_sesi 
     WHERE a.created_by = $id_peserta -- milik sendiri  
-    AND a.status = 100 -- active room
+    AND a.status = 100 -- active $room
     AND a.id = $id_room
     ";
   } elseif ($penilaian == 'count_attemp_ujian') {
@@ -153,7 +153,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     JOIN tb_paket_kelas c ON b.id=c.id_paket 
     JOIN tb_jawabans d ON d.paket_kelas=c.paket_kelas 
     WHERE a.created_by = $id_peserta -- milik sendiri  
-    AND a.status = 100 -- active room
+    AND a.status = 100 -- active $room
     AND a.id = $id_room
     ";
   } else {
@@ -167,7 +167,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     echo "<hr>$s2";
     $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
     if (!mysqli_num_rows($q2)) {
-      $my_multiplier .= div_alert('danger', "Belum ada data $satuan di semua room Anda");
+      $my_multiplier .= div_alert('danger', "Belum ada data $satuan di semua $Room Anda");
     } else {
       $count = mysqli_num_rows($q2);
       $my_multiplier .= "<div>$count $satuan $img_check</div>";
@@ -223,7 +223,7 @@ $total_poin_show = number_format($total_poin);
 if (!isset($thead)) $thead = "
   <thead class='gradasi-toska'>
     <th>No</th>
-    <th>Detail Penilaian Instruktur</th>
+    <th>Detail Penilaian $Trainer</th>
     <th class='tengah desktop_only'>Basic Poin</th>
     <th class='desktop_only'>My Multiplier Info</th>
     <th class=kanan>Teaching Points</th>
@@ -273,5 +273,5 @@ foreach ($arr_point as $id_penilaian => $value) {
   }
 }
 
-echo div_alert('success', 'Auto-Update Point Mingguan Instruktur sukses.');
+echo div_alert('success', "Auto-Update Point Mingguan $Trainer sukses.");
 jsurl('?', 1000);

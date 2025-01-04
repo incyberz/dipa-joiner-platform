@@ -140,7 +140,7 @@ $nama_paket_soal = $d['nama_paket_soal'];
 $count_penjawab = $d['count_penjawab'];
 $assigned_soal = $d['assigned_soal'];
 
-if ($count_penjawab) echo div_alert('danger', "Perhatian! Paket ini sudah dijawab oleh <a target=_blank href='?monitoring_ujian&id_paket=$get_id_paket'>$count_penjawab peserta</a>. Anda tidak dapat lagi melakukan proses Assign ataupun Drop Soal dari Paket Soal ini.");
+if ($count_penjawab) echo div_alert('danger', "Perhatian! Paket ini sudah dijawab oleh <a target=_blank href='?monitoring_ujian&id_paket=$get_id_paket'>$count_penjawab $Peserta</a>. Anda tidak dapat lagi melakukan proses Assign ataupun Drop Soal dari Paket Soal ini.");
 $disabled_assign = $count_penjawab ? 'disabled' : '';
 
 # =============================================
@@ -165,7 +165,7 @@ ORDER BY date_created";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $count_soal = mysqli_num_rows($q);
 if (!$count_soal) {
-  $tr = div_alert('danger', "Belum ada data soal untuk room ini.");
+  $tr = div_alert('danger', "Belum ada data soal untuk $Room ini.");
 } else {
   $tr = '';
   $no = 0;

@@ -1,7 +1,7 @@
 <div class="tab-pane fade pt-3" id="profile-settings" role="tabpanel">
 
   <div class="alert alert-danger">
-    Maaf, page ini masih dalam tahap pengembangan.
+    Maaf, page ini in development.
   </div>
 
   <!-- Settings Form -->

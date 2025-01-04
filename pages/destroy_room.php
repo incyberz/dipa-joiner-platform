@@ -1,10 +1,10 @@
 <?php
-session_start();
-include '../includes/insho_functions.php';
-include '../conn.php';
-include '../../insho_styles.php';
-set_h2('Destroy Room');
-$target_id_room = $_GET['id_room'] ?? die('Target Room unspecified.');
+// session_start();
+// include '../includes/insho_functions.php';
+// include '../conn.php';
+// include '../../insho_styles.php';
+set_h2("Destroy $Room");
+$target_id_room = $_GET['id_room'] ?? die("Target $Room unspecified.");
 
 die('Page ini tidak bisa diakses secara langsung. Call Developer!');
 

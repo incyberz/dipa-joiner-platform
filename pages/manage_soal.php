@@ -252,7 +252,7 @@ AND tipe_soal='PG'
 ORDER BY date_created";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) {
-  $tr = div_alert('danger', "Belum ada data soal untuk room ini.");
+  $tr = div_alert('danger', "Belum ada data soal untuk $Room ini.");
 } else {
   $tr = '';
   $no = 0;
@@ -318,7 +318,7 @@ if (!mysqli_num_rows($q)) {
         <td width=80px class=tengah>
           <span class=edit_soal id=edit_soal__$id_soal>$img_edit</span> 
           <form method=post style='display:inline'>
-            <button class='p0 m0' name=btn_delete_soal style='display:inline; background:none; border:none' onclick='return confirm(\"Yakin untuk hapus soal ini?\")' value=$id_soal>$img_delete</button>
+            <button class='p0 m0' name=btn_delete_soal style='display:inline; background:none; border:none' onclick='return confirm(`Yakin untuk hapus soal ini?`)' value=$id_soal>$img_delete</button>
           </form>
         </td>
       </tr>
@@ -326,7 +326,7 @@ if (!mysqli_num_rows($q)) {
   }
 }
 
-$list_gambar = div_alert('info', 'Belum ada media gambar pada room ini.');
+$list_gambar = div_alert('info', "Belum ada media gambar pada $Room ini.");
 $s = "SELECT gambar_soal FROM tb_soal WHERE gambar_soal IS NOT NULL AND id_room=$id_room";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (mysqli_num_rows($q)) {

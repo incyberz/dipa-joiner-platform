@@ -78,7 +78,7 @@ if ($get_update) {
   if ($get_best == 'rank_room' || $get_best == 'rank_kelas') {
     echo div_alert('danger', 'ZZZ');
     $div_peserta = 'ZZZ';
-    $title = $get_best == 'rank_room' ? 'Terbaik di Room ini' : 'Terbaik di kelas ini.';
+    $title = $get_best == 'rank_room' ? "Terbaik di $Room ini" : 'Terbaik di kelas ini.';
     $desc = 'desc ZZZ';
     $div_best .= div_best(
       $get_best,
@@ -88,7 +88,7 @@ if ($get_update) {
       $desc,
       'gradasi-toska'
     );
-  } else { // selain rank room | rank kelas
+  } else { // selain rank $Room | rank kelas
     if (!mysqli_num_rows($q)) {
       // echo $s;
       // echo '<pre>';
@@ -287,7 +287,7 @@ if ($get_update) {
         $arr_rank = [
           'rank_room' => [
             'title' => 'THE BEST ROOM PLAYER',
-            'desc' => "Player Terbaik di Room <b class=darkblue>$nama_room</b>",
+            'desc' => "Player Terbaik di $Room <b class=darkblue>$nama_room</b>",
             'data' => $arr_rank_room
           ],
           'rank_kelas' => [
@@ -395,7 +395,7 @@ if ($get_update) {
         include 'leaderboard-auto_update.php';
       }
     } // end // multiple 3 best
-  } // end // selain rank room | rank kelas
+  } // end // selain rank $Room | rank kelas
 }
 
 echo "<div class=row>$div_best</div>";

@@ -48,7 +48,7 @@ if ($d) {
     </div>
   ";
 } else {
-  $div_wars = div_alert('info', 'Belum ada Wars pada room ini.');
+  $div_wars = div_alert('info', "Belum ada Wars pada $Room ini.");
 }
 
 # ==========================================================
@@ -108,7 +108,7 @@ if ($d) {
     </div>
   ";
 } else {
-  $div_kbm = div_alert('info', 'Belum ada Nilai KBM pada room ini.');
+  $div_kbm = div_alert('info', "Belum ada Nilai KBM pada $Room ini.");
 }
 
 

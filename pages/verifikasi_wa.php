@@ -40,7 +40,7 @@ if ($id_peserta == '') { // belum login
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     if (!mysqli_num_rows($q)) {
       $link_back = $dari == '' ? '' : "  <a href='?$dari'>Kembali</a>";
-      $pesan .= div_alert('danger mt2', "Maaf, data untuk username <span class=darkblue>$username</span> kelas <span class=darkblue>$kelas</span> tidak ditemukan. <hr>Jika Anda juga lupa dengan <i>username</i>, maka silahkan hubungi ke nomor instruktur Anda.<hr>$link_back | <a href='?'>Homepage</a>");
+      $pesan .= div_alert('danger mt2', "Maaf, data untuk username <span class=darkblue>$username</span> kelas <span class=darkblue>$kelas</span> tidak ditemukan. <hr>Jika Anda juga lupa dengan <i>username</i>, maka silahkan hubungi ke nomor $Trainer Anda.<hr>$link_back | <a href='?'>Homepage</a>");
       $hide_form = 1;
     } else {
       $d = mysqli_fetch_assoc($q);
@@ -57,7 +57,7 @@ if ($id_peserta == '') { // belum login
 }
 
 if ($dari == 'routing_verifikasi_wa_instruktur') {
-  $pesan = "Agar dapat lanjut sebagai $sebagai nomor whatsapp Anda harus terverifikasi oleh Master Instruktur. Pesan dan link verifikasi akan diteruskan ke Developer Team (Bapak Iin Sholihin)";
+  $pesan = "Agar dapat lanjut sebagai $sebagai nomor whatsapp Anda harus terverifikasi oleh Master $Trainer. Pesan dan link verifikasi akan diteruskan ke Developer Team (Bapak Iin Sholihin)";
 
   // $hide_form = 0;
   // $hide_section = 0;

@@ -165,13 +165,13 @@ include 'list_sesi-add_sesi.php';
 # ============================================================
 # FORM ADD SESI
 # ============================================================
-include 'list_sesi-laporkan_error.php';
+include 'laporkan_error.php';
 
 # ============================================================
 # NAVIGASI SESI
 # ============================================================
 set_h2('Learning Path', "
-  Room 
+  $Room 
   <span class=darkblue>$nama_room</span> 
   <div class='f10 flexy flex-center mt2' style=gap:1px>
     $nav_lp

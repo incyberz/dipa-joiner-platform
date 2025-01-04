@@ -18,9 +18,9 @@ if (!$status and $parameter != 'verifikasi_wa' and $is_login and $parameter != '
   echo "
     <section id=section_routing>
       <div class='wadah gradasi-kuning p4'>
-        <div class=sub_form>Routing Exceptions - Unverified Status as Instruktur</div>
+        <div class=sub_form>Routing Exceptions - Unverified Status as $Trainer</div>
         <p>Halo $nama_peserta!</p>
-        <p>Kamu sudah tercatat sebagai <u>$custom_sebagai</u> pada kelas <u>$custom_kelas</u>. </p><p>Untuk $custom_sebagai baru wajib diverifikasi oleh Master Instruktur yaitu Dev-Team (Bapak Iin Sholihin, dan tim)</p>
+        <p>Kamu sudah tercatat sebagai <u>$custom_sebagai</u> pada kelas <u>$custom_kelas</u>. </p><p>Untuk $custom_sebagai baru wajib diverifikasi oleh Master $Trainer yaitu Dev-Team (Bapak Iin Sholihin, dan tim)</p>
         <hr>
         <div class='alert alert-danger'>
           Status <i class=darkblue>Akun $custom_sebagai</i> Anda belum terverifikasi.  

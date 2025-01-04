@@ -4,7 +4,7 @@
 # ============================================================
 if ($jumlah_sesi) {
 
-  if (!$room['minggu_normal_uts']) { // minggu_normal_uts belum ada artinya room lama harus diupdate 
+  if (!$room['minggu_normal_uts']) { // minggu_normal_uts belum ada artinya $Room lama harus diupdate 
 
     // nomor sesi saat UTS
     $s = "SELECT a.no
@@ -68,7 +68,7 @@ if ($jumlah_sesi) {
 
     $info_room = "
       <div class=wadah>
-        <div class=mb2>Sesi-sesi pada room lama:</div>
+        <div class=mb2>Sesi-sesi pada $Room lama:</div>
         <div class='row mt2'>
           <div class=col-6>
             <div class=wadah>
@@ -121,7 +121,7 @@ if ($jumlah_sesi) {
       </div>
       <input type=hidden name=date_created value='$now'>
     ";
-    $inputs = div_alert('success', "Sudah ada $jumlah_sesi sesi pada room ini.<hr>$info_room");
+    $inputs = div_alert('success', "Sudah ada $jumlah_sesi sesi pada $Room ini.<hr>$info_room");
   }
 } else {
   $inputs = "
@@ -198,7 +198,7 @@ if ($jumlah_sesi) {
       <ul>
         <li>Jumlah sesi default adalah 7 kali pertemuan (tanpa UTS/UAS)</li>
         <li>Durasi UTS/UAS default selama 2 minggu</li>
-        <li>Durasi total default adalah 18 minggu, room-closed pada minggu ke-19</li>
+        <li>Durasi total default adalah 18 minggu, $Room-closed pada minggu ke-19</li>
       </ul>
     </div>
   

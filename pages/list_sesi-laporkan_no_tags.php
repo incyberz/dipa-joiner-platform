@@ -8,7 +8,7 @@ if ($id_role == 2) {
     <div class='alert alert-danger kecil miring mb4 tengah belum_ada_tags' id=belum_ada_tags__$id_sesi>
       belum ada tags
       <hr>
-      tanpa tags, di sesi ini $peserta_title tidak bisa melakukan: Presensi, Tanam Soal, atau Bertanya. Tags merupakan pemandu materi agar alur belajar $peserta_title tidak <i>out-of-topic</i>.
+      tanpa tags, di sesi ini $Peserta tidak bisa melakukan: Presensi, Tanam Soal, atau Bertanya. Tags merupakan pemandu materi agar alur belajar $Peserta tidak <i>out-of-topic</i>.
       <hr>
       <span class=blue>Silahkan klik tombol edit lalu isi beberapa tags untuk sesi ini.</span>
     </div>

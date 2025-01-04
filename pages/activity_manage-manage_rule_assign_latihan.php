@@ -90,7 +90,7 @@ $disabled_submit_assign_info = $count_submiter ? div_alert('info red mt2 tengah'
 
 $manage_assign = "
   <h5 class='darkblue proper' id=manage_rule_$jenis>Manage Rule Assign $jenis <span class=btn_aksi id=form_assign__toggle>$img_detail</span></h5>
-  <p>Manage aturan khusus latihan untuk setiap Grup Kelas pada room ini.</p>
+  <p>Manage aturan khusus latihan untuk setiap Grup Kelas pada $Room ini.</p>
   <div class='tengah p2 border-top border-bottom mb2 gradasi-toska tebal darkblue' >$Jenis Sesi-$no_sesi $nama_sesi</b></div>
   <form method=post id=form_assign class=hideita>
     <table class=table>

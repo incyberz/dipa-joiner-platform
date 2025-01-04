@@ -21,7 +21,7 @@ $welcome = "
       </li> 
       $welcome_kelas 
       <li> 
-        Room <span class='tebal darkblue'>$nama_room</span>
+        $Room <span class='tebal darkblue'>$nama_room</span>
       </li> 
     </ul> 
     <div class='tengah border-top blue f14 miring pt1'>
@@ -67,7 +67,7 @@ if ($id_role == 1 || $is_login_as) {
     echo div_alert('info', "Status Mitra: $status");
   }
 } else {
-  echo div_alert('info', "Maaf, dashboard khusus untuk role: $sebagai sedang dalam tahap pengembangan. Silahkan klik menu lainnya.");
+  echo div_alert('info', "Maaf, dashboard khusus untuk role: $sebagai in development. Silahkan klik menu lainnya.");
 }
 
 // include 'dashboard_room_stats.php'; 

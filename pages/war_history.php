@@ -13,7 +13,7 @@ $limit = $all_wars ? '100' : '20';
 
 $nav_kelas = '';
 if ($id_role != 1) {
-  //instruktur only
+  // $Trainer only
   foreach ($arr_kelas as $kelas => $jml) {
     if ($kelas == 'INSTRUKTUR') continue;
     $nav_kelas .= "<a href='?war_history&all_wars&kelas=$kelas'>$kelas</a> | ";

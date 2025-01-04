@@ -128,7 +128,7 @@ $blok_progres = "
     <span class="rank_of">of
       <a href="?peserta_kelas">
         <span class="rank_of_count"><?= $total_peserta_kelas ?></span>
-        peserta
+        <?= $Peserta ?>
       </a>
     </span>
   </div>

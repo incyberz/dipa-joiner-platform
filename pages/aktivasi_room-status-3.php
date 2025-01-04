@@ -5,11 +5,11 @@ if ($jumlah_sesi) {
 
   if ($awal_sesi) {
     $tanggal = date('d-F-Y H:i', strtotime($awal_sesi));
-    $info_room .= div_alert('success', "Awal sesi room pada tanggal $tanggal.");
+    $info_room .= div_alert('success', "Awal sesi $Room pada tanggal $tanggal.");
   } else {
-    $info_room .= div_alert('danger', "Awal sesi pada room belum ada (sepertinya ini room lama).");
+    $info_room .= div_alert('danger', "Awal sesi pada $Room belum ada (sepertinya ini $Room lama).");
   }
-  $info_room .= div_alert('success', "Sudah ada $jumlah_sesi sesi aktif pada room ini.");
+  $info_room .= div_alert('success', "Sudah ada $jumlah_sesi sesi aktif pada $Room ini.");
 
   // cari tanggal pada sesi pertama
   $s = "SELECT awal_presensi FROM tb_sesi WHERE id_room=$id_room AND no=1 -- pertemuan 1";
@@ -35,7 +35,7 @@ if ($jumlah_sesi) {
 }
 if (1) {
   if (!$room['minggu_normal_uts']) {
-    die(div_alert('danger', "Data Room minggu_normal_uts (jumlah sesi normal sebelum UTS) belum lengkap (masih null)."));
+    die(div_alert('danger', "Data $Room minggu_normal_uts (jumlah sesi normal sebelum UTS) belum lengkap (masih null)."));
   } else {
     $inputs = '';
     $ta_show = tahun_ajar_show($ta);
@@ -46,7 +46,7 @@ if (1) {
       <div class='mb1'>Awal TA $ta_show adalah $hari.</div>
       <hr>
       <div class='flexy mb2'>
-        <div>Awal Pekan untuk Room ini : </div>
+        <div>Awal Pekan untuk $Room ini : </div>
         <div>
           <input class='form-control awal_sesi_trigger' type='date' id=tgl_awal_sesi value='$senin_pertama' />
         </div>

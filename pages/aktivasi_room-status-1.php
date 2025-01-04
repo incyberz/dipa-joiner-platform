@@ -19,7 +19,7 @@ $room_tahun_ajar = $room['ta'] > 20201 ? $room['ta'] : "$thn_ajar$gg";
 
 $ket_ta = '';
 if ($room['ta']) {
-  $ket_ta = "<div class='green bold wadah'>Tahun Ajar Room sudah di set ke TA. $room[ta]</div>";
+  $ket_ta = "<div class='green bold wadah'>Tahun Ajar $Room sudah di set ke TA. $room[ta]</div>";
 }
 
 $inputs = "

@@ -8,7 +8,7 @@
 </style>
 <div class="section-title" data-aos="fade">
   <h2>Profil Peserta</h2>
-  <p><?php if ($id_role == 2) echo "Berikut adalah profil $peserta_title yang harus diverifikasi. | 
+  <p><?php if ($id_role == 2) echo "Berikut adalah profil $Peserta yang harus diverifikasi. | 
         <a href='?verifikasi_profil_peserta'>Unverified</a> | 
         <a href='?verifikasi_profil_peserta&profil_ok=1'>Accepted</a> | 
         <a href='?verifikasi_profil_peserta&profil_ok=-1'>Rejected</a>";
@@ -42,7 +42,7 @@ JOIN tb_kelas c ON b.kelas=c.kelas
 JOIN tb_room_kelas d ON c.kelas=d.kelas 
 WHERE a.status=1 
 AND c.ta = $ta  -- tahun ajar saat ini
-AND d.id_room=$id_room -- di room ini
+AND d.id_room=$id_room -- di $Room ini
 AND $sql_id_peserta  -- untuk _peserta ini atau semua (admin)
 AND $sql_profil_ok   
 AND c.kelas != 'INSTRUKTUR' 
@@ -53,7 +53,7 @@ AND c.kelas != 'INSTRUKTUR'
 // echo '</pre>';
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) {
-  $divs = div_alert('info', "Belum ada profil $peserta_title yang harus Anda verifikasi.");
+  $divs = div_alert('info', "Belum ada profil $Peserta yang harus Anda verifikasi.");
 } else {
   $divs = '';
   $batas = 20;
@@ -100,8 +100,8 @@ if (!mysqli_num_rows($q)) {
           $status = [
             -1 => '<span class=red>Profil kurang layak.</span> Silahkan ganti dengan foto profil close-up (setengah badan) atau pas-foto ijazah. Kemungkinan ditolak antara lain: memakai avatar, foto terlalu jauh, foto landscape, dll',
             0 => '<span class=red>Unverified.</span> Profil kamu belum diverifikasi, masih terdapat fitur yang dibatasi yang mengharuskan verified profile',
-            1 => '<span class=green>Accepted.</span> Profil bebas kamu sudah diverifikasi oleh instruktur, kamu bisa mengakses seluruh fitur',
-            2 => '<span class=green>Accepted.</span> Profil formal kamu sudah diverifikasi oleh instruktur, kamu bisa mengakses seluruh fitur',
+            1 => "<span class=green>Accepted.</span> Profil bebas kamu sudah diverifikasi oleh $Trainer, kamu bisa mengakses seluruh fitur",
+            2 => "<span class=green>Accepted.</span> Profil formal kamu sudah diverifikasi oleh $Trainer, kamu bisa mengakses seluruh fitur",
           ];
           $ok = $d['profil_ok'] ?? 0;
           $status_profil = $status[$ok];

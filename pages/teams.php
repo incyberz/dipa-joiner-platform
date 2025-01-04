@@ -4,7 +4,7 @@
     <div class="section-title" data-aos="fade-up">
       <h2>TEAMS</h2>
       <div class="alert alert-danger">
-        Maaf, page ini masih dalam tahap pengembangan.
+        Maaf, page ini in development.
       </div>
 
       <p>Berikut adalah DIPA Teams on-progress. </p>

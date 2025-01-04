@@ -26,7 +26,7 @@ $u = $_GET['u'] ?? 'uts';
 echo "
 <div class='section-title' data-aos='fade'>
   <h2>Hasil Polling</h2>
-  <p>Berikut adalah hasil polling untuk <span id=nama_instruktur class=darkblue>$nama_instruktur</span> pada room <span class=darkblue>$singkatan_room</span></p>
+  <p>Berikut adalah hasil polling untuk <span id=nama_instruktur class=darkblue>$nama_instruktur</span> pada $Room <span class=darkblue>$singkatan_room</span></p>
 </div>
 ";
 

@@ -10,11 +10,11 @@
 $arr = [
   'count_presensi_offline' => [
     'default' => 5,
-    'desc' => "Jumlah Presensi Manual dicek oleh instruktur ke tiap $peserta_title",
+    'desc' => "Jumlah Presensi Manual dicek oleh $Trainer ke tiap $Peserta",
   ],
   'count_presensi_online' => [
     'default' => 5,
-    'desc' => "Jumlah Presensi Online bagi $peserta_title yang sudah memenuhi seluruh Syarat Presensi",
+    'desc' => "Jumlah Presensi Online bagi $Peserta yang sudah memenuhi seluruh Syarat Presensi",
   ],
   'count_ontime' => [
     'default' => 10,
@@ -38,11 +38,11 @@ $arr = [
   ],
   'rank_room' => [
     'default' => 10,
-    'desc' => 'Ranking Peserta berdasarkan Jumlah Peserta Room',
+    'desc' => "Ranking $Peserta berdasarkan Jumlah $Peserta $Room",
   ],
   'rank_kelas' => [
     'default' => 15,
-    'desc' => 'Ranking Peserta berdasarkan Jumlah Peserta Kelas',
+    'desc' => "Ranking $Peserta berdasarkan Jumlah $Peserta",
   ],
   'nilai_uts' => [
     'default' => 10,

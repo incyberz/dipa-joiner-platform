@@ -187,7 +187,7 @@ AND e.id_room=$id_room
 ORDER BY e.akumulasi_poin DESC $limit";
 if ($dm) echo "<pre>$s</pre>";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$tb = div_alert('danger', 'Belum ada data peserta.');
+$tb = div_alert('danger', "Belum ada data $Peserta.");
 if (mysqli_num_rows($q)) {
   $tr = '';
   $i = 0;

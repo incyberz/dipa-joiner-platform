@@ -70,17 +70,17 @@ $btn_reupload = "<button class='btn btn-secondary btn-sm' id=btn_reupload>Reuplo
 $info = '';
 $src = "$lokasi_profil/$user[war_image]";
 if ($user['war_image'] == 'war_image_rejected.jpg') {
-  $info = "Kamu sudah upload profil perang akan tetapi instruktur menolaknya, <span class=darkred>mungkin kurang layak</span> untuk Perang! <span class='tebal darkred'>Jangan foto formal!</span> Silahkan <a href='?pengajar'>whatsapp beliau</a> jika ada kesalahan. Sekarang <span class=blue>silahkan reupload sesuai contoh profil</span>.";
+  $info = "Kamu sudah upload profil perang akan tetapi $Trainer menolaknya, <span class=darkred>mungkin kurang layak</span> untuk Perang! <span class='tebal darkred'>Jangan foto formal!</span> Silahkan <a href='?pengajar'>whatsapp beliau</a> jika ada kesalahan. Sekarang <span class=blue>silahkan reupload sesuai contoh profil</span>.";
   $status_show = "<span class='darkred'>Profil Ditolak, silahkan reupload!</span>";
   $btn_reupload = '';
 } else if (strpos($src_profil_perang, 'war_unverified') and file_exists($src_profil_perang)) {
-  $info = "Kamu sudah upload profil perang akan tetapi belum diverifikasi oleh instruktur. Silahkan <a href='?pengajar'>whatsapp beliau</a> untuk mempercepat proses verifikasi profil ini. Jika ingin mengubahnya silahkan reupload.";
+  $info = "Kamu sudah upload profil perang akan tetapi belum diverifikasi oleh $Trainer. Silahkan <a href='?pengajar'>whatsapp beliau</a> untuk mempercepat proses verifikasi profil ini. Jika ingin mengubahnya silahkan reupload.";
   $status_show = "<span class='darkred'>Belum diverifikasi</span>";
   $hideit_blok_upload = 'hideit';
 } else if (file_exists($src) and $user['war_image']) {
   $hideit_blok_upload = 'hideit';
   // $src = $src_profil_perang_accepted;
-  $info = "Profil perang kamu sudah terverifikasi. Kamu bisa mengakses fitur <a href='?perang_soal'>Perang Soal</a> secara penuh. Jika ingin mengubah kembali foto profil silahkan reupload, namun kamu harus menunggu kembali verifikasi dari instruktur.";
+  $info = "Profil perang kamu sudah terverifikasi. Kamu bisa mengakses fitur <a href='?perang_soal'>Perang Soal</a> secara penuh. Jika ingin mengubah kembali foto profil silahkan reupload, namun kamu harus menunggu kembali verifikasi dari $Trainer.";
   $status_show = "<span class='green'>Accepted </span>";
 } else {
   echo '<pre>';

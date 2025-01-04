@@ -11,7 +11,7 @@ if (!$room_count['count_peserta']) {
     <div>$img_check</div>
   ";
   $notif_type = 'success';
-} else { // ada peserta dan profil_ok != count_peserta
+} else { // ada $Peserta dan profil_ok != count_peserta
 
   $s = "SELECT 1
   FROM tb_peserta a 
@@ -23,7 +23,7 @@ if (!$room_count['count_peserta']) {
   AND a.image is not null   -- _peserta sudah upload
   AND c.ta = $ta  -- tahun ajar saat ini
   AND c.kelas != 'INSTRUKTUR'
-  AND d.id_room=$id_room -- di room ini
+  AND d.id_room=$id_room -- di $Room ini
   ";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $count = mysqli_num_rows($q);

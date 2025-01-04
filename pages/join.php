@@ -1,6 +1,6 @@
 <?php
 $img_home = img_icon('home');
-set_h2($join_title, "<a href='?'>$img_home</a> <a href='?login'>$img_login_as</a> ");
+set_h2($Join, "<a href='?'>$img_home</a> <a href='?login'>$img_login_as</a> ");
 $as = $_GET['as'] ?? '';
 $as = strtolower($as);
 
@@ -42,11 +42,11 @@ if (isset($_POST['btn_join'])) {
     $pesan_join = "<div class='alert alert-danger' data-aos='fade-left'>Nickname <b><u>$username</u></b> sudah diambil. Silahkan tambahkan nickname Anda dengan angka, nama tengah, atau nama belakang (tanpa spasi atau karakter khusus).</div>";
   } else { // input username sudah unik
 
-    // default status peserta baru = aktif
+    // default status $Peserta baru = aktif
     $status = 1;
-    $id_role = 1; // default as peserta
+    $id_role = 1; // default as $Peserta
     if ($as != 'peserta') {
-      $status = 0; // perlu verifikasi untuk instruktur, pro, mitra baru
+      $status = 0; // perlu verifikasi untuk $Trainer, pro, mitra baru
       if ($as == 'instruktur') {
         $id_role = 2;
       } elseif ($as == 'praktisi') {
@@ -58,7 +58,7 @@ if (isset($_POST['btn_join'])) {
       }
     }
 
-    // add peserta
+    // add $Peserta
     $s = "INSERT INTO tb_peserta 
       (username,nama,status,id_role) VALUES 
       ('$username','$nama','$status',$id_role) 
@@ -74,12 +74,12 @@ if (isset($_POST['btn_join'])) {
     $id_peserta = $d['id'];
     echo div_alert('info', 'Getting new id_peserta sukses...');
 
-    // assign kelas peserta
+    // assign kelas $Peserta
     $s = "INSERT INTO tb_kelas_peserta 
       (id_peserta,kelas) VALUES 
       ('$id_peserta','$select_kelas')";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-    echo div_alert('success', "Assign peserta baru ke kelas <u>$select_kelas</u> sukses...");
+    echo div_alert('success', "Assign $Peserta baru ke kelas <u>$select_kelas</u> sukses...");
 
 
 
@@ -122,18 +122,20 @@ if (isset($_POST['btn_join'])) {
 # ===========================================================
 if (!$as) {
   $arr_as = ['peserta', 'instruktur', 'praktisi', 'mitra'];
+  $arr_As = [$Peserta, $Trainer, $Praktisi, $Mitra];
   $arr_gradasi = ['hijau', 'hijau', 'biru', 'kuning'];
-  $arr_ket = [
-    'Saya ingin belajar dengan target di dunia nyata. Saya akan mengerjakan Challenges baik dari instruktur maupun dari mitra.',
-    'Koordinator mahasiswa, praktisi, dan mitra (industri). Saya mempertemukan para mahasiswa, pihak mitra, dan juga para professional.',
-    'Saya bersedia mentoring dengan senang hati. Saya akan membagikan pengalaman saya di dunia kerja bagi adik-adik mahasiswa.',
-    'Saya membutuhkan jasa dari mahasiswa. Dimulai dari yang simple saja!'
+  $arr_peran = [
+    'peserta' => "Saya ingin belajar dengan target di dunia nyata. Saya akan mengerjakan Challenges baik dari $Trainer maupun dari mitra.",
+    'instruktur' => 'Koordinator mahasiswa, praktisi, dan mitra (industri). Saya mempertemukan para mahasiswa, pihak mitra, dan juga para professional.',
+    'praktisi' => 'Saya bersedia mentoring dengan senang hati. Saya akan membagikan pengalaman saya di dunia kerja bagi adik-adik mahasiswa.',
+    'mitra' => 'Saya membutuhkan jasa dari mahasiswa. Dimulai dari yang simple saja!'
   ];
 
   $blok_joins = '';
   foreach ($arr_as as $key => $value) {
     $time_anim = ($key + 1) * 150;
-    $value_title = $institusi ? $custom[$value] : $value;
+    $value_title = $Institusi ? $arr_As[$key] : $value;
+    $peran = $custom_arr_peran[$arr_as[$key]] ?? $arr_peran[$arr_as[$key]];
     $blok_joins .= "
     <div class='col-lg-3' data-aos='fade-up' data-aos-delay='$time_anim'>
       <div class='wadah gradasi-$arr_gradasi[$key]'>
@@ -141,7 +143,7 @@ if (!$as) {
           <img src='assets/img/icon/$value.png' alt='as $value' class='foto-ilustrasi'>
         </div>
         <a href='?join&as=$value' class='btn btn-primary btn-block proper'>Sebagai $value_title</a>
-        <div class='tengah kecil abu mt1'>$arr_ket[$key]</div>
+        <div class='tengah kecil abu mt1'>$peran</div>
       </div>
     </div>
   ";
@@ -213,11 +215,10 @@ if (!$as) {
   }
 
   $hideit_btn_join = ($nama != '' and $username != '' and $select_kelas != '0') ? '' : 'hideit';
-  $as_title = $custom[$as] ?? 'Peserta';
 
   echo "
   <div class='section-title' data-aos='fade-up'>
-    <p><a href='?join'>Back</a> | Silahkan Anda $join_title sebagai <span class=proper>$as_title</span></p>
+    <p><a href='?join'>Back</a> | Silahkan Anda $Join sebagai $Peserta</p>
     <div class='mt3 mb4'>
       <img src='assets/img/icon/$as.png' alt='img-as-$as' class='foto-ilustrasi'>
     </div>
@@ -227,20 +228,20 @@ if (!$as) {
   ";
 
   $input_username = '';
-  if (!$file_config_institusi) {
+  if (!$path_custom) {
     $input_username = "
           <label for='username'>Username</label>
           <input type='text' required maxlength=20 minlength=3 class='form-control input_isian mt1' id='username' name='username'  value='$username'>
           <div class='f12 miring mt1'>Usahakan agar username adalah nama depan atau nama panggilan!</div>
     ";
-  } elseif ($file_config_institusi == 'custom') {
+  } elseif ($path_custom == 'custom') {
     $input_username = "
       <label for='username'>Username (NIM)</label>
       <input type='text' required maxlength=9 minlength=9 class='form-control input_isian mt1'  id='username' name='username'  value='$username'>
       <div class='f12 miring mt1'>NIM 9 digit angka</div>
     ";
   } else {
-    die("File config [ $file_config_institusi ] institusi tidak ditemukan");
+    die("File config [ $path_custom ] institusi tidak ditemukan");
   }
 
   echo "

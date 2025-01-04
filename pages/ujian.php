@@ -32,7 +32,7 @@ $id_paket = $_GET['id_paket'] ?? '';
 # =======================================================
 if ($id_paket == '') {
   if ($id_role == 2) {
-    // tampilan untuk instruktur, tampilkan seluruh paket soal untuk setiap kelas
+    // tampilan untuk $Trainer, tampilkan seluruh paket soal untuk setiap kelas
     $s = "SELECT a.*,
     b.awal_ujian,
     b.kelas,
@@ -91,9 +91,9 @@ if ($id_paket == '') {
       if ($d['kelas'] == 'INSTRUKTUR') {
         $btn = 'primary';
         if (!$jumlah_attemp) {
-          $info_paket = 'Instruktur belum mencoba trial.';
+          $info_paket = "$Trainer belum mencoba trial.";
         } else {
-          $info_paket = 'Sudah dicoba oleh instruktur.';
+          $info_paket = "Sudah dicoba oleh $Trainer.";
         }
       } elseif ($selisih_akhir < 0) {
         // sudah berakhir
@@ -162,13 +162,13 @@ if ($id_paket == '') {
     $datetime = date('d F, Y, H:i:s');
 
     $link_encoded = urlencode(get_current_url());
-    $text_wa = "Yth. $Bapak $trainer[nama], saya $user[nama] ingin meminta Paket Ujian untuk Room $room[nama] karena sebentar lagi akan memasuki sesi ujian. Terimakasih.%0a%0aLink:%0a$link_encoded%0a%0aFrom: DIPA Joiner System, $datetime";
+    $text_wa = "Yth. $Bapak $trainer[nama], saya $user[nama] ingin meminta Paket Ujian untuk $Room $room[nama] karena sebentar lagi akan memasuki sesi ujian. Terimakasih.%0a%0aLink:%0a$link_encoded%0a%0aFrom: DIPA Joiner System, $datetime";
     $link_wa = "https://api.whatsapp.com/send?phone=$trainer[no_wa]&text=$text_wa";
 
     $list_paket = div_alert('danger tengah', "
       Maaf, belum ada Paket Soal untuk kelas $kelas.
       <hr>
-      Mintalah ke $trainer_title kamu untuk membuatnya jika sebentar lagi memasuki sesi ujian.
+      Mintalah ke $Trainer kamu untuk membuatnya jika sebentar lagi memasuki sesi ujian.
       <a class='btn btn-success w-100 mt4' href='$link_wa' onclick='return confirm(`Minta Paket Soal via whatsapp?`)'>$img_wa Minta Paket Soal</a>
     ");
   } // end jika ada data paket 
@@ -180,7 +180,7 @@ if ($id_paket == '') {
   if ($id_role == 2) {
     $fitur_instruktur = "
       <div class='wadah gradasi-kuning'>
-        <div class=sub_form>Fitur Instruktur</div>
+        <div class=sub_form>Fitur $Trainer</div>
         <a class='btn btn-success' href='?manage_soal'>Manage Soal</a>
         <a class='btn btn-success' href='?manage_paket_soal'>Manage Paket Soal</a>
         <a class='btn btn-success' href='?insert_nilai_manual'>Insert Nilai Manual</a>

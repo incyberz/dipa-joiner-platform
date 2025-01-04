@@ -54,7 +54,7 @@ if (isset($_POST['btn_upload'])) {
     '$new_file',
     $get_point$link_value
     )";
-    $pesan_upload = div_alert('success', "Upload success. Tunggulah hingga instruktur melakukan verifikasi bukti $jenis kamu!");
+    $pesan_upload = div_alert('success', "Upload success. Tunggulah hingga $Trainer melakukan verifikasi bukti $jenis kamu!");
     // die("<pre>$s</pre>");
 
   } else {

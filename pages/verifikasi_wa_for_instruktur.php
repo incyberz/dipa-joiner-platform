@@ -12,11 +12,11 @@ if (isset($_POST['btn_approve'])) {
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
   $tanggal =  date('D, M d, Y, H:i:s');
-  $DIPAJoiner = $custom['DIPA Joiner'] ?? 'DIPA Joiner';
+  $DIPAJoiner = $Nama_LMS ?? 'DIPA Joiner';
   $link = urlencode("$_SERVER[REQUEST_SCHEME]://$_SERVER[SERVER_NAME]");
   $link_encoded = urlencode("$_SERVER[REQUEST_SCHEME]://$_SERVER[SERVER_NAME]/$_SERVER[SCRIPT_NAME]?login&username=$get_username");
 
-  $selamat = "*AKUN LMS VERIFIED*%0a%0aSelamat $d[nama]!%0a%0aAkun Anda telah kami verifikasi. Silahkan login ke LMS dan buatlah Room Baru untuk Anda mengajar. Terimakasi.%0a%0aLink:%0a$link_encoded %0a%0a[$DIPAJoiner Apps, $tanggal]";
+  $selamat = "*AKUN LMS VERIFIED*%0a%0aSelamat $d[nama]!%0a%0aAkun Anda telah kami verifikasi. Silahkan login ke LMS dan buatlah $Room Baru untuk Anda mengajar. Terimakasi.%0a%0aLink:%0a$link_encoded %0a%0a[$DIPAJoiner Apps, $tanggal]";
 
   $href_wa = "https://api.whatsapp.com/send?phone=$get_no_wa&text=$selamat";
 
@@ -30,7 +30,7 @@ if (isset($_POST['btn_approve'])) {
 
 
 if (!isset($id_role) || $id_role != 2) {
-  echo (div_alert('danger', 'Maaf, fitur ini hanya bisa diakses oleh Instruktur | <a target=_blank href="?login">Login</a>'));
+  echo (div_alert('danger', "Maaf, fitur ini hanya bisa diakses oleh $Trainer | <a target=_blank href="?login">Login</a>"));
 } else {
   if ($get_kelas == 'MITRA') {
     echo div_alert('danger', "Belum ada handler untuk kelas $get_kelas");

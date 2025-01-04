@@ -4,7 +4,7 @@
 # ============================================================
 if ($room['status'] == 100) {
 
-  if (!$id_sesi_aktif) $id_sesi_aktif = 0; // fixed when new room created
+  if (!$id_sesi_aktif) $id_sesi_aktif = 0; // fixed when new $Room created
   $s = "SELECT *,a.id as id_room_kelas_peserta ,
   (
     SELECT COUNT(1) 
@@ -17,7 +17,7 @@ if ($room['status'] == 100) {
   (
     SELECT COUNT(1) 
     FROM tb_presensi p 
-    JOIN tb_peserta q ON p.id_peserta=q.id -- hanya _peserta di room kelas TA sekarang 
+    JOIN tb_peserta q ON p.id_peserta=q.id -- hanya _peserta di $Room kelas TA sekarang 
     JOIN tb_kelas_peserta r ON q.id=r.id_peserta 
     JOIN tb_kelas s ON r.kelas=s.kelas 
     JOIN tb_room_kelas t ON s.kelas=t.kelas 
@@ -25,7 +25,7 @@ if ($room['status'] == 100) {
     WHERE p.id_sesi=$id_sesi_aktif -- di sesi aktif
     AND q.id_role = 1 -- hanya _peserta
     AND q.status = 1 -- hanya _peserta aktif 
-    AND t.id=a.id -- di room kelas ini saja
+    AND t.id=a.id -- di $Room kelas ini saja
     ) count_presenter
   FROM tb_room_kelas a 
   WHERE a.id_room=$id_room 
@@ -138,15 +138,15 @@ if ($room['status'] == 100) {
     WHERE id_room=$id_room 
     AND jenis = 1 -- sesi normal 
     AND awal_presensi <= '$now'
-    ) count_presensi_aktif, -- @Updated Room
+    ) count_presensi_aktif, -- @Updated $Room
   (
     SELECT COUNT(1) 
     FROM tb_sesi   
     WHERE id_room=$id_room 
     AND jenis = 1 -- sesi normal
-    ) count_presensi, -- @Updated Room
-  ( SELECT 1 FROM tb_sesi WHERE jenis=2 $and_sudah_ujian) sudah_uts, -- @Updated Room
-  ( SELECT 1 FROM tb_sesi WHERE jenis=3 $and_sudah_ujian) sudah_uas, -- @Updated Room
+    ) count_presensi, -- @Updated $Room
+  ( SELECT 1 FROM tb_sesi WHERE jenis=2 $and_sudah_ujian) sudah_uts, -- @Updated $Room
+  ( SELECT 1 FROM tb_sesi WHERE jenis=3 $and_sudah_ujian) sudah_uas, -- @Updated $Room
   ( 
     SELECT count(1) FROM tb_bertanya p 
     JOIN tb_room_kelas q ON p.id_room_kelas=q.id 

@@ -65,7 +65,7 @@ if (mysqli_num_rows($q)) {
       </tr>
     ";
 
-    // add to bestiers room | kelas
+    // add to bestiers $Room | kelas
     $image = $d['war_image'] ?? $d['image'];
     $bestiers .= "$d[id_peserta]|$d[nama_peserta]|$d[kelas]|$d[akumulasi_poin]|$image--";
 

@@ -273,7 +273,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   $bobot_total = create_input_array('bobot_total', $d['kelas'], '', 'disabled', '', 'input_bobot input-disabled', $arr_bobot['nilai_akhir'], '', 'required', 1);
 
   $link_assign = "<a href='?assign_peserta_kelas&kelas=$d[kelas]'>Assign Peserta Kelas</a>";
-  echo !$d['count_peserta'] ? div_alert('danger', "Belum ada $peserta_title pada Grup Kelas $d[kelas] | $link_assign") : "
+  echo !$d['count_peserta'] ? div_alert('danger', "Belum ada $Peserta pada Grup Kelas $d[kelas] | $link_assign") : "
     <h3 class='h3-kelas'>$d[kelas]</h3>
     <form method=post>
     <table class='table table-striped table-hover table-bordered'>
@@ -312,7 +312,7 @@ while ($d = mysqli_fetch_assoc($q)) {
       </thead>
       $tr
     </table>
-    <div class='abu miring f12 mb1'>$d[count_peserta] $peserta_title</div>
+    <div class='abu miring f12 mb1'>$d[count_peserta] $Peserta</div>
     <button class='btn btn-primary w-100 mb4 btn-simpan' name=btn_simpan>SIMPAN</button>
     </form>
   ";

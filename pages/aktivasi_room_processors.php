@@ -7,7 +7,7 @@ if ($aksi == 'reset_room_kelas') {
   echolog('dropping classes');
   $s = "DELETE FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR'";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  echolog('updating room status');
+  echolog("updating $Room status");
   $s = "UPDATE tb_room set status=5 WHERE id=$id_room";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   echo div_alert('success', 'Reset kelas sukses');
@@ -42,7 +42,7 @@ if (isset($_POST['btn_batalkan_aktivasi'])) {
 # BTN NEXT AKTIVASI
 # ============================================================
 if (isset($_POST['btn_aktivasi'])) {
-  echolog('Validation room data');
+  echolog("Validation $Room data");
 
 
 
@@ -210,7 +210,7 @@ if (isset($_POST['btn_aktivasi'])) {
       $s = "SELECT id as id_sesi FROM tb_sesi WHERE id_room=$id_room";
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       if (!mysqli_num_rows($q)) {
-        die(div_alert('danger', 'Belum ada data sesi pada room ini.'));
+        die(div_alert('danger', "Belum ada data sesi pada $Room ini."));
       } else {
         while ($d = mysqli_fetch_assoc($q)) {
           foreach ($arr as $kelas => $jadwal_kelas) {
@@ -233,7 +233,7 @@ if (isset($_POST['btn_aktivasi'])) {
               $q3 = mysqli_query($cn, $s3) or die(mysqli_error($cn));
             }
           } // end foreach jadwal_kelas
-        } // end while sesi in room
+        } // end while sesi in $room
       } // end if ada data sesi
 
       unset($_POST['jadwal_kelas']);
@@ -346,7 +346,7 @@ if (isset($_POST['btn_aktivasi'])) {
       } else {
         if (is_array($value)) {
           echolog("key: $key");
-          die(div_alert('danger', 'Tidak bisa menggunakan array dalam input aktivasi ke data Room.'));
+          die(div_alert('danger', "Tidak bisa menggunakan array dalam input aktivasi ke data $Room."));
         }
         $value = clean_sql($value);
         $pairs .= ",$key='$value'";

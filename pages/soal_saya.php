@@ -25,7 +25,7 @@ JOIN tb_sesi b ON a.id_sesi=b.id
 WHERE id_pembuat=$id_peserta AND b.id_room=$id_room";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $r = rand(1, 9);
-$div = div_alert('danger tengah', "<img class=meme src='assets/img/meme/dont-have-$r.jpg'><div class=mt2>Kamu belum punya Soal PG di room ini.</div> <hr> $link");
+$div = div_alert('danger tengah', "<img class=meme src='assets/img/meme/dont-have-$r.jpg'><div class=mt2>Kamu belum punya Soal PG di $Room ini.</div> <hr> $link");
 if (mysqli_num_rows($q)) {
   $div = '';
   $i = 0;

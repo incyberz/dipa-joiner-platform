@@ -43,7 +43,7 @@ if (mysqli_num_rows($q)) {
 
 
 if (!$start) {
-  $link_start = !$max_soal ? "<span class='btn btn-secondary btn-block' onclick='alert(\"Suruhlah kawanmu untuk membuat soal agar kamu dapat Play Kuis!\")'>Kawanmu belum membuat soal!</span><div class='tengah mt2 f14'><a href='?tanam_soal'>Saya saja yang bikin soal</a></div>" : "<a class='btn btn-primary btn-block' href='?perang_soal&mode=random&start=1'>Start $max_soal Quiz PG!</a>";
+  $link_start = !$max_soal ? "<span class='btn btn-secondary btn-block' onclick='alert(`Suruhlah kawanmu untuk membuat soal agar kamu dapat Play Kuis!`)'>Kawanmu belum membuat soal!</span><div class='tengah mt2 f14'><a href='?tanam_soal'>Saya saja yang bikin soal</a></div>" : "<a class='btn btn-primary btn-block' href='?perang_soal&mode=random&start=1'>Start $max_soal Quiz PG!</a>";
 
   echo "
   <div class='tebal tengah'>Rules!!</div>

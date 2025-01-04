@@ -45,7 +45,7 @@ AND jenis=1";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $count_sesi_aktif = 0;
 if (!mysqli_num_rows($q)) {
-  echo div_alert('danger', "Belum ada sesi pada room $singkatan_room.");
+  echo div_alert('danger', "Belum ada sesi pada $Room $singkatan_room.");
 } else {
   while ($d = mysqli_fetch_assoc($q)) {
     $rid_sesi[$d['no']] = $d['id_sesi'];
@@ -89,7 +89,8 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
 $tr = '';
 if (!mysqli_num_rows($q)) {
-  echo div_alert('danger', "Belum ada <a href='?peserta_kelas'>$peserta_title pada kelas ini</a>.");
+  if ($get_kelas)
+    echo div_alert('danger', "Belum ada <a href='?peserta_kelas'>$Peserta pada kelas [$get_kelas] ini</a>.");
 } else {
 
   $table_tag = "<table class='table mt4'>";

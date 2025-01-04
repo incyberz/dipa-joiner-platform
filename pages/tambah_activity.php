@@ -88,7 +88,7 @@ $csesi = mysqli_fetch_assoc($q);
 
 $s = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room -- AND ta=$ta";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-if (!mysqli_num_rows($q)) die(div_alert('danger', 'Belum ada Room Kelas.'));
+if (!mysqli_num_rows($q)) die(div_alert('danger', "Belum ada $Room Kelas."));
 
 $untuk_kelas = '';
 while ($d = mysqli_fetch_assoc($q)) {

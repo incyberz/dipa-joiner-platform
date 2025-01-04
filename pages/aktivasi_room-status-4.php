@@ -34,7 +34,7 @@ $pre_form = "
 # AKTIVASI JADWAL SESI
 # ============================================================
 if (!$room['awal_sesi']) {
-  die(div_alert('danger', "Data Room awal sesi belum ada."));
+  die(div_alert('danger', "Data $Room awal sesi belum ada."));
 } else {
   $inputs = '';
 
@@ -121,7 +121,7 @@ if (!$room['awal_sesi']) {
           }
         }
       } else {
-        echo (div_alert('danger', "Tidak ada sesi untuk pekan $nama_musim, tambahkan nanti pada Menu Manage Learning Path setelah Aktivasi Room slesai."));
+        echo (div_alert('danger', "Tidak ada sesi untuk pekan $nama_musim, tambahkan nanti pada Menu Manage Learning Path setelah Aktivasi $Room slesai."));
       }
     }
 
@@ -141,7 +141,7 @@ if (!$room['awal_sesi']) {
       </div>
     ";
 
-    // Closing Room
+    // Closing $Room
     $jam_sesi = date('H:i', strtotime($awal_sesi));
     $no_minggu_closed = $no_minggu + 2;
     $selisih = $jeda_sesi * ($no_minggu_closed - 1);
@@ -152,10 +152,10 @@ if (!$room['awal_sesi']) {
     $total_sesi = $room['minggu_normal_uts'] + $room['minggu_normal_uas'];
 
     $inputs .= "
-      )* default Close Room adalah dua $Minggu setelah UAS.
+      )* default Close $Room adalah dua $Minggu setelah UAS.
       <hr>
       <input class='bg-yellow' type='hidden' name=tanggal_close id=tanggal_close value='$tanggal_close' required />
-      <div class='mb1'>Tanggal Close Room:</div>
+      <div class='mb1'>Tanggal Close $Room:</div>
       <div class='flexy'>
         <div>
           <input class='form-control tanggal_close_trigger' type='date' id=tgl_tanggal_close value='$tgl_close' />
@@ -166,7 +166,7 @@ if (!$room['awal_sesi']) {
       </div>
       
       <div class='mt2'>
-        )* Sistem otomatis akan membuatkan sebanyak $no_minggu sesi untuk room ini.
+        )* Sistem otomatis akan membuatkan sebanyak $no_minggu sesi untuk $Room ini.
       </div>
       
       <div class='mt2'>
@@ -179,7 +179,7 @@ if (!$room['awal_sesi']) {
       <div class='mt2 mb4'>
         <label>
           <input type=checkbox required />
-          Saya menyatakan bahwa pada tanggal diatas peserta tidak dapat lagi Update Activity (belajar) pada room ini, dan hanya dapat melihat History Activity saja.
+          Saya menyatakan bahwa pada tanggal diatas $Peserta tidak dapat lagi Update Activity (belajar) pada $Room ini, dan hanya dapat melihat History Activity saja.
         </label>
       </div>
   

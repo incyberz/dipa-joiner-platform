@@ -17,25 +17,41 @@
 session_start();
 // session_destroy();
 
-$path_custom = 'custom';
-$file_custom = "$path_custom/custom.php";
-
-$file_config_institusi = 'custom'; // .php
+# ============================================================
+# DEFAULT GLOBAL VARIABLE 
+# ============================================================
 $is_custom = false;
-# ============================================================
-# INSTITUSI VARIABLE
-# ============================================================
-$institusi = null;
-$peserta_title = 'peserta';
-$trainer_title = 'instruktur';
-$join_title = 'join';
-$room_title = 'room';
+$meta_title = "DIPA Joiner Gamified LMS - Fun Learning Management System bagi Mitra, Praktisi, dan Akademisi";
+$meta_description = "Fun e-Learning Management System (LMS) berbasis Game Mechanics (Gamification) bagi Mitra (Dunia Industri), Praktisi, dan Akademisi. Dengan Rank System, Leaderboard, Play Quiz, dan Tanam Soal, menjadikan Pembelajaran seindah permainan.";
+$meta_keywords = "learning management system, fun lms, gamification, game mechanic, rank, leaderboard, quiz, bank soal, pembelajaran jarak jauh";
+
+$Institusi = 'Firdaus Consultant';
+$Nama_LMS = 'DIPA Joiner System';
+$Room = 'Room';
+$Trainer = 'Trainer';
+$Peserta = 'Peserta';
+$Praktisi = 'Praktisi';
+$Mitra = 'Mitra';
+$Join = 'Join';
+$Slogan = 'Memadukan Dunia Industri, Praktisi, dan Akademisi dalam kebaikan';
+$Leaderboard = 'Leaderboard';
+
 $ops = [
   'nama' => 'Iin Sholihin',
   'username' => 'abi',
   'whatsapp' => '6287729007318',
   'email' => 'isholihin87@gmail.com',
 ];
+
+
+
+# ============================================================
+# DEFAULT VS CUSTOM GLOBAL VARIABLE 
+# ============================================================
+$path_custom = 'custom';
+$file_custom = "$path_custom/custom.php";
+if (file_exists($file_custom)) include $file_custom;
+
 
 
 # ============================================================
@@ -71,20 +87,8 @@ $src_profil_na_fixed = 'assets/img/img_na.jpg';
 
 $is_login_as = isset($_SESSION['dipa_master_username']) ? 1 : 0;
 
-# ============================================================
-# META
-# ============================================================
-$meta_title = "DIPA Joiner Gamified LMS - Fun Learning Management System bagi Mitra, Praktisi, dan Akademisi";
-$meta_description = "Fun e-Learning Management System (LMS) berbasis Game Mechanics (Gamification) bagi Mitra (Dunia Industri), Praktisi, dan Akademisi. Dengan Rank System, Leaderboard, Play Quiz, dan Tanam Soal, menjadikan Pembelajaran seindah permainan.";
-$meta_keywords = "learning management system, fun lms, gamification, game mechanic, rank, leaderboard, quiz, bank soal, pembelajaran jarak jauh";
 
-# ============================================================
-# APPLY CUSTOM
-# ============================================================
-if (file_exists($file_custom)) {
-  include $file_custom;
-  $is_custom = true;
-}
+
 
 # ============================================================
 # DATABASE CONNECTION
@@ -219,7 +223,7 @@ if ($username) {
 
   if (!$is_login || $id_room) include 'pages/header.php';
   if (!$is_login and $parameter == '') {
-    include $institusi ? "$path_custom/custom-hero.php" : 'pages/hero.php';
+    include $is_custom ? "$path_custom/custom-hero.php" : 'pages/hero.php';
   }
   ?>
   <main id="main">

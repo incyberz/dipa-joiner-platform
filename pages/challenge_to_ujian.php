@@ -196,7 +196,7 @@ echo "
       <tr class='gradasi-toska'>
         <td>
           <div>$get_kelas</div>
-          <span id=total_peserta__$get_kelas>$count_peserta</span> peserta
+          <span id=total_peserta__$get_kelas>$count_peserta</span> $Peserta
         </td>
         <td>
           <div class='f12 mb1'>Batas Nilai Terendah</div>

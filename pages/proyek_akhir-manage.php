@@ -76,11 +76,11 @@ if (!mysqli_num_rows($q)) {
           <div class='col-sm-3 py-2'>
             <div class='d-flex gap-2'>
               <div class='bold d-sm-none'>Poin:</div>
-              <div class=input_editable id=poin_min__$d[id]>$d[poin_min]</div>
+              <div class=input_editable id=min_poin__$d[id]>$d[min_poin]</div>
               <div>
                 s.d
               </div>
-              <div  class=input_editable id=poin_max__$d[id]>$d[poin_max]</div>
+              <div  class=input_editable id=max_poin__$d[id]>$d[max_poin]</div>
             </div>
           </div>
           <div class='col-sm-1 py-2'>

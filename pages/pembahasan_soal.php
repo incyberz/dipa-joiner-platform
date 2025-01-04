@@ -86,7 +86,7 @@
           if ($profil_ok == -1 and false) {
             echo div_alert('danger', 'Wah maaf! Silahkan ganti profil dulu dengan yang baik. | <a href="?verifikasi_profil_peserta">Status Profile</a>');
           } elseif ($profil_ok == '' || $profil_ok == 0 and false) {
-            echo div_alert('danger', 'Sepertinya profil kamu belum diverifikasi oleh instruktur. Sabar ya! Atau silahkan japri ke beliau via Whatsapp.');
+            echo div_alert('danger', "Sepertinya profil kamu belum diverifikasi oleh $Trainer. Sabar ya! Atau silahkan japri ke beliau via Whatsapp.");
           } else {
             # =================================================
             # READY TO PEMBAHASAN

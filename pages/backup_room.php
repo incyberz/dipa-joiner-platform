@@ -1,6 +1,5 @@
 <?php
-set_h2('Backup Room');
-// $target_id_room = $_GET['id_room'] ?? die('Target Room unspecified.');
+set_h2("Backup $Room");
 $target_id_room = $_GET['id_room'] ?? $id_room;
 
 $arr = [

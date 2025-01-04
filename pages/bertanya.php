@@ -35,7 +35,7 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $sedang_bertanya = mysqli_num_rows($q);
 if ($sedang_bertanya) {
   $info_sesi = '';
-  $form = div_alert('info', "Maaf, pertanyaan kamu belum dijawab atau belum diverifikasi oleh instruktur. Mohon bersabar hingga pertanyaan kamu dibahas!<hr><a class='btn btn-sm btn-primary' href='?questions'>List Bertanya</a>");
+  $form = div_alert('info', "Maaf, pertanyaan kamu belum dijawab atau belum diverifikasi oleh $Trainer. Mohon bersabar hingga pertanyaan kamu dibahas!<hr><a class='btn btn-sm btn-primary' href='?questions'>List Bertanya</a>");
 } else {
   $id_sesi = $_GET['id_sesi'] ?? '';
   $info_sesi = '';
@@ -48,11 +48,11 @@ if ($sedang_bertanya) {
       $i++;
       $r = explode(';', $d['tags']);
       sort($r);
-      $imp = $d['tags'] == '' ? '<span class=red>belum bisa mengajukan pertanyaan karena belum ada tags sesi.</span>' : implode(', ', $r);
+      $imp = $d['tags'] == '' ? "<span class=red>belum ada tags </span>" : implode(', ', $r);
       $tags_show = "<div class='kecil miring abu'>$imp</div>";
       $danger = $d['tags'] == '' ? 'danger' : 'success';
       $href = $d['tags'] == ''
-        ? "'#' onclick='alert(\"Maaf, belum bisa mengajukan pertanyaan pada sesi ini karena instuktur belum setting tags untuk sesi ini.\")'"
+        ? "'#' onclick='alert(`Maaf, belum bisa bertanya karena $Trainer belum setting tags untuk sesi ini.`)'"
         : "'?bertanya&id_sesi=$d[id]'";
       $pilih_sesi .= "<div class=wadah><a class='btn btn-$danger btn-sm mb1' href=$href>P$i $d[nama]</a>$tags_show</div>";
     }

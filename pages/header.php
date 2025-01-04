@@ -51,7 +51,7 @@ $header_logo = $is_custom ? "$path_custom/custom-logo.png" : 'assets/img/dipa-lo
         if ($id_role != 4) {
           echo "
             <li><a class='nav-link scrollto active' href='?'>Home</a></li>
-            <li><a class='nav-link scrollto' href='?leaderboard'>Leaderboard</a></li>
+            <li><a class='nav-link scrollto' href='?leaderboard'>$Leaderboard</a></li>
           ";
         }
 
@@ -76,12 +76,12 @@ $header_logo = $is_custom ? "$path_custom/custom-logo.png" : 'assets/img/dipa-lo
             ";
 
             $li_manage_room = "
-              <li class='gradasi-merah'><a href='?manage_room'>Manage Room</a></li>
-              <li class='gradasi-merah'><a href='?assign_room_kelas'>Assign Room Kelas</a></li>
+              <li class='gradasi-merah'><a href='?manage_room'>Manage $Room</a></li>
+              <li class='gradasi-merah'><a href='?assign_room_kelas'>Assign $Room Kelas</a></li>
             ";
           }
 
-          $Peserta_Kelas = $id_role == 1 ? 'Teman Sekelas' : 'Peserta Room ini';
+          $Peserta_Kelas = $id_role == 1 ? 'Teman Sekelas' : "Peserta $Room ini";
 
 
           if ($id_role == 1 || $id_role == 2) {
@@ -114,7 +114,7 @@ $header_logo = $is_custom ? "$path_custom/custom-logo.png" : 'assets/img/dipa-lo
                   <li class=''><a href='?questions'>List Bertanya</a></li>
                   <li class=''><a href='?ujian'>Ujian Mid/Akhir</a></li>
                   <li class=''><a href='?nilai_akhir'>Nilai Akhir</a></li>
-                  <li><a href='?pilih_room'>Ganti Room</a></li>
+                  <li><a href='?pilih_room'>Ganti $Room</a></li>
                   $li_manage_room
                 </ul>
               </li>
@@ -133,7 +133,7 @@ $header_logo = $is_custom ? "$path_custom/custom-logo.png" : 'assets/img/dipa-lo
                   <li class='hideit'><a href='?my_testimony'>My Testimony</a></li>
                   <li class=hideit><a href='?my_biodata'>My Biodata</a></li>
                   <li><a href='?ubah_password'>Ubah Password</a></li>
-                  <li><a href='?logout' onclick='return confirm(\"Yakin untuk Logout?\")' class=red>Logout</a></li>
+                  <li><a href='?logout' onclick='return confirm(`Yakin untuk Logout?`)' class=red>Logout</a></li>
                 </ul>
               </li>
               <li class='darkred f10 tengah' style='margin-left:10px'>$singkatan_room$at_kelas</li>

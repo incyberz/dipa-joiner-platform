@@ -53,12 +53,12 @@ echo "
         <td>$room[ta]</td>
       </tr>
       <tr>
-        <td>Aktifkan Room untuk TA</td>
+        <td>Aktifkan $Room untuk TA</td>
         <td>
           $radios
         </td>
       </tr>
     </table>
-    <button class='btn btn-primary w-100' name=btn_reactivate_room>Reactivate Room</button>
+    <button class='btn btn-primary w-100' name=btn_reactivate_room>Reactivate $Room</button>
   </form>
 ";

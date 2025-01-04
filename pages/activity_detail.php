@@ -262,16 +262,16 @@ if ($id_bukti) {
 
       if ($trainer['no_wa']) {
         $link_akses = urlencode(get_current_url());
-        $text_wa = "Yth. Instruktur ($trainer[nama]),%0a%0aPak/Bu $jenis nya belum disetting. Segera ya Pak/Bu, mau saya kerjakan :) %0a%0aLink akses:%0a$link_akses";
+        $text_wa = "Yth. $Trainer ($trainer[nama]),%0a%0aPak/Bu $jenis nya belum disetting. Segera ya Pak/Bu, mau saya kerjakan :) %0a%0aLink akses:%0a$link_akses";
         $href = "https://api.whatsapp.com/?send&phone=$trainer[no_wa]&text=$text_wa";
         $img_wa = img_icon('wa');
-        $link_wa = "<a href='$href' target=_blank>Hubungi Instruktur $img_wa</a>";
+        $link_wa = "<a href='$href' target=_blank>Hubungi $Trainer $img_wa</a>";
       } else {
-        $link_wa = div_alert('danger', "Instruktur belum mempunyai nomor whatsapp, silahkan hubungi via manual.");
+        $link_wa = div_alert('danger', "$Trainer belum mempunyai nomor whatsapp, silahkan hubungi via manual.");
       }
 
       $form_bukti = div_alert('danger tengah mt2', "
-        Belum bisa upload bukti latihan. Instruktur belum mengisi keterangan untuk latihan ini. 
+        Belum bisa upload bukti latihan. $Trainer belum mengisi keterangan untuk latihan ini. 
         Silahkan hubungi beliau! <hr>
         $link_wa 
       ");
@@ -286,7 +286,7 @@ if ($id_bukti) {
         include 'activity_sublevel_show.php';
       }
     } else {
-      $form_bukti = div_alert('danger', "Maaf, challenge ini belum mempunyai Sub-Level. Segera hubungi instruktur!");
+      $form_bukti = div_alert('danger', "Maaf, challenge ini belum mempunyai Sub-Level. Segera hubungi $Trainer!");
       $hasil_submit = '';
     }
 
@@ -395,12 +395,12 @@ if (!$d_assign['ket']) {
       </tr>
       <tr>
         <td class='tebal abu'>Closing $Jenis</td>
-        <td class='tebal darkred'>hingga UTS/UAS (atau sesuai info dari instruktur)</td>
+        <td class='tebal darkred'>hingga UTS/UAS (atau sesuai info dari $Trainer)</td>
       </tr>
     </table>
   
     <div class='wadah darkblue tengah f12 bg-white'>
-      Dikerjakan oleh $count_submiter of $total_peserta $peserta_title ($persen_peserta%)
+      Dikerjakan oleh $count_submiter of $total_peserta $Peserta ($persen_peserta%)
       <div class='progress mt1'>
         <div class='progress-bar' style='width:$persen_peserta%'>
         </div>
@@ -458,7 +458,7 @@ echo "
 # ADMIN ONLY
 # =========================================================
 if ($id_role == 2) {
-  echo '<hr class="mt4 mb4"><h3 class="tebal darkred tengah mb4">Fitur Khusus Instruktur</h3>';
+  echo "<hr class='mt4 mb4'><h3 class='tebal darkred tengah mb4'>Fitur Khusus $Trainer</h3>";
   if (!$ket_kosong) {
     include 'includes/form_target_kelas.php';
     if ($target_kelas) {

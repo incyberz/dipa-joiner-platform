@@ -344,11 +344,11 @@ while ($d = mysqli_fetch_assoc($q)) {
             "<button class='btn btn-$primary btn-sm btn-block' disabled><span class=f12>$saya_hadir</span></button>";
         } else { // syarat kurang
           $btn_presensi = "
-            <button class='btn btn-secondary btn-sm btn-block' onclick='alert(\"Maaf, kamu belum memenuhi syarat presensi, periksalah yang bertanda merah.\")'><span class=f12>Set Saya Hadir</span></button>
+            <button class='btn btn-secondary btn-sm btn-block' onclick='alert(`Maaf, kamu belum memenuhi syarat presensi, periksalah yang bertanda merah.`)'><span class=f12>Set Saya Hadir</span></button>
           ";
         }
       } else {
-        $btn_presensi = '<span class=red>Batasan Presensi Unset.</span> <div class="kecil darkblue mt1">Segera lapor ke instruktur!</div>';
+        $btn_presensi = "<span class=red>Batasan Presensi Unset.</span> <div class='kecil darkblue mt1'>Segera lapor ke $Trainer!</div>";
       }
 
 
@@ -396,7 +396,7 @@ while ($d = mysqli_fetch_assoc($q)) {
       $form_durasi_presensi = "
         <div class='hideit wadah gradasi-kuning' id=form_durasi_presensi$id_sesi>
           <form method=post>
-            <div class='mb2 darkblue'>)* Durasi Presensi berlaku untuk seluruh kelas pada room ini</div>
+            <div class='mb2 darkblue'>)* Durasi Presensi berlaku untuk seluruh kelas pada $Room ini</div>
             Pembukaan
             <input required class='form-control form-control-sm mb2' name=awal_presensi value='$awal_presensi' placeholder='Format YYYY-MM-DD HH:MM'>
             Penutupan

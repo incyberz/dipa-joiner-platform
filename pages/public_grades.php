@@ -17,7 +17,7 @@ AND a.status = 1 -- _peserta aktif
 ORDER BY d.akumulasi_poin DESC LIMIT 10";
 
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$tb = div_alert('danger', "Belum ada data $peserta_title.");
+$tb = div_alert('danger', "Belum ada data $Peserta.");
 if (mysqli_num_rows($q)) {
   $tr = '';
   $i = 0;

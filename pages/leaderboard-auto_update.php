@@ -44,7 +44,7 @@ $arr_s['play_quiz'] = "SELECT
   FROM tb_war p 
   JOIN tb_room q ON p.id_room=q.id 
   WHERE p.id_penjawab=a.id
-  AND q.status = 100 -- Active Room 
+  AND q.status = 100 -- Active $Room 
   AND q.ta=$ta 
 ";
 
@@ -58,7 +58,7 @@ $arr_s['ontimer'] = "SELECT
   JOIN tb_room r ON q.id_room=r.id 
   WHERE p.id_peserta=a.id 
   AND p.is_ontime = 1 
-  AND r.status = 100 -- Active Room 
+  AND r.status = 100 -- Active $Room 
   AND r.ta=$ta 
 ";
 
@@ -78,7 +78,7 @@ $arr_s['accuracy'] = "SELECT
   FROM tb_war p 
   JOIN tb_room q ON p.id_room=q.id 
   WHERE p.id_penjawab=a.id
-  AND q.status = 100 -- Active Room 
+  AND q.status = 100 -- Active $Room 
   AND q.ta=$ta 
   LIMIT 1
 ";
@@ -98,7 +98,7 @@ $arr_s['accuracy'] = "SELECT
 //   FROM tb_war p 
 //   JOIN tb_room q ON p.id_room=q.id 
 //   WHERE p.id_penjawab=a.id
-//   AND q.status = 100 -- Active Room 
+//   AND q.status = 100 -- Active $Room 
 //   AND q.ta=$ta 
 //   LIMIT 1
 // ";

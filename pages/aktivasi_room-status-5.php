@@ -10,7 +10,7 @@ WHERE a.id_room=$id_room
 ORDER BY a.no";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) {
-  die(div_alert('danger', "Room ini belum memiliki sesi. Hubungi Developer jika ada kesalahan."));
+  die(div_alert('danger', "$Room ini belum memiliki sesi. Hubungi Developer jika ada kesalahan."));
 } else {
   $tr = '';
   $no_sesi_normal = 0;
@@ -32,7 +32,7 @@ if (!mysqli_num_rows($q)) {
     ";
   }
   $inputs = "
-    <h3>Nama-nama Sesi untuk Room $nama_room</h3>
+    <h3>Nama-nama Sesi untuk $Room $nama_room</h3>
     <p class='biru tebal'>Disarankan Anda mengisi nama-nama sesi berikut atau Anda boleh membiarkannya secara default.</p>
     <table class=table>
       <thead>

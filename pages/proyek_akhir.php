@@ -167,7 +167,7 @@ if ($aksi == 'lihat_bukti') {
           }
           $blok_proyek = $input_progres ? "$input_nama_proyek$input_progres" : $input_nama_proyek;
         } else {
-          $blok_proyek = div_alert('danger', "Tidak ada [ Indikator Proyek ] yang diminta dari $trainer_title. Silahkan hubungi beliau untuk kejelasannya!");
+          $blok_proyek = div_alert('danger', "Tidak ada [ Indikator Proyek ] yang diminta dari $Trainer. Silahkan hubungi beliau untuk kejelasannya!");
         }
       } else {
         # ============================================================
@@ -215,7 +215,7 @@ if ($aksi == 'lihat_bukti') {
       $tr
     ";
   } else {
-    echo div_alert('info', "Belum ada Proyek Akhir.<hr>Tidak ada satu pun indikator pada room ini atau $custom[trainer] belum merencanakannya.");
+    echo div_alert('info', "<span class=red>Belum ada Proyek Akhir.</span><hr>Tidak ada satu pun indikator pada $Room ini atau Trainer belum merencanakannya.");
   }
 
 ?>

@@ -21,7 +21,7 @@
 <?php
 login_only();
 $u = $_GET['u'] ?? 'uts';
-$fitur_dosen = $id_role == 1 ? '' : "<div class='wadah mt2 gradasi-merah'>Fitur Instruktur: <a href='?polling_hasil&u=$u'>Hasil Polling</a></div>";
+$fitur_dosen = $id_role == 1 ? '' : "<div class='wadah mt2 gradasi-merah'>Fitur $Trainer: <a href='?polling_hasil&u=$u'>Hasil Polling</a></div>";
 
 $judul = "Polling $u";
 set_title($judul);
@@ -225,7 +225,7 @@ foreach ($rpolling as $no => $rtanya) {
 <script>
   $(function() {
 
-    // auto rename instruktur dengan nama instruktur
+    // auto rename $Trainer dengan nama $Trainer
     $('.nama_instruktur').text('Bapak ' + $('#nama_instruktur').text());
     $('.nama_instruktur').addClass('darkblue');
 

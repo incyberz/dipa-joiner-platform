@@ -6,11 +6,11 @@ if (0) {
     // bentrok dg login as
     // die('Salah routing ke belum_punya_profil');
   } elseif ($profil_ok == -1) {
-    $ket = "Wah ternyata profil kamu direject oleh instruktur! <a href='?upload_profil'>Silahkan Reupload</a> sesuai dg petunjuk ya!";
+    $ket = "Wah ternyata profil kamu direject oleh $Trainer! <a href='?upload_profil'>Silahkan Reupload</a> sesuai dg petunjuk ya!";
   } else { // belum upload atau belum diverifikasi
     if ($punya_profil) {
       $ket = '';
-      echo div_alert('info', 'Profil status :: Sedang menunggu verifikasi profil dari instruktur');
+      echo div_alert('info', "Profil status :: Sedang menunggu verifikasi profil dari $Trainer");
       if ($id_role == 2) {
         // auto-self verification
         $s = "UPDATE tb_peserta SET profil_ok=1 WHERE id=$id_peserta";
