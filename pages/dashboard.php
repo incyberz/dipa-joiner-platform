@@ -24,7 +24,7 @@ $welcome = "
         $Room <span class='tebal darkblue'>$nama_room</span>
       </li> 
     </ul> 
-    <div class='tengah border-top blue f14 miring pt1'>
+    <div class='tengah border-top blue f14 miring pt1 d-md-none'>
       Silahkan klik Menu di pojok-kanan-atas untuk menuju ke halaman lain.
     </div> 
 

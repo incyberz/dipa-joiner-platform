@@ -1,7 +1,7 @@
 <?php
 if (!$room_count['count_bukti_latihan']) {
   $ui_check = "
-    <div class='f12 abu mb1'>Belum ada satupun Peserta yang mengumpulkan bukti latihan</div>
+    <div class='f12 abu mb1'>Belum ada bukti latihan baru</div>
     <div>$img_warning</div>
   ";
   $notif_type = 'warning';

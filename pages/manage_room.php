@@ -67,6 +67,7 @@ if (mysqli_num_rows($q)) {
 
 
       $kolom = key2kolom($key);
+
       $tr .= "
         <tr>
           <td>$kolom</td>
@@ -87,8 +88,9 @@ echo "
     $tb
     <button class='btn btn-primary' name=btn_save_room>Save $Room</button>
   </form>
-
 ";
+
+
 
 echo "
   <hr>

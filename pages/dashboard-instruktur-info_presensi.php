@@ -1,8 +1,7 @@
 <?php
-if (!$room_count['count_presensi_aktif'] > 1) {
-  $info_presensi = div_alert('danger', 'Belum ada kalkulasi [INFO-presensi] untuk P2');
-} else {
+if ($room_count['count_presensi_aktif'] > 1) {
   $no_sesi = $room_count['count_presensi_aktif'];
+
 
   $tmp = explode(';', $room_count['arr_count_peserta_kelas']);
   $progres = '';
@@ -13,8 +12,10 @@ if (!$room_count['count_presensi_aktif'] > 1) {
       $jumlah_presenter = $tmp2[1];
       $jumlah_peserta_kelas = $tmp2[2];
 
-      $jumlah_presenter = $jumlah_peserta_kelas;
-      if ($jumlah_presenter == $jumlah_peserta_kelas) {
+      if (!$jumlah_presenter) {
+        $persen = 0;
+        $info_persen = "<span class=red>belum ada yang presensi</span> <i style='display:inline-block;margin: 0 0 5px 25px'>$img_warning</i>";
+      } elseif ($jumlah_presenter == $jumlah_peserta_kelas) {
         $persen = 100;
         $info_persen = "$jumlah_presenter $Peserta (100%) <i style='display:inline-block;margin: 0 0 5px 25px'>$img_check</i>";
       } else {

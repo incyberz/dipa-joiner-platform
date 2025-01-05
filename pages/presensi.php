@@ -16,6 +16,11 @@
 login_only();
 set_title("Presensi $target_kelas");
 
+if (!$target_kelas) {
+  include 'target_kelas.php';
+  exit;
+}
+
 include 'presensi_processor.php';
 
 
@@ -33,7 +38,11 @@ AND d.id_room = $id_room
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $total_peserta_presensi = mysqli_num_rows($q); // sesuai target kelas
 $info_target_kelas = $target_kelas ? "<div>Target Kelas: $target_kelas</div>" : '';
-$rekap = $id_role == 1 ? '<p class=f14>Presenting your work! Not only a signature.</p>' : "Admin only: <a href='?presensi_rekap'>Rekap Presensi</a>$info_target_kelas";
+if ($id_role == 1) {
+  $rekap = '<p class=f14>Presenting your work! Not only a signature.</p>';
+} elseif ($id_role == 2) {
+  $rekap = "Admin only: <a href='?presensi_rekap'>Rekap Presensi</a>$info_target_kelas";
+}
 echo "
   <div class='section-title' data-aos-zzz='fade-up'>
     <h2>Presensi</h2>
@@ -367,50 +376,58 @@ while ($d = mysqli_fetch_assoc($q)) {
 
 
     if ($id_role == 2) {
-      $id_sesi_kelas = $id_sesi . "__$target_kelas_presensi";
-      $img_edit = img_icon('edit');
+      if ($target_kelas_presensi == 'INSTRUKTUR') {
+        $form_jadwal_kelas = "target_kelas_presensi=='INSTRUKTUR'";
+        $form_durasi_presensi_toggle = "target_kelas_presensi=='INSTRUKTUR'";
+        $form_durasi_presensi = "target_kelas_presensi=='INSTRUKTUR'";
+        $form_jadwal_kelas_toggle = '';
+      } else {
 
-      $form_jadwal_kelas_toggle = "<span class='btn_aksi' id=form_jadwal_kelas$id_sesi" . "__toggle>$img_edit</span>";
-      $tanggal_sesi = $jadwal_kelas ? date('Y-m-d', strtotime($jadwal_kelas)) : '';
-      $jam_sesi = $jadwal_kelas ? date('H:i', strtotime($jadwal_kelas)) : '';
-      $form_jadwal_kelas = "
-        <div class='hideit wadah gradasi-kuning mt2' id=form_jadwal_kelas$id_sesi>
-          <h3 class=f14>Jadwal untuk Kelas <b class=blue>$target_kelas_presensi</b></h3>
-          <form method=post>
-            Tanggal sesi
-            <input type=date required class='form-control form-control-sm mb2' name=tanggal_sesi value='$tanggal_sesi'>
-            Jam sesi
-            <input type=time required class='form-control form-control-sm mb2' name=jam_sesi value='$jam_sesi'>
-            <div class=mb2>
-              <label>
-                <input type=checkbox checked name=update_next_week> 
-                Update pula Jadwal Kelas berikutnya
-              </label>
-            </div>
-            <button class='btn btn-primary btn-sm' name=btn_update_jadwal_kelas value=$id_sesi_kelas>Update Jadwal Kelas</button>
-          </form>
-        </div>
-      ";
+        $id_sesi_kelas = $id_sesi . "__$target_kelas_presensi";
+        $img_edit = img_icon('edit');
 
-      $form_durasi_presensi_toggle = "<span class='btn_aksi' id=form_durasi_presensi$id_sesi" . "__toggle>$img_edit</span>";
-      $form_durasi_presensi = "
-        <div class='hideit wadah gradasi-kuning' id=form_durasi_presensi$id_sesi>
-          <form method=post>
-            <div class='mb2 darkblue'>)* Durasi Presensi berlaku untuk seluruh kelas pada $Room ini</div>
-            Pembukaan
-            <input required class='form-control form-control-sm mb2' name=awal_presensi value='$awal_presensi' placeholder='Format YYYY-MM-DD HH:MM'>
-            Penutupan
-            <input required class='form-control form-control-sm mb2' name=akhir_presensi value='$akhir_presensi' placeholder='Format YYYY-MM-DD HH:MM'>
-            <div class=mb2>
-              <label>
-                <input type=checkbox checked name=update_next_week> 
-                Update pula untuk sesi minggu berikutnya (sesuai dg jadwal sesi ini)
-              </label>
-            </div>
-            <button class='btn btn-primary btn-sm' name=btn_update_durasi_presensi value=$id_sesi>Update Durasi Presensi :: id-$id_sesi</button>
-          </form>
-        </div>
-      ";
+        $form_jadwal_kelas_toggle = "<span class='btn_aksi' id=form_jadwal_kelas$id_sesi" . "__toggle>$img_edit</span>";
+        $tanggal_sesi = $jadwal_kelas ? date('Y-m-d', strtotime($jadwal_kelas)) : '';
+        $jam_sesi = $jadwal_kelas ? date('H:i', strtotime($jadwal_kelas)) : '';
+        $form_jadwal_kelas = "
+          <div class='hideit wadah gradasi-kuning mt2' id=form_jadwal_kelas$id_sesi>
+            <h3 class=f14>Jadwal untuk Kelas <b class=blue>$target_kelas_presensi</b></h3>
+            <form method=post>
+              Tanggal sesi
+              <input type=date required class='form-control form-control-sm mb2' name=tanggal_sesi value='$tanggal_sesi'>
+              Jam sesi
+              <input type=time required class='form-control form-control-sm mb2' name=jam_sesi value='$jam_sesi'>
+              <div class=mb2>
+                <label>
+                  <input type=checkbox checked name=update_next_week> 
+                  Update pula Jadwal Kelas berikutnya
+                </label>
+              </div>
+              <button class='btn btn-primary btn-sm' name=btn_update_jadwal_kelas value=$id_sesi_kelas>Update Jadwal Kelas</button>
+            </form>
+          </div>
+        ";
+
+        $form_durasi_presensi_toggle = "<span class='btn_aksi' id=form_durasi_presensi$id_sesi" . "__toggle>$img_edit</span>";
+        $form_durasi_presensi = "
+          <div class='hideit wadah gradasi-kuning' id=form_durasi_presensi$id_sesi>
+            <form method=post>
+              <div class='mb2 darkblue'>)* Durasi Presensi berlaku untuk seluruh kelas pada $Room ini</div>
+              Pembukaan
+              <input required class='form-control form-control-sm mb2' name=awal_presensi value='$awal_presensi' placeholder='Format YYYY-MM-DD HH:MM'>
+              Penutupan
+              <input required class='form-control form-control-sm mb2' name=akhir_presensi value='$akhir_presensi' placeholder='Format YYYY-MM-DD HH:MM'>
+              <div class=mb2>
+                <label>
+                  <input type=checkbox checked name=update_next_week> 
+                  Update pula untuk sesi minggu berikutnya (sesuai dg jadwal sesi ini)
+                </label>
+              </div>
+              <button class='btn btn-primary btn-sm' name=btn_update_durasi_presensi value=$id_sesi>Update Durasi Presensi :: id-$id_sesi</button>
+            </form>
+          </div>
+        ";
+      }
     } else {
       $form_jadwal_kelas = '';
       $form_durasi_presensi = '';

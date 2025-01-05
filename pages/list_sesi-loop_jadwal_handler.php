@@ -25,8 +25,24 @@ if ($id_role == 1) {
     $sesi['jadwal_kelas'] ? '' : '<span class="f12 miring abu">belum dilaksanakan</span>';
   }
 } elseif ($id_role == 2) {
-  $status_pelaksanaan = "<i class='abu f10'>Jadwal mengajar $Trainer in development</i>"; // ZZZ sesuai dengan list Room Kelas
-  $jadwal_kelas_show = '';
+
+  $s2 = "SELECT * FROM tb_room_kelas a 
+  JOIN tb_sesi_kelas b ON a.kelas=b.kelas
+  WHERE a.ta=$ta AND a.id_room=$id_room AND a.kelas !='INSTRUKTUR' 
+  AND id_sesi = $id_sesi";
+  $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+  $li = '';
+  while ($d2 = mysqli_fetch_assoc($q2)) {
+    $eta = eta2($d2['jadwal_kelas']);
+    $hari = hari_tanggal($d2['jadwal_kelas']);
+    $li .= "
+      <li>
+        <b>$d2[kelas]: </b> $hari $eta
+      </li>
+    ";
+  }
+  $jadwal_kelas_show = "<ul class='p0 m0 pl2'>$li</ul>";
+  $status_pelaksanaan = '';
 }
 
 $closing = eta2($sesi['akhir_presensi']);
@@ -36,6 +52,7 @@ if ($id_role == 1) {
 
 } elseif ($id_role == 2) {
   $presensi_saya = "<i>Presensi $Trainer in development</i>"; // ZZZ belum dihitung
+
 
 }
 

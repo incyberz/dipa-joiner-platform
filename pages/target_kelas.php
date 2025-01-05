@@ -1,9 +1,9 @@
-<div class="section-title" data-aos="fade">
+<div class="section-title">
   <h2 class=proper>Set Target Kelas</h2>
   <p>Jika Anda sedang masuk ke kelas tertentu, Anda dapat <u>Set Target Kelas</u> agar default Rekap Presensi, Grades, dan hal lainnya mengacu ke target kelas yang Anda pilih.</p>
 </div>
 
-<div data-aos=fade>
+<div>
   <form method=post>
     <?php
     if (isset($_POST['btn_set_target_kelas'])) {

@@ -141,7 +141,7 @@ if (!$id_room_kelas) {
     $assign_room_kelas = "<a href='?pilih_room'>Pilih $Room lainnya</a>";
     if ($id_role == 2) {
       if ($id_instruktur == $id_peserta) {
-        $assign_room_kelas = "<a href='?assign_room_kelas'>Assign $Room Kelas</a>";
+        $assign_room_kelas = "<a href='?manage_kelas'>Assign $Room Kelas</a>";
         $pesan = "Anda adalah pemilik $Room ini. Silahkan Assign kelas ini ke $Room Anda.";
 
         // auto-assign kelas sendiri ke $Room ini
@@ -254,9 +254,6 @@ if (!$room['last_update']) {
   $total_latihan_wajib = $room_count['count_latihan_wajib'];
   $total_challenge_wajib = $room_count['count_challenge_wajib'];
 }
-
-
-
 
 # ============================================================
 # VERIF COUNTS FOR INSTRUKTUR

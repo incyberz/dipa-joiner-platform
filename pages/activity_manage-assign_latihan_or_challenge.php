@@ -28,7 +28,7 @@ $grup_kelas_pengakses = "
   <h3 class='darkblue'>Grup Kelas Pengakses $Jenis</h3>
   <p>$Jenis yang Anda buat akan dapat diakses oleh kelas:</p>
   <ol>$li</ol>
-  <div class='ml2 pl1 f14'>Opsi: <a href='?assign_room_kelas'>Assign $Room Kelas</a></div>
+  <div class='ml2 pl1 f14'>Opsi: <a href='?manage_kelas'>Assign $Room Kelas</a></div>
   <hr>
 ";
 

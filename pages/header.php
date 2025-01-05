@@ -77,7 +77,7 @@ $header_logo = $is_custom ? "$path_custom/custom-logo.png" : 'assets/img/dipa-lo
 
             $li_manage_room = "
               <li class='gradasi-merah'><a href='?manage_room'>Manage $Room</a></li>
-              <li class='gradasi-merah'><a href='?assign_room_kelas'>Assign $Room Kelas</a></li>
+              <li class='gradasi-merah'><a href='?manage_kelas'>Manage Kelas</a></li>
             ";
           }
 
