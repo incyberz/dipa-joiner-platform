@@ -34,6 +34,8 @@ if (isset($_POST['reset_awal_sesi'])) {
 # BATALKAN AKTIVASI
 # ============================================================
 if (isset($_POST['btn_batalkan_aktivasi'])) {
+  $s = "UPDATE tb_room SET status=NULL WHERE id=$id_room";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   unset($_SESSION['dipa_id_room']);
   jsurl();
 }

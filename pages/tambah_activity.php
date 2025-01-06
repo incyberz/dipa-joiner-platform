@@ -64,7 +64,7 @@ if (isset($_POST['btn_add'])) {
         $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       }
     } // end foreach kelas
-    jsurl('?list_sesi', 1000);
+    jsurl('?lp', 1000);
   } // end nama available
 } // end if 
 

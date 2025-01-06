@@ -63,7 +63,8 @@ b.war_image as war_image_creator,
 FROM tb_room a 
 JOIN tb_peserta b ON a.created_by=b.id  
 WHERE 1 -- b.id = $id_peserta
-ORDER BY my_room DESC, a.status DESC
+ORDER BY my_room DESC, a.status DESC, a.nama  
+LIMIT 50
 ";
 
 

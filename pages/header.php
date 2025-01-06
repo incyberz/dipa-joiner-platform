@@ -105,7 +105,7 @@ $header_logo = $is_custom ? "$path_custom/custom-logo.png" : 'assets/img/dipa-lo
               </li>
               <li class='dropdown'><a  href='#'><span class='tebal darkblue'>Belajar</span> <i class='bi bi-chevron-down'></i></a>
                 <ul>
-                  <li><a href='?list_sesi'>Learning Path</a></li>
+                  <li><a href='?lp'>Learning Path</a></li>
                   <li class=><a href='?presensi'>Presensi</a></li>
                   <li><a href='?activity&jenis=latihan'>Tugas Latihan</a></li>
                   <li><a href='?activity&jenis=challenge'>Tugas Challenges</a></li>

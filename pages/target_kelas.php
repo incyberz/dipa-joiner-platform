@@ -11,7 +11,7 @@
       $target_kelas = $_SESSION['target_kelas'];
     }
 
-    $info_target = $target_kelas ? "<div>Target kelas saat ini: <b class=darkblue>$target_kelas</b> | <button name=btn_set_target_kelas >Reset</button></div>" : '<div class="consolas darkred">Saat ini target kelas belum terpilih.</div>';
+    $info_target = $target_kelas ? "<div>Target kelas saat ini: <b class=darkblue>$target_kelas</b> | <button name=btn_set_target_kelas >Refresh Page</button></div>" : '<div class="consolas darkred">Saat ini target kelas belum terpilih.</div>';
 
     echo "
       $info_target

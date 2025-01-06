@@ -8,6 +8,8 @@ set_title($judul);
 # ================================================================
 $blok_kelas = '';
 $img_detail = img_icon('detail');
+$img_refresh = img_icon('refresh');
+$img_reject = img_icon('reject');
 $get_kelas = $_GET['kelas'] ?? '';
 $get_keyword = $_GET['keyword'] ?? '';
 $get_mode = $_GET['mode'] ?? 'fast';
@@ -105,8 +107,19 @@ while ($d = mysqli_fetch_assoc($q)) { // loop $Room kelas
       }
       $list_peserta .= "
         <div class='kecil tengah abu'>
-          <img src='$src' class='foto_profil' style='$sty'>
-          <div>$nama $link_super_delete</div>
+          <div class=toggle_aksi_peserta id=toggle_aksi_peserta__$d2[id_peserta]>
+            <img src='$src' class='foto_profil' style='$sty'>
+            <div>$nama</div>
+          </div>
+          <div id=aksi_peserta__$d2[id_peserta] class='hideit aksi_peserta'>
+            <div class='flexy flex-center gap-1'>
+              <div onclick='alert(`Fitur approve_profil in development.`)'>$img_check</div>
+              <div onclick='alert(`Fitur reject_profil in development.`)'>$img_reject</div>
+              <div onclick='alert(`Fitur reset_password in development.`)'>$img_refresh</div>
+              <div><a href='?login_as&id_peserta=$d2[id_peserta]'>$img_login_as</a></div>
+              <div>$link_super_delete</div>
+            </div>
+          </div>
         </div>
       ";
     } elseif ($get_mode == 'detail') {
@@ -364,3 +377,17 @@ if ($id_role == 2) {
 
 set_h2($judul, "Peserta Kelas MK $singkatan_room :: $jumlah_peserta $Peserta $pilih_mode");
 echo $blok_kelas;
+?>
+<script>
+  $(function() {
+    $('.toggle_aksi_peserta').click(function() {
+      let tid = $(this).prop('id');
+      let rid = tid.split('__');
+      let aksi = rid[0];
+      let id = rid[1];
+      console.log(aksi, id);
+      $('.aksi_peserta').slideUp();
+      $('#aksi_peserta__' + id).slideDown();
+    })
+  })
+</script>

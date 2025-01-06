@@ -1,7 +1,7 @@
 <?php
 if (!$sesi_aktif) {
   echo div_alert('danger', "Tidak ada sesi aktif untuk hari ini.<hr>Silahkan <a href='?presensi'>Manage Penanggalan Presensi</a>");
-  exit;
+  // exit;
 }
 
 
@@ -51,7 +51,7 @@ if ($room_count['count_presensi_aktif'] > 1) {
 
 
     $info_pekan = "
-      <div><a href='?list_sesi'>Pertemuan ke-$sesi_aktif[sesi_normal_count] $sesi_aktif[nama]</a></div>
+      <div><a href='?lp'>Pertemuan ke-$sesi_aktif[sesi_normal_count] $sesi_aktif[nama]</a></div>
       <div class='f12 mt2'>$info_kelas</div>
     ";
   } else {

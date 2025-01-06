@@ -14,7 +14,8 @@ while ($d = mysqli_fetch_assoc($q)) {
 
 $s = "SELECT a.kelas,a.id as id_room_kelas FROM tb_room_kelas a 
 JOIN tb_kelas b ON a.kelas=b.kelas  
-WHERE a.id_room=$id_room AND b.status=1
+WHERE a.id_room=$id_room AND b.status=1 
+AND b.kelas !='INSTRUKTUR'
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $li = '';
@@ -337,7 +338,7 @@ echo "
   </form>
   
   
-  <a class='btn btn-success btn-sm' href='?list_sesi' >Tambah $jenis via Learning Path</a>
+  <a class='btn btn-success btn-sm' href='?lp' >Tambah $jenis via Learning Path</a>
   
   <form method=post class='wadah mt4'>
     <div class='proper mb2'>Close/Open All $jenis</div>

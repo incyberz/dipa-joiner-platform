@@ -1,8 +1,11 @@
 <?php
 $arr_bahan_ajar = ['bahan_ajar', 'file_ppt', 'video_ajar', 'file_lain'];
-include 'list_sesi-processors.php';
-include 'list_sesi-styles.php';
-include 'list_sesi-functions.php';
+include 'lp-processors.php';
+include 'lp-styles.php';
+include 'lp-functions.php';
+
+$get_id_sesi = $_GET['id_sesi'] ?? null;
+echo "<span class=hideit id=get_id_sesi>$get_id_sesi</span>";
 
 $img_wa = img_icon('wa');
 $img_ask = img_icon('ask');
@@ -15,12 +18,12 @@ $img_up_disabled = img_icon('up_disabled');
 # ============================================================
 # ARR FITUR SESI
 # ============================================================
-include 'list_sesi-arr_fitur_sesi.php';
+include 'lp-arr_fitur_sesi.php';
 
 # ============================================================
 # ARR LATIHAN DAN CHALLENGE
 # ============================================================
-include 'list_sesi-arr_latihan.php';
+include 'lp-arr_latihan.php';
 
 $count_sesi = [];
 $count_sesi[0] = 0; // sesi tenang
@@ -62,7 +65,12 @@ a.*,
   WHERE p.id_sesi=a.id 
   AND p.kelas='$kelas' 
   -- AND p.is_terlaksana=1 
-  ) jadwal_kelas 
+  ) jadwal_kelas, 
+(
+  SELECT is_ontime FROM tb_presensi p 
+  WHERE p.id_sesi=a.id 
+  AND p.id_peserta='$id_peserta' 
+  ) my_presensi 
   
 FROM tb_sesi a 
 WHERE a.id_room=$id_room 
@@ -87,14 +95,14 @@ while ($sesi = mysqli_fetch_assoc($q)) {
   $jenis_sesi = $sesi['jenis'];
   $count_sesi[$jenis_sesi]++;
 
-  $hide_lp = $sesi['id'] == $sesi_aktif_id ? '' : 'hideit'; // hide all sesi except this
+  $hide_lp = ($sesi['id'] == $sesi_aktif_id && !$get_id_sesi) ? '' : 'hideit'; // hide all sesi except this
 
   if ($jenis_sesi === '0') {
-    include 'list_sesi-loop_ui_minggu_tenang.php';
+    include 'lp-loop_ui_minggu_tenang.php';
   } elseif ($jenis_sesi == 2) {
-    include 'list_sesi-loop_ui_uts.php';
+    include 'lp-loop_ui_uts.php';
   } elseif ($jenis_sesi == 3) {
-    include 'list_sesi-loop_ui_uas.php';
+    include 'lp-loop_ui_uas.php';
   } elseif ($jenis_sesi == 1) { // sesi normal
 
     $no_sesi++;
@@ -103,19 +111,19 @@ while ($sesi = mysqli_fetch_assoc($q)) {
     # UI HANDLER AT LOOP SESI NORMAL
     # ============================================================
     $fiturs = []; // activities
-    include 'list_sesi-loop_ui_handler.php';
+    include 'lp-loop_ui_handler.php';
 
     # ============================================================
     # JADWAL KELAS HANDLER AT LOOP SESI NORMAL
     # ============================================================
     $ui_jadwal = '';
-    include 'list_sesi-loop_jadwal_handler.php';
+    include 'lp-loop_jadwal_handler.php';
 
     # ============================================================
     # BLOK EDIT SESI :: TRAINER ONLY
     # ============================================================
     $edit_sesi = '';
-    include 'list_sesi-loop_edit_sesi.php';
+    include 'lp-loop_edit_sesi.php';
 
     # ============================================================
     # UI FIELDS
@@ -123,7 +131,7 @@ while ($sesi = mysqli_fetch_assoc($q)) {
     $ui_nama = create_ui('nama', $sesi['nama'], $id_sesi, '', 'f18 bold darkblue');
     $ui_deskripsi = create_ui('deskripsi', $sesi['deskripsi'], $id_sesi, '', null, true);
     $ui_tags = create_ui('tags', $sesi['tags'], $id_sesi, 'Tags Materi', 'darkblue f14', true);
-    if (!$sesi['tags']) include 'list_sesi-laporkan_no_tags.php';
+    if (!$sesi['tags']) include 'lp-laporkan_no_tags.php';
 
     # ============================================================
     # DIV LP LOOP
@@ -154,13 +162,13 @@ while ($sesi = mysqli_fetch_assoc($q)) {
   # ============================================================
   # NAV LP LOOP
   # ============================================================
-  include 'list_sesi-loop_nav.php';
+  include 'lp-loop_nav.php';
 }
 
 # ============================================================
 # FORM ADD SESI
 # ============================================================
-include 'list_sesi-add_sesi.php';
+include 'lp-add_sesi.php';
 
 # ============================================================
 # FORM ADD SESI
@@ -337,6 +345,10 @@ if ($id_role == 2) { ?>
 ?>
 <script>
   $(function() {
+    let get_id_sesi = $('#get_id_sesi').text();
+    if (get_id_sesi) {
+      $('#div_lp__' + get_id_sesi).fadeIn();
+    }
     $('.nav_lp').click(function() {
       let tid = $(this).prop('id');
       let rid = tid.split('__');

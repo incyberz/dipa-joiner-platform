@@ -48,12 +48,20 @@ if ($id_role == 1) {
 $closing = eta2($sesi['akhir_presensi']);
 
 if ($id_role == 1) {
-  $presensi_saya = 'Presensi Saya: <i>no-data</i>'; // ZZZ belum dihitung
-
+  if ($sesi['my_presensi'] === '0') {
+    $presensi_saya = "Presensi Saya: <i>Hadir Telat $img_warning</i>";
+  } elseif ($sesi['my_presensi']) {
+    $presensi_saya = "Presensi Saya: <i class=green>Hadir Ontime $img_check</i>";
+  } else {
+    $presensi_saya = "Presensi Saya: <i class=red>Belum Presensi $img_warning</i>";
+  }
 } elseif ($id_role == 2) {
-  $presensi_saya = "<i>Presensi $Trainer in development</i>"; // ZZZ belum dihitung
-
-
+  if ($sesi['id'] == ($sesi_aktif['id'] ?? null)) {
+    require_once 'progress_bar_presensi.php';
+    $presensi_saya = progress_bar_presensi($room_count['arr_count_peserta_kelas']);
+  } else {
+    $presensi_saya = "<a href='?presensi_rekap'>Go to Rekap Presensi</a>";
+  }
 }
 
 $ui_jadwal = "
@@ -66,10 +74,10 @@ $ui_jadwal = "
       $jadwal_kelas_show $status_pelaksanaan
     </div>
     <div class='miring '>
-      $presensi_saya
+      <a href='?presensi'>$presensi_saya</a>
     </div>
     <div class='miring '>
-      Closing Presensi: $closing
+      Deadline Presensi: $closing
     </div>
   </div>
 ";

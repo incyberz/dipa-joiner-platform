@@ -19,7 +19,7 @@ include 'includes/arr_status_room.php';
 # SET HEADER
 # ============================================================
 $status_room = $status_room == '' ? 0 : $status_room;
-set_h2('Aktivasi $Room', "
+set_h2("Aktivasi $Room", "
   <h3 class=coklat>$nama_room</h3>
   Aktivasi $Room bertujuan agar $Room siap dipakai oleh $Peserta.
   <div class='wadah mt1 gradasi-toska f20 darkblue'>

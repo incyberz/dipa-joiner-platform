@@ -4,6 +4,7 @@
 // include '../conn.php';
 // include '../../insho_styles.php';
 set_h2("Destroy $Room");
+echo "    <div class='alert alert-danger mt2'>Fitur ini in development. Terimakasih sudah mencoba.</div>";
 $target_id_room = $_GET['id_room'] ?? die("Target $Room unspecified.");
 
 die('Page ini tidak bisa diakses secara langsung. Call Developer!');

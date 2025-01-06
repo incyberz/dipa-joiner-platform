@@ -16,7 +16,7 @@
 login_only();
 set_title("Presensi $target_kelas");
 
-if (!$target_kelas) {
+if (!$target_kelas and $id_role == 2) {
   include 'target_kelas.php';
   exit;
 }
