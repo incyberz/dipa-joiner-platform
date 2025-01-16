@@ -217,6 +217,8 @@ if ($selisih_hari >= 2) {
   $coming_soon = $img . '<h1 class=blue>Hari ini Ujian !!</h1>';
 }
 
+$nilai_max = 0;
+
 if ($selisih > 0) { //belum mulai
   $blok_timer = "
     <h2>$coming_soon</h2>
@@ -251,7 +253,6 @@ if ($selisih > 0) { //belum mulai
   # ==================================================
   # SHOW JAWABAN
   # ==================================================
-  $nilai_max = 0;
   if ($jumlah_attemp and !$start) { // jika SUDAH ATTEMP
 
 
@@ -374,6 +375,7 @@ if (
   echo $by_pass_notif;
   include 'ujian_show_list_soal.php';
 }
+
 
 
 

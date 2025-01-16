@@ -51,8 +51,8 @@ if ($room['status'] == 100) {
     if (
       $d['Field'] == 'id_room'
       || $d['Field'] == 'last_update'
-      || $d['Field'] == 'sudah_uts'
-      || $d['Field'] == 'sudah_uas'
+      // || $d['Field'] == 'sudah_uts'
+      // || $d['Field'] == 'sudah_uas' // auto update sudah_uas
     ) continue;
     array_push($koloms, $d['Field']);
   }
@@ -199,6 +199,7 @@ if ($room['status'] == 100) {
       $koma = $pairs ? ',' : '';
       $vnull = ($room_count[$v] === null || $room_count[$v] === '') ? 'NULL' : "'$room_count[$v]'";
       $pairs .= "$koma$v = $vnull";
+      // echolog("updating $v = $vnull");
     } else {
       echo "<div class='red bold'> [$v] belum dihitung.</h1>";
       exit;
@@ -211,10 +212,11 @@ if ($room['status'] == 100) {
 } else {
   $s = "UPDATE tb_room_count SET last_update=CURRENT_TIMESTAMP WHERE id_room=$id_room";
 }
+
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
 if ($parameter == 'update_room_count') {
-  jsurl('?');
+  jsurl('?', 3000);
 } else {
   jsurl();
 }

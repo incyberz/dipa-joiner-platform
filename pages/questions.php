@@ -260,7 +260,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     </form>
   ";
 
-  $form_dev = $online_version ? '' : "
+  $form_dev = $is_live ? '' : "
     <form method=post >
       <button class='btn btn-sm btn-danger mt2' value=reset_jawaban__$id name=btn_verifikasi>Reset Jawaban</button>
     </form>  

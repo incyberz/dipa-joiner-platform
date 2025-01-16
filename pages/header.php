@@ -82,7 +82,7 @@ $header_logo = $is_custom ? "$path_custom/custom-logo.png" : 'assets/img/dipa-lo
           }
 
           $Peserta_Kelas = $id_role == 1 ? 'Teman Sekelas' : "Peserta $Room ini";
-
+          $no_sesi_aktif_show = $no_sesi_aktif ? "<div>P$no_sesi_aktif</div>" : '';
 
           if ($id_role == 1 || $id_role == 2) {
             echo "
@@ -109,7 +109,7 @@ $header_logo = $is_custom ? "$path_custom/custom-logo.png" : 'assets/img/dipa-lo
                   <li class=><a href='?presensi'>Presensi</a></li>
                   <li><a href='?activity&jenis=latihan'>Tugas Latihan</a></li>
                   <li><a href='?activity&jenis=challenge'>Tugas Challenges</a></li>
-                  <li><a href='?proyek_akhir'>Tugas Akhir</a></li>
+                  <li><a href='?proyek_akhir'>Proyek Akhir</a></li>
                   <li class=''><a href='?bertanya'>Fitur Bertanya</a></li>
                   <li class=''><a href='?questions'>List Bertanya</a></li>
                   <li class=''><a href='?ujian'>Ujian Mid/Akhir</a></li>
@@ -136,7 +136,7 @@ $header_logo = $is_custom ? "$path_custom/custom-logo.png" : 'assets/img/dipa-lo
                   <li><a href='?logout' onclick='return confirm(`Yakin untuk Logout?`)' class=red>Logout</a></li>
                 </ul>
               </li>
-              <li class='darkred f10 tengah' style='margin-left:10px'>$singkatan_room$at_kelas</li>
+              <li class='darkred f10 tengah' style='margin-left:10px'>$singkatan_room$at_kelas$no_sesi_aktif_show</li>
               $unlog_link
             ";
           } elseif ($id_role == 4) {

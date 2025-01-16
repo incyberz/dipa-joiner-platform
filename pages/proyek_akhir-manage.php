@@ -21,7 +21,8 @@ if (isset($_POST['btn_add_indikator'])) {
 
 $indikator = '';
 $s = "SELECT a.*,
-(SELECT COUNT(1) FROM tb_bukti_proyek WHERE id_indikator=a.id) count_bukti 
+(SELECT COUNT(1) FROM tb_bukti_proyek WHERE id_indikator=a.id) count_bukti ,
+(SELECT COUNT(1) FROM tb_bukti_proyek WHERE id_indikator=a.id AND verif_at is not null) count_verified 
 FROM tb_indikator a 
 WHERE a.id_room=$id_room";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -42,7 +43,7 @@ if (!mysqli_num_rows($q)) {
           Poin
         </div>
         <div class='col-sm-1'>
-          Bukti
+          Verifikasi Bukti
         </div>
         <div class='col-sm-1'>
           Aksi
@@ -60,6 +61,8 @@ if (!mysqli_num_rows($q)) {
     ";
 
     $lihat_bukti = $d['count_bukti'] ? "<a href='?proyek_akhir&aksi=lihat_bukti&id_indikator=$d[id]'>$img_next</a>" : '';
+
+    $light = ($d['count_bukti'] && $d['count_bukti'] != $d['count_verified']) ? 'red' : $light;
 
     $indikator .= "
       <div class=''>
@@ -87,7 +90,7 @@ if (!mysqli_num_rows($q)) {
             <div class='d-flex gap-2'>
               <div class='bold d-sm-none'>Bukti:</div>
               <div>
-                $d[count_bukti] $lihat_bukti
+                $d[count_verified] of $d[count_bukti] $lihat_bukti
               </div>
             </div>
           </div>

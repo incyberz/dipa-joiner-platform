@@ -20,15 +20,8 @@ $session_id_room = $_SESSION['dipa_id_room'];
 $session_username = $_SESSION['dipa_username'];
 
 
-if ($get_username != $session_username) {
-  echo '<pre>';
-  var_dump($_GET);
-  echo '</pre>';
-
-  echo '<pre>';
-  var_dump($_SESSION);
-  echo '</pre>';
-
+if (strtolower($get_username) != strtolower($session_username)) {
+  echo "get_username:$get_username != session_username:$session_username\n";
   echo 'gak boleh ngedit punya orang ya!';
 } else {
 

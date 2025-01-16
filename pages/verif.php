@@ -388,10 +388,11 @@ foreach ($rjenis as $key => $jenis) {
   } else { // no need verif
     $pada_kelas = $get_kelas ? " pada kelas $get_kelas" : '';
     $clear_keyword = $keyword ? " [keyword: <b class='consolas darkblue'>$keyword</b>] | <a href='?verif'>Clear Keyword</a>" : '';
+    $add = " | <a href='?tambah_activity&p=$jenis&id_sesi=$id_sesi_aktif'>Add</a>";
     if ($get_history) {
-      echo div_alert('info', "Data history bukti $jenis tidak ditemukan $pada_kelas $clear_keyword");
+      echo div_alert('info', "Data history bukti $jenis tidak ditemukan $pada_kelas $clear_keyword $add");
     } else {
-      echo div_alert('info', "Data bukti $jenis tidak ditemukan $pada_kelas $clear_keyword");
+      echo div_alert('info', "Data bukti $jenis tidak ditemukan $pada_kelas $clear_keyword $add");
     }
   } // end no need verif
 

@@ -125,7 +125,8 @@ d.nama as nama_peserta,
   SELECT get_point FROM tb_bukti_challenge p
   JOIN tb_assign_challenge q ON p.id_assign_challenge=q.id 
   WHERE q.id_challenge = $id_challenge 
-  AND p.id_peserta=d.id
+  AND p.id_peserta=d.id 
+  AND p.status != -1
 ) poin_chal,
 -- nilai sebelumnya pada tb_poin
 (

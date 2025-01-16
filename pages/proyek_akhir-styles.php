@@ -7,6 +7,10 @@
     background-color: #f2f2f2;
   }
 
+  .bg-red {
+    background: linear-gradient(#fee, #faa);
+  }
+
   .border-mine {
     border: solid 3px blue;
   }

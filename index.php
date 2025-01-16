@@ -43,6 +43,12 @@ $ops = [
   'email' => 'isholihin87@gmail.com',
 ];
 
+$awal_nilai['A'] = 80;
+$awal_nilai['B'] = 70;
+$awal_nilai['C'] = 60;
+$awal_nilai['D'] = 50;
+$awal_nilai['E'] = 1;
+
 
 
 # ============================================================
@@ -141,13 +147,38 @@ if ($parameter == 'logout') {
 # ========================================================
 # INCLUDES PURE PHP
 # ========================================================
-include 'includes/insho_functions.php';
-include 'includes/dipa_functions.php';
-include 'includes/fungsi_alert.php';
-include 'includes/fungsi_session_login.php';
-include 'includes/date_managements.php';
-include 'includes/href_wa.php';
-include 'includes/get_current_url.php';
+$arr_includes = [
+  'insho_functions',
+  'dipa_functions',
+  'fungsi_alert',
+  'fungsi_session_login',
+  'date_managements',
+  'href_wa',
+  'get_current_url',
+  // 'erid',
+  'redirect',
+  'echolog',
+  'alert',
+];
+foreach ($arr_includes as $v) {
+  $file = "includes/$v.php";
+  if (file_exists($file)) {
+    include $file;
+  } elseif (file_exists("../$file")) {
+    include "../$file"; // at htdocs or main server
+
+  } else {
+    die("<b style=color:red>File include [ $v ] diperlukan untuk menjalankan sistem.</b>");
+  }
+}
+
+// include 'includes/insho_functions.php';
+// include 'includes/dipa_functions.php';
+// include 'includes/fungsi_alert.php';
+// include 'includes/fungsi_session_login.php';
+// include 'includes/date_managements.php';
+// include 'includes/href_wa.php';
+// include 'includes/get_current_url.php';
 $ta_show = tahun_ajar_show($ta);
 
 
@@ -211,7 +242,7 @@ if ($username) {
   # INCLUDE STYLES
   # ============================================================
   include 'dipa_styles.php';
-  $insho_styles = $online_version ? 'includes/insho_styles.php' : '../includes/insho_styles.php';
+  $insho_styles = $is_live ? 'includes/insho_styles.php' : '../includes/insho_styles.php';
   include $insho_styles;
   include 'includes/meme.php';
   include 'includes/img_icon.php';

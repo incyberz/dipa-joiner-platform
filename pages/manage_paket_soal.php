@@ -2,6 +2,8 @@
 $dp = 1;
 instruktur_only();
 $null = '<span class="abu f12 miring consolas">null</span>';
+$img_monitoring = img_icon('monitoring');
+$img_test = img_icon('test');
 
 $judul = 'Manage Paket Soal';
 set_h2($judul, "Paket Soal adalah wadah untuk soal-soal yang akan diujikan ke tiap Grup Kelas<div class=mt2><a href='?ujian' >$img_prev</a></div>");
@@ -135,7 +137,7 @@ if (!mysqli_num_rows($q)) {
     if (!$count_kelas) {
       $list_kelas = "<a class='btn btn-sm btn-danger' href='?add_paket_soal&id_paket=$id_paket'>Set Kelas</a>";
     } else {
-      $s2 = "SELECT * FROM tb_paket_kelas WHERE id_paket=$id_paket";
+      $s2 = "SELECT * FROM tb_paket_kelas WHERE id_paket=$id_paket AND kelas != 'INSTRUKTUR'";
       $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
       while ($d2 = mysqli_fetch_assoc($q2)) {
         // $id = $d2['id'];
@@ -194,10 +196,11 @@ if (!mysqli_num_rows($q)) {
           $d[count_soal] soal <a href='?assign_soal&id_paket=$id_paket'>$img_detail</a>
         </td>
         <td>
-          $d[count_submit] kali <a href='?monitoring_ujian&id_paket=$id_paket'>$img_detail</a>
+          $d[count_submit] kali <a href='?monitoring_ujian&id_paket=$id_paket'>$img_monitoring</a>
         </td>
-        <td width=50px class=tengah>
+        <td width=80px class=tengah>
           $btn_delete
+          <a target=_blank href='?ujian&id_paket=$id_paket'>$img_test</a>
         </td>
       </tr>
     ";

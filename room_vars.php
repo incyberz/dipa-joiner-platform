@@ -107,8 +107,10 @@ if (!mysqli_num_rows($q)) {
   $sesi_aktif = mysqli_fetch_assoc($q);
 }
 $id_sesi_aktif = null;
+$no_sesi_aktif = null;
 if (!(!$sesi_aktif and !$sesi_pertama)) {
   $id_sesi_aktif = $sesi_aktif ? $sesi_aktif['id'] : $sesi_pertama['id'];
+  $no_sesi_aktif = $sesi_aktif ? $sesi_aktif['no'] : $sesi_pertama['no'];
 }
 
 

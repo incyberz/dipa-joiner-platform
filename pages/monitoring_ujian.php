@@ -5,6 +5,7 @@
 </style>
 <?php
 instruktur_only();
+$aksi = $_GET['aksi'] ?? ''; // save_nilai
 
 
 $id_paket = $_GET['id_paket'] ?? die('<script>location.replace("?ujian")</script>');
@@ -91,15 +92,19 @@ $s = "SELECT
 a.*,
 a.nama as nama_paket_soal,
 b.nama as pengawas_ujian,
--- c.nama as nama_sesi,
+c.jenis as jenis_sesi, -- jenis sesi
+d.nama as nama_jenis_sesi,  
 (SELECT COUNT(1) FROM tb_assign_soal WHERE id_paket=a.id)  jumlah_soal  
 FROM tb_paket a 
 JOIN tb_peserta b ON a.id_pembuat=b.id  
+JOIN tb_sesi c ON a.id_sesi=c.id 
+JOIN tb_jenis_sesi d ON c.jenis=d.jenis
 -- JOIN tb_ kode sesi aborted  
 WHERE a.id=$id_paket";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) die("Data Paket Soal tidak ditemukan.");
 $d_paket = mysqli_fetch_assoc($q);
+
 
 
 # =======================================================
@@ -205,6 +210,12 @@ while ($d = mysqli_fetch_assoc($q)) {
     $download_hasil_ujian = $jumlah_peserta ? "<a href='$src_csv' class='btn btn-$btn btn-sm' target=_blank $onclick>Download Hasil Ujian</a> " : "<span class='btn btn-secondary btn-sm' onclick='alert(`Belum ada pesertanya.`)'>Download Hasil Ujian</span>";
     while ($d2 = mysqli_fetch_assoc($q2)) {
 
+      if ($aksi == 'save_nilai' and $d2['nilai_max']) {
+        $s3 = "UPDATE tb_poin SET uas=$d2[nilai_max] WHERE id_room=$id_room AND id_peserta=$d2[id_peserta]";
+        echolog($s3);
+        mysqli_query($cn, $s3) or die(mysqli_error($cn));
+      }
+
       // jika INSTRUKTUR (trial)
       if ($d2['id_role'] == 2 and !$d2['jumlah_attemp']) continue; // skip jika $Trainer dan belum submit
       $delete_jawaban = '';
@@ -301,6 +312,8 @@ while ($d = mysqli_fetch_assoc($q)) {
           $tr
         </table>
         $download_hasil_ujian
+
+        
     
         <hr>
       ";
@@ -322,3 +335,14 @@ while ($d = mysqli_fetch_assoc($q)) {
     echo $penjawabs ? "Penjawab di system lama:$penjawabs" : "<hr>--no data-- untuk kelas [$d[kelas]]";
   }
 } // end while paket kelas
+
+
+if ($id_role == 2) {
+  echo "
+    <hr/>
+    <a onclick='return confirm(`Save Nilai ke input nilai $d_paket[nama_jenis_sesi]?`)' href='?monitoring_ujian&id_paket=$id_paket&aksi=save_nilai&jenis=$d_paket[jenis_sesi]' class='btn btn-success btn-sm'>Save Nilai $d_paket[nama_jenis_sesi]</a>
+    <hr>
+    <a target=_blank href='?insert_nilai_manual'>Insert Nilai Manual</a>
+
+    ";
+}

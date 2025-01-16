@@ -75,10 +75,33 @@ if ($aksi == 'lihat_bukti') {
     ";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
+
     $tr = '';
     $i = 0;
     $input_nama_proyek = '';
     while ($d = mysqli_fetch_assoc($q)) {
+      // if ($id_room == 3) { // PWEB2
+      if ($id_room == 21 and $d['count_bukti']) { // WEB MOBILE
+
+
+        $s2 = "SELECT * FROM tb_poin WHERE id_peserta=$d[id_peserta] AND id_room=$id_room";
+        $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+        $d2 = mysqli_fetch_assoc($q2);
+        // if ($d['id_peserta'] == 172) { // farkhan
+        //   $s2 = "UPDATE tb_poin SET uts=70 WHERE id_peserta=$d[id_peserta] AND id_room=$id_room";
+        //   mysqli_query($cn, $s2) or die(mysqli_error($cn));
+        //   $d2['uts'] = 75;
+        // }
+        $nilai_akhir_tembak = $d2['uts'] * 1.04;
+        $nilai_akhir_tembak = $nilai_akhir_tembak > 100 ? 100 : $nilai_akhir_tembak;
+
+
+        // UPDATE TB_POIN SET UAS=TEMBAK WHERE ...
+        $s2 = "UPDATE tb_poin SET uas=$nilai_akhir_tembak WHERE id_peserta=$d[id_peserta] AND id_room=$id_room";
+        mysqli_query($cn, $s2) or die(mysqli_error($cn));
+      }
+
+
       $i++;
       $bg_ganjil = $i % 2 == 0 ? 'bg-putih' : 'bg-abu';
       $nama = strtoupper($d['nama_peserta']);

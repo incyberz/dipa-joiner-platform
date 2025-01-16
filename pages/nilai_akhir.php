@@ -44,8 +44,11 @@ $img['delete'] = '<img class=zoom src="assets/img/icon/delete.png" height=25px /
 # =======================================================
 # PEMBOBOTAN DAN HEADER TABEL
 # =======================================================
+// ZZZ CUSTOMIZE BOBOT FROM DB
+$rbobot = [];
+
 $rbobot['count_presensi_offline'] = 0;
-$rbobot['count_presensi_online'] = 10;
+$rbobot['count_presensi_online'] = 6;
 $rbobot['count_ontime'] = 5;
 $rbobot['count_latihan'] = 5;
 $rbobot['count_latihan_wajib'] = 10;
@@ -485,7 +488,7 @@ while ($d = mysqli_fetch_assoc($q)) {
 
     $sub_nilai_akhir = round(($rkonversi[$key] * $rbobot[$key]) / 100, 2);
     $nilai_akhir += $sub_nilai_akhir;
-    $gradasi = $rbobot[$key] ?  gradasi_nilai($rkonversi[$key]) : '';
+    $gradasi = $rbobot[$key] ?  gradasi_nilai($rkonversi[$key], $awal_nilai) : '';
 
     if ($key == 'nilai_uts' and !$room_count['sudah_uts']) {
     } elseif ($key == 'nilai_uas' and !$room_count['sudah_uas']) {
@@ -529,7 +532,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   # FINAL TR
   # =======================================================
   if ($id_role == 2) {
-    $gradasi =   gradasi_nilai($nilai_akhir);
+    $gradasi =   gradasi_nilai($nilai_akhir, $awal_nilai);
 
 
     if ($get_save) {
@@ -592,7 +595,7 @@ if ($id_role != 1) {
 
 // return to normal view
 if ($get_save) {
-  echo div_alert('success', "Data Nilai Akhir untuk $d[total_peserta] $Peserta sudah tersimpan.<hr><a class='btn btn-primary' href='?nilai_akhir'>Kembali ke Mode View Nilai Akhir</a>");
+  echo div_alert('success', "Data Nilai Akhir sudah tersimpan.<hr><a class='btn btn-primary' href='?nilai_akhir'>Kembali ke Mode View Nilai Akhir</a>");
   exit;
 }
 

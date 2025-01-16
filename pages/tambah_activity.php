@@ -3,7 +3,7 @@
 # GET VAR
 # ============================================================
 $p = $_GET['p'] ?? die(erid('p'));
-$id_sesi = $_GET['id_sesi'] ?? die(erid('id_sesi'));
+$id_sesi = $_GET['id_sesi'] ?? die(redirect('?lp', 'id_sesi'));
 $nama = $_GET['nama'] ?? '';
 
 

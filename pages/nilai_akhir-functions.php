@@ -1,12 +1,12 @@
 <?php
-function gradasi_nilai($nilai)
+function gradasi_nilai($nilai, $awal_nilai)
 {
   if ($nilai) {
-    if ($nilai >= 85) {
+    if ($nilai >= $awal_nilai['A']) {
       return  'hijau';
-    } elseif ($nilai >= 70) {
+    } elseif ($nilai >= $awal_nilai['B']) {
       return  'toska';
-    } elseif ($nilai >= 50) {
+    } elseif ($nilai >= $awal_nilai['C']) {
       return  'kuning';
     } else {
       return  'merah';

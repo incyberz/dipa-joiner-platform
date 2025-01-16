@@ -18,6 +18,8 @@
 $judul = "Ujian";
 set_title($judul);
 
+$meme = '';
+$Trainer = 'Dosen'; //zzz
 $debug = '';
 if (!$is_login) die('<script>location.replace("?")</script>');
 $id_paket = $_GET['id_paket'] ?? '';

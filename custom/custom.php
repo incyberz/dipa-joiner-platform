@@ -22,6 +22,16 @@ $Slogan = 'Belajar Tanpa Batas, Belajar Kapan saja, dimana saja.';
 $Leaderboard = 'Peringkat';
 
 # ============================================================
+# CUSTOM PENILAIAN
+# ============================================================
+$awal_nilai = [];
+$awal_nilai['A'] = 80;
+$awal_nilai['B'] = 70;
+$awal_nilai['C'] = 60;
+$awal_nilai['D'] = 50;
+$awal_nilai['E'] = 1;
+
+# ============================================================
 # KONTAK OPERATOR LMS
 # ============================================================
 $ops = [
