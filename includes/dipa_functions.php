@@ -19,3 +19,12 @@ function ondev()
 {
   echo div_alert('danger', 'Page ini in development. Terimakasih sudah mencoba!');
 }
+
+function cek_src_profil($src_image, $src_war, $lokasi_profil = '.')
+{
+  $src =  "$lokasi_profil/$src_image";
+  $src = (file_exists($src) and $src_image) ? $src : 'assets/img/no_profil.jpg';
+  $src2 = "$lokasi_profil/$src_war";
+  $src = (file_exists($src2) and $src_war) ? $src2 : $src;
+  return $src;
+}

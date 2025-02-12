@@ -46,6 +46,23 @@ if ($keyword) {
   AND e.id_room = $id_room 
   LIMIT 50
   ";
+
+  if ($username == 'abi') {
+    $s = "SELECT a.id,
+    a.nama,
+    a.username,
+    -- b.akumulasi_poin,
+    ('all kelas') kelas,
+    (SELECT akumulasi_poin FROM tb_poin WHERE id_peserta=a.id and id_room=$id_room) akumulasi_poin,  
+    (SELECT COUNT(1) FROM tb_kelas_peserta WHERE id_peserta=a.id) count_kelas_peserta,  
+    (SELECT COUNT(1) FROM tb_war WHERE id_penjawab=a.id) count_wars,  
+    (SELECT COUNT(1) FROM tb_jawabans WHERE id_peserta=a.id) count_ujian  
+    FROM tb_peserta a 
+    WHERE a.nama like '%$keyword%'
+    AND a.id_role = 1 
+    LIMIT 50
+    ";
+  }
   // echo "<hr>$s";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 

@@ -7,6 +7,7 @@ JOIN tb_kelas b ON a.kelas=b.kelas
 WHERE a.id_room=$id_room 
 AND b.kelas != 'INSTRUKTUR' 
 AND b.status = 1 -- kelas aktif 
+AND b.ta = $ta
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) {

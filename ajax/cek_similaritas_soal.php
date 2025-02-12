@@ -41,10 +41,10 @@ function sortnclean($str)
 # ================================================
 # GET VARIABEL
 # ================================================
-$my_tags = $_GET['my_tags'] ?? die(erid('my_tags'));
-if ($my_tags == '') die(erid("my_tags::null"));
-$kalimat_soal = $_GET['kalimat_soal'] ?? die(erid('kalimat_soal'));
-if ($kalimat_soal == '') die(erid("kalimat_soal::null"));
+$my_tags = $_GET['my_tags'] ?? die('undefined my_tags');
+if ($my_tags == '') die("undefined my_tags::null");
+$kalimat_soal = $_GET['kalimat_soal'] ?? die('undefined kalimat_soal');
+if ($kalimat_soal == '') die("undefined kalimat_soal::null");
 
 
 # ================================================

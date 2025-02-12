@@ -81,6 +81,7 @@ $nama_room = null;
 
 $target_kelas = $_SESSION['target_kelas'] ?? null;
 $harus_update_poin = 0;
+$link_wa = null;
 
 $unset = '<span class="consolas f12 red miring">unset</span>';
 $null_red = '<span class="consolas f12 red miring">null</span>';
@@ -104,7 +105,7 @@ include 'conn.php';
 # ============================================================
 # TAHUN AJAR AKTIF
 # ============================================================
-$ta_aktif = 20241;
+$ta_aktif = $_GET['ta'] ?? 20242;
 include 'config_ta.php';
 
 # ========================================================
@@ -148,6 +149,7 @@ if ($parameter == 'logout') {
 # INCLUDES PURE PHP
 # ========================================================
 $arr_includes = [
+  'mulai',
   'insho_functions',
   'dipa_functions',
   'fungsi_alert',

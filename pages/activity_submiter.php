@@ -83,6 +83,7 @@ while ($d = mysqli_fetch_assoc($q)) {
 
   $war_image = $d['war_image'] ?? $d['image'];
   $src = "$lokasi_profil/$war_image";
+  $src = cek_src_profil($d['image'], $d['war_image'], $lokasi_profil);
 
   $divs .= "
     <div class='wadah gradasi-$gradasi tengah'>

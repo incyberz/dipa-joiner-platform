@@ -15,11 +15,7 @@ if ($is_live) {
 } else {
   $db_user = 'root';
   $db_pass = '';
-  $db_name = 'db_dipa';
-
-  $db_name = 'db_online_dipa_sep_2024';
-  $db_name = 'db_online_dipa_oct_2024';
-  // $db_name = 'tb_dipa_destroyed';
+  $db_name = 'db_dipa_v5';
 }
 
 $cn = new mysqli($db_server, $db_user, $db_pass, $db_name);

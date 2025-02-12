@@ -59,7 +59,7 @@ if (isset($_POST['btn_add_kelas'])) {
 
     $fakultas = strtoupper($_POST['fakultas']);
     $nama_prodi = strtoupper($_POST['nama_prodi']);
-    $caption = $_POST['caption'] ? strtoupper("'$_POST[caption]'") : $NAMA;
+    $caption = $_POST['caption'] ? strtoupper("$_POST[caption]") : $NAMA;
 
     $s = "INSERT INTO tb_kelas (
       kelas,
@@ -86,6 +86,9 @@ if (isset($_POST['btn_add_kelas'])) {
       '1',
       '$caption'
     )";
+    echo '<pre>';
+    var_dump($s);
+    echo '</pre>';
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     echo div_alert('success', 'Insert sukses.');
     jsurl("?manage_kelas&ta=$ta_aktif", 2000);

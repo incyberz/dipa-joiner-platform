@@ -39,16 +39,16 @@ if (1) {
   } else {
     $inputs = '';
     $ta_show = tahun_ajar_show($ta);
-    $hari = hari_tanggal($senin_pertama, 1, 1, 0);
+    $hari = hari_tanggal($senin_pertama_kuliah, 1, 1, 0);
 
     $inputs .= "
-      <input class='bg-yellow' type='hidden' name=awal_sesi id=awal_sesi required  value='$senin_pertama 08:00:00' />
+      <input class='bg-yellow' type='hidden' name=awal_sesi id=awal_sesi required  value='$senin_pertama_kuliah 08:00:00' />
       <div class='mb1'>Awal TA $ta_show adalah $hari.</div>
       <hr>
       <div class='flexy mb2'>
         <div>Awal Pekan untuk $Room ini : </div>
         <div>
-          <input class='form-control awal_sesi_trigger' type='date' id=tgl_awal_sesi value='$senin_pertama' />
+          <input class='form-control awal_sesi_trigger' type='date' id=tgl_awal_sesi value='$senin_pertama_kuliah' />
         </div>
       </div>
       

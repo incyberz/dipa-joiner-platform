@@ -50,7 +50,7 @@ AND b.ta = $ta
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) {
-  $blok_kelas = div_alert('danger', "Belum ada Grup Kelas pada $Room ini untuk TA $ta_show");
+  $blok_kelas = div_alert('danger', "Belum ada Grup Kelas pada $Room ini untuk TA $ta_show | <a href='?manage_kelas'>Manage Kelas</a>");
 }
 while ($d = mysqli_fetch_assoc($q)) { // loop $Room kelas
 
@@ -86,10 +86,9 @@ while ($d = mysqli_fetch_assoc($q)) { // loop $Room kelas
   while ($d2 = mysqli_fetch_assoc($q2)) { // LOOP PESERTA KELAS
     $nama = ucwords(strtolower($d2['nama']));
     $jumlah_peserta++;
-    $d2['war_image'] = $d2['war_image'] ? $d2['war_image'] : $d2['image'];
 
-    $src = "$lokasi_profil/$d2[war_image]";
-    $src = file_exists($src) ? $src : 'assets/img/img_na.jpg';
+    $src = cek_src_profil($d2['image'], $d2['war_image'], $lokasi_profil);
+
 
 
     if ($get_mode == 'fast') {
@@ -98,10 +97,10 @@ while ($d = mysqli_fetch_assoc($q)) { // loop $Room kelas
       if (!$d2['war_image'] and !$d2['image']) {
         // profil dan war profil belum ada
         $sty = 'border:solid 3px red';
-        $src = 'assets/img/peserta/belum_upload.jpg';
-      } else if ($d2['war_image'] == $d2['image']) {
-        // profil ada tapi belum jadi profil wars
-        $sty = 'border:solid 3px blue';
+        $src = 'assets/img/img_na.jpg';
+      } else if (!$d2['war_image'] and $d2['image']) {
+        // profil ada, war blm ada
+        $sty = 'border:solid 3px orange';
       } else {
         $link_super_delete = $id_role == 2 ? "<a href='?super_delete_peserta&keyword=$d2[nama]'>$img_delete</a>" : '';
       }
@@ -112,6 +111,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop $Room kelas
             <div>$nama</div>
           </div>
           <div id=aksi_peserta__$d2[id_peserta] class='hideit aksi_peserta'>
+            <div class='f10 abu miring consolas'>id: $d2[id_peserta]</div>
             <div class='flexy flex-center gap-1'>
               <div onclick='alert(`Fitur approve_profil in development.`)'>$img_check</div>
               <div onclick='alert(`Fitur reject_profil in development.`)'>$img_reject</div>

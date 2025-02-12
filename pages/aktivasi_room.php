@@ -22,9 +22,6 @@ $status_room = $status_room == '' ? 0 : $status_room;
 set_h2("Aktivasi $Room", "
   <h3 class=coklat>$nama_room</h3>
   Aktivasi $Room bertujuan agar $Room siap dipakai oleh $Peserta.
-  <div class='wadah mt1 gradasi-toska f20 darkblue'>
-    Status $Room : Selesai $arr_status_room[$status_room] <span class=consolas>(Tahap $status_room)</span>
-  </div>
 ");
 
 # ============================================================
@@ -46,7 +43,7 @@ if (file_exists($src)) include $src;
 $h3 = $arr_status_room[$next_status] ?? '';
 if ($h3) {
   echo "
-  <div class='tebal abu miring'>Verifikasi Tahap $next_status</div>
+  <div class='tebal abu miring'>Verifikasi Tahap $next_status dari 10</div>
   <h3>$h3</h3>
   <p>$arr_status_room_desc[$next_status]</p>
   $pre_form

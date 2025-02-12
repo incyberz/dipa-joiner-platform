@@ -47,7 +47,7 @@ if ($id_role == 1) {
   $sub_sql_my_room = "SELECT 1  
   FROM tb_room p 
   WHERE p.created_by = $id_peserta 
-  AND p.id=a.id
+  AND p.id=a.id 
   ";
 }
 
@@ -62,8 +62,8 @@ b.war_image as war_image_creator,
 
 FROM tb_room a 
 JOIN tb_peserta b ON a.created_by=b.id  
-WHERE 1 -- b.id = $id_peserta
-ORDER BY my_room DESC, a.status DESC, a.nama  
+WHERE 1 -- b.id = $id_peserta 
+ORDER BY my_room DESC, a.jenjang,a.jenis,a.no, a.status DESC, a.nama  
 LIMIT 50
 ";
 
@@ -73,7 +73,11 @@ LIMIT 50
 
 
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$my_room = '';
+$my_rooms = '';
+$my_rooms_sd = [];
+$my_rooms_sd[1] = ''; // mapel inti
+$my_rooms_sd[2] = ''; // mapel tambahan
+$my_rooms_sd[3] = ''; // mapel informal
 $other_room = '';
 while ($d = mysqli_fetch_assoc($q)) {
   if ($d['status_room'] == 100) {
@@ -118,22 +122,55 @@ while ($d = mysqli_fetch_assoc($q)) {
     </div>
   ";
   if ($d['my_room']) {
-    $my_room .= $singkatan_room;
+    if ($d['jenjang'] == 'SD') {
+      $my_rooms_sd[$d['jenis']] .= $singkatan_room;
+    } else {
+      $my_rooms .= $singkatan_room;
+    }
   } else {
     $other_room .= $singkatan_room;
   }
 }
-$my_room = $my_room ? $my_room : div_alert('warning tengah', $id_role == 2 ? "Anda belum punya $Room di TA $ta_show" : "Kamu belum dimasukan ke $Room manapun pada TA. $ta_show");
+$my_rooms = $my_rooms ? $my_rooms : div_alert('warning tengah', $id_role == 2 ? "Anda belum punya $Room di TA $ta_show" : "Kamu belum dimasukan ke $Room manapun pada TA. $ta_show");
 $link_buat_room_baru = $id_role == 2 ?  "<div class='alert alert-info'>$Room digunakan untuk mewadahi kegiatan belajar Anda dengan <b>multiple-kelas</b> dan dapat dipakai kembali (<b>reusable</b>) di setiap Tahun Ajar.</div> <div class='mb2'><a class='btn btn-primary w-100 ' href='?buat_room' onclick='return confirm(`Buat $Room Baru?`)'>Buat $Room Baru</a></div>" : '';
 
+$my_rooms_sd = (!$my_rooms_sd || $id_role != 2) ? '' : "
+  <hr>
+  <div class='wadah gradasi-toska'>
+    <h4 class='tengah darkblue'>$Room Sekolah Dasar</h4>
+    <div class='wadah bg-white'>
+      <div class=' darkred f24 miring mb2'>Mapel Inti</div>
+      <div class=row>
+        $my_rooms_sd[1]
+      </div>
+    </div>
+    <div class='wadah bg-white'>
+      <div class=' darkred f24 miring mb2'>Mapel Tambahan</div>
+      <div class=row>
+        $my_rooms_sd[2]
+      </div>
+    </div>
+    <div class='wadah bg-white'>
+      <div class=' darkred f24 miring mb2'>Mapel Informal</div>
+      <div class=row>
+        $my_rooms_sd[3]
+      </div>
+    </div>
+  </div>
+";
+
+# ============================================================
+# FINAL ECHO
+# ============================================================
 echo "
 <div class=container>
   <form method=post>
     <hr>
     <h3 class='darkblue f20 upper tengah mb4'>$Room Aktif $ta_show</h3>
     <div class=row>
-      $my_room
+      $my_rooms
     </div>
+    $my_rooms_sd
     <hr>
     <div class='tengah'>
       $link_buat_room_baru

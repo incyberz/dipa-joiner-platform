@@ -47,6 +47,11 @@ if (!mysqli_num_rows($q)) {
 }
 
 $room = mysqli_fetch_assoc($q);
+if ($room['jenjang'] == 'SD' || $room['jenjang'] == 'SP' || $room['jenjang'] == 'SA') {
+  $senin_pertama_kuliah = $senin_pertama_sekolah;
+  $ta_awal = $senin_pertama_sekolah;
+  $ta_akhir = $akhir_sekolah;
+}
 
 # ============================================================
 # STATUS ROOM VALIDATION

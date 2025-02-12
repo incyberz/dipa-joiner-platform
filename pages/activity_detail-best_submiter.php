@@ -1,7 +1,12 @@
 <?php
 $best_submiter = '';
 $stars = "<img src='$lokasi_img/icon/stars.png' height=25px>";
-if ($count_submiter) {
+if ($count_submiter and $target_kelas) { // wajib ada target kelas
+  // echo '<pre>';
+  // var_dump($target_kelas);
+  // echo '<b style=color:red>sedang DEBUGING: echopreExit</b></pre>';
+  // exit;
+
   $s2 = "SELECT 
   (a.get_point + COALESCE(a.poin_antrian,0) + COALESCE(a.poin_apresiasi,0)) total_poin, 
   c.nama as nama_submiter, 
@@ -14,9 +19,30 @@ if ($count_submiter) {
     AND q.id_room=$id_room ) kelas_submiter 
   FROM tb_bukti_$jenis a 
   JOIN tb_assign_$jenis b ON a.id_assign_$jenis=b.id   
-  JOIN tb_peserta c ON a.id_peserta=c.id
+  JOIN tb_peserta c ON a.id_peserta=c.id 
+
+  
+  -- ======================================
+  -- JOIN DENGAN TARGET KELAS
+  -- ====================================== 
+  JOIN tb_kelas_peserta d ON d.id_peserta=c.id 
+  JOIN tb_kelas e ON d.kelas=e.kelas
+
   WHERE b.id_$jenis=$id_jenis
   AND c.id_role=1 
+
+  -- ======================================
+  -- ONLY ACCEPTED BUKTI
+  -- ====================================== 
+  AND a.status=1
+  
+  
+  -- ======================================
+  -- FILTERED DENGAN TARGET KELAS
+  -- ====================================== 
+  AND d.kelas='$target_kelas'
+  AND e.ta=$ta
+
   ORDER BY total_poin DESC, tanggal_upload  
   LIMIT 3 
   ";
@@ -26,10 +52,11 @@ if ($count_submiter) {
   while ($d2 = mysqli_fetch_assoc($q2)) {
     $i++;
     $nama_submiter = $d2['nama_submiter'];
+    $src = cek_src_profil($d2['image_submiter'], $d2['war_image_submiter'], $lokasi_profil);
     // echo "<br>$nama_submiter";
     $best_submiter .= "
       <div style='position: relative'>
-        <img src='$lokasi_profil/$d2[war_image_submiter]' class=foto_profil>
+        <img src='$src' class=foto_profil>
         <div class='f12 darkblue'>$d2[nama_submiter]</div>
         <div class='f12 abu miring'>$d2[kelas_submiter]</div>
         <div style='position:absolute; top:80px; right:0'>

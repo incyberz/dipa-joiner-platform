@@ -16,7 +16,7 @@ if (isset($_POST['btn_add'])) {
   // echo '</pre>';
 
   $nama = trim($_POST['nama']);
-  $is_wajib = $_POST['is_wajib'] == 'on' ? 1 : 'NULL';
+  $is_wajib = (isset($_POST['is_wajib']) and $_POST['is_wajib'] == 'on')  ? 1 : 'NULL';
 
   // select nama latihan similar
   $s = "SELECT 1 FROM tb_$p WHERE nama like '%$nama%'";

@@ -197,25 +197,26 @@ if (isset($_POST['btn_aktivasi'])) {
     if (isset($_POST['jadwal_kelas'])) {
       $arr = $_POST['jadwal_kelas'];
 
-      // unset radio__kelas
-      foreach ($arr as $kelas => $value) {
+      # ============================================================
+      # UNTUK TIAP KELAS
+      # ============================================================
+      foreach ($arr as $kelas => $jadwal_kelas_awal) {
+        // unset radio__kelas
         unset($_POST['radio__' . $kelas]);
-      }
 
-      // unset($_POST['sesi_kelas_count']);
-
-
-
-
-
-
-      $s = "SELECT id as id_sesi FROM tb_sesi WHERE id_room=$id_room";
-      $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-      if (!mysqli_num_rows($q)) {
-        die(div_alert('danger', "Belum ada data sesi pada $Room ini."));
-      } else {
-        while ($d = mysqli_fetch_assoc($q)) {
-          foreach ($arr as $kelas => $jadwal_kelas) {
+        # ============================================================
+        # GET ALL SESI
+        # ============================================================
+        $s = "SELECT id as id_sesi FROM tb_sesi WHERE id_room=$id_room";
+        $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+        if (!mysqli_num_rows($q)) {
+          die(div_alert('danger', "Belum ada data sesi pada $Room ini."));
+        } else {
+          $i = 0;
+          while ($d = mysqli_fetch_assoc($q)) { // loop all sesi
+            $jeda = $i * 7;
+            $jadwal_kelas_baru = date('Y-m-d H:i', strtotime("+$jeda day", strtotime($jadwal_kelas_awal)));
+            $i++;
             $s2 = "SELECT 1 FROM tb_sesi_kelas WHERE id_sesi=$d[id_sesi] AND kelas='$kelas'";
             echolog('checking duplikat jadwal kelas');
             $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
@@ -230,13 +231,15 @@ if (isset($_POST['btn_aktivasi'])) {
               ) VALUES (
                 $d[id_sesi],
                 '$kelas',
-                '$jadwal_kelas'
+                '$jadwal_kelas_baru'
               )";
+              echolog("inseting jadwal kelas [$kelas]:<hr>$s3");
               $q3 = mysqli_query($cn, $s3) or die(mysqli_error($cn));
             }
-          } // end foreach jadwal_kelas
-        } // end while sesi in $room
-      } // end if ada data sesi
+          } // end while sesi in $room
+        } // end if ada data sesi
+      }
+
 
       unset($_POST['jadwal_kelas']);
     }

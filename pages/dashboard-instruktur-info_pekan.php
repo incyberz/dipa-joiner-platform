@@ -4,8 +4,7 @@ if (!$sesi_aktif) {
   // exit;
 }
 
-
-if ($room_count['count_presensi_aktif'] > 1) {
+if ($room_count['count_presensi_aktif'] >= 1) {
   $info_pekan = div_alert('danger', 'Belum ada kalkulasi [INFO-PEKAN] untuk P2');
 
 
@@ -60,7 +59,7 @@ if ($room_count['count_presensi_aktif'] > 1) {
     echo '</pre>';
     die('<hr>Invalid jenis sesi.');
   }
-} else {
+} else { // tidak ada sesi aktif
   $nama_sesi = "Siap-siap untuk Pertemuan Pertama!";
   $mode = 'Tatap Muka';
 

@@ -56,7 +56,7 @@ if (!$room['awal_sesi']) {
     $no_sesi_harian = 0;
     $no_minggu = 0;
     $tr = '';
-    $arr = [
+    $arr_ujian = [
       'uts' => [
         'caption' => 'UTS',
         'jumlah_sesi' => $room['minggu_normal_uts'],
@@ -71,7 +71,7 @@ if (!$room['awal_sesi']) {
       ],
     ];
 
-    foreach ($arr as $musim => $arr_musim) {
+    foreach ($arr_ujian as $musim => $arr_musim) {
       $nama_musim = $arr_musim['caption'];
       $jumlah_sesi = $arr_musim['jumlah_sesi'];
       if ($jumlah_sesi) {
@@ -85,7 +85,9 @@ if (!$room['awal_sesi']) {
             <tr>
               <td class=tengah>$no_minggu</td>
               <td>$Minggu normal sesi $no_sesi_harian</td>
-              <td>$tanggal_sesi_show</td>
+              <td>
+                $tanggal_sesi_show
+              </td>
             </tr>
           ";
         } // end for sesi normal
@@ -115,7 +117,9 @@ if (!$room['awal_sesi']) {
             $tr .= "
               <tr class='tengah gradasi-kuning biru miring'>
                 <td>$no_minggu</td>
-                <td colspan=100%>$nama_musim $Minggu ke-$j | $tanggal_sesi_show</td>
+                <td colspan=100%>
+                  $nama_musim $Minggu ke-$j | $tanggal_sesi_show
+                </td>
               </tr>
             ";
           }

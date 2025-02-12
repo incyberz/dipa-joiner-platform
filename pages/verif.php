@@ -301,7 +301,7 @@ foreach ($rjenis as $key => $jenis) {
           ";
         }
 
-        $link_nama_jenis = "<a href='?verif&keyword=$d[nama_jenis]'>$d[nama_jenis]</a>";
+        $link_nama_jenis = "<a href='?verif&keyword=$d[nama_jenis]&show_img=$show_img'>$d[nama_jenis]</a>";
 
         $nama_jenis_show = $jenis == 'challenge' ? "
         <div class='abu miring f12'>$link_nama_jenis</div>
@@ -313,8 +313,8 @@ foreach ($rjenis as $key => $jenis) {
           <tr>
             <td>$i</td>
             <td>
-              <a href='?verif&keyword=$d[nama_peserta]'>$d[nama_peserta]</a>  $span_icon 
-              <div class='f12 abu'><a href='?verif&keyword=$d[kelas]'>$d[kelas]</a></div> 
+              <a href='?verif&keyword=$d[nama_peserta]&show_img=$show_img'>$d[nama_peserta]</a>  $span_icon 
+              <div class='f12 abu'><a href='?verif&keyword=$d[kelas]&show_img=$show_img'>$d[kelas]</a></div> 
               $div_img_peserta
             </td>
             <td>
@@ -387,8 +387,9 @@ foreach ($rjenis as $key => $jenis) {
     ";
   } else { // no need verif
     $pada_kelas = $get_kelas ? " pada kelas $get_kelas" : '';
-    $clear_keyword = $keyword ? " [keyword: <b class='consolas darkblue'>$keyword</b>] | <a href='?verif'>Clear Keyword</a>" : '';
+    $clear_keyword = $keyword ? " [keyword: <b class='consolas darkblue'>$keyword</b>] | <a href='?verif&show_img=$show_img'>Clear Keyword</a>" : '';
     $add = " | <a href='?tambah_activity&p=$jenis&id_sesi=$id_sesi_aktif'>Add</a>";
+    $add = ''; // UI membingungkan
     if ($get_history) {
       echo div_alert('info', "Data history bukti $jenis tidak ditemukan $pada_kelas $clear_keyword $add");
     } else {

@@ -1,0 +1,2 @@
+jenjang functions
+<?php
