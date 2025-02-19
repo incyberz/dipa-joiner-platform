@@ -2,6 +2,7 @@
 # =====================================================================
 # GET DATA ASSIGN
 # =====================================================================
+$sql_kelas_saya = $id_role == 1 ? "s.kelas = '$kelas'" : '1';
 $s = "SELECT 
 a.tanggal as tanggal_assign,
 a.no as no_lat,
@@ -29,6 +30,7 @@ b.no as no_sesi,
   WHERE q.id_$jenis=a.id_$jenis
   AND r.id_role=1 
   AND s.ta = $ta 
+  AND $sql_kelas_saya
 
   ) count_submiter 
 
@@ -355,6 +357,7 @@ if (!$d_assign['ket']) {
   # 3 BEST SUBMITER
   # ============================================================
   include 'activity_detail-best_submiter.php';
+  include 'activity_lihat_punya_teman.php';
 
   # ============================================================
   # LATIHAN/CHALLENGE INFO
@@ -408,6 +411,7 @@ if (!$d_assign['ket']) {
       <div class='f20 blue pt2'>
         $be_the_first
         $best_submiter
+        $lihat_punya_teman
       </div>
     </div>
   ";

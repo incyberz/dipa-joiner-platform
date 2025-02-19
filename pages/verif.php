@@ -12,21 +12,30 @@
 </style>
 <?php
 if ($id_role <= 1) jsurl('?');
+# =============================================================
+# KEYWORD HANDLER
+# =============================================================
+$keyword = $_GET['keyword'] ?? '';
+if (isset($_POST['keyword'])) {
+  $keyword = $_POST['keyword'];
+  jsurl("?verif&keyword=$keyword");
+}
+
 $get_kelas = $_GET['kelas'] ?? '';
 $get_history = $_GET['history'] ?? '';
 $show_img = $_GET['show_img'] ?? '';
+$not_get_history = !$get_history;
 
 
+$url_params = "&show_img=$show_img&kelas=$get_kelas&keyword=$keyword";
 if ($get_history) {
   $judul = 'Histori Verifikasi';
   $judul2 = 'Cek Verifikasi';
-  $url = '';
   $sql_not = 'not';
   $h2_history = 'History';
 } else {
   $judul = 'Verifikasi Latihan dan Challenge';
   $judul2 = 'Histori Verifikasi';
-  $url = '&history=1';
   $sql_not = '';
   $h2_history = 'Verifikasi';
 }
@@ -35,7 +44,7 @@ set_title($judul);
 echo "
   <div class='flexy flex-between'>
     <h1 class='abu tebal f12 mb2'>$judul</h1>
-    <h2><a class=' tebal f12 mb2' href='?verif$url'>$judul2</a></h2>
+    <h2><a class=' tebal f12 mb2' href='?verif$url_params&history=$not_get_history'>$judul2</a></h2>
   </div>
 ";
 
@@ -68,18 +77,10 @@ $param_awal = "verif&history=$get_history";
 include 'navigasi_room_kelas.php';
 $sql_kelas = $get_kelas ? "g.kelas = '$get_kelas'" : '1';
 
-# =============================================================
-# KEYWORD HANDLER
-# =============================================================
-$keyword = $_GET['keyword'] ?? '';
-if (isset($_POST['keyword'])) {
-  $keyword = $_POST['keyword'];
-  jsurl("?verif&keyword=$keyword");
-}
-$sql_keyword = $keyword ? "(e.nama LIKE '%$keyword%' OR d.nama LIKE '%$keyword%' OR g.kelas LIKE '%$keyword%')" : '1';
 
 $jumlah_verif = 0;
 $rjenis = ['latihan', 'challenge'];
+$sql_keyword = $keyword ? "(e.nama LIKE '%$keyword%' OR d.nama LIKE '%$keyword%' OR g.kelas LIKE '%$keyword%')" : '1';
 foreach ($rjenis as $key => $jenis) {
   $sql_image_bukti = $jenis == 'latihan' ? 'a.image as image_bukti' : '1';
   $s = "SELECT 
