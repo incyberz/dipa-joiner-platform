@@ -16,7 +16,7 @@ set_h2("Create $Room", "
 // variabel awal
 $nama_room = '';
 $singkatan_room = '';
-// $ta = date('Y');
+//= $ta_aktif = date('Y');
 $prodi = '';
 $jumlah_sesi = 16;
 $pukul = '08:00:00';
@@ -60,7 +60,7 @@ if (isset($_POST['btn_buat_room'])) {
         created_by
       ) VALUES (
         $new_id,
-        $ta,
+        $ta_aktif,
         '$_POST[nama_room]',
         '$_POST[singkatan_room]',
         $id_peserta
@@ -74,7 +74,7 @@ if (isset($_POST['btn_buat_room'])) {
         id_room,
         kelas
       ) VALUES (
-        $ta,
+        $ta_aktif,
         $new_id,
         '$kelas'
       )

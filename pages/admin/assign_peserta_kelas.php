@@ -22,13 +22,13 @@ if (isset($_POST['btn_filter_kelas'])) {
 # ============================================================
 # HEADER ASSIGN PESERTA KELAS
 # ============================================================
-if (!$ta) die(erid('ta'));
+if (!$ta_aktif) die(erid('ta_aktif'));
 set_h2(
   'Assign Peserta Kelas',
   "Proses memasukan $Peserta ke Grup Kelas 
   <b class=darkblue>$get_kelas</b>
   pada TA. 
-  <b class=darkblue>$ta</b>
+  <b class=darkblue>$ta_aktif</b>
   <div class=mt2>
     <a href='?peserta_kelas'>
       $img_prev
@@ -42,7 +42,7 @@ instruktur_only();
 # ==================================================
 # SELECT FROM KELAS TERDAHULU
 # ==================================================
-$s = "SELECT * FROM tb_kelas WHERE ta < $ta";
+$s = "SELECT * FROM tb_kelas WHERE ta < $ta_aktif";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $opt = '<option value=0>--Pilih--</option>';
 $opt .= '<option value=all>Semua Kelas</option>';
@@ -67,7 +67,7 @@ FROM tb_kelas_peserta a
 JOIN tb_kelas b ON a.kelas=b.kelas    
 JOIN tb_peserta c ON a.id_peserta=c.id 
 WHERE b.kelas='$get_kelas' 
-AND b.ta=$ta
+AND b.ta=$ta_aktif
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (mysqli_num_rows($q) == 0) {
@@ -106,7 +106,7 @@ a.nama as nama_peserta,
   FROM tb_kelas_peserta p 
   JOIN tb_kelas q ON p.kelas=q.kelas  
   WHERE id_peserta=a.id
-  AND q.ta=$ta) kelas 
+  AND q.ta=$ta_aktif) kelas 
 
 FROM tb_peserta a 
 -- JOIN tb_kelas_peserta

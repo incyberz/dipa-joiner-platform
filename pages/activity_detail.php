@@ -29,7 +29,7 @@ b.no as no_sesi,
   JOIN tb_room_kelas s ON q.id_room_kelas=s.id 
   WHERE q.id_$jenis=a.id_$jenis
   AND r.id_role=1 
-  AND s.ta = $ta 
+  AND s.ta = $ta_aktif 
   AND $sql_kelas_saya
 
   ) count_submiter 

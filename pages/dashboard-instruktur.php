@@ -2,7 +2,7 @@
 # ============================================================
 # INFO TAHUN AJAR DAN PEKAN
 # ============================================================
-$ta_show = tahun_ajar_show($ta);
+$ta_show = tahun_ajar_show($ta_aktif);
 $awal = date('M-Y', strtotime($ta_awal));
 $akhir = date('M-Y', strtotime($ta_akhir));
 echo div_alert('info tengah', "

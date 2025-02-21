@@ -86,7 +86,7 @@ if (isset($_POST['btn_super_delete_kelas'])) {
   # FINAL DELETE
   # ============================================================
   echolog('<hr>FINAL DELETE');
-  $s = "DELETE FROM tb_kelas WHERE kelas='$ckelas' AND ta=$ta";
+  $s = "DELETE FROM tb_kelas WHERE kelas='$ckelas' AND ta=$ta_aktif";
   echolog($s);
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
@@ -101,7 +101,7 @@ if (isset($_POST['btn_super_delete_kelas'])) {
 # MAIN PROCESS
 # ============================================================
 $get_kelas = $_GET['kelas'] ?? '';
-echo set_h2('SUPER DELETE KELAS', "Tahun Ajar: [$ta] " . tahun_ajar_show($ta));
+echo set_h2('SUPER DELETE KELAS', "Tahun Ajar: [$ta_aktif] " . tahun_ajar_show($ta_aktif));
 
 if (!$get_kelas) {
   // ambil data kelas pada ta sekarang
@@ -109,7 +109,7 @@ if (!$get_kelas) {
   (
     SELECT COUNT(1) FROM tb_kelas_peserta 
     WHERE kelas=a.kelas) jumlah_peserta 
-  FROM tb_kelas a WHERE a.ta=$ta";
+  FROM tb_kelas a WHERE a.ta=$ta_aktif";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $tr = '';
   while ($d = mysqli_fetch_assoc($q)) {

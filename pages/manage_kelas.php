@@ -8,7 +8,7 @@
 if (!$id_room) die(erid('id_room'));
 instruktur_only();
 
-$get_ta = $_GET['ta'] ?? $ta;
+$get_ta = $_GET['ta'] ?? $ta_aktif;
 $mode = $_GET['mode'] ?? '';
 
 $s = "SELECT ta FROM tb_ta";
@@ -86,7 +86,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   }
 
   if ($d['status']) {
-    if ($d['ta'] == $ta) {
+    if ($d['ta'] == $ta_aktif) {
       $btn = "<button class='btn btn-primary btn-sm' name=btn_assign_room_kelas value='$d[kelas]' onclick='return confirm(`Confirm Assign?\n\nMasukan semua peserta pada kelas ke $Room ini?`)'>Assign</button>";
     } else {
       $btn = "<span class='btn btn-secondary btn-sm' onclick='alert(`Tidak dapat Drop karena TA sudah tidak aktif.`)'>Drop</span>";
@@ -130,7 +130,7 @@ if (!$mode) {
   die("Belum ada handler untuk mode [$mode]");
 }
 
-$btn_add = $get_ta == $ta ? "<span class='btn btn-sm btn-success btn_toggle'>Add Kelas</span>" : "<span class='btn btn-sm btn-secondary' onclick='alert(`Add Kelas hanya dapat di TA Aktif ($ta_aktif)\n\nSilahkan pindahkan navigasi ke TA Aktif terlebih dahulu.`)'>Add Kelas</span>";
+$btn_add = $get_ta == $ta_aktif ? "<span class='btn btn-sm btn-success btn_toggle'>Add Kelas</span>" : "<span class='btn btn-sm btn-secondary' onclick='alert(`Add Kelas hanya dapat di TA Aktif ($ta_aktif)\n\nSilahkan pindahkan navigasi ke TA Aktif terlebih dahulu.`)'>Add Kelas</span>";
 
 $opt_smt = '';
 for ($i = 1; $i <= 8; $i++) {

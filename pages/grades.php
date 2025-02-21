@@ -257,7 +257,7 @@ if ($id_role == 2 && $get_kelas != 'all') {
   $s = "SELECT a.kelas 
   FROM tb_kelas a 
   JOIN tb_room_kelas b ON a.kelas=b.kelas 
-  WHERE a.ta=$ta 
+  WHERE a.ta=$ta_aktif 
   AND a.status=1 
   AND b.id_room=$id_room 
   ";

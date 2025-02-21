@@ -50,7 +50,7 @@ if (isset($_POST['btn_add_room_jenis'])) {
   ) VALUES (
     '$nama',
     '$singkatan',
-    '$ta',
+    '$ta_aktif',
     '$lembaga',
     '$id_peserta',
     '$jenjang',

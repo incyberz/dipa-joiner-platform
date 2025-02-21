@@ -7,7 +7,7 @@ if (isset($_POST['btn_assign_room_kelas'])) {
   $s = "SELECT 1 FROM tb_room_kelas WHERE id_room=$id_room AND kelas='$kelas'";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   if (!mysqli_num_rows($q)) {
-    $s = "INSERT INTO tb_room_kelas (kelas,id_room,ta) VALUES ('$kelas',$id_room,$ta)";
+    $s = "INSERT INTO tb_room_kelas (kelas,id_room,ta) VALUES ('$kelas',$id_room,$ta_aktif)";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     echo div_alert('success', "Assign $Room Kelas sukses.");
   } else {

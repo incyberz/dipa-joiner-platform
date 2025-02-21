@@ -25,7 +25,7 @@ if ($room_count['count_presensi_aktif'] >= 1) {
     -- JOIN tb_sesi_kelas b ON a.kelas=b.kelas -- terdapat $Room lama yang belum set jadwal kuliah
     WHERE a.id_room=$id_room 
     AND a.kelas!= 'INSTRUKTUR' 
-    AND a.ta=$ta 
+    AND a.ta=$ta_aktif 
     -- AND b.id_sesi = $sesi_aktif[id]
     ";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));

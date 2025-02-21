@@ -26,7 +26,7 @@ b.nama as nama_instruktur,
 (
   SELECT count(1) FROM tb_room_kelas 
   WHERE id_room='$id_room'
-  AND ta=$ta) total_kelas,
+  AND ta=$ta_aktif) total_kelas,
 (
   SELECT last_update FROM tb_room_count  
   WHERE id_room='$id_room') last_update,
@@ -75,7 +75,7 @@ if ($status_room != 100) {
 # ============================================================
 if ($id_role != 2) {
   if (!$room['total_kelas']) {
-    die(div_alert('danger', "Belum ada satupun kelas pada $Room ini di TA $ta"));
+    die(div_alert('danger', "Belum ada satupun kelas pada $Room ini di TA= $ta_aktif"));
   }
 }
 
@@ -152,7 +152,7 @@ if (!$id_room_kelas) {
         $pesan = "Anda adalah pemilik $Room ini. Silahkan Assign kelas ini ke $Room Anda.";
 
         // auto-assign kelas sendiri ke $Room ini
-        $s = "INSERT INTO tb_room_kelas (id_room,kelas,ta) VALUES ($id_room,'$kelas',$ta)";
+        $s = "INSERT INTO tb_room_kelas (id_room,kelas,ta) VALUES ($id_room,'$kelas', $ta_aktif)";
         $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
         jsurl();
       } else {
@@ -180,7 +180,7 @@ if (!$id_room_kelas) {
 }
 
 
-$select_all_from_tb_room_kelas = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR' AND ta=$ta";
+$select_all_from_tb_room_kelas = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR' AND ta=$ta_aktif";
 
 
 
@@ -385,7 +385,7 @@ $s = "SELECT
   SELECT count(1) FROM tb_kelas_peserta p  
   JOIN tb_kelas q ON p.kelas=q.kelas  
   JOIN tb_peserta r ON p.id_peserta=r.id 
-  WHERE q.ta=$ta 
+  WHERE q.ta=$ta_aktif 
   AND r.id_role = $id_role 
   AND r.status = 1 
   AND q.kelas='$kelas') total_peserta_kelas 

@@ -7,7 +7,7 @@ JOIN tb_kelas b ON a.kelas=b.kelas
 WHERE a.id_room=$id_room 
 AND b.kelas != 'INSTRUKTUR' 
 AND b.status = 1 -- kelas aktif 
-AND b.ta = $ta
+AND b.ta = $ta_aktif
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) {
@@ -20,7 +20,7 @@ if (!mysqli_num_rows($q)) {
     $font_size = $d['kelas'] == $get_kelas ? 'f16 blue bold' : 'f10';
     $kelas_show = "$d[prodi]-$reg-SM$d[semester]";
     $kelas_show = $d['caption'];
-    $kelas_show = str_replace("~$ta", '', $kelas_show);
+    $kelas_show = str_replace("~$ta_aktif", '', $kelas_show);
     $li .= "
       <li>
         <a class='$font_size $btn_class' href='?$param_awal&kelas=$d[kelas]'>

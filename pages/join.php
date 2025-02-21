@@ -197,7 +197,7 @@ if (!$as) {
   # SELECTED AS
   # ===========================================================
   if ($as == 'peserta') {
-    $s = "SELECT kelas FROM tb_kelas WHERE ta=$ta AND status=1  ";
+    $s = "SELECT kelas FROM tb_kelas WHERE ta=$ta_aktif AND status=1  ";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     $option_kelas = '';
     while ($d = mysqli_fetch_assoc($q)) {
@@ -255,7 +255,7 @@ if (!$as) {
           $input_username
         </div>
         <div class='form-group'>
-          <label for='select_kelas'>Kelas Aktif <span class='f12 abu'>pada TA $ta</span></label>
+          <label for='select_kelas'>Kelas Aktif <span class='f12 abu'>pada TA $ta_aktif</span></label>
           <select name='select_kelas' id='select_kelas' class='form-control'>
             <option value='0'>--Pilih--</option>
             $option_kelas

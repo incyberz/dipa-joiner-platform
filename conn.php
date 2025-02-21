@@ -15,7 +15,7 @@ if ($is_live) {
 } else {
   $db_user = 'root';
   $db_pass = '';
-  $db_name = 'db_dipa_v5';
+  $db_name = 'db_dipa_v6';
 }
 
 $cn = new mysqli($db_server, $db_user, $db_pass, $db_name);

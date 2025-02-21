@@ -34,7 +34,7 @@ if ($id_peserta == '') { // belum login
     JOIN tb_kelas c ON b.kelas=c.kelas  
     WHERE a.username='$username' 
     AND b.kelas='$kelas' 
-    AND c.ta=$ta 
+    AND c.ta=$ta_aktif 
     AND c.status=1 
     ";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));

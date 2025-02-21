@@ -166,7 +166,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   AND b.kelas='$d[kelas]' 
   AND c.status = 1 -- kelas aktif
   AND d.id_room=$id_room  
-  AND d.ta = $ta 
+  AND d.ta = $ta_aktif 
   ORDER BY a.nama
   ";
 

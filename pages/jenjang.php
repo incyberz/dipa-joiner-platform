@@ -165,7 +165,7 @@ foreach ($rjenis as $key_jenis => $arr_jenis) {
     <form method=post id=form_add_$key_jenis class='wadah mt3 gradasi-kuning'>
       <input placeholder='Nama $title baru...' name=nama required minlength=8 class='form-control mb2'>
       <input placeholder='Singkatan...' name=singkatan required minlength=3 maxlength=10 class='form-control mb2'>
-      <input disabled class='form-control mb2' value='Tahun Ajar: $ta'>
+      <input disabled class='form-control mb2' value='Tahun Ajar: $ta_aktif'>
       <input placeholder='Lembaga...' name=lembaga required minlength=5 class='hideit form-control mb2' value='AL-BAITI SUMEDANG'>
       <button class='btn btn-success' name=btn_add_room_jenis value=$key_jenis>Confirm Add</button>
     </form>

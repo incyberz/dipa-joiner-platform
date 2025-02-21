@@ -181,7 +181,7 @@ foreach ($arr_includes as $v) {
 // include 'includes/date_managements.php';
 // include 'includes/href_wa.php';
 // include 'includes/get_current_url.php';
-$ta_show = tahun_ajar_show($ta);
+$ta_show = tahun_ajar_show($ta_aktif);
 
 
 # ========================================================
@@ -252,7 +252,7 @@ if ($username) {
 </head>
 
 <body>
-  <div class="hideit" id="ta"><?= $ta ?></div>
+  <div class="hideit" id="ta_aktif"><?= $ta_aktif ?></div>
   <?php
 
   if (!$is_login || $id_room) include 'pages/header.php';

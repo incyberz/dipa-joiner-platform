@@ -21,7 +21,7 @@ JOIN tb_room_kelas d ON c.kelas=d.kelas
 
 WHERE b.id_room=$id_room 
 AND d.id_room=$id_room 
-AND d.ta = $ta 
+AND d.ta = $ta_aktif 
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $num_rows = mysqli_num_rows($q);

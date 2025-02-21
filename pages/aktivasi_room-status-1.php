@@ -10,7 +10,7 @@ $room_tahun_ajar = $room['ta'] > 20201 ? $room['ta'] : "$thn_ajar$gg";
 
 // echo "
 //   <br>thn_ajar: $thn_ajar
-//   <br>ta: $ta
+//   <br>ta:= $ta_aktif
 //   <br>room_tahun_ajar: $room_tahun_ajar
 //   <br>gg: $gg
 // ";

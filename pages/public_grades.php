@@ -11,7 +11,7 @@ FROM tb_peserta a
 JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
 JOIN tb_kelas c ON b.kelas=c.kelas 
 JOIN tb_poin d ON a.id=d.id_peserta  
-WHERE c.ta = $ta  
+WHERE c.ta = $ta_aktif  
 AND c.status = 1 -- kelas aktif 
 AND a.status = 1 -- _peserta aktif
 ORDER BY d.akumulasi_poin DESC LIMIT 10";

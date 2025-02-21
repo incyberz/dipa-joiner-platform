@@ -69,7 +69,7 @@ FROM tb_peserta a
 JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
 JOIN tb_kelas c ON b.kelas=c.kelas 
 WHERE a.id_role = 1 
-AND c.ta=$ta 
+AND c.ta=$ta_aktif 
 AND c.status = 1 
 AND $sql_kelas
 ORDER BY c.shift, b.kelas, a.nama";

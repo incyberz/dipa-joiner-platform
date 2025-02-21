@@ -16,6 +16,12 @@
 login_only();
 set_title("Presensi $target_kelas");
 
+// echo '<pre>';
+// var_dump($_SESSION);
+// echo '<b style=color:red>DEBUGING: echopreExit</b></pre>';
+// unset($_SESSION['target_kelas']);
+// exit;
+
 if (!$target_kelas and $id_role == 2) {
   include 'target_kelas.php';
   exit;

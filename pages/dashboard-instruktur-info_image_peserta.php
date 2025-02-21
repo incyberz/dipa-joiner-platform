@@ -21,7 +21,7 @@ if (!$room_count['count_peserta']) {
   WHERE a.status=1 
   AND a.profil_ok is null   -- belum diperiksa
   AND a.image is not null   -- _peserta sudah upload
-  AND c.ta = $ta  -- tahun ajar saat ini
+  AND c.ta = $ta_aktif  -- tahun ajar saat ini
   AND c.kelas != 'INSTRUKTUR'
   AND d.id_room=$id_room -- di $Room ini
   ";

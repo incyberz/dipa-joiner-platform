@@ -15,6 +15,9 @@ if (isset($_POST['btn_update_jadwal_kelas'])) {
   } else {
     $s = "INSERT INTO tb_sesi_kelas (id_sesi,kelas,jadwal_kelas) VALUES ($arr[0],'$arr[1]','$jadwal_kelas')";
   }
+  echo '<pre>';
+  var_dump($s);
+  echo '</pre>';
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
   if (isset($_POST['update_next_week'])) {

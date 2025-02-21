@@ -17,7 +17,7 @@ a.prodi,
 
 FROM tb_kelas a 
 WHERE a.status=1 
-AND a.ta = $ta  
+AND a.ta = $ta_aktif  
 AND kelas != 'INSTRUKTUR'
 ORDER BY a.fakultas,a.prodi,a.kelas";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -27,7 +27,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   $checked = $d['my_room_kelas'] ? 'checked' : '';
 
   $copy = '';
-  if ($username == 'abi') $copy = " | <span class='text-hover'>Copy</span>";
+  // if ($username == 'abi') $copy = " | <span class='text-hover'>Copy</span>";
 
   # ============================================================
   # FINAL TR
@@ -196,7 +196,7 @@ if (isset($mode) and $mode == 'add_kelas') {
   echo "
     <form method=post action='?add_kelas'>
       <h3 class=tr>Select $Room Kelas</h3>
-      <p class=tr>Silahkan Anda pilih Grup <b class=darkblue>Kelas aktif TA. $ta</b> yang boleh mengakses $Room Anda (max: 5 kelas).</p>
+      <p class=tr>Silahkan Anda pilih Grup <b class=darkblue>Kelas aktif TA.= $ta_aktif</b> yang boleh mengakses $Room Anda (max: 5 kelas).</p>
       <table class='table' id=tb_kelas>
         <thead class='tr'>
           <th>Fakultas / Lembaga</th>
@@ -215,7 +215,7 @@ if (isset($mode) and $mode == 'add_kelas') {
 } else {
   $inputs = "
     <h3 class=tr>Select $Room Kelas</h3>
-    <p class=tr>Silahkan Anda pilih Grup <b class=darkblue>Kelas aktif TA. $ta</b> yang boleh mengakses $Room Anda (max: 5 kelas).</p>
+    <p class=tr>Silahkan Anda pilih Grup <b class=darkblue>Kelas aktif TA.= $ta_aktif</b> yang boleh mengakses $Room Anda (max: 5 kelas).</p>
     <table class='table' id=tb_kelas>
       <thead class='tr'>
         <th>Fakultas / Lembaga</th>

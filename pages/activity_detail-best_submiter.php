@@ -41,7 +41,7 @@ if ($count_submiter and $target_kelas) { // wajib ada target kelas
   -- FILTERED DENGAN TARGET KELAS
   -- ====================================== 
   AND d.kelas='$target_kelas'
-  AND e.ta=$ta
+  AND e.ta=$ta_aktif
 
   ORDER BY total_poin DESC, tanggal_upload  
   LIMIT 3 

@@ -67,7 +67,7 @@ if ($aksi == 'lihat_bukti') {
     JOIN tb_peserta d ON c.id_peserta=d.id
     
     WHERE a.id_room = $id_room 
-    AND a.ta = $ta 
+    AND a.ta = $ta_aktif 
     AND d.status = 1 -- _peserta aktif
     -- AND d.id_role = 1 -- _peserta 
     AND $sql_target_kelas

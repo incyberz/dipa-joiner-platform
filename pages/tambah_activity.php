@@ -86,7 +86,7 @@ $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) die(div_alert('danger', 'Invalid sesi.'));
 $csesi = mysqli_fetch_assoc($q);
 
-$s = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room -- AND ta=$ta";
+$s = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room -- AND ta=$ta_aktif";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) die(div_alert('danger', "Belum ada $Room Kelas."));
 
@@ -99,7 +99,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     $untuk_kelas .= "<div class='kiri hideit'><label><input type=checkbox checked name=untuk_kelas[$id]> $k</label></div>";
     $untuk_kelas .= "<div class='kiri'><label><input type=checkbox checked disabled> $k</label></div>";
   } else {
-    if ($d['ta'] != $ta) continue;
+    if ($d['ta'] != $ta_aktif) continue;
     $untuk_kelas .= "<div class='kiri'><label><input type=checkbox checked name=untuk_kelas[$id]> $k</label></div>";
   }
 }

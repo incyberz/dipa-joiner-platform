@@ -23,7 +23,7 @@ if (isset($_POST['btn_add_kelas'])) {
       $isis = strtoupper(str_replace('__,', '', $isis));
 
 
-      $s = "INSERT INTO tb_kelas ($koloms,ta) VALUES ($isis,$ta)";
+      $s = "INSERT INTO tb_kelas ($koloms,ta) VALUES ($isis,$ta_aktif)";
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       echolog("Executing: $s");
     }

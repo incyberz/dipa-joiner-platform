@@ -168,7 +168,7 @@ if (isset($_POST['btn_aktivasi'])) {
             id_room,
             kelas
           ) VALUES (
-            $ta,
+            $ta_aktif,
             $id_room,
             '$kelas'
           )";

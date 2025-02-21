@@ -187,7 +187,7 @@ c.*,
   JOIN tb_kelas q ON p.kelas=q.kelas  
   JOIN tb_kelas_peserta r ON q.kelas=r.kelas
   JOIN tb_peserta s ON r.id_peserta=s.id 
-  WHERE q.ta=$ta 
+  WHERE q.ta=$ta_aktif 
   AND s.id_role = 1 
   AND s.status = 1 
   AND p.id_room=$id_room) total_peserta,
@@ -195,7 +195,7 @@ c.*,
   SELECT count(1) FROM tb_kelas_peserta p  
   JOIN tb_kelas q ON p.kelas=q.kelas  
   JOIN tb_peserta r ON p.id_peserta=r.id 
-  WHERE q.ta=$ta 
+  WHERE q.ta=$ta_aktif 
   AND r.id_role = 1 
   AND r.status = 1 
   AND q.kelas=c.kelas) total_peserta_kelas,
@@ -294,7 +294,7 @@ WHERE 1 -- _peserta aktif/nonaktif
 AND password is not null -- _peserta aktif pasti sudah ganti pass
 AND a.id_role=1 -- _peserta only tidak GM
 AND $sql_id_peserta -- SWITCH VIEW PESERTA | GM
-AND c.ta = $ta 
+AND c.ta = $ta_aktif 
 AND d.id_room = $id_room 
 
 

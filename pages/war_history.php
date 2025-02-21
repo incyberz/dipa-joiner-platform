@@ -55,11 +55,11 @@ e.war_image as war_image_pembuat,
 (
   SELECT p.kelas FROM tb_kelas_peserta p 
   JOIN tb_kelas q ON p.kelas=q.kelas   
-  WHERE id_peserta=a.id_penjawab AND q.ta=$ta) kelas_penjawab,   
+  WHERE id_peserta=a.id_penjawab AND q.ta=$ta_aktif) kelas_penjawab,   
 (
   SELECT p.kelas FROM tb_kelas_peserta p 
   JOIN tb_kelas q ON p.kelas=q.kelas   
-  WHERE id_peserta=a.id_pembuat AND q.ta=$ta) kelas_pembuat    
+  WHERE id_peserta=a.id_pembuat AND q.ta=$ta_aktif) kelas_pembuat    
 FROM tb_war a 
 JOIN tb_peserta b ON a.id_penjawab=b.id 
 JOIN tb_soal_peserta c ON a.id_soal_peserta=c.id 

@@ -28,7 +28,7 @@ if ($id_role == 1) {
 
   $s2 = "SELECT * FROM tb_room_kelas a 
   JOIN tb_sesi_kelas b ON a.kelas=b.kelas
-  WHERE a.ta=$ta AND a.id_room=$id_room AND a.kelas !='INSTRUKTUR' 
+  WHERE a.ta=$ta_aktif AND a.id_room=$id_room AND a.kelas !='INSTRUKTUR' 
   AND id_sesi = $id_sesi";
   $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
   $li = '';

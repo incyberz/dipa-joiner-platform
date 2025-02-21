@@ -34,8 +34,9 @@ JOIN tb_peserta d ON a.id_peserta=d.id
 JOIN tb_kelas_peserta e ON e.id_peserta=d.id 
 JOIN tb_kelas f ON e.kelas=f.kelas 
 WHERE c.id=$id_jenis 
-AND f.ta=$ta 
-AND f.status=1 
+AND f.ta=$ta_aktif 
+AND f.status=1 -- kelas aktif 
+AND a.status = 1 -- hanya yang sudah di acc
 AND f.kelas = '$kelas' -- teman kelas sendiri 
 
 -- ======================================

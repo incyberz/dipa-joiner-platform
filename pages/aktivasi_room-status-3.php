@@ -38,7 +38,7 @@ if (1) {
     die(div_alert('danger', "Data $Room minggu_normal_uts (jumlah sesi normal sebelum UTS) belum lengkap (masih null)."));
   } else {
     $inputs = '';
-    $ta_show = tahun_ajar_show($ta);
+    $ta_show = tahun_ajar_show($ta_aktif);
     $hari = hari_tanggal($senin_pertama_kuliah, 1, 1, 0);
 
     $inputs .= "

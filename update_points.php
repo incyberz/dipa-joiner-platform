@@ -12,7 +12,7 @@ if ($harus_update_poin and $id_room_kelas and !$_POST) {
   WHERE a.id_room=$id_room 
   AND b.status = 1 
   AND b.id_role = 1 
-  AND d.ta = $ta 
+  AND d.ta = $ta_aktif 
   AND d.status = 1 
   AND c.kelas = '$kelas'
   
@@ -45,7 +45,7 @@ if ($harus_update_poin and $id_room_kelas and !$_POST) {
   WHERE a.id_room=$id_room 
   AND b.status = 1 
   AND b.id_role = 1 
-  AND d.ta = $ta 
+  AND d.ta = $ta_aktif 
   AND d.status = 1 
   
   ORDER BY a.akumulasi_poin DESC;

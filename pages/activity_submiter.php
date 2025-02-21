@@ -108,7 +108,7 @@ JOIN tb_peserta d ON a.id_peserta=d.id
 JOIN tb_kelas_peserta e ON e.id_peserta=d.id 
 JOIN tb_kelas f ON e.kelas=f.kelas 
 WHERE c.id=$id_jenis 
-AND f.ta=$ta 
+AND f.ta=$ta_aktif 
 AND f.status=1 
 AND f.kelas = '$target_kelas' 
 
@@ -125,7 +125,7 @@ $divs = null;
 while ($d = mysqli_fetch_assoc($q)) {
   array_push($arr_yg_sudah, $d['id_peserta']);
   $nama_peserta = ucwords(strtolower($d['nama_peserta']));
-  $kelas_show = str_replace("~$ta", '', $d['kelas']);
+  $kelas_show = str_replace("~ $ta_aktif", '', $d['kelas']);
 
   if ($d['status'] == 1) {
     $gradasi = 'hijau';
@@ -194,7 +194,7 @@ c.war_image,
 FROM tb_kelas_peserta a 
 JOIN tb_kelas b ON a.kelas=b.kelas 
 JOIN tb_peserta c ON a.id_peserta=c.id 
-WHERE b.ta=$ta 
+WHERE b.ta=$ta_aktif 
 AND b.status = 1 
 AND b.kelas = '$target_kelas' 
 ORDER BY b.kelas, c.nama 
@@ -206,7 +206,7 @@ $divs_belum = null;
 while ($d = mysqli_fetch_assoc($q)) {
   if (in_array($d['id_peserta'], $arr_yg_sudah)) continue;
   $nama_peserta = ucwords(strtolower($d['nama_peserta']));
-  $kelas_show = str_replace("~$ta", '', $d['kelas']);
+  $kelas_show = str_replace("~ $ta_aktif", '', $d['kelas']);
 
   $war_image = $d['war_image'] ?? $d['image'];
   $src = "$lokasi_profil/$war_image";

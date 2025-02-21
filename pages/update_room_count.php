@@ -30,7 +30,7 @@ if ($room['status'] == 100) {
   FROM tb_room_kelas a 
   WHERE a.id_room=$id_room 
   AND a.kelas != 'INSTRUKTUR' 
-  AND a.ta=$ta
+  AND a.ta=$ta_aktif
   ";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   $arr_count_peserta_kelas = '';
@@ -71,7 +71,7 @@ if ($room['status'] == 100) {
     AND q.status=1 -- hanya kelas aktif
     AND s.status=1 -- hanya _peserta aktif
     AND s.id_role=1 -- hanya _peserta
-    AND r.ta=$ta -- hanya di TA sekarang
+    AND r.ta=$ta_aktif -- hanya di TA sekarang
     ) count_peserta,
   (
     SELECT COUNT(1) 
@@ -83,7 +83,7 @@ if ($room['status'] == 100) {
     AND q.status=1 -- hanya kelas aktif
     AND s.status=1 -- hanya _peserta aktif
     AND s.id_role=1 -- hanya _peserta
-    AND r.ta=$ta -- hanya di TA sekarang
+    AND r.ta=$ta_aktif -- hanya di TA sekarang
     AND s.image is not null 
     AND s.profil_ok = 1  
     ) count_peserta_image_ok,
@@ -97,7 +97,7 @@ if ($room['status'] == 100) {
     AND q.status=1 -- hanya kelas aktif
     AND s.status=1 -- hanya _peserta aktif
     AND s.id_role=1 -- hanya _peserta
-    AND r.ta=$ta -- hanya di TA sekarang
+    AND r.ta=$ta_aktif -- hanya di TA sekarang
     AND s.war_image is not null 
     ) count_peserta_war_image_ok,
   
@@ -130,7 +130,7 @@ if ($room['status'] == 100) {
     SELECT COUNT(1) 
     FROM tb_room_kelas   
     WHERE id_room=$id_room 
-    AND ta=$ta 
+    AND ta=$ta_aktif 
     AND kelas != 'INSTRUKTUR') count_kelas, -- @TA Aktif
   (
     SELECT COUNT(1) 
@@ -151,39 +151,39 @@ if ($room['status'] == 100) {
     SELECT count(1) FROM tb_bertanya p 
     JOIN tb_room_kelas q ON p.id_room_kelas=q.id 
     WHERE q.id_room=$id_room
-    AND q.ta=$ta) count_bertanya, -- @TA Aktif
+    AND q.ta=$ta_aktif) count_bertanya, -- @TA Aktif
   ( 
     SELECT count(1) FROM tb_bertanya p 
     JOIN tb_room_kelas q ON p.id_room_kelas=q.id 
     WHERE q.id_room=$id_room
     AND p.verif_by is not null
-    AND q.ta=$ta) count_bertanya_verified,
+    AND q.ta=$ta_aktif) count_bertanya_verified,
   ( 
     SELECT count(1) FROM tb_bukti_latihan p 
     JOIN tb_assign_latihan q ON p.id_assign_latihan=q.id 
     JOIN tb_room_kelas r ON q.id_room_kelas=r.id 
     WHERE r.id_room=$id_room
-    AND r.ta=$ta) count_bukti_latihan,
+    AND r.ta=$ta_aktif) count_bukti_latihan,
   ( 
     SELECT count(1) FROM tb_bukti_latihan p 
     JOIN tb_assign_latihan q ON p.id_assign_latihan=q.id 
     JOIN tb_room_kelas r ON q.id_room_kelas=r.id 
     WHERE r.id_room=$id_room 
     AND verified_by IS NOT NULL
-    AND r.ta=$ta) count_bukti_latihan_verified,
+    AND r.ta=$ta_aktif) count_bukti_latihan_verified,
   ( 
     SELECT count(1) FROM tb_bukti_challenge p 
     JOIN tb_assign_challenge q ON p.id_assign_challenge=q.id 
     JOIN tb_room_kelas r ON q.id_room_kelas=r.id 
     WHERE r.id_room=$id_room
-    AND r.ta=$ta) count_bukti_challenge,
+    AND r.ta=$ta_aktif) count_bukti_challenge,
   ( 
     SELECT count(1) FROM tb_bukti_challenge p 
     JOIN tb_assign_challenge q ON p.id_assign_challenge=q.id 
     JOIN tb_room_kelas r ON q.id_room_kelas=r.id 
     WHERE r.id_room=$id_room 
     AND verified_by IS NOT NULL
-    AND r.ta=$ta) count_bukti_challenge_verified
+    AND r.ta=$ta_aktif) count_bukti_challenge_verified
   
   ";
 
