@@ -182,6 +182,7 @@ if ($harus_update_poin and $id_room_kelas and !$_POST) {
   AND id_peserta=$id_peserta
   ";
 
+
   echo "<br>updating poin data... ";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   echo 'success.';

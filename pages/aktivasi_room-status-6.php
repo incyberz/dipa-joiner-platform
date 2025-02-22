@@ -233,11 +233,11 @@ if (isset($mode) and $mode == 'add_kelas') {
 <script>
   $(function() {
     let modeAdd = 0;
-    let ta = $('#ta').text();
+    let ta_aktif = $('#ta_aktif').text();
     let kode_kelas = '';
 
-    if (ta.length != 5) {
-      alert(`Invalid tahun ajar: ${ta}`);
+    if (ta_aktif.length != 5) {
+      alert(`Invalid tahun ajar: ${ta_aktif}`);
       return;
     }
 
@@ -249,7 +249,7 @@ if (isset($mode) and $mode == 'add_kelas') {
         $('#prodi').val() + '-' +
         $('#sub_kelas').val() + '-' +
         $('#shift').val() + '-SM' +
-        $('#semester').val() + '-' + ta;
+        $('#semester').val() + '-' + ta_aktif;
 
       kode_kelas = kode_kelas.toUpperCase().replace(/-+/gim, '-');
 

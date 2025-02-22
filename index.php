@@ -94,6 +94,8 @@ $src_profil_na_fixed = 'assets/img/img_na.jpg';
 
 $is_login_as = isset($_SESSION['dipa_master_username']) ? 1 : 0;
 
+$sesi_aktif = [];
+
 
 
 
@@ -182,6 +184,7 @@ foreach ($arr_includes as $v) {
 // include 'includes/href_wa.php';
 // include 'includes/get_current_url.php';
 $ta_show = tahun_ajar_show($ta_aktif);
+$weekday = date('w');
 
 
 # ========================================================

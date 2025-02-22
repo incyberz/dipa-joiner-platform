@@ -1,401 +1,538 @@
-<style>
-  .foto_profil_small {
-    height: 80px;
-    width: 80px;
-  }
-
-  .border_mine {
-    border: solid 3px blue
-  }
-
-
-  @media (max-width: 400px) {
-    .hide-at-mobile {
-      display: none;
-    }
-
-  }
-</style>
 <?php
-$div_best = '';
-$stars = "<img src='$lokasi_img/icon/stars.png' height=25px>";
-$get_update = $_GET['update'] ?? '';
-$get_best = $_GET['best'] ?? '';
-$sql_best = $get_best ? "a.best = '$get_best'" : 1;
-
-$bulan_tahun = $nama_bulan[intval(date('m')) - 1] . ' ' . date('Y');
-$Leaderboard = $id_room ? 'Room Leaderboard' : 'Leaderboard';
-$Leaderboard = $parameter ? $Leaderboard : 'Leaderboard';
-$nama_room_show = $id_room ? " - <span class=darkblue>$nama_room</span> " : '';
-set_h2($Leaderboard, "Peserta Terbaik minggu ini - $bulan_tahun $nama_room_show - <i>all time</i>");
-include 'leaderboard-functions.php';
-
+set_h2('Kalkulasi Leaderboard', "Week $week");
+include "includes/form_target_kelas.php";
 
 # ============================================================
-# MAIN SELECT ALL BEST
+# CEK JIKA ADA DATA POIN WEEKLY HARI INI
 # ============================================================
-$sql_id_room = $id_room ? "b.id_room = $id_room" : "b.id_room is null";
-$sql_kelas = $kelas ? "b.kelas = '$kelas'" : 1;
-$sql_kelas = 1;
-$s = "SELECT 
-a.best,
-a.deskripsi,
-a.satuan,
-b.*,
-(
-  SELECT p.kelas FROM tb_kelas_peserta p 
-  JOIN tb_kelas q ON p.kelas=q.kelas
-  WHERE p.id_peserta=b.best1 AND q.ta=$ta_aktif) kelas_best1,
-(
-  SELECT p.kelas FROM tb_kelas_peserta p 
-  JOIN tb_kelas q ON p.kelas=q.kelas
-  WHERE p.id_peserta=b.best2 AND q.ta=$ta_aktif) kelas_best2,
-(
-  SELECT p.kelas FROM tb_kelas_peserta p 
-  JOIN tb_kelas q ON p.kelas=q.kelas
-  WHERE p.id_peserta=b.best3 AND q.ta=$ta_aktif) kelas_best3,
-(SELECT nama FROM tb_peserta WHERE id=b.best1) nama_best1,
-(SELECT nama FROM tb_peserta WHERE id=b.best2) nama_best2,
-(SELECT nama FROM tb_peserta WHERE id=b.best3) nama_best3
-
-FROM tb_best a 
-JOIN tb_best_week b ON a.best=b.best 
-WHERE b.week=$week 
-AND a.hidden IS NULL 
-AND $sql_best
-AND $sql_id_room
-AND $sql_kelas
-ORDER BY a.no
-";
-
+$s = "SELECT * FROM tb_poin_weekly WHERE id='$id_room-$week' AND update_at = '$today'";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-// $get_update = 1;
-if ($get_update) {
-  echolog('including leaderboard-auto_update.php first');
-  include 'leaderboard-auto_update.php';
-  exit;
-} else {
-  if ($get_best == 'rank_room' || $get_best == 'rank_kelas') {
-    echo div_alert('danger', 'ZZZ');
-    $div_peserta = 'ZZZ';
-    $title = $get_best == 'rank_room' ? "Terbaik di $Room ini" : 'Terbaik di kelas ini.';
-    $desc = 'desc ZZZ';
-    $div_best .= div_best(
-      $get_best,
-      $div_peserta,
-      $stars,
-      $title,
-      $desc,
-      'gradasi-toska'
-    );
-  } else { // selain rank $Room | rank kelas
-    if (!mysqli_num_rows($q)) {
-      // echo $s;
-      // echo '<pre>';
-      // var_dump($s);
-      // echo '</pre>';
-      // die(div_alert('danger', "Data untuk BEST [$get_best] tidak ditemukan"));
-      echo (div_alert('danger', "Data untuk BEST [$get_best] tidak ditemukan"));
-      echo (div_alert('info', "Mencoba Update Leaderboard untuk minggu ini."));
+if (mysqli_num_rows($q)) {
+  # ============================================================
+  # GUNAKAN DATA POIN WEEKLY
+  # ============================================================
+  // echolog('GUNAKAN DATA POIN WEEKLY');
+  $row = [];
+  $d = mysqli_fetch_assoc($q);
+  $t = explode('|', $d['poin_kbms']);
+  foreach ($t as $k => $v) {
+    if ($v) {
+      $t2 = explode(':', $v);
+      $id_pes = $t2[0];
+
+      $t3 = explode(',', $t2[1]);
+
+      $row[$id_pes] = [
+        'presensi' => $t3[0],
+        'latihan' => $t3[1],
+        'challenge' => $t3[2],
+        'play_kuis' => $t3[3],
+        'tanam_soal' => $t3[4],
+      ];
     }
-    $tr_best = '';
-    if ($get_best) { // single best
-      # ============================================================
-      # SINGLE BEST
-      # ============================================================
-      $d = mysqli_fetch_assoc($q);
-      $satuan = $d['satuan'] ? $d['satuan'] : 'LP';
-      $AT = strtoupper(key2kolom($d['best']));
-      $arr_bestiers = explode('--', $d['bestiers']);
-      $i = 0;
-      foreach ($arr_bestiers as $key => $v) {
-        if (!$v) continue;
-        $i++;
-        if (($id_role == 1 || !$id_role) and $i > 10) break;
-        $arr2 = explode('|', $v);
-        $id_bestie = $arr2[0];
-        $nama = $arr2[1];
-        $kelas = $arr2[2];
-        $poin = $arr2[3] ?? 0;
-        // $image = $arr2[4] ?? die(div_alert('danger', "Peserta wajib ada image profil"));
-        $image = $arr2[4] ?? 'profil_na.jpg';
+  }
 
-        $poin_show = $poin ? number_format($poin) : 0;
+  $t = explode('|', $d['rank_kelass']);
+  $rank_kelas = [];
+  foreach ($t as $k => $v) {
+    if ($v) {
+      $t2 = explode(':', $v);
+      $ckelas = $t2[0];
+      $rank_kelas[$ckelas] = [];
 
-        $aos_delay = $i * 60;
-        $src = "$lokasi_profil/wars/$image";
-        if (!file_exists($src)) $src = "$lokasi_profil/$image";
-        if (!file_exists($src)) $src = $src_profil_na_fixed;
-        $the_stars = '&nbsp;';
-        $gradasi = '';
-        if ($i == 1) {
-          $the_stars = "$stars$stars$stars";
-          $gradasi = 'pink';
-        } elseif ($i == 2) {
-          $the_stars = "$stars$stars";
-          $gradasi = 'biru';
-        } elseif ($i == 3) {
-          $the_stars = "$stars";
-          $gradasi = 'toska';
-        } elseif (!$poin) {
-          $gradasi = 'merah';
+      $t3 = explode(',', $t2[1]);
+
+      foreach ($t3 as $key_rank => $id_pes) {
+        if ($id_pes) {
+          $row[$id_pes]['rank_kelas'] = $key_rank + 1;
+          array_push($rank_kelas[$ckelas], $id_pes);
         }
-
-        $border_mine = $id_bestie == $id_peserta ? 'border_mine' : '';
-
-        $tr_best .= "
-          <tr class='gradasi-$gradasi $border_mine'>
-            <td class='kanan hide-at-mobile'>
-              $the_stars
-            </td>
-            <td class=tengah>
-              <div class='abu miring f12 mb2 mt2'>RANK</div>
-              <div class='darkblue f34'>$i</div>
-            </td>
-            <td>
-              <img src='$src' class='foto_profil foto_profil_small'>
-            </td>
-            <td>
-              <div class='darkblue mt4'>$nama</div>
-              <div class='abu miring f12'>$kelas</div>
-              <div class='f14 '>$poin_show $satuan</div>
-            </td>
-          </tr>
-        ";
       }
+    }
+  }
 
-      # ============================================================
-      # SINGLE BEST UI
-      # ============================================================
-      $div_best = "
-        <div class='tengah' data-aos='fade-up'>
-          <a href='?leaderboard'>$img_prev</a>
-          <h4 class='f16 tengah'>
-            $stars  
-            <span class='upper green bold' style='display:inline-block; margin-top:15px'>
-              THE BEST $AT
-            </span> 
-            $stars 
-          </h4>
-          <p class=abu>
-            $d[deskripsi] 
-          </p>
-          <div class='flex flex-center'>
-            <div style='max-width:600px'>
-              <table class='table table-hover'>$tr_best</table>
-            </div>
-          </div>
-        </div>
+  $t = explode('|', $d['rank_rooms']);
+  foreach ($t as $k => $v) {
+    if ($v) {
+      $t2 = explode(',', $v);
+      foreach ($t2 as $key_rank => $id_pes) {
+        if ($id_pes) {
+          $row[$id_pes]['rank_room'] = $key_rank + 1;
+        }
+      }
+    }
+  }
+
+
+  # ============================================================
+  # MAIN SELECT PESERTA
+  # ============================================================
+  $s = "SELECT 
+  a.id,
+  c.kelas,
+  a.nama
+  FROM tb_peserta a 
+  JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
+  JOIN tb_kelas c ON b.kelas=c.kelas 
+  JOIN tb_room_kelas d ON c.kelas=d.kelas 
+  WHERE d.id_room = $id_room 
+  AND a.id_role = 1 -- mhs only
+  AND a.status = 1 -- mhs aktif 
+  AND d.ta = $ta_aktif 
+  ";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  $rpes = [];
+  while ($d = mysqli_fetch_assoc($q)) {
+    $rpes[$d['id']] = $d;
+  }
+
+  /*
+
+  # ============================================================
+  # USER ROWS
+  # ============================================================
+  $tr = '';
+  $i = 0;
+  foreach ($row as $id_pes => $v) {
+    $crank_kelas = $v['rank_kelas'] ?? '-'; // exception for all KBM null
+    $crank_room = $v['rank_room'] ?? '-';
+    $nama = strtoupper($rpes[$id_pes]['nama']);
+    $kelas = $rpes[$id_pes]['kelas'];
+    $i++;
+    $tr .= "
+      <tr>
+        <td>$i</td>
+        <td>$nama</td>
+        <td>$kelas</td>
+        <td>$v[presensi]</td>
+        <td>$v[latihan]</td>
+        <td>$v[challenge]</td>
+        <td>$v[play_kuis]</td>
+        <td>$v[tanam_soal]</td>
+        <td>$crank_kelas</td>
+        <td>$crank_room</td>
+      </tr>
+    ";
+  }
+
+  echo "
+    <table class='table table-striped table-hover'>
+      <thead>
+        <th>No</th>
+        <th>Nama</th>
+        <th>kelas</th>
+        <th>presensi</th>
+        <th>latihan</th>
+        <th>challenge</th>
+        <th>play_kuis</th>
+        <th>tanam_soal</th>
+        <th>rank_kelas</th>
+        <th>rank_room</th>
+      </thead>
+      $tr
+    </table>
+  ";
+  */
+
+  # ============================================================
+  # USE RANK KELAS
+  # ============================================================
+  $div_rank = '';
+  $col = intval(12 / count($rank_kelas)); // bootstrap col
+  if ($col < 4) $col = 4;
+
+  foreach ($rank_kelas as $ckelas => $ids) {
+
+    $tr = '';
+    $i = 0;
+    foreach ($ids as $key => $id_pes) {
+      $i++;
+      $nama = strtoupper($rpes[$id_pes]['nama']);
+      $ckelas = str_replace('--', '-', str_replace("-$ta_aktif", '', $rpes[$id_pes]['kelas']));
+      $data = $row[$id_pes];
+      $poin = 0;
+      foreach ($data as $k2 => $v2) {
+        if ($k2 == 'rank_kelas' || $k2 == 'rank_room') continue;
+        $poin += intval($v2);
+      }
+      $rank = $key + 1;
+      $poin = number_format($poin);
+      $hideit = $i > 10 ? 'hideit' : '';
+      $tr .= "
+        <tr class='$hideit tr__$ckelas'>
+          <td>$rank</td>
+          <td>$nama</td>
+          <td>$poin</td>
+        </tr>
       ";
-    } else { // multiple 3 best
+    }
+
+    $show_all = count($ids) > 10  ? "<div class='tengah abu mb4'><i class='show_all pointer' id=show_all__$ckelas>Show All</i></div>" : '';
 
 
 
+    $div_rank .= "
+      <div class='col-lg-$col f12'>
+        <h3 class='f16 bold darkblue tengah gradasi-toska border-top p2'>$ckelas</h3>
+        <table class='table table-striped table-hover mb1'>
+          <thead>
+            <th>Rank</th>
+            <th>Nama</th>
+            <th>Poin</th>
+          </thead>
+          $tr
+        </table>
+        $show_all
+      </div>
+    ";
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      # ============================================================
-      # BEST ROOM PLAYER IF LOGIN
-      # ============================================================
-      if ($id_room and $kelas and $id_room_kelas) {
-
-        # ============================================================
-        # GET ROOM KELAS DAN INISIALISASI RANK
-        # ============================================================
-        $s2 = "SELECT kelas FROM tb_room_kelas WHERE id_room=$id_room -- AND kelas!='INSTRUKTUR'";
-        $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
-        while ($d = mysqli_fetch_assoc($q2)) {
-          $arr_rank_kelas[$d['kelas']] = [];
-        }
-
-        # ============================================================
-        # GET DATA POIN
-        # ============================================================
-        $s2 = "SELECT 
-        a.id as id_poin,
-        a.akumulasi_poin,
-        a.rank_room,
-        a.rank_kelas,
-        b.id as id_peserta,
-        b.nama as nama_peserta,
-        b.image,
-        b.war_image,
-        d.kelas 
+  echo "<div class=row>$div_rank</div>";
+?>
+  <script>
+    $(function() {
+      $(".show_all").click(function() {
+        let tid = $(this).prop('id');
+        let rid = tid.split('__');
+        let aksi = rid[0];
+        let id = rid[1];
+        $('.tr__' + id).show();
+        $(this).hide();
+      })
+    })
+  </script>
+<?php
+} else {
+  # ============================================================
+  # KALKULASI DAN UPDATE REALTIME POIN
+  # ============================================================
+  echolog('KALKULASI DAN UPDATE REALTIME POIN');
+  # ============================================================
+  # MAIN SELECT PESERTA
+  # ============================================================
+  $s = "SELECT 
+  a.id,
+  c.kelas,
+  a.nama,
+  (
+    SELECT 
+    SUM(p.poin) 
+    FROM tb_presensi p 
+    JOIN tb_sesi q ON p.id_sesi=q.id 
+    WHERE id_peserta=a.id
+    -- AND p.is_ontime = 1 -- Ontime Only 
+    AND q.id_room = $id_room  
+    -- AND s.ta = $ta_aktif 
+    ) poin_presensi,
+  (
+    SELECT 
+    SUM(p.get_point + COALESCE(p.poin_antrian,0) + COALESCE(p.poin_apresiasi,0)) 
+    FROM tb_bukti_latihan p 
+    JOIN tb_assign_latihan q ON p.id_assign_latihan=q.id 
+    JOIN tb_room_kelas r ON q.id_room_kelas=r.id 
+    JOIN tb_kelas s ON r.kelas=s.kelas  
+    WHERE id_peserta=a.id
+    AND p.status = 1 -- Verified Poin 
+    AND s.ta = $ta_aktif ) poin_latihan,
+  (
+    SELECT 
+    SUM(p.get_point + COALESCE(p.poin_antrian,0) + COALESCE(p.poin_apresiasi,0)) 
+    FROM tb_bukti_challenge p 
+    JOIN tb_assign_challenge q ON p.id_assign_challenge=q.id 
+    JOIN tb_room_kelas r ON q.id_room_kelas=r.id 
+    JOIN tb_kelas s ON r.kelas=s.kelas  
+    WHERE id_peserta=a.id
+    AND p.status = 1 -- Verified Poin 
+    AND s.ta = $ta_aktif ) poin_challenge,
+  (
+    SELECT 
+    SUM(p.poin_penjawab) 
+    FROM tb_war p 
+    JOIN tb_room q ON p.id_room=q.id 
+    WHERE p.id_penjawab=a.id
+    AND q.status = 100 -- Active $Room 
+    -- AND q.ta=$ta_aktif 
+    ) poin_play_kuis,
+  (
+    SELECT SUM(p.poin_membuat_soal) 
+    FROM tb_soal_peserta p 
+    JOIN tb_sesi q ON p.id_sesi=q.id 
+    WHERE p.id_pembuat=a.id  
+    AND q.id_room=$id_room
+    ) + (
+    SELECT SUM(poin_pembuat) 
+    FROM tb_war p 
+    WHERE p.id_pembuat=a.id 
+    AND p.id_room=$id_room
+    ) as poin_tanam_soal
   
-        FROM tb_poin a 
-        JOIN tb_peserta b ON a.id_peserta=b.id 
-        JOIN tb_kelas_peserta c ON b.id=c.id_peserta 
-        JOIN tb_kelas d ON c.kelas=d.kelas 
-        JOIN tb_room_kelas e ON e.kelas=d.kelas 
-        WHERE a.id_room=$id_room 
-        AND a.rank_kelas <= 10 
-        AND e.id_room = $id_room  
-        AND b.status = 1 -- _peserta aktif
-        AND b.id_role = 1 -- _peserta only 
-        ORDER BY a.akumulasi_poin DESC
-        ";
+  FROM tb_peserta a 
+  JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
+  JOIN tb_kelas c ON b.kelas=c.kelas 
+  JOIN tb_room_kelas d ON c.kelas=d.kelas 
+  
+  WHERE d.id_room = $id_room 
+  AND a.id_role = 1 -- mhs only
+  AND a.status = 1 -- mhs aktif 
+  AND d.ta = $ta_aktif 
+  
+  ORDER BY kelas, nama 
+  ";
 
-        $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
-        $arr_rank_room = [];
-        $i = 0;
-        while ($d = mysqli_fetch_assoc($q2)) {
-          $i++;
-          if ($i <= 10) {
-            $arr_rank_room[$d['rank_room']] = [
-              'id' => $d['id_peserta'],
-              'nama' => $d['nama_peserta'],
-              'kelas' => $d['kelas'],
-              'poin' => $d['akumulasi_poin'],
-              'image' => $d['image'],
-              'war_image' => $d['war_image'],
-            ];
-          }
-          $arr_rank_kelas[$d['kelas']][$d['rank_kelas']] = [
-            'id' => $d['id_peserta'],
-            'nama' => $d['nama_peserta'],
-            'kelas' => $d['kelas'],
-            'poin' => $d['akumulasi_poin'],
-            'image' => $d['image'],
-            'war_image' => $d['war_image'],
-          ];
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  $tr = '';
+  $poin_kbms = ''; // for tb_poin_weekly | id:lat=poin,
+  if (mysqli_num_rows($q)) {
+    $i = 0;
+    $th = '';
+    $last_kelas = '';
+    $rpairs = [];
+    $rkum_poin = [];
+    while ($d = mysqli_fetch_assoc($q)) {
+      $separator = '';
+      $i++;
+      if ($last_kelas != $d['kelas'] and $i > 1) $separator = "border-top:solid 5px #faf";
+      $td = '';
+      $pairs = '';
+      $akumulasi_poin = 0;
+      // $poin_kbms = ''; // for tb_poin_weekly | id:lat=poin,
+      $poin_kbms .= "$d[id]:"; // for tb_poin_weekly | id:lat=poin,
+      foreach ($d as $key => $value) {
+
+        # ============================================================
+        # KOLOMS DAN VALUES
+        # ============================================================
+        if (!($key == 'nama' || $key == 'kelas' || $key == 'id')) {
+          $akumulasi_poin += $value;
+          $koma = $pairs ? ',' : '';
+          $pairs .= "$koma$key = '$value'";
+          // $poin_kbms = ''; // for tb_poin_weekly | id:lat=poin,
+          $poin_kbms .= "$value,"; // for tb_poin_weekly | id:poin,
         }
 
-        $arr_rank = [
-          'rank_room' => [
-            'title' => 'THE BEST ROOM PLAYER',
-            'desc' => "Player Terbaik di $Room <b class=darkblue>$nama_room</b>",
-            'data' => $arr_rank_room
-          ],
-          'rank_kelas' => [
-            'title' => 'THE BEST PLAYER in ' . $kelas,
-            'desc' => "Player Terbaik di Kelas <b class=darkblue>$kelas</b> | $nama_room",
-            'data' => $arr_rank_kelas[$kelas]
-          ]
-        ];
-
-        foreach ($arr_rank as $best_code => $v) {
-          $div_peserta = '';
-          if ($best_code == 'rank_kelas' and $kelas == 'INSTRUKTUR') {
-            $div_peserta .= div_alert('info', 'Leaderboard INSTRUKTUR terdapat di <a href="?">Dashboard</a>');
-          } else {
-            $i = 0;
-            foreach ($v['data'] as $best_no => $arr_bestie) {
-              if ($i == 3) break;
-              $i++;
-              $id_bestie = $arr_bestie['id'];
-              $class_style = $id_bestie == $id_peserta ? 'br10 gradasi-pink border_mine' : '';
-              $src = "$lokasi_profil/$arr_bestie[war_image]";
-              if (!file_exists($src)) $src = "$lokasi_profil/$arr_bestie[image]";
-              if (!file_exists($src)) $src = $src_profil_na_fixed;
-              $div_peserta .= "
-                <div style='position: relative;' class='$class_style '>
-                  <img src='$src' class=foto_profil>
-                  <div class='f12 darkblue'>$arr_bestie[nama]</div>
-                  <div class='f12 abu miring'>$arr_bestie[kelas]</div>
-                  <div style='position:absolute; top:80px; right:0'>
-                    <img src='$lokasi_img/gif/juara-$i.gif' height=50px>
-                  </div>
-                </div>
-              ";
-            }
-          }
-
-          $div_best .= div_best(
-            $best_code,
-            $div_peserta,
-            $stars,
-            $v['title'],
-            $v['desc'],
-            'gradasi-toska'
-          );
+        # ============================================================
+        # KOLOM HANDLER UI
+        # ============================================================
+        if (
+          $key == 'id'
+          || $key == 'date_created'
+        ) {
+          continue;
+        } elseif ($key == 'nama') {
+          $value = strtoupper("$i. $value");
         }
-      }
-
-
+        if ($i == 1) {
+          $kolom = key2kolom($key);
+          $th .= "<th>$kolom</th>";
+        }
+        $td .= "<td>$value</td>";
+      } // end foreach
+      $poin_kbms .= "|"; // end separator
 
       # ============================================================
-      # ALL BEST PUBLIC | NON RANK_ROOM OR RANK_KELAS
+      # AUTOSAVE TB_POIN 
       # ============================================================
-      $count_blok_public = 0;
-      while ($d = mysqli_fetch_assoc($q)) {
-        if ($d['best'] == 'rank_room' || $d['best'] == 'rank_kelas') continue;
-        $count_blok_public++;
-        $AT = strtoupper(key2kolom($d['best']));
+      $rpairs["$id_room-$d[id]"] = $pairs; // tampung pairs kolom poin
+      $rkum_poin["$id_room-$d[id]"] = $akumulasi_poin; // tampung pairs kolom poin
+
+      $tr .= "
+        <tr style='$separator'>
+          $td
+        </tr>
+      ";
+      $last_kelas = $d['kelas'];
+    }
+  }
+
+  $tb = $tr ? "
+    <table class=table>
+      <thead>$th</thead>
+      $tr
+    </table>
+  " : div_alert('danger', "Data XXX tidak ditemukan.");
+  echo "
+    <div class='wadah gradasi-toska'>
+      <h3>POIN KBM</h3>
+      $tb
+    </div>
+  ";
 
 
-        $id_besties = [
-          $d['best1'] => ['nama' => $d['nama_best1'], 'kelas' => $d['kelas_best1']],
-          $d['best2'] => ['nama' => $d['nama_best2'], 'kelas' => $d['kelas_best2']],
-          $d['best3'] => ['nama' => $d['nama_best3'], 'kelas' => $d['kelas_best3']]
-        ];
-        $div_peserta = '';
-        $i = 0;
-        foreach ($id_besties as $id_bestie => $arr_nama_kelas) {
-          if (!$arr_nama_kelas['nama']) continue;
+  # ============================================================
+  # DATA POIN | RANK KELAS
+  # ============================================================
+  $s = "SELECT 
+  e.akumulasi_poin,
+  a.nama,
+  a.id,
+  c.kelas 
+  
+  FROM tb_peserta a 
+  JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
+  JOIN tb_kelas c ON b.kelas=c.kelas 
+  JOIN tb_room_kelas d ON c.kelas=d.kelas 
+  JOIN tb_poin e ON a.id=e.id_peserta 
+  WHERE d.id_room = $id_room 
+  AND a.id_role = 1 -- mhs only
+  AND a.status = 1 -- mhs aktif 
+  AND d.ta = $ta_aktif 
+  AND e.id_room = $id_room 
+  
+  ORDER BY c.kelas, e.akumulasi_poin DESC
+  ";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  $tr = '';
+  $i = 0;
+  $rank = 0;
+  $last_kelas = '';
+  $rank_kelass = ''; // untuk tb_poin_weekly | kelas=id_pesertas,
+  while ($d = mysqli_fetch_assoc($q)) {
+    $i++;
+    $rank++;
+    $separator = '';
+    if ($last_kelas != $d['kelas']) {
+      $rank = 1;
+      $separator = "border-top:solid 5px #faf";
+      $rank_kelass .= "|$d[kelas]:"; // untuk tb_poin_weekly | kelas=id_pesertas,
+    }
+    $nama = strtoupper($d['nama']);
 
-          // get war image
-          $s2 = "SELECT image, war_image FROM tb_peserta WHERE id=$id_bestie";
-          $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
-          $d2 = mysqli_fetch_assoc($q2);
-          $image = $d2['war_image'] ?? $d2['image'];
+    # ============================================================
+    # TAMPUNG RANK KELAS KE PAIRS 
+    # ============================================================
+    $k = "$id_room-$d[id]";
+    $rpairs[$k] .= ", rank_kelas = $rank";
+    $rank_kelass .= "$d[id],"; // untuk tb_poin_weekly | kelas=id_pesertas,
 
 
-          $i++;
-          $class_style = $id_bestie == $id_peserta ? 'br10 gradasi-pink border_mine' : '';
-          $src = "$lokasi_profil/$image";
-          if (!file_exists($src)) $src = $src_profil_na_fixed;
+    # ============================================================
+    # FINAL TR RANK KELAS
+    # ============================================================
+    $tr .= "
+      <tr id=tr__$d[id] style='$separator'>
+        <td>$i</td>
+        <td>$nama</td>
+        <td>$d[akumulasi_poin]</td>
+        <td>$rank</td>
+      </tr>
+    ";
+    $last_kelas = $d['kelas'];
+  }
 
-          $div_peserta .= "
-            <div style='position: relative;' class='$class_style '>
-              <img src='$src' class=foto_profil>
-              <div class='f12 darkblue'>$arr_nama_kelas[nama]</div>
-              <div class='f12 abu miring'>$arr_nama_kelas[kelas]</div>
-              <div style='position:absolute; top:80px; right:0'>
-                <img src='$lokasi_img/gif/juara-$i.gif' height=50px>
-              </div>
-            </div>
-          ";
-        }
 
-        $div_best .= div_best(
-          $d['best'],
-          $div_peserta,
-          $stars,
-          "THE BEST $AT",
-          $d['deskripsi']
-        );
-      }
-      if (!$count_blok_public) {
-        echolog('count of count_blok_public is null... perform PUBLIC AUTO_UPDATE');
-        echolog('including leaderboard-auto_update.php after best RANK_ROOM');
-        include 'leaderboard-auto_update.php';
-      }
-    } // end // multiple 3 best
-  } // end // selain rank $Room | rank kelas
-}
+  echo "
+    <div class='wadah gradasi-toska'>
+      <h3>RANK KELAS</h3>
+      <table class=table>
+        <thead>
+          <th>No</th>
+          <th>Nama</th>
+          <th>Poin</th>
+          <th>Rank Kelas</th>
+        </thead>
+        $tr
+      </table>
+    </div>
+  ";
 
-echo "<div class=row>$div_best</div>";
+
+  # ============================================================
+  # DATA POIN | RANK ROOM
+  # ============================================================
+  $s = "SELECT 
+  e.akumulasi_poin,
+  a.nama,
+  a.id,
+  c.kelas 
+  
+  FROM tb_peserta a 
+  JOIN tb_kelas_peserta b ON a.id=b.id_peserta 
+  JOIN tb_kelas c ON b.kelas=c.kelas 
+  JOIN tb_room_kelas d ON c.kelas=d.kelas 
+  JOIN tb_poin e ON a.id=e.id_peserta 
+  WHERE d.id_room = $id_room 
+  AND a.id_role = 1 -- mhs only
+  AND a.status = 1 -- mhs aktif 
+  AND d.ta = $ta_aktif 
+  AND e.id_room = $id_room 
+  
+  ORDER BY e.akumulasi_poin DESC
+  ";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  $tr = '';
+  $rank = 0;
+  $rank_rooms = '';
+  while ($d = mysqli_fetch_assoc($q)) {
+    $rank++;
+    $rank_rooms .= "$d[id],";
+    $nama = strtoupper($d['nama']);
+
+    # ============================================================
+    # TAMPUNG RANK ROOM KE PAIRS 
+    # ============================================================
+    $k = "$id_room-$d[id]";
+    $rpairs[$k] .= ", rank_room = $rank";
+
+    # ============================================================
+    # FINAL TR RANK ROOM
+    # ============================================================
+    $tr .= "
+      <tr id=tr__$d[id] >
+        <td>$rank</td>
+        <td>$nama</td>
+        <td>$d[akumulasi_poin]</td>
+      </tr>
+    ";
+  }
+
+  echo "
+    <div class='wadah gradasi-toska'>
+      <h3>RANK</h3>
+      <table class=table>
+        <thead>
+          <th>Rank</th>
+          <th>Nama</th>
+          <th>Poin</th>
+        </thead>
+        $tr
+      </table>
+    </div>
+  ";
+
+  foreach ($rpairs as $key => $pairs) {
+    $t = explode('-', $key);
+
+    $s2 = "UPDATE tb_poin SET 
+    $pairs,
+    akumulasi_poin = '$rkum_poin[$key]'
+    WHERE id_peserta = $t[1] 
+    AND id_room = $id_room 
+  
+    ";
+    $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+  }
+
+
+  # ============================================================
+  # UPDATE TB_POIN_WEEKLY
+  # ============================================================
+  $s = "INSERT INTO tb_poin_weekly (
+    id,
+    update_at,
+    poin_kbms,
+    rank_rooms,
+    rank_kelass
+  ) VALUES (
+    '$id_room-$week',
+    '$today',
+    '$poin_kbms',
+    '$rank_rooms',
+    '$rank_kelass'
+  ) ON DUPLICATE KEY UPDATE 
+    update_at = '$today',
+    poin_kbms = '$poin_kbms',
+    rank_rooms = '$rank_rooms',
+    rank_kelass = '$rank_kelass'
+  ";
+  $q2 = mysqli_query($cn, $s) or die(mysqli_error($cn));
+} // end update realtime

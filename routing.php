@@ -33,12 +33,21 @@ if (!$status and $parameter != 'verifikasi_wa' and $is_login and $parameter != '
   exit;
 }
 
-# ============================================================
-# WAJIB AKTIVASI SETELAH MEMBUAT ROOM DI TAHAP AWAL
-# ============================================================
+
 if ($id_room and $status_room === null and $id_role == 2 and $parameter != 'aktivasi_room') {
+  # ============================================================
+  # WAJIB AKTIVASI SETELAH MEMBUAT ROOM DI TAHAP AWAL
+  # ============================================================
   jsurl('?aktivasi_room');
+} elseif ($parameter != 'manage_ta' and (!$ta_awal || !$ta_akhir)) {
+  # ============================================================
+  # WAJIB MANAGE TA JIKA INVALID 
+  # ============================================================
+  jsurl('?manage_ta');
+} elseif (!$sesi_aktif and $parameter != 'manage_sesi_aktif' and $id_room) {
+  jsurl('?manage_sesi_aktif');
 }
+
 
 
 switch ($parameter) {

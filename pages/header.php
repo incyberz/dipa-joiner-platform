@@ -107,12 +107,12 @@ $header_logo = $is_custom ? "$path_custom/custom-logo.png" : 'assets/img/dipa-lo
                 <ul>
                   <li><a href='?lp'>Learning Path</a></li>
                   <li class=><a href='?presensi'>Presensi</a></li>
-                  <li><a href='?activity&jenis=latihan'>Tugas Latihan</a></li>
-                  <li><a href='?activity&jenis=challenge'>Tugas Challenges</a></li>
-                  <li><a href='?proyek_akhir'>Proyek Akhir</a></li>
-                  <li class=''><a href='?bertanya'>Fitur Bertanya</a></li>
-                  <li class=''><a href='?questions'>List Bertanya</a></li>
-                  <li class=''><a href='?ujian'>Ujian Mid/Akhir</a></li>
+                  <li><a href='?activity&jenis=latihan'>Latihan</a></li>
+                  <li><a href='?activity&jenis=challenge'>Challenges</a></li>
+                  <li class='hideit' ><a href='?proyek_akhir'>Proyek Akhir</a></li>
+                  <li class='hideit'><a href='?bertanya'>Fitur Bertanya</a></li>
+                  <li class='hideit'><a href='?questions'>List Bertanya</a></li>
+                  <li class=''><a href='?ujian'>Ujian</a></li>
                   <li class=''><a href='?nilai_akhir'>Nilai Akhir</a></li>
                   <li><a href='?pilih_room'>Ganti $Room</a></li>
                   $li_manage_room

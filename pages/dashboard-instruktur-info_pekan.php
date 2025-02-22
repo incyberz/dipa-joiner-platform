@@ -36,6 +36,9 @@ if ($room_count['count_presensi_aktif'] >= 1) {
       // echo "<hr>$s2 ZZZ HERE";
       $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
       $d2 = mysqli_fetch_assoc($q2);
+      if (!$d2) {
+        die("Belum ada jadwal kelas untuk kelas $d[kelas]. Set pada <a href=?presensi>Manage Presensi</a>");
+      }
 
       $eta = eta2($d2['jadwal_kelas']);
       $hari = hari_tanggal($d2['jadwal_kelas'], 1, 0);

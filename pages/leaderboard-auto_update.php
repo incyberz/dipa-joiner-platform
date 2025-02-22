@@ -10,8 +10,12 @@ $arr_s = [];
 $arr_s['challenger'] = "SELECT 
   SUM(p.get_point + COALESCE(p.poin_antrian,0) + COALESCE(p.poin_apresiasi,0)) 
   FROM tb_bukti_challenge p 
+  JOIN tb_assign_challenge q ON p.id_assign_challenge=q.id 
+  JOIN tb_room_kelas r ON q.id_room_kelas=r.id 
+  JOIN tb_kelas s ON r.kelas=s.kelas  
   WHERE id_peserta=a.id
-  AND p.status = 1 -- Verified Poin
+  AND p.status = 1 -- Verified Poin 
+  AND s.ta = $ta_aktif 
 ";
 
 # ============================================================
@@ -20,8 +24,12 @@ $arr_s['challenger'] = "SELECT
 $arr_s['submiter'] = "SELECT
   SUM(p.get_point + COALESCE(p.poin_antrian,0) + COALESCE(p.poin_apresiasi,0)) 
   FROM tb_bukti_latihan p 
+  JOIN tb_assign_latihan q ON p.id_assign_latihan=q.id 
+  JOIN tb_room_kelas r ON q.id_room_kelas=r.id 
+  JOIN tb_kelas s ON r.kelas=s.kelas  
   WHERE id_peserta=a.id
   AND p.status = 1 -- Verified Poin
+  AND s.ta = $ta_aktif 
 ";
 
 
@@ -179,6 +187,7 @@ while ($d_best = mysqli_fetch_assoc($q_best)) {
       ORDER BY best_value DESC 
       LIMIT 10  
     ";
+    echolog($s2);
     $q = mysqli_query($cn, $s2) or die(mysqli_error($cn));
 
 
@@ -233,4 +242,4 @@ while ($d_best = mysqli_fetch_assoc($q_best)) {
   }
 }
 
-jsurl('?leaderboard', 3000);
+// jsurl('?leaderboard', 3000);

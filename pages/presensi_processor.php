@@ -56,7 +56,7 @@ if (isset($_POST['btn_update_jadwal_kelas'])) {
     }
   }
   echo ("All command... success | <a href='?presensi'>Back to Presensi</a>");
-  // jsurl();
+  jsurl();
   exit;
 }
 
@@ -110,6 +110,6 @@ if (isset($_POST['btn_update_durasi_presensi'])) {
   }
 
   echo "<hr>All command... success | <a href='?presensi'>Back to Presensi</a>";
-  // jsurl();
+  jsurl();
   exit;
 }

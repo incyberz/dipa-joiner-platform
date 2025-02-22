@@ -10,6 +10,7 @@ if (!$kelas) {
   <a href='?logout'>Logout</a>
   ");
 }
+$pesan = '';
 
 # ========================================================
 # GET DATA ROOM
@@ -64,7 +65,8 @@ if ($status_room != 100) {
       echo div_alert('danger', "Status $Room tidak 100% ... Anda harus reactivate!");
       jsurl('?aktivasi_room', 2000);
     } else {
-      die(div_alert('danger', "Status $Room ini belum siap untuk digunakan.<hr>Silahkan hubungi $Trainer [ $nama_instruktur ]  "));
+      unset($_SESSION['dipa_id_room']);
+      die(div_alert('danger', "Status $Room ini belum siap untuk digunakan.<hr>Silahkan hubungi $Trainer [ $nama_instruktur ]  | <a href=?>Home</a>"));
     }
   }
 }
@@ -89,7 +91,10 @@ $s = "SELECT *,
   AND id_room=$id_room 
   AND awal_presensi <= '$now'
   ) sesi_normal_count 
-FROM tb_sesi WHERE id_room=$id_room AND awal_presensi < '$now' 
+FROM tb_sesi 
+WHERE id_room=$id_room 
+AND awal_presensi <= '$now' 
+AND akhir_presensi > '$now' -- untuk set invalid Room  
 ORDER BY no DESC LIMIT 1
 ";
 
@@ -337,6 +342,10 @@ if (mysqli_num_rows($q)) {
   $last_update_point = $my_poin['last_update_point'];
   $selisih = strtotime('now') - strtotime($last_update_point);
 
+  // echo '<pre>';
+  // var_dump("$selisih >= $jeda_update_poin | $last_update_point");
+  // echo '<b style=color:red>DEBUGING: echopreExit</b></pre>';
+  // exit;
   if ($selisih >= $jeda_update_poin) $harus_update_poin = 1;
 
   $rank_room = $my_poin['rank_room'];
