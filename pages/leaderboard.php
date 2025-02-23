@@ -1,6 +1,7 @@
 <?php
 $bulan = date('M Y');
 $public = $_GET['public'] ?? null;
+$update = $_GET['update'] ?? null;
 $link_public = $public ? '' : ' | <a href=?leaderboard&public=1>Public</a>';
 if (!$username || $public) {
   # ============================================================
@@ -25,7 +26,7 @@ if (!$username || $public) {
   # ============================================================
   $s = "SELECT * FROM tb_poin_weekly WHERE id='$id_room-$week' AND update_at = '$today'";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  if (mysqli_num_rows($q)) {
+  if (mysqli_num_rows($q) and !$update) {
     # ============================================================
     # GUNAKAN DATA POIN WEEKLY ROW MANAGER
     # ============================================================
@@ -67,7 +68,7 @@ if (!$username || $public) {
     # UPDATE REALTIME POIN
     # ============================================================
     echolog('UPDATE REALTIME KUMULATIF POIN');
-    include 'leaderboard-update_realtime_kumulatif_poin.php';
+    include 'leaderboard-update_poin.php';
     # ============================================================
   } // end update realtime kumulatif poin
 } // end logged user

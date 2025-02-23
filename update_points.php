@@ -1,5 +1,26 @@
 <?php
-if ($harus_update_poin and $id_room_kelas and !$_POST) {
+// if ($harus_update_poin and $id_room_kelas and !$_POST) {
+
+// count_presensi = '0',
+// count_presensi_ontime = '0',
+// count_latihan = '0',
+// count_latihan_verified = '0',
+// count_challenge = '0',
+// count_challenge_verified = '0',
+// count_ujian = '0',
+// poin_presensi = '10566',
+// poin_bertanya = '0',
+// poin_menjawab = '0',
+// poin_latihan = '379679', // 379679
+// poin_challenge = '799500',
+// poin_play_kuis = '7040', // 7040
+// poin_tanam_soal = '1172',
+
+
+// akumulasi_poin = 1179957,
+
+
+if (1) {
   echo '<div class="consolas f12 abu">Updating Points... please wait!<hr>';
   # ========================================================
   # HITUNG MY RANK KELAS
@@ -111,29 +132,33 @@ if ($harus_update_poin and $id_room_kelas and !$_POST) {
       SELECT poin_presensi 
       FROM tb_presensi_summary   
       WHERE id_peserta=a.id 
-      AND id_room=$id_room ) poin_presensi,
+      AND id_room=$id_room 
+      ) poin_presensi,
     (
-      SELECT SUM(poin) 
-      FROM tb_bertanya  
-      WHERE id_penanya=a.id 
-      AND id_room_kelas = $id_room_kelas  
-      AND verif_date is not null) poin_bertanya,
+      SELECT 0 -- SUM(poin) 
+      -- FROM tb_bertanya  
+      -- WHERE id_penanya=a.id 
+      -- AND id_room_kelas = $id_room_kelas  
+      -- AND verif_date is not null
+      ) poin_bertanya,
     (
-      SELECT SUM(poin) 
-      FROM tb_bertanya  
-      WHERE id_penjawab=a.id 
-      AND id_room_kelas = $id_room_kelas  
-      AND verif_date is not null) poin_menjawab,
+      SELECT 0 -- SUM(poin) 
+      -- FROM tb_bertanya  
+      -- WHERE id_penjawab=a.id 
+      -- AND id_room_kelas = $id_room_kelas  
+      -- AND verif_date is not null
+      ) poin_menjawab,
     (
-      SELECT SUM(p.get_point) 
+      SELECT SUM(p.get_point + COALESCE(p.poin_antrian,0) + COALESCE(p.poin_apresiasi,0)) 
       FROM tb_bukti_latihan p 
       JOIN tb_assign_latihan q ON p.id_assign_latihan=q.id 
       WHERE p.id_peserta=a.id 
       AND q.id_room_kelas = $id_room_kelas  
-      AND status=1
-      AND p.tanggal_verifikasi is not null) poin_latihan, 
+      AND p.status=1 -- verified latihan
+      AND p.tanggal_verifikasi is not null
+      ) poin_latihan, 
     (
-      SELECT SUM(p.get_point) 
+      SELECT SUM(p.get_point + COALESCE(p.poin_antrian,0) + COALESCE(p.poin_apresiasi,0)) 
       FROM tb_bukti_challenge p 
       JOIN tb_assign_challenge q ON p.id_assign_challenge=q.id 
       WHERE p.id_peserta=a.id 
@@ -141,7 +166,8 @@ if ($harus_update_poin and $id_room_kelas and !$_POST) {
       AND status=1 
       AND p.tanggal_verifikasi is not null ) poin_challenge, 
     (
-      SELECT (war_point_quiz + war_point_reject) FROM tb_war_summary   
+      SELECT (war_point_quiz + war_point_reject) 
+      FROM tb_war_summary   
       WHERE id_peserta=a.id 
       AND id_room = $id_room) poin_play_kuis,
     (
@@ -181,6 +207,8 @@ if ($harus_update_poin and $id_room_kelas and !$_POST) {
   WHERE id_room=$id_room
   AND id_peserta=$id_peserta
   ";
+  echolog($s);
+  exit;
 
 
   echo "<br>updating poin data... ";

@@ -15,7 +15,7 @@ a.nama,
   -- AND p.is_ontime = 1 -- Ontime Only 
   AND q.id_room = $id_room  
   -- AND s.ta = $ta_aktif 
-  ) poin_presensi,
+  ) poin_presensi, 
 (
   SELECT 
   SUM(p.get_point + COALESCE(p.poin_antrian,0) + COALESCE(p.poin_apresiasi,0)) 
@@ -41,7 +41,8 @@ a.nama,
   SUM(p.poin_penjawab) 
   FROM tb_war p 
   JOIN tb_room q ON p.id_room=q.id 
-  WHERE p.id_penjawab=a.id
+  WHERE p.id_penjawab=a.id 
+  AND p.id_room = $id_room 
   AND q.status = 100 -- Active $Room 
   -- AND q.ta=$ta_aktif 
   ) poin_play_kuis,
