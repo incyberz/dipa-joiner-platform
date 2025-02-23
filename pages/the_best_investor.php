@@ -59,11 +59,14 @@ $s = "SELECT (
   a.my_question_promoted 
   ) my_questions, 
 b.id as id_peserta, 
+b.war_image,
 b.nama as nama_peserta 
-FROM tb_war_summary a JOIN tb_peserta b ON a.id_peserta=b.id 
+FROM tb_war_summary a 
+JOIN tb_peserta b ON a.id_peserta=b.id 
 WHERE b.id_role=1 
 AND id_room=$id_room 
-ORDER BY my_questions DESC LIMIT 10";
+ORDER BY my_questions DESC LIMIT 10
+";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $rnama = [];
 $rpoints = [];

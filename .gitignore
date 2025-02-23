@@ -3,6 +3,7 @@ assets/vendor
 tmp/
 docs/
 uploads/
+includes/
 
 
 *.jpg

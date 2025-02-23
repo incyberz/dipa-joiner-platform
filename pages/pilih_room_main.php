@@ -134,12 +134,6 @@ while ($d = mysqli_fetch_assoc($q)) {
       } // end while $d2
       continue; // sudah di handle dengan UI2
     } else { // tidak ada sesi aktif
-      // if ($d['my_room']) {
-      //   echo '<pre>';
-      //   var_dump($d);
-      //   echo '<b style=color:red>DEBUGING: echopreExit</b></pre>';
-      //   exit;
-      // }
       # ============================================================
       # SARAN UNTUK CLOSING ROOM
       # ============================================================
@@ -184,7 +178,6 @@ while ($d = mysqli_fetch_assoc($q)) {
     <div class='col-md-4 col-lg-3'>
       <div class='wadah $wadah_active gradasi-$gradasi tengah' style='border: $border;'>
         <div class='darkblue f18'>$d[room]</div>
-        <div class='red'>DEBUG id_sesi_aktif: $d[id_sesi_aktif]</div>
         <div class=f12>Status: $status</div>
         <!-- img src='$lokasi_profil/$d[war_image_creator]' alt='pengajar' class='foto_profil' -->
         <div>By: $d[creator]</div>
@@ -243,10 +236,6 @@ $my_rooms_sd = (!$my_rooms_sd || $id_role != 2) ? '' : "
 # UI2
 # ============================================================
 ksort($my_jadwal_harian);
-// echo '<pre>';
-// var_dump($my_jadwal_harian);
-// echo '<b style=color:red>DEBUGING: echopreExit</b></pre>';
-// exit;
 $arr_hari = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 $div_my_active_rooms = '';
 for ($w = 1; $w <= 6; $w++) { // dari senin s.d sabtu 
@@ -256,10 +245,6 @@ for ($w = 1; $w <= 6; $w++) { // dari senin s.d sabtu
   if ($my_jadwal) {
     // $count_sesi = count($my_jadwal);
     foreach ($my_jadwal as $k => $v) {
-      // echo '<pre>';
-      // var_dump($v);
-      // echo '<b style=color:red>DEBUGING: echopreExit</b></pre>';
-      // exit;
       if ($id_role == 1 and ($v['kelas'] != $kelas)) continue; // mhs only
 
       $jadwal_kelas = date('d-M, H:i', strtotime($v['jadwal_kelas']));

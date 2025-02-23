@@ -1,7 +1,8 @@
 <?php
 $at_kelas = '';
 if ($id_role == 2 and isset($_SESSION['target_kelas'])) {
-  $at_kelas = $_SESSION['target_kelas'] ? "<div class='f8 pointer' onclick='alert(`Saat ini Anda sedang berada di kelas $_SESSION[target_kelas]. \n\nSet target kelas untuk mengubahnya.`)'>$_SESSION[target_kelas]</div>" : '';
+  $tkelas = str_replace("-$ta_aktif", '', $_SESSION['target_kelas']);
+  $at_kelas = $_SESSION['target_kelas'] ? "<div class='f8 pointer' onclick='alert(`Saat ini Anda sedang berada di kelas $_SESSION[target_kelas]. \n\nSet target kelas untuk mengubahnya.`)'>$tkelas</div>" : '';
 }
 $jumlah_verif = 0;
 $rjenis = ['latihan', 'challenge'];

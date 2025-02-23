@@ -43,9 +43,11 @@ if ($id_room and $status_room === null and $id_role == 2 and $parameter != 'akti
   # ============================================================
   # WAJIB MANAGE TA JIKA INVALID 
   # ============================================================
-  jsurl('?manage_ta');
+  if ($id_role == 2) echo div_alert('danger', "TA $ta_aktif invalid setting. <a href=?manage_ta>Manage TA</a>");
+  // jsurl('?manage_ta');
 } elseif (!$sesi_aktif and $parameter != 'manage_sesi_aktif' and $id_room) {
-  jsurl('?manage_sesi_aktif');
+  if ($id_role == 2) echo div_alert('danger', "Sesi Aktif pada TA $ta_aktif invalid. <a href=?presensi>Manage Sesi Presensi</a>");
+  // jsurl('?manage_sesi_aktif');
 }
 
 

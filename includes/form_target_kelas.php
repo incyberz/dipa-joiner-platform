@@ -5,9 +5,13 @@
     <div class='flexy flex-center'>
 
       <?php
+      $img_exit = img_icon('exit');
       if (isset($_POST['btn_set_target_kelas'])) {
         $_SESSION['target_kelas'] = $_POST['btn_set_target_kelas'];
-        $target_kelas = $_SESSION['target_kelas'];
+        // $target_kelas = $_SESSION['target_kelas'];
+        jsurl();
+      } elseif (isset($_POST['btn_exit_target_kelas'])) {
+        unset($_SESSION['target_kelas']);
         jsurl();
       }
 
@@ -24,8 +28,9 @@
         }
       }
 
-
+      echo "<div><button class=' btn-transparan' name=btn_exit_target_kelas>$img_exit</button></div>";
       ?>
+
     </div>
   </form>
 </div>

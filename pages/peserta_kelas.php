@@ -92,6 +92,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop $Room kelas
 
 
     if ($get_mode == 'fast') {
+      $no++;
       $sty = '';
       $link_super_delete = '';
       if (!$d2['war_image'] and !$d2['image']) {
@@ -104,7 +105,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop $Room kelas
       } else {
         $link_super_delete = $id_role == 2 ? "<a href='?super_delete_peserta&keyword=$d2[nama]'>$img_delete</a>" : '';
       }
-      $list_peserta .= "
+      $list_peserta .= $id_role == 2 ? "
         <div class='kecil tengah abu'>
           <div class=toggle_aksi_peserta id=toggle_aksi_peserta__$d2[id_peserta]>
             <img src='$src' class='foto_profil' style='$sty'>
@@ -121,6 +122,10 @@ while ($d = mysqli_fetch_assoc($q)) { // loop $Room kelas
             </div>
           </div>
         </div>
+      " : "
+        <div class='kecil tengah abu p2 bordered br5 gradasi-toska'>
+          <div>$no. $nama</div>
+        </div>        
       ";
     } elseif ($get_mode == 'detail') {
       $no++;
