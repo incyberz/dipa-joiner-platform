@@ -1,4 +1,6 @@
 <?php
+$gradasi = '';
+$border = '';
 # =====================================================
 # PROCESSOR PILIH ROOM
 # =====================================================
@@ -36,6 +38,8 @@ if ($id_role == 1) {
   ";
 }
 
+$sql_created_by = $id_role == 1 ? '' : "AND a.created_by = $id_peserta";
+
 $s = "SELECT a.*,
 a.nama as room,
 a.status as status_room,
@@ -48,11 +52,14 @@ b.war_image as war_image_creator,
   SELECT id FROM tb_sesi 
   WHERE id_room=a.id 
   AND awal_presensi <= '$now'
-  AND akhir_presensi > '$now') id_sesi_aktif 
+  AND akhir_presensi > '$now'
+  LIMIT 1 -- ZZZ perlu di test
+  ) id_sesi_aktif 
 
 FROM tb_room a 
 JOIN tb_peserta b ON a.created_by=b.id  
 WHERE 1 -- b.id = $id_peserta 
+$sql_created_by -- hanya room saya
 ORDER BY 
   my_room DESC, -- ROOM SAYA ATAU BUKAN 
   a.jenjang,
@@ -202,12 +209,13 @@ $div_my_inactive_rooms = !$div_my_inactive_rooms ? '' : "
   <div class=row>$div_my_inactive_rooms</div>
 ";
 
-$link_buat_room_baru = $id_role == 2 ?  "<div class='alert alert-info'>$Room digunakan untuk mewadahi kegiatan belajar Anda dengan <b>multiple-kelas</b> dan dapat dipakai kembali (<b>reusable</b>) di setiap Tahun Ajar.</div> <div class='mb2'><a class='btn btn-primary w-100 ' href='?buat_room' onclick='return confirm(`Buat $Room Baru?`)'>Buat $Room Baru</a></div>" : '';
+// $link_buat_room_baru = $id_role == 2 ?  "<div class='alert alert-info'>$Room digunakan untuk mewadahi kegiatan belajar Anda dengan <b>multiple-kelas</b> dan dapat dipakai kembali (<b>reusable</b>) di setiap Tahun Ajar.</div> <div class='mb2'><a class='btn btn-primary w-100 ' href='?buat_room' onclick='return confirm(`Buat $Room Baru?`)'>Buat $Room Baru</a></div>" : '';
+$link_buat_room_baru = $id_role == 2 ?  "<div class='mb2'><a class='btn btn-primary w-100 ' href='?buat_room' onclick='return confirm(`Buat $Room Baru?`)'>Buat $Room Baru</a></div>" : '';
 
 # ============================================================
 # MY ROOMS SD
 # ============================================================
-$my_rooms_sd = (!$my_rooms_sd || $id_role != 2) ? '' : "
+$my_rooms_sd = (!$my_rooms_sd || $username != 'abi') ? '' : "
   <hr>
   <div class='wadah gradasi-toska'>
     <h4 class='tengah darkblue'>$Room Sekolah Dasar</h4>
@@ -240,12 +248,22 @@ $arr_hari = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 $div_my_active_rooms = '';
 for ($w = 1; $w <= 6; $w++) { // dari senin s.d sabtu 
   $my_jadwal = $my_jadwal_harian[$w] ?? [];
+
+  // echo '<pre>';
+  // var_dump($my_jadwal_harian);
+  // var_dump($my_jadwal);
+  // echo '<b style=color:red>DEBUGING: echopreExit</b></pre>';
+  // exit;
   // $count_sesi = 0;
   $div_my_jadwal = '';
   if ($my_jadwal) {
     // $count_sesi = count($my_jadwal);
     foreach ($my_jadwal as $k => $v) {
-      if ($id_role == 1 and ($v['kelas'] != $kelas)) continue; // mhs only
+      if ($id_role == 1 and ($v['kelas'] != $kelas)) {
+        // echolog('$v[\'kelas\'] != $kelas' . " || $v[kelas] != $kelas");
+        continue; // mhs only
+
+      }
 
       $jadwal_kelas = date('d-M, H:i', strtotime($v['jadwal_kelas']));
       $selisih =   strtotime($v['jadwal_kelas']) - strtotime('now');
@@ -330,7 +348,13 @@ for ($w = 1; $w <= 6; $w++) { // dari senin s.d sabtu
 }
 
 $div_my_active_rooms = $div_my_active_rooms ? $div_my_active_rooms : div_alert('warning tengah', $id_role == 2 ? "Anda belum punya $Room Aktif di TA $ta_show" : "Kamu belum dimasukan ke $Room manapun pada TA. $ta_show");
-$other_room = !$other_room ? '' : "    
+// $other_room = !$other_room ? '' : "    
+//   <h3 class='mt4 mb4 tengah'>$Room $Trainer lain</h3>
+//   <div class=row>
+//     $other_room
+//   </div>
+// ";
+$other_room = $username != 'abi' ? '' : "    
   <h3 class='mt4 mb4 tengah'>$Room $Trainer lain</h3>
   <div class=row>
     $other_room

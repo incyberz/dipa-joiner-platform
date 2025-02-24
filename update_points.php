@@ -1,5 +1,4 @@
 <?php
-// if ($harus_update_poin and $id_room_kelas and !$_POST) {
 
 // count_presensi = '0',
 // count_presensi_ontime = '0',
@@ -20,7 +19,8 @@
 // akumulasi_poin = 1179957,
 
 
-if (1) {
+// if (1) {
+if ($harus_update_poin and $id_room_kelas and !$_POST) {
   echo '<div class="consolas f12 abu">Updating Points... please wait!<hr>';
   # ========================================================
   # HITUNG MY RANK KELAS
@@ -44,7 +44,9 @@ if (1) {
   $rank_kelas = 1;
   $i = 1;
   while ($d = mysqli_fetch_assoc($q)) {
+    echo "$d[id_peserta] == $id_peserta";
     if ($d['id_peserta'] == $id_peserta) {
+      echo " SAMA $d[id_peserta] == $id_peserta";
       $rank_kelas = $i;
       break;
     }
@@ -207,9 +209,6 @@ if (1) {
   WHERE id_room=$id_room
   AND id_peserta=$id_peserta
   ";
-  echolog($s);
-  exit;
-
 
   echo "<br>updating poin data... ";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));

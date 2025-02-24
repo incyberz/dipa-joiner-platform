@@ -27,6 +27,7 @@ if (!$username || $public) {
   $s = "SELECT * FROM tb_poin_weekly WHERE id='$id_room-$week' AND update_at = '$today'";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   if (mysqli_num_rows($q) and !$update) {
+    /*
     # ============================================================
     # GUNAKAN DATA POIN WEEKLY ROW MANAGER
     # ============================================================
@@ -49,19 +50,13 @@ if (!$username || $public) {
     # ============================================================
     # USE RANK KELAS
     # ============================================================
-    if ($target_kelas || $id_role == 1) { // jika ada target kelas atau untuk individu mhs
-      # ============================================================
-      # THE BEST TIAP KELAS
-      # ============================================================
-      include 'leaderboard-the_best_kelas.php';
-      # ============================================================
-    } else { // untuk dosen, tanpa target kelas, show all kelas
-      # ============================================================
-      # SHOW ALL RANKING KELAS
-      # ============================================================
-      include 'leaderboard-show_all_ranking_kelas.php';
-      # ============================================================
-    } // end if tidak ada target_kelas
+    */
+
+    # ============================================================
+    # USE DATABASE POIN
+    # ============================================================
+    include 'leaderboard-show2.php';
+    # ============================================================
   } else {
     instruktur_only();
     # ============================================================

@@ -19,6 +19,11 @@ if ($global) {
   $rids = $rrank_kelas[$target_kelas] ?? die("Tidak ada data rank untuk kelas: $target_kelas");
 }
 
+echo '<pre>';
+var_dump($rrank_kelas[$target_kelas]);
+echo '<b style=color:red>DEBUGING: echopreExit</b></pre>';
+exit;
+
 
 # =========================================================
 # MAIN SELECT
