@@ -82,8 +82,16 @@ if (!file_exists($konten)) {
 
 
   if ($username and !$kelas) {
+    # ============================================================
+    # KESEMPATAN SATU KALI JOIN KELAS PER SEMESTER
+    # ============================================================
     include 'pages/join_kelas.php';
   } else {
+    if ($id_role == 2 and $id_room) {
+      include 'includes/ontops.php';
+      include 'includes/form_ubah_ta.php';
+      include 'includes/form_target_kelas.php';
+    }
     include $konten;
   }
 }

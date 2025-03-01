@@ -17,7 +17,7 @@ function input_radio($name, $value = '', $caption = '', $id = '', $checked = '',
 # ============================================================
 # ROOM KELAS
 # ============================================================
-$s = $select_all_from_tb_room_kelas;
+$s = $select_room_kelas;
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $div = '';
 $arr = [];

@@ -26,7 +26,7 @@ if ($room_count['count_presensi_aktif'] >= 1) {
     WHERE a.id_room=$id_room 
     AND a.kelas!= 'INSTRUKTUR' 
     AND a.ta=$ta_aktif 
-    -- AND b.id_sesi = $sesi_aktif[id]
+    -- AND b.id_sesi = $sesi_aktif[id] 
     ";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
@@ -42,8 +42,9 @@ if ($room_count['count_presensi_aktif'] >= 1) {
 
       $eta = eta2($d2['jadwal_kelas']);
       $hari = hari_tanggal($d2['jadwal_kelas'], 1, 0);
+      $style = $d['kelas'] == $target_kelas ? $border_blue : '';
       $info_kelas .= "
-        <div>
+        <div style='$style'>
           $d[kelas] - $hari - $eta 
           <a target=_blank href='?set_jadwal_kelas&kelas=$d[kelas]'>$img_edit</a>
         </div>

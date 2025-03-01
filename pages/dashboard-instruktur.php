@@ -9,6 +9,8 @@ echo div_alert('info tengah', "
   Tahun Ajar Aktif $ta_show
   <div class='abu miring'>$awal - $akhir</div>
 ");
+$border_blue = 'border: dashed 2px blue; padding: 10px; border-radius: 10px; margin: 10px 0';
+
 
 
 # ============================================================

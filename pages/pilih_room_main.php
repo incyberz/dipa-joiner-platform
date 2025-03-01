@@ -1,4 +1,6 @@
 <?php
+login_only();
+$dm = 1;
 $gradasi = '';
 $border = '';
 # =====================================================
@@ -71,6 +73,7 @@ ORDER BY
 LIMIT 50
 ";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+// if ($dm) echo "<pre>$s</pre>numrows: " . mysqli_num_rows($q) . "<br>";
 
 $div_my_inactive_rooms = '';
 $my_rooms_sd = [];
@@ -82,124 +85,138 @@ $my_jadwal_kelas = [];
 $my_jadwal_harian = [];
 $my_invalid_rooms = []; // room aktif tapi tidak punya id_sesi_aktif, rekomendasi untuk Closing Room
 $sedang_kuliah = 0;
-while ($d = mysqli_fetch_assoc($q)) {
+if (!mysqli_num_rows($q)) {
+  // echo '<pre>';
+  // var_dump($s);
+  // echo '<b style=color:red>Developer SEDANG DEBUGING: exit(true)</b></pre>';
+  // exit;
+} else {
+  while ($d = mysqli_fetch_assoc($q)) {
 
-  if (!$d['my_room'] and $id_role == 1) continue;
+    if (!$d['my_room'] and $id_role == 1) continue;
 
-  // debug
-  if ($d['id'] == 34) {
-    // echo '<pre>';
-    // var_dump($d);
-    // echo '</pre>';
-    // $d2['jadwal_kelas'] = '2025-02-21 19:20';
-  }
+    // debug
+    if ($d['id'] == 34) {
+      // echo '<pre>';
+      // var_dump($d);
+      // echo '</pre>';
+      // $d2['jadwal_kelas'] = '2025-02-21 19:20';
+    }
 
-  if ($d['status_room'] == 100) {
-    $btn_close_room = '';
-    $jadwal_kelas_count = 0;
-    if ($d['id_sesi_aktif']) {
-      # ============================================================
-      # GET JADWAL KELAS
-      # ============================================================
-      $s2 = "SELECT a.*,
-      b.nama as nama_sesi,
-      b.no, -- nomor sesi
-      c.id as id_room, 
-      c.nama as nama_room 
-      
-      FROM tb_sesi_kelas a 
-      JOIN tb_sesi b ON a.id_sesi=b.id
-      JOIN tb_room c ON b.id_room=c.id
-      JOIN tb_kelas d ON a.kelas=d.kelas
-      WHERE a.id_sesi = $d[id_sesi_aktif] 
-      AND a.kelas != 'INSTRUKTUR' 
-      AND d.ta = $ta_aktif
-      ORDER BY a.jadwal_kelas 
-      ";
-      $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
-      $jadwal_kelas_count = mysqli_num_rows($q2);
+    if ($d['status_room'] == 100) {
+      $btn_close_room = '';
+      $jadwal_kelas_count = 0;
+      if ($d['id_sesi_aktif']) {
+        # ============================================================
+        # GET JADWAL KELAS
+        # ============================================================
+        $s2 = "SELECT a.*,
+        b.nama as nama_sesi,
+        b.no, -- nomor sesi
+        c.id as id_room, 
+        c.nama as nama_room 
+        
+        FROM tb_sesi_kelas a 
+        JOIN tb_sesi b ON a.id_sesi=b.id
+        JOIN tb_room c ON b.id_room=c.id
+        JOIN tb_kelas d ON a.kelas=d.kelas
+        WHERE a.id_sesi = $d[id_sesi_aktif] 
+        AND a.kelas != 'INSTRUKTUR' 
+        AND d.ta = $ta_aktif
+        ORDER BY a.jadwal_kelas 
+        ";
+        $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+        // if ($dm) echo "<pre>$s2</pre>numrows: " . mysqli_num_rows($q2) . "<br>";
 
-      while ($d2 = mysqli_fetch_assoc($q2)) {
-        if (isset($my_jadwal_kelas[$d2['jadwal_kelas']])) {
-          $id_sebelumnya = $my_jadwal_kelas[$d2['jadwal_kelas']]['id'];
-          $kelas_sebelumnya = $my_jadwal_kelas[$d2['jadwal_kelas']]['kelas'];
-          echo $id_role == 1 ? '' : div_alert('warning', "Terdapat dua jadwal kelas yang sama [ $d2[jadwal_kelas] ] - [ $kelas_sebelumnya dan $d2[kelas] ], abaikan jika join kelas.");
+        $jadwal_kelas_count = mysqli_num_rows($q2);
+
+        if (mysqli_num_rows($q2)) {
+
+          while ($d2 = mysqli_fetch_assoc($q2)) {
+            // echolog("-- Sub Loop Jadwal Kelas: $d2[jadwal_kelas]");
+            if (isset($my_jadwal_kelas[$d2['jadwal_kelas']])) {
+              $id_sebelumnya = $my_jadwal_kelas[$d2['jadwal_kelas']]['id'];
+              $kelas_sebelumnya = $my_jadwal_kelas[$d2['jadwal_kelas']]['kelas'];
+              echo $id_role == 1 ? '' : div_alert('warning', "Terdapat dua jadwal kelas yang sama [ $d2[jadwal_kelas] ] - [ $kelas_sebelumnya dan $d2[kelas] ], abaikan jika join kelas.<hr><pre>$s2</pre>");
+            } else {
+              $my_jadwal_kelas[$d2['jadwal_kelas']] = $d2;
+
+
+
+              $w = date('w', strtotime($d2['jadwal_kelas']));
+              if (isset($my_jadwal_harian[$w])) {
+                // echolog('Array push: array_push($my_jadwal_harian[$w], $d2);');
+                array_push($my_jadwal_harian[$w], $d2);
+              } else {
+                $my_jadwal_harian[$w][0] = $d2;
+              }
+            }
+          } // end while $d2
+          continue; // sudah di handle dengan UI2
         } else {
-          // echolog($d2['jadwal_kelas']);
-          // echo '<pre>';
-          // var_dump("$d[nama] | $d[status]  | $d[id_sesi_aktif] | $d2[jadwal_kelas] ");
-          // echo '</pre>';
-          $my_jadwal_kelas[$d2['jadwal_kelas']] = $d2;
-
-          $w = date('w', strtotime($d2['jadwal_kelas']));
-          if (isset($my_jadwal_harian[$w])) {
-            array_push($my_jadwal_harian[$w], $d2);
-          } else {
-            $my_jadwal_harian[$w][0] = $d2;
-          }
+          $btn = "<button class='btn btn-info mt2 w-100' name=btn_pilih value=$d[id_room]>Manage Sesi Aktif</button>";
         }
-      } // end while $d2
-      continue; // sudah di handle dengan UI2
-    } else { // tidak ada sesi aktif
-      # ============================================================
-      # SARAN UNTUK CLOSING ROOM
-      # ============================================================
-      $btn_close_room = '<b class=red>CLOSE ROOM ZZZ</b>';
-      $my_invalid_rooms[$d['id']] = $d;
-      $status = '<b class=red>Tidak ada sesi aktif</b>';
-      $gradasi = 'merah';
-      $btn = "<button class='btn btn-info mt2 w-100' name=btn_pilih value=$d[id_room]>Manage Sesi Aktif</button>";
-      $btn .= "<button class='btn btn-primary mt2 w-100' name=btn_close_room value=$d[id_room] onclick='return confirm(`Close $Room ?`)'>Close $Room</button>";
-    }
-    // $status = 'Aktif';
-    // $gradasi = 'hijau';
-    // $btn = "<button class='btn btn-success mt2 w-100' name=btn_pilih value=$d[id_room]>Pilih $Room</button>";
-  } elseif ($d['status_room'] < 0) {
-    $status = 'Closed';
-    $gradasi = 'kuning';
-    $btn = "<button class='btn btn-warning mt2 w-100' name=btn_pilih value=$d[id_room] onclick='return confirm(`Pilih Closed $Room untuk melihat history?`)'>Closed</button>";
-  } else {
-    $status = 'Tidak Aktif';
-    $gradasi = 'abu';
-    $btn = "<span class='btn btn-secondary mt2 w-100' onclick='alert(`$Room belum diaktifkan oleh $Trainer. Segera hubungi beliau via whatsApp!`)'>Inactive</span>";
-    $btn = $id_role == 1 ? "<span class='btn btn-secondary mt2 w-100' >Closed</span>" : "<a href='?pilih_room&aktivasi_room=$d[id_room]' class='btn btn-secondary mt2 w-100' >Aktivasi</a>";
-  }
-
-  if ($id_room == $d['id_room']) {
-    $wadah_active = 'wadah_active';
-    $btn = "<span class='btn btn-secondary mt2 w-100' onclick='alert(`Kamu sedang berada di $Room ini.`)'>Selected</span>";
-  } else {
-    $wadah_active = '';
-  }
-
-  if ($d['my_room']) {
-    // $border = 'solid 3px blue';
-    $border = '';
-  } else {
-    $gradasi = 'abu';
-    $border = '';
-    $btn = "<a href='?pilih_room&daftar_ke_room=$d[id_room]' class='btn btn-secondary mt2 w-100' value=$d[id_room]>Daftar Anggota</a>";
-  }
-
-  $div_room = "
-    <div class='col-md-4 col-lg-3'>
-      <div class='wadah $wadah_active gradasi-$gradasi tengah' style='border: $border;'>
-        <div class='darkblue f18'>$d[room]</div>
-        <div class=f12>Status: $status</div>
-        <!-- img src='$lokasi_profil/$d[war_image_creator]' alt='pengajar' class='foto_profil' -->
-        <div>By: $d[creator]</div>
-        $btn
-      </div>
-    </div>
-  ";
-  if ($d['my_room']) {
-    if ($d['jenjang'] == 'SD') {
-      $my_rooms_sd[$d['jenis']] .= $div_room;
+      } else { // tidak ada sesi aktif
+        # ============================================================
+        # SARAN UNTUK CLOSING ROOM
+        # ============================================================
+        $btn_close_room = '<b class=red>CLOSE ROOM ZZZ</b>';
+        $my_invalid_rooms[$d['id']] = $d;
+        $status = '<b class=red>Tidak ada sesi aktif</b>';
+        $gradasi = 'merah';
+        $btn = "<button class='btn btn-info mt2 w-100' name=btn_pilih value=$d[id_room]>Manage Sesi Aktif</button>";
+        $btn .= "<button class='btn btn-primary mt2 w-100' name=btn_close_room value=$d[id_room] onclick='return confirm(`Close $Room ?`)'>Close $Room</button>";
+      }
+      // $status = 'Aktif';
+      // $gradasi = 'hijau';
+      // $btn = "<button class='btn btn-success mt2 w-100' name=btn_pilih value=$d[id_room]>Pilih $Room</button>";
+    } elseif ($d['status_room'] < 0) {
+      $status = 'Closed';
+      $gradasi = 'kuning';
+      $btn = "<button class='btn btn-warning mt2 w-100' name=btn_pilih value=$d[id_room] onclick='return confirm(`Pilih Closed $Room untuk melihat history?`)'>Closed</button>";
     } else {
-      $div_my_inactive_rooms .= $div_room;
+      $status = 'Tidak Aktif';
+      $gradasi = 'abu';
+      $btn = "<span class='btn btn-secondary mt2 w-100' onclick='alert(`$Room belum diaktifkan oleh $Trainer. Segera hubungi beliau via whatsApp!`)'>Inactive</span>";
+      $btn = $id_role == 1 ? "<span class='btn btn-secondary mt2 w-100' >Closed</span>" : "<a href='?pilih_room&aktivasi_room=$d[id_room]' class='btn btn-secondary mt2 w-100' >Aktivasi</a>";
     }
-  } else {
-    $other_room .= $div_room;
+
+    if ($id_room == $d['id_room']) {
+      $wadah_active = 'wadah_active';
+      $btn = "<span class='btn btn-secondary mt2 w-100' onclick='alert(`Kamu sedang berada di $Room ini.`)'>Selected</span>";
+    } else {
+      $wadah_active = '';
+    }
+
+    if ($d['my_room']) {
+      // $border = 'solid 3px blue';
+      $border = '';
+    } else {
+      $gradasi = 'abu';
+      $border = '';
+      $btn = "<a href='?pilih_room&daftar_ke_room=$d[id_room]' class='btn btn-secondary mt2 w-100' value=$d[id_room]>Daftar Anggota</a>";
+    }
+
+    $div_room = "
+      <div class='col-md-4 col-lg-3'>
+        <div class='wadah $wadah_active gradasi-$gradasi tengah' style='border: $border;'>
+          <div class='darkblue f18'>$d[room]</div>
+          <div class=f12>Status: $status</div>
+          <!-- img src='$lokasi_profil/$d[war_image_creator]' alt='pengajar' class='foto_profil' -->
+          <div>By: $d[creator]</div>
+          $btn
+        </div>
+      </div>
+    ";
+    if ($d['my_room']) {
+      if ($d['jenjang'] == 'SD') {
+        $my_rooms_sd[$d['jenis']] .= $div_room;
+      } else {
+        $div_my_inactive_rooms .= $div_room;
+      }
+    } else {
+      $other_room .= $div_room;
+    }
   }
 }
 
@@ -248,6 +265,7 @@ $arr_hari = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 $div_my_active_rooms = '';
 for ($w = 1; $w <= 6; $w++) { // dari senin s.d sabtu 
   $my_jadwal = $my_jadwal_harian[$w] ?? [];
+  // if ($dm and $my_jadwal) echolog("My Jadwal at week $w OK.");
 
   // echo '<pre>';
   // var_dump($my_jadwal_harian);
@@ -255,14 +273,15 @@ for ($w = 1; $w <= 6; $w++) { // dari senin s.d sabtu
   // echo '<b style=color:red>DEBUGING: echopreExit</b></pre>';
   // exit;
   // $count_sesi = 0;
-  $div_my_jadwal = '';
+  $div_my_jadwals = '';
   if ($my_jadwal) {
     // $count_sesi = count($my_jadwal);
+    $timer = '';
     foreach ($my_jadwal as $k => $v) {
       if ($id_role == 1 and ($v['kelas'] != $kelas)) {
-        // echolog('$v[\'kelas\'] != $kelas' . " || $v[kelas] != $kelas");
-        continue; // mhs only
-
+        // if ($dm) echolog('BREAK BY continue: $v[\'kelas\'] != $kelas' . " || $v[kelas] != $kelas");
+        // continue; // mhs only
+        // if ($dm) echo "continue aborted.";
       }
 
       $jadwal_kelas = date('d-M, H:i', strtotime($v['jadwal_kelas']));
@@ -285,7 +304,6 @@ for ($w = 1; $w <= 6; $w++) { // dari senin s.d sabtu
         # ============================================================
         # CREATE TIMER
         # ============================================================
-        $timer = '';
         if (!$timer) { // hanya satu timer ke sesi terdekat
           include 'timer.php';
           $info .= "$timer";
@@ -304,7 +322,7 @@ for ($w = 1; $w <= 6; $w++) { // dari senin s.d sabtu
         # ============================================================
         $info = 'SUDAH USAI';
         $eta = eta2($v['jadwal_kelas']);
-        $Ganti = 'Review';
+        $Ganti = 'Enter';
       }
 
 
@@ -314,14 +332,15 @@ for ($w = 1; $w <= 6; $w++) { // dari senin s.d sabtu
         $btn = "<button class='btn btn-$btn_type mt2 w-100' name=btn_pilih value=$v[id_room]>$Ganti $Room</button>";
       }
 
-      $debug = "$v[id_room]";
+      $ckelas = substr(str_replace("-$ta_aktif", '', $v['kelas']), 3);
 
-      $div_my_jadwal .= "
+      // if ($dm) echo "Final echo $ div_my_jadwals";
+      $div_my_jadwals .= "
         <div class='col-md-4 col-lg-3'>
           <div class='wadah $wadah_active gradasi-$gradasi tengah' style='border: $border;'>
-            <div class=' f12 blue bold'>$v[nama_room] $debug</div>
-            <div class='darkblue f18'>P$v[no] $v[nama_sesi]</div>
-            <div class='f12 abu'>$v[kelas]</div>
+            <div class=' f12 bold'>$v[nama_room]</div>
+            <div class='f12 darkblue bold'>P$v[no] $v[nama_sesi]</div>
+            <div class='f20 blue'>$ckelas</div>
             <div class='f12 abu'>$jadwal_kelas</div>
             <div class='f12 brown'>$eta</div>
             <div class='f12 brown'>$info</div>
@@ -332,15 +351,15 @@ for ($w = 1; $w <= 6; $w++) { // dari senin s.d sabtu
       $tanggal = date('d M Y', strtotime($v['jadwal_kelas']));
     }
 
+    $border_today = date('w') == $w ? 'border: 5px solid blue;' : '';
 
-
-    $div_my_active_rooms .= !$div_my_jadwal ? '' : "
-      <div>
+    $div_my_active_rooms .= !$div_my_jadwals ? '' : "
+      <div class='wadah gradasi-toska' style='$border_today'>
         <div class='tengah gradasi-kuning p2 mb2 border-top blue bold'>
           $arr_hari[$w], $tanggal
         </div>
         <div class='row mb4'>
-          $div_my_jadwal
+          $div_my_jadwals
         </div>
       </div>
     ";

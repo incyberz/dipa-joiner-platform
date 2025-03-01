@@ -1,7 +1,7 @@
 <?php
 $arr_bahan_ajar = ['bahan_ajar', 'file_ppt', 'video_ajar', 'file_lain'];
 include 'lp-processors.php';
-include 'lp-styles.php';
+include $dark ? 'lp-styles-dark.php' : 'lp-styles.php';
 include 'lp-functions.php';
 
 $get_id_sesi = $_GET['id_sesi'] ?? null;
@@ -180,7 +180,9 @@ include 'laporkan_error.php';
 # ============================================================
 set_h2('Learning Path', "
   $Room 
-  <span class=darkblue>$nama_room</span> 
+  <span class=darkblue>$nama_room</span> | 
+  <span class=darkblue>$target_kelas_show</span>  
+  
   <div class='f10 flexy flex-center mt2' style=gap:1px>
     $nav_lp
   </div>

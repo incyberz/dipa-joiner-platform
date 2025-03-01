@@ -9,6 +9,7 @@
     if (isset($_POST['btn_set_target_kelas'])) {
       $_SESSION['target_kelas'] = $_POST['btn_set_target_kelas'];
       $target_kelas = $_SESSION['target_kelas'];
+      jsurl();
     }
 
     $info_target = $target_kelas ? "<div>Target kelas saat ini: <b class=darkblue>$target_kelas</b> | <button name=btn_set_target_kelas >Refresh Page</button></div>" : '<div class="consolas darkred">Saat ini target kelas belum terpilih.</div>';
@@ -19,7 +20,7 @@
       <div class=mb2>Set target kelas ke:</div>
     ";
 
-    $s = $select_all_from_tb_room_kelas;
+    $s = $select_room_kelas;
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     if (!mysqli_num_rows($q)) {
       echo div_alert('danger', "Belum terdapat $Room-kelas pada $Room ini. | <a href=?manage_kelas>Manage Kelas</a>");

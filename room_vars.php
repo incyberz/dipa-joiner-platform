@@ -185,7 +185,21 @@ if (!$id_room_kelas) {
 }
 
 
-$select_all_from_tb_room_kelas = "SELECT * FROM tb_room_kelas WHERE id_room=$id_room AND kelas != 'INSTRUKTUR' AND ta=$ta_aktif";
+$select_room_kelas = "SELECT a.*,
+CONCAT(b.prodi,'-',b.shift,'-',b.sub_kelas,'-SM',b.semester) kelas_show
+
+FROM tb_room_kelas a 
+JOIN tb_kelas b ON a.kelas=b.kelas 
+WHERE a.id_room=$id_room 
+AND a.kelas != 'INSTRUKTUR' 
+AND a.ta=$ta_aktif
+";
+$q = mysqli_query($cn, $select_room_kelas) or die(mysqli_error($cn));
+$rid_room_kelas = [];
+while ($d = mysqli_fetch_assoc($q)) {
+  $rid_room_kelas[$d['id']] = $d;
+}
+
 
 
 

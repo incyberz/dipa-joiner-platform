@@ -21,6 +21,7 @@ session_start();
 # DEFAULT GLOBAL VARIABLE 
 # ============================================================
 $is_custom = false;
+$dark = true;
 $meta_title = "DIPA Joiner Gamified LMS - Fun Learning Management System bagi Mitra, Praktisi, dan Akademisi";
 $meta_description = "Fun e-Learning Management System (LMS) berbasis Game Mechanics (Gamification) bagi Mitra (Dunia Industri), Praktisi, dan Akademisi. Dengan Rank System, Leaderboard, Play Quiz, dan Tanam Soal, menjadikan Pembelajaran seindah permainan.";
 $meta_keywords = "learning management system, fun lms, gamification, game mechanic, rank, leaderboard, quiz, bank soal, pembelajaran jarak jauh";
@@ -82,6 +83,8 @@ $nama_room = null;
 $target_kelas = $_SESSION['target_kelas'] ?? null;
 $harus_update_poin = 0;
 $link_wa = null;
+$target_kelas_show = null;
+$no_sesi_aktif = null;
 
 $unset = '<span class="consolas f12 red miring">unset</span>';
 $null_red = '<span class="consolas f12 red miring">null</span>';
@@ -107,7 +110,8 @@ include 'conn.php';
 # ============================================================
 # TAHUN AJAR AKTIF
 # ============================================================
-$ta_aktif = $_GET['ta'] ?? 20242;
+$session_ta_aktif = $_SESSION['dipa_ta'] ?? 20242;
+$ta_aktif = $_GET['ta'] ?? $session_ta_aktif;
 include 'config_ta.php';
 
 # ========================================================
@@ -240,7 +244,7 @@ if ($username) {
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
   <!-- Template Main CSS File -->
-  <link href="assets/css/style.css" rel="stylesheet">
+  <!-- <link href="assets/css/style.css" rel="stylesheet"> -->
   <script src="assets/js/jquery.min.js"></script>
   <?php
   # ============================================================
@@ -252,6 +256,7 @@ if ($username) {
   include 'includes/meme.php';
   include 'includes/img_icon.php';
   ?>
+  <link href="assets/css/dark.css" rel="stylesheet">
 </head>
 
 <body>

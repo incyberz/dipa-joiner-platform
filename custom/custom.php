@@ -19,7 +19,7 @@ $Praktisi = 'Praktisi'; // Praktisi | Professional
 $Mitra = 'Mitra'; // Mitra | DUDI | Industri
 $Join = 'Daftar'; // Join | Daftar | Register | Admisi
 $Slogan = 'Belajar Tanpa Batas, Belajar Kapan saja, dimana saja.';
-$Leaderboard = 'Peringkat';
+$Leaderboard = 'Leaderboard';
 
 # ============================================================
 # CUSTOM PENILAIAN

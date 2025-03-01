@@ -351,7 +351,7 @@ if ($id_role == 2 and !$total_data) {
 # =======================================================
 if ($id_role == 2) {
   $arr_kelas = [];
-  $s2 = $select_all_from_tb_room_kelas;
+  $s2 = $select_room_kelas;
   $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
   while ($d2 = mysqli_fetch_assoc($q2)) {
     $arr_kelas[$d2['kelas']] = $d2['id'];
@@ -602,7 +602,7 @@ if ($get_save) {
 
 if ($id_role == 2) {
   $blok_kelas = "
-    <table class='table td_transZZZ th_toska'>
+    <table class='table'>
       $tr
     </table>
     <div class=mb4>

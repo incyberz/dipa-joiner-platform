@@ -158,7 +158,7 @@ $tb = $tr ? "
     </thead>
     $tr
   </table>
-" : div_alert('danger', "Data XXX tidak ditemukan.");
+" : div_alert('danger', "Belum ada $Peserta");
 echo "
   <div class='wadah gradasi-toska'>
     <h3>Kalkulasi Poin KBM minggu-$week</h3>

@@ -130,7 +130,7 @@ if ($jumlah_soal) {
       <div class='wadah blok_soal hideit' id=blok_soal__$id_soal_peserta>
         <div style='display:grid; grid-template-columns:auto 60px'>
           <div>
-            <div>$i <span class='kecil miring abu'>of $jumlah_soal</span></div>
+            <div class=abu>$i <span class='kecil miring abu'>of $jumlah_soal</span></div>
             <div class='kecil miring abu mb2'>by: $d[pembuat_soal] ~ $status_soal question</div>
           </div>
           <div>

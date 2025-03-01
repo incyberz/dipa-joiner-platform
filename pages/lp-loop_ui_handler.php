@@ -88,7 +88,7 @@ $ui_bahan_ajar = "
 ";
 
 $ui_acts = "
-  <div class='mt1 tengah pt1' style='border-top:solid 3px #cdc'>
+  <div class='mt1 tengah pt1 aktifitas-pembelajaran'>
     <div class='kecil miring abu mb2 f10 tengah'>Aktivitas Pembelajaran:</div>
     <div class='row'>
       <div class='col-md-4 mb2'>

@@ -5,13 +5,52 @@
 * License: https://bootstrapmade.com/license/
 */
 
+
+
+/*--------------------------------------------------------------
+# OVERRIDE INSHO STYLES
+--------------------------------------------------------------*/
+.gradasi-hijau, .gradasi-biru,.card,.gradasi-toska,.gradasi-abu{
+  background: linear-gradient(rgba(0,0,50,0.8),#0a0019e7);
+}
+
+.gradasi-pink{
+  background: linear-gradient(rgba(50,0,50,0.8),#000000ee);
+}
+
+.gradasi-kuning{
+  background: linear-gradient(rgba(50,50,0,0.8),#000000ee);
+}
+.gradasi-merah{
+  background: linear-gradient(rgba(70,0,0,0.8),#000000ee);
+}
+.wadah{
+  /* border: solid 1px #111; */
+  border-radius: 5px;
+  border: none;
+  /* box-shadow: 0 0 20px rgb(38, 7, 141); */
+}
+
+.bordered{
+  border: solid 1px #190562;
+}
+
+.darkblue{
+  color: rgb(46, 46, 255)
+}
+
+.bg-white{
+  background: rgba(0, 0, 0, 0.907) !important ;
+  color: rgb(150, 150, 150);
+}
+
 /*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/
 body {
   font-family: "Open Sans", sans-serif;
-  color: #444444;
-  /* background: url('../img/bg-body-9.png'); */
+  color: #e5e5e5;
+  background: url('../img/bg-body-9.png');
 }
 
 a {
@@ -32,6 +71,9 @@ h5,
 h6 {
   font-family: "Raleway", sans-serif;
 }
+th, td{
+  color: rgb(182, 182, 182);
+}
 
 /*--------------------------------------------------------------
 # Back to top button
@@ -43,7 +85,7 @@ h6 {
   right: 15px;
   bottom: 15px;
   z-index: 996;
-  background: #3498db;
+  background: #db3434;
   width: 40px;
   height: 40px;
   border-radius: 4px;
@@ -57,7 +99,7 @@ h6 {
 }
 
 .back-to-top:hover {
-  background: #57aae1;
+  background: #e15757;
   color: #fff;
 }
 
@@ -82,7 +124,8 @@ h6 {
   z-index: 997;
   transition: all 0.5s;
   padding: 22px 0;
-  background: #fff;
+  /* background: #fff; */
+  background: linear-gradient(rgba(0,0,50,0.8),black);
 }
 
 #header.header-scrolled {
@@ -141,7 +184,7 @@ h6 {
   padding: 10px 0 10px 30px;
   font-size: 15px;
   font-weight: 400;
-  color: #555555;
+  color: #afafaf;
   white-space: nowrap;
   transition: 0.3s;
 }
@@ -363,7 +406,7 @@ h6 {
   font-size: 48px;
   font-weight: 700;
   line-height: 56px;
-  color: black;
+  color: red;
 }
 
 #hero h2 {
@@ -488,7 +531,7 @@ section {
   font-weight: bold;
   text-transform: uppercase;
   position: relative;
-  color: #222222;
+  color: #fb1111;
 }
 
 .section-title h2::before,
@@ -1611,7 +1654,7 @@ section {
 # Footer
 --------------------------------------------------------------*/
 #footer {
-  background: #fff;
+  /* background: #fff; */
   box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.1);
   padding: 30px 0;
   color: #222222;

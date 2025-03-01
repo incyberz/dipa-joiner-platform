@@ -39,10 +39,10 @@ if (isset($_COOKIE[$dipa_cookie])) {
 
   .form-login {
     max-width: 400px;
-    margin: auto;
+    margin: 30px auto;
   }
 </style>
-<div class="full" data-aos='fade-up'>
+<div class="flexy" data-aos='fade-up'>
   <div class="wadah gradasi-biru form-login p-4">
     <div class="flexy flex-between">
       <div><?= $img_login_as ?> </div>
@@ -58,16 +58,16 @@ if (isset($_COOKIE[$dipa_cookie])) {
     </p>
     <hr>
     <div class="tengah">
-      <img src="<?= $header_logo ?>" alt="header-logo">
+      <img src="<?= $header_logo ?>" alt="header-logo" class="img-fluid">
     </div>
     <hr>
     <form method="post">
       <div class="form-group">
-        <input type="text" class="form-control" minlength=3 maxlength=50 required id="username" name="username" value="<?= $username ?>" placeholder="Enter username...">
+        <input type="text" class="form-control text-center" minlength=3 maxlength=50 required id="username" name="username" value="<?= $username ?>" placeholder="Enter username...">
       </div>
 
       <div class="form-group">
-        <input type="password" class="form-control" minlength=3 maxlength=50 required id="password" name="password" value="<?= $password ?>" placeholder="Enter password...">
+        <input type="password" class="form-control text-center" minlength=3 maxlength=50 required id="password" name="password" value="<?= $password ?>" placeholder="Enter password...">
       </div>
 
       <div class="form-group">

@@ -95,9 +95,9 @@ while ($d = mysqli_fetch_assoc($q)) {
   $id = $d['id'];
   $k = $d['kelas'];
   if ($k == 'INSTRUKTUR') {
-    $ada_room_kelas_instruktur = 1;
-    $untuk_kelas .= "<div class='kiri hideit'><label><input type=checkbox checked name=untuk_kelas[$id]> $k</label></div>";
-    $untuk_kelas .= "<div class='kiri'><label><input type=checkbox checked disabled> $k</label></div>";
+    // $ada_room_kelas_instruktur = 1;
+    // $untuk_kelas .= "<div class='kiri hideit'><label><input type=checkbox checked name=untuk_kelas[$id]> $k</label></div>";
+    // $untuk_kelas .= "<div class='kiri'><label><input type=checkbox checked disabled> $k</label></div>";
   } else {
     if ($d['ta'] != $ta_aktif) continue;
     $untuk_kelas .= "<div class='kiri'><label><input type=checkbox checked name=untuk_kelas[$id]> $k</label></div>";
@@ -108,10 +108,11 @@ while ($d = mysqli_fetch_assoc($q)) {
 $not_p = $p == 'latihan' ? 'challenge' : 'latihan';
 
 if ($csesi['count_act']) {
-  $info_wajib = "Sudah ada $csesi[count_act] $p pada sesi ini.";
+  // $info_wajib = "Sudah ada $csesi[count_act] $p pada sesi ini.";
+  $info_wajib = '';
   $checked_wajib = '';
 } else {
-  $info_wajib = "Belum ada satupun $p pada sesi ini. <div class=' bold biru'>Anda disarankan mewajibkan $p ini.</div>";
+  $info_wajib = "<div class='alert alert-info f12'>Belum ada satupun $p pada sesi ini. <div class=' bold biru'>Anda disarankan mewajibkan $p ini.</div></div>";
   $checked_wajib = 'checked';
 }
 
@@ -119,7 +120,7 @@ echo "
   <div class='flexy flex-center tengah'>
     <form method=post style='max-width:600px; min-width:300px'>
       <div class='f12 kiri mb1'><b>Untuk:</b> <span class='f22 darkblue'>P$csesi[pertemuan_ke] $csesi[nama]</span></div>
-      <div class='alert alert-info f12'>$info_wajib</div>
+      $info_wajib
       <div class='f12 tebal kiri mb1'>Kelas:</div>
       $untuk_kelas
       <input class='form-control mt4 mb2' required minlength=3 maxlength=30 placeholder='Nama $p baru...' name=nama value='$nama'>

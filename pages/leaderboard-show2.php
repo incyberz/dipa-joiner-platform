@@ -1,4 +1,6 @@
 <?php
+include 'leaderboard-reset.php';
+include 'leaderboard-styles.php';
 # ============================================================
 # LEADERBOARD KELAS ATAU GLOBAL
 # ============================================================
@@ -60,13 +62,15 @@ while ($d = mysqli_fetch_assoc($q)) {
   $i++;
   $rank = $i + 1;
   if ($d['id_peserta'] == $id_peserta) $my_rank = $i;
-  if ($i < 3) continue;
-  if ($i > 3) $btop = 'btop';
+  if ($i < 4) continue;
+  if ($i > 4) $btop = 'btop';
   $poin = number_format($d['akumulasi_poin'], 0);
   $nama = $d['nama_peserta'];
   $kelas = $global ? "<div class='f10 abu'>$d[kelas]</div>" : '';
   $my_row = $d['id_peserta'] == $id_peserta ? 'border-top: solid 5px #ccf;border-bottom: solid 5px #ccf; background: linear-gradient(#efe,#ffc); margin: 0 -12px 0 -12px;padding:12px' : '';
   if ($i > 10 and $id_role == 1 and $d['id_peserta'] != $id_peserta) continue; // limit data untuk mhs
+
+  $img = $id_role == 2 ? cek_src_profil($d['image'], $d['war_image'], $lokasi_profil) : '';
 
   $juara4 .=  "
     <div class='flexy $btop ' style='$my_row'>
@@ -75,93 +79,35 @@ while ($d = mysqli_fetch_assoc($q)) {
       <div class='mt1 mb1' style='flex: 2'>$poin <span class='kecil miring abu'>LP</span></div>
     </div>
   ";
-
-  // $tr .= "
-  //   <tr id=tr__$d[id]>
-  //     <td>$i</td>
-  //     <td>$d[nama]</td>
-  //     <td>$d[kelas]</td>
-  //     <td>$d[akumulasi_poin]</td>
-  //     <td>Edit | Delete</td>
-  //   </tr>
-  // ";
 }
 
-// echo "
-//   <table class=table>
-//     $tr
-//   </table>";
-// $count = mysqli_num_rows($q);
-// echo '<pre>';
-// var_dump($count);
-// echo '<b style=color:red>DEBUGING: echopreExit</b></pre>';
-// exit;
+$rids_belum_ada = [
+  'id' => 0,
+  'nama_peserta' => 'Belum Ada',
+  'rank' => 0,
+  'akumulasi_poin' => 0,
+  'kelas' => '',
+  'image' => null,
+  'war_image' => null,
+];
 
 
-// if ($global) {
-//   $rids = $rrank_room;
-// } else {
-//   $target_kelas = $id_role == 1 ? $kelas : $target_kelas; // target kelas adalah kelas sendiri bagi mhs
-//   $rids = $rrank_kelas[$target_kelas] ?? die("Tidak ada data rank untuk kelas: $target_kelas");
-// }
 
-// echo '<pre>';
-// var_dump($rrank_kelas[$target_kelas]);
-// echo '<b style=color:red>DEBUGING: echopreExit</b></pre>';
-// exit;
+$rids[0] = $rids[0] ?? $rids_belum_ada;
+$rids[1] = $rids[1] ?? $rids_belum_ada;
+$rids[2] = $rids[2] ?? $rids_belum_ada;
 
+$img1 = $id_role == 2 ? cek_src_profil($rids[0]['image'], $rids[0]['war_image'], $lokasi_profil) : '';
+$img2 = $id_role == 2 ? cek_src_profil($rids[1]['image'], $rids[1]['war_image'], $lokasi_profil) : '';
+$img3 = $id_role == 2 ? cek_src_profil($rids[2]['image'], $rids[2]['war_image'], $lokasi_profil) : '';
 
-# =========================================================
-# MAIN SELECT
-# =========================================================
-/*
-$rids = [];
-$my_rank = null; // posisi rank saya 
-foreach ($rids as $k => $id_pes) {
-  $rank = $k + 1;
-  if ($id_pes == $id_peserta) $my_rank = $rank; // posisi rank saya 
-  if ($k > 9 and $id_role == 1 and $id_pes != $id_peserta) continue; // limit data untuk mhs
-  $rpoin = $row[$id_pes];
-  $poin = 0;
-  foreach ($rpoin as $k2 => $v2) {
-    if ($k2 == 'rank_kelas' || $k2 == 'rank_room') continue;
-    $poin += intval($v2);
-  }
+$juara1 = ucwords(strtolower($rids[0]['nama_peserta']));
+$juara2 = ucwords(strtolower($rids[1]['nama_peserta']));
+$juara3 = ucwords(strtolower($rids[2]['nama_peserta']));
 
-  $img = '';
-  if ($id_role == 2 || $id_pes == $id_peserta) {
-
-    $src1 = !$d['war_image'] ? $src_profil_na : "$lokasi_profil/$d[war_image]";
-    $src2 = !$d['image'] ? $src_profil_na : "$lokasi_profil/$d[image]";
-    $src = $src_profil_na;
-    if (file_exists($src1)) {
-      $src = $src1;
-    } elseif (file_exists($src2)) {
-      $src = $src2;
-    }
-
-
-    $img = "<img src='$src' class='profil_pembuat' ><br> ";
-  }
-
-  array_push($rids, [
-    'id' => $d['id_peserta'],
-    'nama' => $img . $d['nama_peserta'],
-    'rank' => $rank,
-    'poin' => $poin,
-    'kelas' => $d['kelas'],
-  ]);
-}
-  */
-
-// echo '<pre>';
-// var_dump($my_rank);
-// echo '<b style=color:red>DEBUGING: echopreExit</b></pre>';
-// exit;
-
-$juara1 = ucwords(strtolower($rids[0]['nama']));
-$juara2 = ucwords(strtolower($rids[1]['nama']));
-$juara3 = ucwords(strtolower($rids[2]['nama']));
+$juara1 = $id_role == 2 ? "<img src='$img1' class=profil_pembuat /><br>$juara1" : $juara1;
+$juara2 = $id_role == 2 ? "<img src='$img2' class=profil_pembuat /><br>$juara2" : $juara2;
+$juara3 = $id_role == 2 ? "<img src='$img3' class=profil_pembuat /><br>$juara3" : $juara3;
 
 $poin_juara1 = number_format($rids[0]['akumulasi_poin']);
 $poin_juara2 = number_format($rids[1]['akumulasi_poin']);
@@ -175,28 +121,35 @@ $border1 = $my_rank == 1 ? 'border: solid 4px blue' : '';
 $border2 = $my_rank == 2 ? 'border: solid 4px blue' : '';
 $border3 = $my_rank == 3 ? 'border: solid 4px blue' : '';
 
+$medal1st = '<div class="shimmer">&nbsp;1<sup class="shimmer-st"> st</sup></div>';
+$medal2st = '<div class="shimmer shimmer-second">&nbsp;2<sup class="shimmer-st"> nd</sup></div>';
+$medal3st = '<div class="shimmer shimmer-third">&nbsp;3<sup class="shimmer-st"> rd</sup></div>';
+
+$medal1 = $dark ? $medal1st : '<img src=assets/img/gif/medal1-1.gif height=90px>';
+$medal2 = $dark ? $medal2st : '<img src=assets/img/gif/medal2-1.gif height=90px>';
+$medal3 = $dark ? $medal3st : '<img src=assets/img/gif/medal3-1.gif height=90px>';
 
 echo "
   <div class='wadah gradasi-hijau mx-auto' style='max-width:500px'>
 
-    <div class='wadah tengah ' style='background: linear-gradient(#ffbbff,#fef);$border1'>
-      <img src=assets/img/gif/medal1-1.gif height=90px>
-      <div class='darkblue mt1 f20'>$juara1$kelas_juara1</div>
+    <div class='wadah tengah juara-1' style='$border1'>
+      $medal1
+      <div class='darkblue mt2 f20'>$juara1$kelas_juara1</div>
       <div class=' darkblue '>$poin_juara1 LP</div>
     </div>
 
 
     <div class=row>
       <div class=col-6>
-        <div class='wadah tengah bg-white' style='$border2'>
-          <img src=assets/img/gif/medal2-1.gif height=70px>
+        <div class='wadah tengah juara-2' style='$border2'>
+          $medal2
           <div class='darkblue mt1'>$juara2$kelas_juara2</div>
           <div class='kecil darkblue'>$poin_juara2 LP</div>
         </div>
       </div>
       <div class=col-6>
-        <div class='wadah tengah bg-white' style='$border3'>
-          <img src=assets/img/gif/medal3-1.gif height=70px>
+        <div class='wadah tengah juara-3' style='$border3'>
+          $medal3
           <div class='darkblue mt1'>$juara3$kelas_juara3</div>
           <div class='kecil darkblue'>$poin_juara3 LP</div>
         </div>
@@ -212,7 +165,14 @@ echo "
   </div>
 ";
 
-
+if ($id_role == 2) {
+  // form reset leaderboard
+  echo "
+    <form method=post class='tengah wadah gradasi-kuning mx-auto' style='max-width:500px'>
+      <button class='btn btn-danger' onclick='return confirm(`Reset Leaderboard di minggu ini?`)' name=btn_reset_leaderboard>Reset Leaderboard</button>
+      <div class='mt1 f12 abu miring'>Jika ingin merekap ulang leaderboard di minggu ini silahkan Reset Leaderboard</div>
+    </form>";
+}
 
 
 

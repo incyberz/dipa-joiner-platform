@@ -30,7 +30,10 @@ WHERE a.username='$username'
 ";
 
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-if (!mysqli_num_rows($q)) die('Username tidak ditemukan.');
+if (!mysqli_num_rows($q)) {
+  unset($_SESSION['dipa_username']);
+  die('Username tidak ditemukan. | <a href="?login">Login</a>');
+}
 $user = mysqli_fetch_assoc($q);
 $id_peserta = $user['id_peserta'];
 $nama_peserta = ucwords(strtolower($user['nama']));

@@ -17,7 +17,7 @@ $ryaitu = [
   'latihan' => "Yaitu praktikum yang persis dicontohkan oleh $Trainer atau materi yang sudah disampaikan. Kamu wajib mengerjakannya.",
   'challenge' => 'Yaitu pembuktian bahwa kamu sudah siap terjun ke Dunia Usaha dan Industri (DUDI). Kamu wajib membangun salah satu portfolio system yang berhasil kamu buat.'
 ];
-$yaitu = $ryaitu[$jenis];
+$yaitu = $id_role == 2 ? "<span class=proper>$jenis</span> untuk kelas <b>$target_kelas_show</b>" : $ryaitu[$jenis];
 $pesan_upload = null;
 $closed = 0;
 $Jenis = ucwords($jenis);
@@ -43,6 +43,7 @@ include 'activity_manage-processor.php';
 # NORMAL FLOW :: LIST ALL LATIHAN/CHALLENGE
 # ============================================
 if (!$id_assign) {
+  /*
   $s = "SELECT a.nama,
   (
     SELECT 1 FROM tb_assign_$jenis
@@ -59,12 +60,17 @@ if (!$id_assign) {
     $list .= "<li>$d[nama]</li>";
   }
   echo $list ? "<div class='wadah gradasi-kuning'>List $jenis yang belum bisa dikerjakan: <ol>$list</ol><div class='f12 biru miring'>Hubungi $Trainer agar $jenis ini di-assign ke kelas kamu.</div></div>" : '';
+  */
+
+  $sql_target_kelas = $id_role == 2 ?
+    "AND d.kelas = '$target_kelas' -- dosen fokus ke target kelas" :
+    "AND id_room_kelas='$id_room_kelas' -- kelas sendiri, mhs ponly";
 
   $s = "SELECT a.id as id_assign, 
   a.is_wajib,
   b.nama,
   b.status as status_jenis,
-  (b.basic_point + b.ontime_point) as sum_point,
+  -- (b.basic_point + b.ontime_point) as sum_point,
   c.no, 
   (
     SELECT 1 FROM tb_bukti_$jenis 
@@ -77,22 +83,20 @@ if (!$id_assign) {
   FROM tb_assign_$jenis a 
   JOIN tb_$jenis b ON a.id_$jenis=b.id 
   JOIN tb_sesi c ON a.id_sesi=c.id 
+  JOIN tb_room_kelas d ON a.id_room_kelas=d.id 
   -- WHERE no is not null 
   WHERE 1  
-  AND id_room_kelas='$id_room_kelas'
-  order by c.no, sum_point";
+  $sql_target_kelas
+  order by c.no";
   // echo "<pre>$s</pre>";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   if (!mysqli_num_rows($q)) {
-    if ($count_jenis) {
-      echo div_alert('danger', "Terdapat $count_jenis $jenis yang belum di-assign oleh $Trainer untuk kelas $kelas");
-    } else {
-      echo div_alert('danger', "Maaf, belum ada satupun $jenis pada $Room ini. Beritahukan hal ini kepada $Trainer!");
-    }
+    echo div_alert('danger', "Maaf, belum ada satupun $jenis pada $Room ini. Beritahukan hal ini kepada $Trainer!");
   } else {
     $list_jenis = '';
+    $rlist_jenis = [];
     while ($d = mysqli_fetch_assoc($q)) {
-      $sum_point = number_format($d['sum_point'], 0);
+      // $sum_point = number_format($d['sum_point'], 0);
 
       if ($d['status_jenis'] == -1) {
         $closed = 1;
@@ -104,23 +108,37 @@ if (!$id_assign) {
         $nama_jenis = $d['is_wajib'] ? "<b style=color:#ff0>$d[nama] (WAJIB)</b>" : "$d[nama]";
       }
 
-      $list_jenis .= "
+      $div = "
         <div>
           <a class='btn btn-$primary btn-sm mb2 w-100' href='?activity&jenis=$jenis&id_assign=$d[id_assign]'>
-            P$d[no] 
-            ~ 
             $nama_jenis
-            ~ 
-            $sum_point
           </a> 
         </div>
       ";
+      if (isset($rlist_jenis[$d['no']])) {
+        $rlist_jenis[$d['no']] .= $div;
+      } else {
+        $rlist_jenis[$d['no']] = $div;
+      }
     }
+
+    $divs_col = '';
+    foreach ($rlist_jenis as $no_sesi => $divs) {
+      $divs_col .= "
+        <div class='col-lg-4 col-xl-3 col-md-6'>
+          <div class=wadah>
+            <div class='tengah f24 mb2'>P$no_sesi</div>
+            $divs
+          </div>
+        </div>
+      ";
+    }
+
+    $info = $id_role == 1 ? "<div class='tengah mb2'><span class=proper>$jenis</span> yang dapat kamu kerjakan:</span></div>" : '';
+
     echo "
-      Silahkan pilih $jenis yang dapat kamu kerjakan:
-      <div class=wadah>
-        $list_jenis
-      </div>
+      $info
+      <div class=row>$divs_col</div>
       <div class='kecil miring'>
         <span class=hijau>hijau: sudah dikerjakan</span>; <span class=kuning>kuning: belum diverifikasi</span>; <span class=biru>biru: belum kamu kerjakan</span>
       </div>

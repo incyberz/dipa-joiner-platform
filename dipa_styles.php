@@ -275,7 +275,8 @@
     padding: 5px;
     border-radius: 5px;
     margin-bottom: 5px;
-    cursor: pointer
+    cursor: pointer;
+    color: darkblue;
   }
 
   .unclicked {

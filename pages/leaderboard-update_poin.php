@@ -75,11 +75,11 @@ ORDER BY kelas, nama
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $tr = '';
 $poin_kbms = ''; // for tb_poin_weekly | id:lat=poin,
+$rpairs = [];
 if (mysqli_num_rows($q)) {
   $i = 0;
   $th = '';
   $last_kelas = '';
-  $rpairs = [];
   $rkum_poin = [];
   while ($d = mysqli_fetch_assoc($q)) {
     $separator = '';
@@ -142,7 +142,7 @@ $tb = $tr ? "
     <thead>$th</thead>
     $tr
   </table>
-" : div_alert('danger', "Data XXX tidak ditemukan.");
+" : div_alert('danger', "Belum ada $Peserta pada $Room ini.");
 echo "
   <div class='wadah gradasi-toska'>
     <h3>POIN KBM</h3>
@@ -292,39 +292,43 @@ echo "
   </div>
 ";
 
-foreach ($rpairs as $key => $pairs) {
-  $t = explode('-', $key);
+if ($rpairs) {
+  foreach ($rpairs as $key => $pairs) {
+    $t = explode('-', $key);
 
-  $s2 = "UPDATE tb_poin SET 
-  $pairs,
-  akumulasi_poin = '$rkum_poin[$key]'
-  WHERE id_peserta = $t[1] 
-  AND id_room = $id_room 
-
-  ";
-  $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+    $s2 = "UPDATE tb_poin SET 
+    $pairs,
+    akumulasi_poin = '$rkum_poin[$key]'
+    WHERE id_peserta = $t[1] 
+    AND id_room = $id_room 
+  
+    ";
+    $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
+  }
 }
 
 
 # ============================================================
 # UPDATE TB_POIN_WEEKLY
 # ============================================================
-$s = "INSERT INTO tb_poin_weekly (
-  id,
-  update_at,
-  poin_kbms,
-  rank_rooms,
-  rank_kelass
-) VALUES (
-  '$id_room-$week',
-  '$today',
-  '$poin_kbms',
-  '$rank_rooms',
-  '$rank_kelass'
-) ON DUPLICATE KEY UPDATE 
-  update_at = '$today',
-  poin_kbms = '$poin_kbms',
-  rank_rooms = '$rank_rooms',
-  rank_kelass = '$rank_kelass'
-";
-$q2 = mysqli_query($cn, $s) or die(mysqli_error($cn));
+if ($poin_kbms) {
+  $s = "INSERT INTO tb_poin_weekly (
+    id,
+    update_at,
+    poin_kbms,
+    rank_rooms,
+    rank_kelass
+  ) VALUES (
+    '$id_room-$week',
+    '$today',
+    '$poin_kbms',
+    '$rank_rooms',
+    '$rank_kelass'
+  ) ON DUPLICATE KEY UPDATE 
+    update_at = '$today',
+    poin_kbms = '$poin_kbms',
+    rank_rooms = '$rank_rooms',
+    rank_kelass = '$rank_kelass'
+  ";
+  $q2 = mysqli_query($cn, $s) or die(mysqli_error($cn));
+}

@@ -65,7 +65,7 @@ if ($id_role == 1) {
 }
 
 $ui_jadwal = "
-  <div  class='mt1 pt1 mb4 f10 abu' style='border-top:solid 3px #cdc'>
+  <div  class='mt1 pt1 mb4 f10 abu'>
     <div class=''>
       <div>
         <b class=darkblue>Jadwal Kelas</b> 

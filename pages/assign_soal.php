@@ -157,11 +157,18 @@ a.id as id_soal,
   WHERE id_soal=a.id AND id_paket=$get_id_paket) is_assigned, 
 (
   SELECT COUNT(1) FROM tb_assign_soal 
-  WHERE id_paket=$get_id_paket) count_assign 
+  WHERE id_paket=$get_id_paket) count_assign, 
+(
+  SELECT no FROM tb_sesi  
+  WHERE id=a.id_sesi
+  AND a.id_sesi IS NOT NULL
+  ) no_sesi -- optional 
 FROM tb_soal a 
 WHERE a.id_room=$id_room 
-AND tipe_soal='PG' 
-ORDER BY date_created";
+AND a.tipe_soal='PG' 
+ORDER BY a.id_sesi, a.id 
+";
+// echolog($s);
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $count_soal = mysqli_num_rows($q);
 if (!$count_soal) {
@@ -204,12 +211,17 @@ if (!$count_soal) {
     $hide_btn_assign = $d['sudah_assign'] ? 'style="display:none"' : '';
     $hide_btn_drop = $d['sudah_assign'] ? '' : 'style="display:none"';
 
+    $no_sesi = $d['no_sesi'] ? "P-$d[no_sesi]" : $null;
+
     $tr .= "
       <tr class='tr_soal $gradasi' id=tr_soal__$id_soal>
         <td>$no</td>
         <td>
           <span id=kalimat_soal__$id_soal>$d[soal]</span>
           <div class='f12 abu'>$opsies</div>
+        </td>
+        <td>
+          $no_sesi
         </td>
         <td width=10% class=kanan>
           <button class='btn btn-primary btn-sm assign-soal ' $hide_btn_assign $disabled_assign id=assign__$id_soal>Assign</button>

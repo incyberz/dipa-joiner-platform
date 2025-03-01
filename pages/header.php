@@ -28,7 +28,7 @@ $red = $available_questions ? 'red' : 'green';
 $available_question_show = "<span class='count_badge badge_$red' id='available_questions'>$available_questions</span>";
 
 $target_kelas_header = $id_role == 2 ? 'all' : $kelas;
-$header_logo = $is_custom ? "$path_custom/custom-logo.png" : 'assets/img/dipa-logo.png';
+$header_logo = $is_custom ? "$path_custom/custom-header-logo.png" : 'assets/img/dipa-logo.png';
 ?>
 <header id="header" class="fixed-top d-flex align-items-center">
   <div class="container d-flex align-items-center justify-content-between">

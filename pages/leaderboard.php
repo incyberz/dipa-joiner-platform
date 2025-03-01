@@ -64,6 +64,7 @@ if (!$username || $public) {
     # ============================================================
     echolog('UPDATE REALTIME KUMULATIF POIN');
     include 'leaderboard-update_poin.php';
+    jsurl();
     # ============================================================
   } // end update realtime kumulatif poin
 } // end logged user

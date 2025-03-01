@@ -12,26 +12,6 @@ while ($d = mysqli_fetch_assoc($q)) {
   array_push($arr_sesi, "P$d[no] $d[nama]");
 }
 
-$s = "SELECT a.kelas,a.id as id_room_kelas FROM tb_room_kelas a 
-JOIN tb_kelas b ON a.kelas=b.kelas  
-WHERE a.id_room=$id_room AND b.status=1 
-AND b.kelas !='INSTRUKTUR'
-";
-$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$li = '';
-$arr_id_room_kelas = [];
-while ($d = mysqli_fetch_assoc($q)) {
-  array_push($arr_id_room_kelas, $d['id_room_kelas']);
-  $li .= "<li>$d[kelas]</li>";
-}
-
-$grup_kelas_pengakses = "
-  <h3 class='darkblue'>Grup Kelas Pengakses $Jenis</h3>
-  <p>$Jenis yang Anda buat akan dapat diakses oleh kelas:</p>
-  <ol>$li</ol>
-  <div class='ml2 pl1 f14'>Opsi: <a href='?manage_kelas'>Assign $Room Kelas</a></div>
-  <hr>
-";
 
 
 
@@ -70,7 +50,7 @@ if (isset($_POST['btn_assign_sesi'])) {
   $id_sesi = $arr[1];
 
   $pesan = '';
-  foreach ($arr_id_room_kelas as $id_rk) {
+  foreach ($rid_room_kelas as $id_rk => $data) {
     $s = "SELECT 1 FROM tb_assign_$jenis WHERE id_$jenis=$id_jenis AND id_room_kelas='$id_rk'";
     // die($s);
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
@@ -313,7 +293,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   ";
 }
 
-$jumlah_kelas = count($arr_id_room_kelas);
+
 $img_add = img_icon('add');
 
 # ============================================================
@@ -345,7 +325,5 @@ echo "
     <button class='btn btn-danger btn-sm' name=btn_set_all value=-1>Close All</button>
     <button class='btn btn-warning btn-sm' name=btn_set_all value=1>Open All</button>
   </form>
-
-  $grup_kelas_pengakses
 </div>
 ";

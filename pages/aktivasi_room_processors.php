@@ -177,7 +177,7 @@ if (isset($_POST['btn_aktivasi'])) {
       }
 
       // drop not checked kelas
-      $s = $select_all_from_tb_room_kelas;
+      $s = $select_room_kelas;
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       while ($d = mysqli_fetch_assoc($q)) {
         // $id=$d['id'];

@@ -8,6 +8,7 @@ $s = "SELECT
 a.kelas, 
 a.fakultas, 
 a.prodi,
+a.semester,
 (
   SELECT COUNT(1) FROM tb_kelas_peserta WHERE kelas=a.kelas) jumlah_peserta,
 (
@@ -19,7 +20,7 @@ FROM tb_kelas a
 WHERE a.status=1 
 AND a.ta = $ta_aktif  
 AND kelas != 'INSTRUKTUR'
-ORDER BY a.fakultas,a.prodi,a.kelas";
+ORDER BY a.fakultas,a.prodi,a.semester,a.kelas";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $tr = '';
 while ($d = mysqli_fetch_assoc($q)) {
@@ -36,6 +37,7 @@ while ($d = mysqli_fetch_assoc($q)) {
     <tr class='tr $my_room_kelas' id=tr__$d[kelas]>
       <td>$d[fakultas]</td>
       <td>$d[prodi]</td>
+      <td>$d[semester]</td>
       <td class='bold'>
         <label class='label pointer' id='label__$d[kelas]'>
           <input 
@@ -201,6 +203,7 @@ if (isset($mode) and $mode == 'add_kelas') {
         <thead class='tr'>
           <th>Fakultas / Lembaga</th>
           <th>Prodi / Jurusan</th>
+          <th>Semester</th>
           <th>Grup Kelas</th>
           <th>Jumlah Peserta</th>
         </thead>
@@ -220,6 +223,7 @@ if (isset($mode) and $mode == 'add_kelas') {
       <thead class='tr'>
         <th>Fakultas / Lembaga</th>
         <th>Prodi / Jurusan</th>
+        <th>Semester</th>
         <th>Grup Kelas</th>
         <th>Jumlah Peserta</th>
       </thead>
