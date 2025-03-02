@@ -57,12 +57,14 @@ while ($d = mysqli_fetch_assoc($q)) { // loop $Room kelas
   # ============================================================
   # SUB SELECT PESERTA KELAS
   # ============================================================
+  $sql_order = $id_role == 1 ? 'akumulasi_poin DESC, -- order by ranking, mhs only' : '';
   $s2 = "SELECT 
   d.id as id_peserta,
   d.nama,
   d.image,
   d.war_image,
-  b.kelas
+  b.kelas,
+  (SELECT akumulasi_poin FROM tb_poin WHERE id_peserta=d.id and id_room=$id_room) akumulasi_poin
 
   FROM tb_kelas_peserta a 
   JOIN tb_kelas b ON a.kelas=b.kelas 
@@ -72,7 +74,8 @@ while ($d = mysqli_fetch_assoc($q)) { // loop $Room kelas
   AND b.status=1 
   AND b.ta=$ta_aktif 
   AND d.status=1 
-  ORDER BY b.shift, b.prodi,d.nama";
+  ORDER BY $sql_order 
+  b.shift, b.prodi,d.nama";
 
   $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
 
@@ -93,6 +96,14 @@ while ($d = mysqli_fetch_assoc($q)) { // loop $Room kelas
 
     if ($get_mode == 'fast') {
       $no++;
+      $th = 'th';
+      if ($no % 10 == 1) {
+        $th = 'st';
+      } elseif ($no % 10 == 2) {
+        $th = 'nd';
+      } elseif ($no % 10 == 3) {
+        $th = 'rd';
+      }
       $sty = '';
       $link_super_delete = '';
       if (!$d2['war_image'] and !$d2['image']) {
@@ -124,7 +135,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop $Room kelas
         </div>
       " : "
         <div class='kecil tengah abu p2 bordered br5 gradasi-toska'>
-          <div>$no. $nama</div>
+          <div>$no<sup>$th</sup> $nama</div>
         </div>        
       ";
     } elseif ($get_mode == 'detail') {

@@ -87,10 +87,12 @@ if (!file_exists($konten)) {
     # ============================================================
     include 'pages/join_kelas.php';
   } else {
-    if ($id_role == 2 and $id_room) {
+    if ($id_room) {
       include 'includes/ontops.php';
-      include 'includes/form_ubah_ta.php';
-      include 'includes/form_target_kelas.php';
+      if ($id_role == 2) {
+        include 'includes/form_ubah_ta.php';
+        include 'includes/form_target_kelas.php';
+      }
     }
     include $konten;
   }

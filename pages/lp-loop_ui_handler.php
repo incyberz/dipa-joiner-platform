@@ -3,12 +3,18 @@ $str_fiturs = '';
 foreach ($arr_fitur_sesi as $fitur => $arr_fitur) {
   if (($fitur == 'bertanya' || $fitur == 'tanam_soal') and !$sesi['tags']) {
     $str_fiturs = "<div class='abu miring f12 mb1 bordered br5 p1'>belum bisa $fitur</div>";
-  } elseif ($fitur == 'challenge' || $fitur == 'latihan') {
+  } elseif ($fitur == 'challenge' || $fitur == 'latihan' || $fitur == 'ujian') {
     $title = '';
-    $tambah = $id_role == 2 ? "<a href='?tambah_activity&p=$fitur&id_sesi=$sesi[id]'>$img_add</a>" : '';
-    $sub_fitur = "<div class='abu miring f12'>belum ada $fitur</div>";
+    $tambah = '';
+    if ($id_role == 2) {
+      $href = $fitur == 'ujian' ? '?add_paket_soal' : "?tambah_activity&p=$fitur";
+      $tambah = "<a href='$href&id_sesi=$sesi[id]'>$img_add</a>";
+    }
 
-    if (isset($arr_data_act[$fitur][$id_sesi])) {
+    $belum_ada = $fitur == 'ujian' ? 'quiz harian' : $fitur;
+    $sub_fitur = "<div class='abu miring f12'>belum ada $belum_ada</div>";
+
+    if (isset($arr_data_act[$fitur][$id_sesi])) { // jika ada datanya
       $title = "<div class='mb1 green bold f12 proper'>$arr_fitur[title]</div>";
       $sub_fitur = '';
       $j = 0;
@@ -17,6 +23,13 @@ foreach ($arr_fitur_sesi as $fitur => $arr_fitur) {
         $btn_info = $v2['ket'] ? 'btn-info' : 'btn-secondary';
         $sub_fitur .= "<a href='?activity&jenis=$fitur&id_assign=$v2[id]' class='btn $btn_info btn-sm mb1 w-100'>$j. $v2[nama_act]</a> ";
       }
+    } else {
+      // if ($fitur == 'ujian') {
+      //   echo '<pre>';
+      //   var_dump($arr_fitur);
+      //   echo '<b style=color:red>Developer SEDANG DEBUGING: exit(true)</b></pre>';
+      //   // exit;
+      // }
     }
     $str_fiturs = "<div class='bordered br5 p1 mb1'>$title $sub_fitur $tambah</div>";
   } elseif (
@@ -105,6 +118,9 @@ $ui_acts = "
       </div>
       <div class='col-md-6'>
         $fiturs[challenge]
+      </div>
+      <div class='col-md-12 mt2'>
+        $fiturs[ujian]
       </div>
     </div>
   </div>

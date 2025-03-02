@@ -8,6 +8,8 @@ $form_submit = '';
 $countdown = '';
 $fitur_dosen = '';
 $start = $_GET['start'] ?? '';
+$free_access = false;
+$Ujian = 'Ujian';
 
 
 
@@ -17,7 +19,7 @@ $start = $_GET['start'] ?? '';
 if ($id_role == 2) {
   $fitur_dosen = "
   <div class='wadah gradasi-merah mt2'>
-    Fitur $Trainer: <a href='?monitoring_ujian&id_paket=$id_paket'>Monitoring Ujian</a>
+    Fitur $Trainer: <a href='?monitoring_ujian&id_paket=$id_paket'>Monitoring $Ujian</a>
   </div>
   ";
 }
@@ -145,22 +147,32 @@ $sub_judul = "<div>$nama_sesi untuk $kelas</div>";
 
 $durasi = number_format((strtotime($akhir_ujian) - strtotime($awal_ujian)) / 60, 0);
 $durasi_show = "<span class='kecil miring abu'>($durasi menit)</span>";
-$awal_ujian_show = $nama_hari[date('w', strtotime($awal_ujian))] . ', ' . date('d-M H:i', strtotime($awal_ujian));
-$akhir_ujian_show = date('H:i', strtotime($akhir_ujian));
-if ($tanggal_pembahasan) {
-  $tanggal_pembahasan_show = date('d-M H:i', strtotime($tanggal_pembahasan));
-  $tanggal_pembahasan_show .= "<br><span class='kecil miring abu'>Pembahasan kunci jawab akan tampil pada tanggal dan jam ini</span>";
+
+if (intval(date('Y', strtotime($awal_ujian))) > 2024) {
+  $awal_ujian_show = $nama_hari[date('w', strtotime($awal_ujian))] . ', ' . date('d-M H:i', strtotime($awal_ujian));
+  $akhir_ujian_show = date('H:i', strtotime($akhir_ujian));
+  if ($tanggal_pembahasan) {
+    $tanggal_pembahasan_show = date('d-M H:i', strtotime($tanggal_pembahasan));
+    $tanggal_pembahasan_show .= "<br><span class='kecil miring abu'>Pembahasan kunci jawab akan tampil pada tanggal dan jam ini</span>";
+  } else {
+    $tanggal_pembahasan_show = "Tidak ada pembahasan Kunci Jawab untuk $Ujian ini.";
+  }
+  $tanggal_pelaksanaan = "$awal_ujian_show s.d $akhir_ujian_show $durasi_show";
 } else {
-  $tanggal_pembahasan_show = 'Tidak ada pembahasan Kunci Jawab untuk ujian ini.';
+  $free_access = true;
+  $Ujian = 'Quiz';
+  $tanggal_pelaksanaan = "<i>free-access</i> - $durasi_show";
+  $tanggal_pembahasan_show = 'Tidak ada pembahasan.';
 }
+
 $kode_sesi_show = "$id_sesi | $nama_sesi";
 $max_attemp_show = $max_attemp ?? '<span class="kecil miring consolas">unlimitted</span>';
 
 
 $rkolom['Paket Soal'] = $nama_paket_soal;
 $rkolom['Untuk Sesi'] = $kode_sesi_show;
-$rkolom['Tanggal Pelaksanaan'] = "$awal_ujian_show s.d $akhir_ujian_show $durasi_show";
-$rkolom['Sifat Ujian'] = $sifat_ujian;
+$rkolom['Tanggal Pelaksanaan'] = $tanggal_pelaksanaan;
+$rkolom["Sifat $Ujian"] = $sifat_ujian;
 $rkolom['Jumlah Soal'] = $jumlah_soal;
 $rkolom['Max Attemp'] = $max_attemp_show;
 $rkolom['Pembuat'] = $pembuat;
@@ -210,19 +222,19 @@ if ($selisih_hari >= 2) {
   $coming_soon = "$img<h3 class=darkblue>Comming Soon !! <br>In $selisih_hari days.</h3>";
 } else if ($selisih_hari == 1) {
   $img = "<div class=tengah style='max-width:300px; margin:auto'><img class='img-fluid' src='assets/img/are-you-ready.png' /></div>";
-  $coming_soon = $img . '<h1 class=darkred>Ingat! Besok Ujian</h1>';
+  $coming_soon = $img . '<h1 class=darkred>Ingat! Besok $Ujian</h1>';
 } else {
   $rand = rand(1, 3);
   $img = "<div class='tengah' style='max-width:300px; margin:15px auto'><img class='img-fluid img-thumbnail' src='assets/img/meme/hari-ini-ujian-$rand.jpg' style='box-shadow: 0 0 20px gray' /></div>";
-  $coming_soon = $img . '<h1 class=blue>Hari ini Ujian !!</h1>';
+  $coming_soon = $img . '<h1 class=blue>Hari ini $Ujian !!</h1>';
 }
 
 $nilai_max = 0;
 
-if ($selisih > 0) { //belum mulai
+if ($selisih > 0 and !$free_access) { //belum mulai
   $blok_timer = "
     <h2>$coming_soon</h2>
-    Ujian akan diselenggarakan dalam:
+    $Ujian akan diselenggarakan dalam:
     <div> 
       <div class='consolas darkblue' style='font-size:40px;' id=detik_lagi>00:00:00:00</div>
       <div class='darkblue hideit' style='margin-top: -10px'>detik lagi</div>
@@ -231,19 +243,31 @@ if ($selisih > 0) { //belum mulai
 } else { //sudah mulai | berakhir
 
 
-  if ($selisih_akhir >= 0) { // sedang ujian
-    $blok_timer = "<h2 class=blue>Ujian Sedang Berlangsung</h2>";
+  if ($selisih_akhir >= 0 || $free_access) { // sedang ujian
+    if ($free_access) {
+      $blok_timer = "
+        <div class='f12 mb2 miring'>Free Access Exam</div>
+        <h2 class=blue>$d[nama]</h2>
+      ";
+    } else {
+      $blok_timer = "<h2 class=blue>$Ujian Sedang Berlangsung</h2>";
+    }
   } else { // sudah berakhir
-    $blok_timer = "<h2 class=darkred>Ujian Sudah Berakhir</h2>";
+    $blok_timer = "<h2 class=darkred>$Ujian Sudah Berakhir</h2>";
   }
 
   if ($jumlah_attemp >= $max_attemp) {
     $blok_timer .= "<div class='darkred mb2'>Kamu sudah mencapai max_attemp ($max_attemp kali mencoba)</div>";
   } else {
     if ($start) {
+      // $blok_timer = ''; // hide timer saat started
       $countdown = "
-        <div style='position:fixed; bottom: 10px; padding: 5px 10px; left: 10px; border-radius: 10px; border: solid 2px darkblue; box-shadow: 0 0 8px gray; z-index:999; background:white'>
-          <span id='countdown' style='font: 30px consolas; color: darkred;'>00:00</span> <span id=sekian_soal_lagi><span id=belum_dijawab_count2>10</span> soal lagi</span>
+        <div class=blok-ujian-countdown>
+          <span id='countdown'>00:00</span> 
+          <span id=sekian_soal_lagi>
+            <span id=belum_dijawab_count2>10</span>
+            soal lagi
+          </span>
         </div>
       ";
     }
@@ -288,7 +312,7 @@ if ($selisih > 0) { //belum mulai
 
       $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
       if (!mysqli_num_rows($q)) {
-        $list_jawabans = div_alert('danger', 'Kamu belum sempat mengisi Ujian dengan benar');
+        $list_jawabans = div_alert('danger', 'Kamu belum sempat mengisi $Ujian dengan benar');
       } else {
         $list_jawabans = '';
         $i = 0;
@@ -309,12 +333,12 @@ if ($selisih > 0) { //belum mulai
         $info_pembahasan = "<hr><div class='miring darkred'>Pembahasan soal akan muncul pada tanggal $tanggal_pembahasan_show</div>";
       }
       $dari = urlencode("?ujian&id_paket=$id_paket");
-      $info_pembahasan .= "<hr><a class='btn btn-primary btn-block' href='?pembahasan_soal&id_paket=$id_paket&dari=$dari'>Lihat Pembahasan</a>";
+      $info_pembahasan .= $free_access ? '' : "<hr><a class='btn btn-primary btn-block' href='?pembahasan_soal&id_paket=$id_paket&dari=$dari'>Lihat Pembahasan</a>";
     }
 
     $blok_timer .= "
       <div class='wadah kiri bg-white'>
-        Nilai Ujian kamu:
+        Nilai $Ujian kamu:
         $list_jawabans
         $info_pembahasan
       </div>
@@ -329,34 +353,38 @@ if ($selisih > 0) { //belum mulai
 # =======================================================
 # SHOW START
 # =======================================================
-if (($selisih <= 0 && $selisih_akhir > 0 && $jumlah_attemp < $max_attemp && !$start) || ($id_role == 2 && !$start)) {
+if (($selisih <= 0 && $selisih_akhir > 0 && $jumlah_attemp < $max_attemp && !$start) || ($id_role == 2 && !$start) || $free_access) {
   $by_pass_notif = $id_role != 2 ? '' : div_alert('danger', "By pass UI dengan Login $Trainer");
   $blok_timer .= $by_pass_notif;
   $rand = rand(1, 9);
-  if ($jumlah_attemp) {
-    $blok_timer .= "
-    <div class='tengah' style='max-width: 300px; margin: auto'><img  class='img-fluid img-thumbnail' src='assets/img/meme/like-$rand.jpg'></div>
-    ";
-    if ($nilai_max == 100) {
+  if (!$start) {
+    $start_ujian = $jumlah_attemp == $max_attemp ? "<a href='?lp'>Back to Learning Path</a>" : "<a href='?ujian&id_paket=$id_paket&start=1' class='btn btn-success btn-block'>Start $Ujian</a>";
+    if ($jumlah_attemp) {
       $blok_timer .= "
-      <div class='mb2 mt4 blue bold'>Selamat!! Kamu sudah mendapat Nilai Sempurna (100)</div>
-      <a href='?ujian&id_paket=$id_paket&start=1' class='btn btn-success btn-block'>Start Ujian</a>
+      <div class='tengah' style='max-width: 300px; margin: auto'><img  class='img-fluid img-thumbnail' src='assets/img/meme/like-$rand.jpg'></div>
       ";
+      if ($nilai_max == 100) {
+        $blok_timer .= "
+        <div class='mb2 mt4 blue bold'>Selamat!! Kamu sudah mendapat Nilai Sempurna (100)</div>
+        $start_ujian
+        ";
+      } else {
+        $coba_lagi = $jumlah_attemp == $max_attemp ? '' : "Silahkan coba lagi! System akan mengambil nilai terbesar untuk rekap $Ujian.";
+        $blok_timer .= "
+        <div class='mb2 mt4'>Kamu sudah mencoba $jumlah_attemp of $max_attemp attemp. $coba_lagi</div>
+        $start_ujian
+        ";
+      }
     } else {
       $blok_timer .= "
-      <div class='mb2 mt4'>Kamu sudah mencoba $jumlah_attemp of $max_attemp attemp. Silahkan coba lagi! System akan mengambil nilai terbesar untuk rekap ujian.</div>
-      <a href='?ujian&id_paket=$id_paket&start=1' class='btn btn-success btn-block'>Start Ujian</a>
+      <div class='tengah' style='max-width: 300px; margin: auto'><img  class='img-fluid img-thumbnail' src='assets/img/meme/funny-$rand.jpg'></div>
+      <div class='mb2 mt4'>Kamu belum pernah mencoba. Coba donk!</div>
+      $start_ujian
       ";
     }
-  } else {
-    $blok_timer .= "
-    <div class='tengah' style='max-width: 300px; margin: auto'><img  class='img-fluid img-thumbnail' src='assets/img/meme/funny-$rand.jpg'></div>
-    <div class='mb2 mt4'>Kamu belum pernah mencoba. Coba donk!</div>
-    <a href='?ujian&id_paket=$id_paket&start=1' class='btn btn-success btn-block'>Start Ujian</a>
-    ";
   }
 } else {
-  $blok_timer .= '<div class="mt2"><a href="?ujian">Back to Ujian Home</a></div>';
+  $blok_timer .= "<div class='mt2'><a href='?ujian'>Back to $Ujian Home</a></div>";
 }
 
 
@@ -369,9 +397,9 @@ if (($selisih <= 0 && $selisih_akhir > 0 && $jumlah_attemp < $max_attemp && !$st
 # =======================================================
 if (
   ($selisih <= 0 and $selisih_akhir >= 0 and $jumlah_attemp < $max_attemp and $start)
-  || ($id_role == 2 && $start)
+  || (($id_role == 2 || $free_access) && $start)
 ) {
-  $by_pass_notif = $id_role != 2 ? '' : div_alert('danger', "By Pass UI - Ujian Show List Soal by Login $Trainer");
+  $by_pass_notif = $id_role != 2 ? '' : div_alert('danger', "By Pass UI - $Ujian Show List Soal by Login $Trainer");
   echo $by_pass_notif;
   include 'ujian_show_list_soal.php';
 }
@@ -424,25 +452,25 @@ if (
 
 
 ?>
-<section>
-  <div class="container">
+<!-- <section> -->
+<!-- <div class="container"> -->
 
-    <div class="section-title" data-aos="fade-up">
-      <h2>Ujian</h2>
-      <?= $sub_judul ?>
-      <?= $fitur_dosen ?>
-    </div>
-    <div class="" data-aos="fade" data-aos-delay=800>
-      <?= $info_paket_soal ?>
-    </div>
-    <div id=blok_hasil_ujian class="wadah gradasi-hijau tengah" data-aos='fade-up' data-aos-delay='150'>
-      <?= $blok_timer ?>
-    </div>
-    <?= $list_soal ?>
-    <?= $form_submit ?>
-    <span class="debug"><?= $debug ?></span>
-  </div>
-</section>
+<div class="section-title" data-aos="fade-up">
+  <h2><?= $Ujian ?></h2>
+  <?= $sub_judul ?>
+  <?= $fitur_dosen ?>
+</div>
+<div class="" data-aos="fade" data-aos-delay=800>
+  <?= $info_paket_soal ?>
+</div>
+<div id=blok_hasil_ujian class="wadah gradasi-hijau tengah" data-aos='fade-up' data-aos-delay='150'>
+  <?= $blok_timer ?>
+</div>
+<?= $list_soal ?>
+<?= $form_submit ?>
+<span class="debug"><?= $debug ?></span>
+<!-- </div> -->
+<!-- </section> -->
 <?= $countdown ?>
 
 

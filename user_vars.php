@@ -22,7 +22,12 @@ b.sebagai,
   SELECT p.kelas FROM tb_kelas_peserta p  
   JOIN tb_kelas q ON p.kelas=q.kelas  
   WHERE $sql_ta
-  AND p.id_peserta=a.id) kelas
+  AND p.id_peserta=a.id) kelas,
+(
+  SELECT CONCAT(q.prodi,'-',q.shift,'-',q.sub_kelas,'-',q.semester) FROM tb_kelas_peserta p  
+  JOIN tb_kelas q ON p.kelas=q.kelas  
+  WHERE $sql_ta
+  AND p.id_peserta=a.id) kelas_show
 
 FROM tb_peserta a 
 JOIN tb_role b ON a.id_role=b.id 
@@ -44,10 +49,11 @@ $is_depas = !$password ? 1 : 0;
 $status = $user['status'];
 $profil_ok = $user['profil_ok'];
 $kelas = $user['kelas'];
+$kelas_show = $user['kelas_show'];
 $sebagai = strtolower($user['sebagai']);
 $punya_biodata = $user['punya_biodata'];
 $nik = $user['nik'];
-$kelas_show = str_replace("~$ta_aktif", '', $kelas);
+// $kelas_show = str_replace("-$ta_aktif", '', substr($kelas, 3));
 $Sebagai = $custom[$sebagai] ?? ucwords($sebagai);
 $image = $user['image'];
 

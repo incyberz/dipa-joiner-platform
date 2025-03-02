@@ -1,36 +1,52 @@
 <?php
 instruktur_only();
+$get_id_sesi = $_GET['id_sesi'];
+$nama_paket = null;
 $null = '<span class="abu f12 miring consolas">null</span>';
+$default_durasi_ujian = 60;
 
 $id_paket = $_GET['id_paket'] ?? '';
 if (intval($id_paket) < 1 and $id_paket !== '') die('Invalid nilai id_paket');
 $judul = $id_paket ? 'Edit Paket Soal' : 'Add Paket Soal';
 $mode = $id_paket ? 'update' : 'add';
-$pesan = $id_paket ? 'Mengubah Data Paket akan mempengaruhi informasi untuk seluruh peserta ujian' : 'Anda sedang melakukan Penambahan Paket Soal untuk ujian baru' . $sebagai;
+$pesan = $id_paket ? 'Mengubah Data Paket akan mempengaruhi informasi untuk seluruh peserta ujian' : 'Anda sedang melakukan Penambahan Paket Soal';
 set_h2($judul, "$pesan<div class=mt2><a href='?manage_paket_soal' >$img_prev</a></div>");
 
 // $global_akhir_ujian = date('Y-m-d H:i', strtotime('now') + 60 * 60);
 $global_akhir_ujian = '';
 
-# ============================================================
-# SELECT ID SESI
-# ============================================================
-$opt = '';
-$s = "SELECT * FROM tb_sesi WHERE id_room=$id_room ORDER BY no";
-$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-$no_sesi = 0;
-while ($d = mysqli_fetch_assoc($q)) {
-  // $id=$d['id'];
-  if ($d['jenis'] == 1) {
-    $no_sesi++;
-    $nama = "P$no_sesi $d[nama]";
-  } else {
-    $nama = $d['nama'];
+if ($get_id_sesi) {
+  # ============================================================
+  # FIXED ID SESI
+  # ============================================================
+  $s = "SELECT * FROM tb_sesi WHERE id=$get_id_sesi";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  if (!mysqli_num_rows($q)) die(div_alert('danger', 'Data sesi tidak ditemukan'));
+  $get_sesi = mysqli_fetch_assoc($q);
+  $select_id_sesi = "<div class=mb2>Untuk Sesi: P$get_sesi[no] $get_sesi[nama]</div>";
+  $nama_paket = "Quiz Harian P$get_sesi[no]";
+  $default_durasi_ujian = 15; // ujian harian
+} else {
+  # ============================================================
+  # SELECT ID SESI
+  # ============================================================
+  $opt = '';
+  $s = "SELECT * FROM tb_sesi WHERE id_room=$id_room ORDER BY no";
+  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
+  $no_sesi = 0;
+  while ($d = mysqli_fetch_assoc($q)) {
+    // $id=$d['id'];
+    if ($d['jenis'] == 1) {
+      $no_sesi++;
+      $nama = "P$no_sesi $d[nama]";
+    } else {
+      $nama = $d['nama'];
+    }
+    $awal = date('d-M-y', strtotime($d['awal_presensi']));
+    $opt .= "<option value=$d[id]>Untuk Sesi $nama (awal pekan: $awal)</option>";
   }
-  $awal = date('d-M-y', strtotime($d['awal_presensi']));
-  $opt .= "<option value=$d[id]>Untuk Sesi $nama (awal pekan: $awal)</option>";
+  $select_id_sesi = "<select class='form-control mb2' name=id_sesi>$opt</select>";
 }
-$select_id_sesi = "<select class='form-control mb2' name=id_sesi>$opt</select>";
 
 
 
@@ -65,7 +81,6 @@ if (isset($_POST['btn_simpan_paket_soal'])) {
     $_POST[$key] = clean_sql($value);
   }
 
-
   # =============================================
   # VAR OR NULL HANDLER
   # =============================================
@@ -77,22 +92,25 @@ if (isset($_POST['btn_simpan_paket_soal'])) {
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
     $d = mysqli_fetch_assoc($q);
     $id_paket = $d['id_paket'] + 1;
-    echo div_alert('info', "Menambahkan Paket Soal baru [ADD Mode, id_paket: $id_paket]");
   }
   $id_paket_or_new = $_POST['id_paket'] ? $_POST['id_paket'] : $id_paket;
-  // echo div_alert('info', "Menambahkan Paket Soal baru [ADD Mode, id_paket_or_new: $id_paket_or_new]");
   $kisi_kisi_or_null = $_POST['kisi_kisi'] ? "'$_POST[kisi_kisi]'" : 'NULL';
 
-
+  # ============================================================
+  # BEBAS AKSES OPSI
+  # ============================================================
+  $rbebas_akses = $_POST['check_bebas_akses'] ?? [];
+  if ($rbebas_akses and !isset($_POST['durasi_ujian'])) $_POST['durasi_ujian'] = $default_durasi_ujian;
+  if ($rbebas_akses and !isset($_POST['id_sesi'])) $_POST['id_sesi'] = $get_id_sesi;
 
   # =============================================
   # NEW GLOBAL AKHIR UJIAN
   # =============================================
-  foreach ($_POST['arr_kelas'] as $kelas) {
-    $is_check = $_POST['untuk_kelas'][$kelas] ?? '';
-    $paket_kelas = $id_paket . '__' . $kelas;
-    $awal_ujian = $kelas == 'INSTRUKTUR' ? 'CURRENT_TIMESTAMP' : $_POST['tanggal_ujian'][$kelas] . ' ' . $_POST['jam_ujian'][$kelas];
-    if ($is_check || $kelas == 'INSTRUKTUR') {
+  foreach ($_POST['arr_kelas'] as $vkelas) {
+    $is_check = $_POST['untuk_kelas'][$vkelas] ?? '';
+    $paket_kelas = $id_paket . '__' . $vkelas;
+    $awal_ujian = $vkelas == 'INSTRUKTUR' ? 'CURRENT_TIMESTAMP' : $_POST['tanggal_ujian'][$vkelas] . ' ' . $_POST['jam_ujian'][$vkelas];
+    if ($is_check || $vkelas == 'INSTRUKTUR') {
       // set global_akhir_ujian
       $akhir_ujian = akhir_ujian($awal_ujian, $_POST['durasi_ujian']);
       if (strtotime($akhir_ujian) > strtotime($global_akhir_ujian)) $global_akhir_ujian = $akhir_ujian;
@@ -107,7 +125,7 @@ if (isset($_POST['btn_simpan_paket_soal'])) {
   # =============================================
   if (!$_POST['mode_pembahasan']) {
     $tanggal_pembahasan_or_null = 'NULL';
-    echo div_alert('info', "Ujian tanpa pembahasan soal.");
+    echo div_alert('info', "Mode pembahasan ujian: <i>none</i>.");
   } elseif ($_POST['mode_pembahasan'] == 1) {
     // pembahasan saat semua ujian berakhir
     $tanggal_pembahasan_or_null = "'$global_akhir_ujian'";
@@ -171,11 +189,18 @@ if (isset($_POST['btn_simpan_paket_soal'])) {
   # =============================================
   # ARR_KELAS HANDLER
   # =============================================
-  foreach ($_POST['arr_kelas'] as $kelas) {
-    $is_check = $_POST['untuk_kelas'][$kelas] ?? '';
-    $paket_kelas = $id_paket . '__' . $kelas;
-    $awal_ujian = $kelas == 'INSTRUKTUR' ? 'CURRENT_TIMESTAMP' : $_POST['tanggal_ujian'][$kelas] . ' ' . $_POST['jam_ujian'][$kelas];
-    if ($is_check || $kelas == 'INSTRUKTUR') {
+  foreach ($_POST['arr_kelas'] as $vkelas) {
+    $is_bebas_akses = $rbebas_akses[$vkelas] ?? null;
+    $is_check = $_POST['untuk_kelas'][$vkelas] ?? '';
+    $paket_kelas = $id_paket . '__' . $vkelas;
+    if ($is_bebas_akses || $vkelas == 'INSTRUKTUR') {
+      $awal_ujian = 'NULL';
+    } else {
+      $tanggal_ujian = $_POST['tanggal_ujian'][$vkelas];
+      $jam_ujian = $_POST['jam_ujian'][$vkelas];
+      $awal_ujian = "'$tanggal_ujian $jam_ujian'";
+    }
+    if ($is_check || $vkelas == 'INSTRUKTUR') {
       // insert anggota kelas 
       $s = "INSERT INTO tb_paket_kelas (
         paket_kelas,
@@ -185,24 +210,23 @@ if (isset($_POST['btn_simpan_paket_soal'])) {
       ) VALUES (
         '$paket_kelas',
         $id_paket,
-        '$kelas',
+        '$vkelas',
         '$awal_ujian'
       ) ON DUPLICATE KEY UPDATE
         id_paket = $id_paket,
-        kelas = '$kelas',
-        awal_ujian = '$awal_ujian'
+        kelas = '$vkelas',
+        awal_ujian = $awal_ujian
       ";
-      echo div_alert('success', "INSERT kelas $kelas sukses.");
+      echo div_alert('success', "perform INSERT kelas $vkelas...");
     } else {
       // drop kelas
       $s = "DELETE FROM tb_paket_kelas WHERE paket_kelas = '$paket_kelas'";
-      echo div_alert('success', "DROP kelas $kelas sukses.");
+      echo div_alert('success', "perform DROP kelas $vkelas...");
     }
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   } // foreach kelas
 
-
-  jsurl('?manage_paket_soal', 2000);
+  jsurl('?manage_paket_soal', 1000);
   exit;
 }
 
@@ -315,6 +339,7 @@ if ($id_paket) {
 # ================================================ -->
 $s = "SELECT 
 a.kelas,
+b.caption as kls,
 b.semester,
 b.prodi,
 (
@@ -351,22 +376,39 @@ while ($d = mysqli_fetch_assoc($q)) {
     $jam_ujian = '7:30';
   }
 
-  $kelas = $d['kelas'];
+  $ckelas = $d['kelas'];
+  $kls = $d['kls'];
   $eta = $awal_ujian ? eta2($awal_ujian) : '';
+
+  $bebas_akses = '';
+  $hide_waktu_ujian = '';
+  $required_waktu_ujian = 'required';
+  if ($get_id_sesi and $get_sesi['jenis'] == 1) { // jika bukan UTS | UAS
+    $hide_waktu_ujian = 'hideit'; // default hide jika bukan ujian
+    $required_waktu_ujian = ''; // waktu ujian tidak perlu jika bebas akses
+    $bebas_akses = "
+      <label class='d-block mb1'>
+        <input type=checkbox checked name=check_bebas_akses[$ckelas] id=check_bebas_akses__$ckelas class=check_bebas_akses> bebas akses
+      </label>  
+    ";
+  }
 
   $input_mulai_ujian = $d['kelas'] == 'INSTRUKTUR' ? "
     <div class='f12 miring abu'>$Trainer dapat mengakses paket ini seterusnya</div>
   " : "
-    <div class='flexy'>
-      <div>
-        <input required type=date value='$tanggal_ujian' min='$today' class='form-control jadwal-berubah' name=tanggal_ujian[$kelas] id=tanggal_ujian__$d[kelas]>
-      </div>
-      <div>
-        <input required type=time value='$jam_ujian' min='7:00' class='form-control jadwal-berubah' name=jam_ujian[$kelas] id=jam_ujian__$d[kelas]>
-      </div>
-      <div class='darkblue pt1'>
-        $eta
-      </div>
+    $bebas_akses
+    <div class='$hide_waktu_ujian' id=waktu_ujian__$ckelas>
+      <div class='flexy'>
+        <div>
+          <input $required_waktu_ujian type=date value='$tanggal_ujian' min='$today' class='form-control jadwal-berubah' name=tanggal_ujian[$ckelas] id=tanggal_ujian__$d[kelas]>
+        </div>
+        <div>
+          <input $required_waktu_ujian type=time value='$jam_ujian' min='7:00' class='form-control jadwal-berubah' name=jam_ujian[$ckelas] id=jam_ujian__$d[kelas]>
+        </div>
+        <div class='darkblue pt1'>
+          $eta
+        </div>
+      </div>  
     </div>  
   ";
 
@@ -374,10 +416,10 @@ while ($d = mysqli_fetch_assoc($q)) {
   $tr_kelas .= "
     <tr>
       <td>
-        <input type=hidden name='arr_kelas[$kelas]' id='arr_kelas__$d[kelas]' value='$d[kelas]'>
+        <input type=hidden name='arr_kelas[$ckelas]' id='arr_kelas__$d[kelas]' value='$d[kelas]'>
         <label>
-          <input type=checkbox name=untuk_kelas[$kelas] class='untuk_kelas' id=untuk_kelas__$d[kelas] $checked $disabled value=1>
-          $d[kelas]
+          <input type=checkbox name=untuk_kelas[$ckelas] class='untuk_kelas' id=untuk_kelas__$d[kelas] $checked $disabled value=1>
+          $d[kls]
         </label>
       </td>
       <td>
@@ -388,7 +430,7 @@ while ($d = mysqli_fetch_assoc($q)) {
 }
 $gg = $ta_aktif % 2 == 0 ? 'Genap' : 'Ganjil';
 $ta_gg = substr($ta_aktif, 0, 4) . ' ' . $gg;
-$misal_nama_paket = "UTS $singkatan_room Semester 1 TA. $ta_gg";
+$misal_nama_paket = $get_id_sesi ? '' : "<div class='f12 abu mb4'>Misal: <span class='darkblue miring pointer' id=misal_nama_paket>UTS $singkatan_room Semester 1 TA. $ta_gg</span></div>";
 
 
 
@@ -398,7 +440,7 @@ $v = [
   'label' => 'Durasi Ujian',
   'type' => 'number',
   'placeholder' => '...',
-  'value' => $d_paket['durasi_ujian'] ?? 60,
+  'value' => $d_paket['durasi_ujian'] ?? $default_durasi_ujian,
   'required' => 1,
   'class' => 'mb2 f18 darkblue tengah',
   'min' => 10,
@@ -410,56 +452,11 @@ $v = [
 
 ];
 
-$div_range = '';
-$min_range = 0;
-$max_range = 0;
-$i = 0;
-foreach ($v['range'] as $key2 => $range_value) {
-  $i++;
-  if ($i == 1) $min_range = $range_value;
-  $div_range .= "<div>$range_value</div>";
-  $max_range = $range_value;
+$range_durasi = null;
+if (!($get_id_sesi and $get_sesi['jenis'] == 1)) { // jika bukan UTS | UAS
+  include 'add_paket_soal-range_durasi.php';
 }
-$value = $v['value'];
-$val_range = $value ? $value : intval(($max_range - $min_range) / 2) + $min_range;
-$step = $v['step'] ?? 1;
-$placeholder = $v['placeholder'] ?? '...';
-$type = $v['type'] ?? 'text';
-$min = $v['min'] ?? '';
-$max = $v['max'] ?? '';
-$minlength = $v['minlength'] ?? '';
-$maxlength = $v['maxlength'] ?? '';
-$class = $v['class'] ?? '';
-$satuan = $v['satuan'] ?? '';
-$required = 'required'; // zzz default
 
-$range_durasi = "
-  <div class='flexy flex-center'>
-    <div class='f14 darkblue miring pt1'>$v[label]</div>
-    <div>
-      <input 
-        id='durasi_ujian' 
-        name='durasi_ujian' 
-        value='$value' 
-        step='$step' 
-        placeholder='$placeholder' 
-        type='$type' 
-        $required
-        class='form-control mb2 $class' 
-        min='$min' 
-        max='$max' 
-        minlength='$minlength' 
-        maxlength='$maxlength' 
-        style='max-width:100px'
-      >          
-    </div>
-    <div class='f14 abu miring pt1'>$satuan</div>
-  </div>
-  <input type='range' class='form-range range' min='$min_range' max='$max_range' id='range__durasi_ujian' value='$val_range' step='$step' name=durasi_ujian>
-  <div class='flexy flex-between f12 consolas abu'>
-    $div_range
-  </div>
-";
 
 $mode_pembahasan = 0; // default tidak ada pembahasan
 $tanggal_pembahasan = $d_paket['tanggal_pembahasan'] ?? '';
@@ -559,7 +556,7 @@ if ($mode == 'add') {
 # ================================================ -->
 # FINAL ECHO || BLOK TAMBAH PAKET SOAL
 # ================================================ -->
-$nama_paket = $d_paket['nama'] ?? '';
+$nama_paket = $d_paket['nama'] ?? $nama_paket;
 $kisi_kisi = $d_paket['kisi_kisi'] ?? '';
 $mode_pembahasan = $d_paket['mode_pembahasan'] ?? '';
 
@@ -591,7 +588,7 @@ echo "
       $select_id_sesi
 
       <input required minlength=10 maxlength=50 class='form-control mb2' placeholder='Enter Nama Paket Soal...' name=nama_paket id=nama_paket value='$nama_paket'>
-      <div class='f12 abu mb4'>Misal: <span class='darkblue miring pointer' id=misal_nama_paket>$misal_nama_paket</span></div>
+      $misal_nama_paket
 
 
       <div class=wadah>
@@ -599,7 +596,7 @@ echo "
         <table class=table>
           <thead>
             <th>Grup Kelas</th>
-            <th>Awal Ujian (Tanggal / Pukul)</th>
+            <th width=60%>Awal Ujian (Tanggal / Pukul)</th>
           </thead>
           $tr_kelas
         </table>
@@ -611,47 +608,50 @@ echo "
         $info_berakhir
       </div>
 
-      <textarea 
-        class='form-control mb2' 
-        placeholder='Enter kisi-kisi ujian (opsional)... akan bisa dilihat oleh $Peserta sebelum ujian berlangsung.' 
-        rows=4 
-        name=kisi_kisi
-      >$kisi_kisi</textarea>
+      <div class='f12 mb2 hover'><span class=btn_aksi id=opsi_lain_ujian__toggle>Opsi lainnya</span></div>
+      <div id=opsi_lain_ujian class=hideit>
+        <textarea 
+          class='form-control mb2' 
+          placeholder='Enter kisi-kisi ujian (opsional)... akan bisa dilihat oleh $Peserta sebelum ujian berlangsung.' 
+          rows=4 
+          name=kisi_kisi
+        >$kisi_kisi</textarea>
 
-      <div class=wadah>
-        <div class='mb2 miring abu tengah'>Opsi-opsi Ujian</div>
+        <div class=wadah>
+          <div class='mb2 miring abu tengah'>Opsi-opsi Ujian</div>
 
-        <select class='form-control mb2 tengah' name=sifat_ujian>
-          $opt_sifat_ujian
-        </select>
+          <select class='form-control mb2 tengah' name=sifat_ujian>
+            $opt_sifat_ujian
+          </select>
 
-        <select class='form-control mb2 center' id=mode_pembahasan name=mode_pembahasan>
-          $opt_mode_pembahasan
-        </select>
+          <select class='form-control mb2 center' id=mode_pembahasan name=mode_pembahasan>
+            $opt_mode_pembahasan
+          </select>
 
-        <div class='$hide_blok_tanggal_pembahasan mb4' id=blok_tanggal_pembahasan>
-          <div class='flexy flex-center'>
-            <div class=pt1>
-              Tanggal
-            </div>
-            <div>
-              <input required type=date value='$tgl_pembahasan' min='$tgl_pembahasan' class='form-control mb2' name=tanggal_pembahasan id=tanggal_pembahasan>
-            </div>
-            <div>
-              <input required type=time value='$jam_pembahasan' class='form-control mb2' name=jam_pembahasan id=jam_pembahasan>
-            </div>
-            </div>
-            $eta_pembahasan
+          <div class='$hide_blok_tanggal_pembahasan mb4' id=blok_tanggal_pembahasan>
+            <div class='flexy flex-center'>
+              <div class=pt1>
+                Tanggal
+              </div>
+              <div>
+                <input required type=date value='$tgl_pembahasan' min='$tgl_pembahasan' class='form-control mb2' name=tanggal_pembahasan id=tanggal_pembahasan>
+              </div>
+              <div>
+                <input required type=time value='$jam_pembahasan' class='form-control mb2' name=jam_pembahasan id=jam_pembahasan>
+              </div>
+              </div>
+              $eta_pembahasan
+          </div>
+
+          <select class='form-control mb2 tengah' name=max_attemp>
+            $opt_max_attemp
+          </select>
+          <select class='form-control mb2 tengah' name=wajib_polling>
+            <option value=0>Tidak wajib polling untuk melihat Hasil Ujian</option>
+            <option class=hideit value=uts>Wajib Poling UTS</option>
+            <option class=hideit value=uas>Wajib Poling UAS</option>
+          </select>
         </div>
-
-        <select class='form-control mb2 tengah' name=max_attemp>
-          $opt_max_attemp
-        </select>
-        <select class='form-control mb2 tengah' name=wajib_polling>
-          <option value=0>Tidak wajib polling untuk melihat Hasil Ujian</option>
-          <option class=hideit value=uts>Wajib Poling UTS</option>
-          <option class=hideit value=uas>Wajib Poling UAS</option>
-        </select>
       </div>
 
       <button class='btn btn-primary w-100 proper' name=btn_simpan_paket_soal id=btn_simpan_paket_soal>$mode Paket Soal</button>
@@ -757,6 +757,22 @@ echo "
 
     $('.jadwal-berubah').change(function() {
       $('.global_akhir_ujian_show').html('<i class=darkblue>Jadwal berubah.</i>');
+    });
+    $('.check_bebas_akses').click(function() {
+      let tid = $(this).prop('id');
+      let rid = tid.split('__');
+      let aksi = rid[0];
+      let kelas = rid[1];
+      console.log(aksi, kelas);
+      let checked = $(this).prop('checked');
+      $('#tanggal_ujian__' + kelas).prop('required', !checked);
+      $('#jam_ujian__' + kelas).prop('required', !checked);
+      if (checked) {
+        $('#waktu_ujian__' + kelas).hide();
+      } else {
+        $('#waktu_ujian__' + kelas).show();
+
+      }
     });
 
   })

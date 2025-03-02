@@ -4,6 +4,9 @@ $null = '<span class="abu f12 miring consolas">null</span>';
 $abjad = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
 $get_id_paket = $_GET['id_paket'] ?? '';
 echo "<span class='hideit' id=id_paket>$get_id_paket</span>";
+$count_assign = 0;
+$id_soals = null;
+$id_soals_assigned = null;
 
 $judul = 'Assign Soal';
 set_h2($judul, "Silahkan cek atau cek-all kemudian klik Assign untuk memasukan soal ke Paket", '?manage_paket_soal');
@@ -53,34 +56,6 @@ if (isset($_POST['btn_assign_all']) || isset($_POST['btn_drop_all'])) {
   exit;
 }
 
-// if (isset($_POST['btn_assign']) || isset($_POST['btn_drop'])) {
-//   if (isset($_POST['id_soal'])) {
-//     $id_paket = $_POST['btn_assign'] ?? $_POST['btn_drop'];
-//     foreach ($_POST['id_soal'] as $id_soal) {
-//       if (isset($_POST['btn_drop'])) {
-//         // proses drop
-//         $s = "DELETE FROM tb_assign_soal WHERE id_soal=$id_soal AND id_paket=$id_paket";
-//         $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-//         echolog("Dropping id_soal: $id_soal");
-//       } else {
-//         // proses assign
-//         $s = "SELECT 1 FROM tb_assign_soal WHERE id_soal=$id_soal AND id_paket=$id_paket";
-//         $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-//         if (mysqli_num_rows($q)) {
-//           echolog('Soal sudah ter-assign.');
-//         } else {
-//           $s = "INSERT INTO tb_assign_soal (id_soal,id_paket) VALUES ($id_soal,$id_paket)";
-//           $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-//           echolog("Assigning id_soal: $id_soal");
-//         }
-//       }
-//     }
-//   }
-
-//   echo div_alert('success', 'Assign soal berhasil.');
-//   jsurl('', 2000);
-//   exit;
-// }
 
 
 
@@ -122,7 +97,13 @@ if (isset($_POST['btn_assign_all']) || isset($_POST['btn_drop_all'])) {
 # =============================================
 # PAKET SOAL PROPERTIES
 # =============================================
-$s = "SELECT a.nama as nama_paket_soal,
+$s = "SELECT 
+a.id,
+a.nama as nama_paket_soal,
+b.id as id_sesi,
+b.nama as nama_sesi,
+b.no as no_sesi,
+b.jenis as jenis_sesi,
 (
   SELECT COUNT(1) 
   FROM tb_jawabans p 
@@ -132,13 +113,15 @@ $s = "SELECT a.nama as nama_paket_soal,
   SELECT COUNT(1) FROM tb_assign_soal 
   WHERE id_paket=$get_id_paket) assigned_soal 
 
-FROM tb_paket a WHERE a.id=$get_id_paket";
+FROM tb_paket a 
+JOIN tb_sesi b ON a.id_sesi=b.id 
+WHERE a.id=$get_id_paket";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 if (!mysqli_num_rows($q)) die('Data Paket Soal tidak ditemukan.');
-$d = mysqli_fetch_assoc($q);
-$nama_paket_soal = $d['nama_paket_soal'];
-$count_penjawab = $d['count_penjawab'];
-$assigned_soal = $d['assigned_soal'];
+$paket = mysqli_fetch_assoc($q);
+$nama_paket_soal = $paket['nama_paket_soal'];
+$count_penjawab = $paket['count_penjawab'];
+$assigned_soal = $paket['assigned_soal'];
 
 if ($count_penjawab) echo div_alert('danger', "Perhatian! Paket ini sudah dijawab oleh <a target=_blank href='?monitoring_ujian&id_paket=$get_id_paket'>$count_penjawab $Peserta</a>. Anda tidak dapat lagi melakukan proses Assign ataupun Drop Soal dari Paket Soal ini.");
 $disabled_assign = $count_penjawab ? 'disabled' : '';
@@ -171,8 +154,23 @@ ORDER BY a.id_sesi, a.id
 // echolog($s);
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $count_soal = mysqli_num_rows($q);
+
+$img_stars = img_icon('stars');
+$fitur_tambah = "
+  <a class='btn btn-sm btn-primary' href='?manage_soal'>Tambah Soal Manual</a>  
+  <a class='btn btn-sm btn-primary' href='?add_soal_via_ai&id_paket=$paket[id]'>$img_stars Tambah via AI</a> 
+";
+
 if (!$count_soal) {
-  $tr = div_alert('danger', "Belum ada data soal untuk $Room ini.");
+  $tr = "
+    <tr>
+      <td colspan=100%>
+        <div class='alert alert-danger'>
+          Belum ada data soal pada sesi [P$paket[no_sesi] - $paket[nama_sesi]] ~ $fitur_tambah
+        </div>
+      </td>
+    </tr>
+  ";
 } else {
   $tr = '';
   $no = 0;
@@ -230,7 +228,6 @@ if (!$count_soal) {
       </tr>
     ";
   } // end while
-  // $tr = $tr ? $tr : tr_col('Soal tidak ada atau semua sudah di di-assign ke Paket Soal.', 'p4 gradasi-kuning consolas f12 miring abu');
 }
 
 
@@ -270,7 +267,7 @@ echo "
 <table class=table>
   <thead class=gradasi-toska>
     <th class=proper>no</th>
-    <th class=proper colspan=2>
+    <th class=proper colspan=3>
       <div class='flexy flex-between'>
         <div class=pt2>
           Terdapat $count_soal Soal yang Tersedia
@@ -288,6 +285,7 @@ echo "
   </thead>
   $tr
 </table>
+<div class=tengah>$fitur_tambah</div>
 ";
 
 

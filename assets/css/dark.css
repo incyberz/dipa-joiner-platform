@@ -44,6 +44,10 @@
   color: rgb(150, 150, 150);
 }
 
+.blue, .biru{
+  color:rgb(111, 111, 255)
+}
+
 /*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/
@@ -228,7 +232,7 @@ th, td{
   z-index: 99;
   opacity: 0;
   visibility: hidden;
-  background: #fff;
+  background: #0b0248;
   box-shadow: 0px 0px 30px rgba(127, 137, 161, 0.25);
   transition: 0.3s;
   border-radius: 4px;

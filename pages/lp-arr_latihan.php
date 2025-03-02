@@ -1,8 +1,10 @@
 <?php
-$arr_act = ['latihan', 'challenge'];
+$arr_act = ['latihan', 'challenge', 'paket']; // paket soal for quiz
 $arr_data_act = [];
 foreach ($arr_act as $act) {
-  $s = "SELECT a.id, a.id_sesi,b.nama as nama_act,b.ket 
+  $s = "SELECT a.id, a.id_sesi,
+  b.nama as nama_act,
+  b.ket 
   FROM tb_assign_$act a
   JOIN tb_$act b ON a.id_$act=b.id
   WHERE id_room_kelas='$id_room_kelas' 

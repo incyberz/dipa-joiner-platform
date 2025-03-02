@@ -91,7 +91,11 @@ if (!$id_assign) {
   // echo "<pre>$s</pre>";
   $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
   if (!mysqli_num_rows($q)) {
-    echo div_alert('danger', "Maaf, belum ada satupun $jenis pada $Room ini. Beritahukan hal ini kepada $Trainer!");
+    if ($id_role == 2 and !$target_kelas) {
+      echo div_alert('danger', "Anda belum memilih Target kelas. Klik pada tombol kelas di kiri-atas.");
+    } else {
+      echo div_alert('danger', "Maaf, belum ada satupun $jenis pada $Room ini. Beritahukan hal ini kepada $Trainer!");
+    }
   } else {
     $list_jenis = '';
     $rlist_jenis = [];

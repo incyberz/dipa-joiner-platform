@@ -25,6 +25,11 @@ $arr_fitur_sesi = [
     'icon' => img_icon('challenge_gray'),
     'param' => 'challenge',
   ],
+  'ujian' => [
+    'title' => 'Kuis Harian',
+    'icon' => img_icon('challenge_gray'),
+    'param' => 'ujian',
+  ],
   'bahan_ajar' => [
     'title' => 'Bahan Ajar PDF',
     'icon' => img_icon('bahan_ajar_gray'),

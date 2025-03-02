@@ -28,7 +28,6 @@ if (isset($_POST['btn_upload'])) {
   $nama = strtolower(str_replace(' ', '_', $nama_peserta));
   $new_war_image = "$id_peserta-war_unverified-$nama-$date.jpg";
   $target = "$lokasi_profil/$new_war_image";
-  echo "<br>$target  ";
   $tmpName = $_FILES['profil_perang']['tmp_name'];
 
   # ============================================================

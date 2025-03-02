@@ -164,8 +164,12 @@ if (!mysqli_num_rows($q)) {
         $my_invalid_rooms[$d['id']] = $d;
         $status = '<b class=red>Tidak ada sesi aktif</b>';
         $gradasi = 'merah';
-        $btn = "<button class='btn btn-info mt2 w-100' name=btn_pilih value=$d[id_room]>Manage Sesi Aktif</button>";
-        $btn .= "<button class='btn btn-primary mt2 w-100' name=btn_close_room value=$d[id_room] onclick='return confirm(`Close $Room ?`)'>Close $Room</button>";
+        if ($id_role == 2) {
+          $btn = "<button class='btn btn-info mt2 w-100' name=btn_pilih value=$d[id_room]>Manage Sesi Aktif</button>";
+          $btn .= "<button class='btn btn-primary mt2 w-100' name=btn_close_room value=$d[id_room] onclick='return confirm(`Close $Room ?`)'>Close $Room</button>";
+        } else {
+          $btn = "<button class='btn btn-secondary mt2 w-100' name=btn_pilih value=$d[id_room]>Enter Room</button>";
+        }
       }
       // $status = 'Aktif';
       // $gradasi = 'hijau';
@@ -210,6 +214,7 @@ if (!mysqli_num_rows($q)) {
     ";
     if ($d['my_room']) {
       if ($d['jenjang'] == 'SD') {
+        echolog('jenjang SD');
         $my_rooms_sd[$d['jenis']] .= $div_room;
       } else {
         $div_my_inactive_rooms .= $div_room;
@@ -299,7 +304,7 @@ for ($w = 1; $w <= 6; $w++) { // dari senin s.d sabtu
         # BELUM MULAI
         # ============================================================
         $info = 'BELUM MULAI';
-        $Ganti = 'Next';
+        $Ganti = $id_role == 2 ? 'Next' : 'Enter';
         $btn_type = 'info';
         # ============================================================
         # CREATE TIMER

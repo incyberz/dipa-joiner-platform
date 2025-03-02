@@ -1,9 +1,4 @@
 <?php
-$at_kelas = '';
-if ($id_role == 2 and isset($_SESSION['target_kelas'])) {
-  $tkelas = str_replace("-$ta_aktif", '', $_SESSION['target_kelas']);
-  $at_kelas = $_SESSION['target_kelas'] ? "<div class='f8 pointer' onclick='alert(`Saat ini Anda sedang berada di kelas $_SESSION[target_kelas]. \n\nSet target kelas untuk mengubahnya.`)'>$tkelas</div>" : '';
-}
 $jumlah_verif = 0;
 $rjenis = ['latihan', 'challenge'];
 if ($id_room) {
@@ -83,7 +78,6 @@ $header_logo = $is_custom ? "$path_custom/custom-header-logo.png" : 'assets/img/
           }
 
           $Peserta_Kelas = $id_role == 1 ? 'Teman Sekelas' : "Peserta $Room ini";
-          $no_sesi_aktif_show = $no_sesi_aktif ? "<div>P$no_sesi_aktif</div>" : '';
 
           if ($id_role == 1 || $id_role == 2) {
             echo "
@@ -98,8 +92,8 @@ $header_logo = $is_custom ? "$path_custom/custom-header-logo.png" : 'assets/img/
                   <li><a href='?war_leaderboard'>War Leaderboard</a></li>
                   <li><a href='?the_best_investor'>The Best Investor</a></li>
                   <li><a href='?the_best_accuracy'>The Best Accuracy</a></li>
-                  <li><a href='?lazy_soldier'>Lazy Soldier</a></li>
-                  <li><a href='?good_soldier'>Good Soldier</a></li>
+                  <li class=hideit><a href='?lazy_soldier'>Lazy Soldier</a></li>
+                  <li class=hideit><a href='?good_soldier'>Good Soldier</a></li>
                   <li><a href='?war_statistics'>War Statistics</a></li>
                   <li><a href='?upload_profil_perang'>Reupload Profil Perang</a></li>
                 </ul>
@@ -113,7 +107,7 @@ $header_logo = $is_custom ? "$path_custom/custom-header-logo.png" : 'assets/img/
                   <li class='hideit' ><a href='?proyek_akhir'>Proyek Akhir</a></li>
                   <li class='hideit'><a href='?bertanya'>Fitur Bertanya</a></li>
                   <li class='hideit'><a href='?questions'>List Bertanya</a></li>
-                  <li class=''><a href='?ujian'>Ujian</a></li>
+                  <li class=''><a href='?ujian'>Quiz | Ujian</a></li>
                   <li class=''><a href='?nilai_akhir'>Nilai Akhir</a></li>
                   <li><a href='?pilih_room'>Ganti $Room</a></li>
                   $li_manage_room
@@ -137,7 +131,6 @@ $header_logo = $is_custom ? "$path_custom/custom-header-logo.png" : 'assets/img/
                   <li><a href='?logout' onclick='return confirm(`Yakin untuk Logout?`)' class=red>Logout</a></li>
                 </ul>
               </li>
-              <li class='darkred f10 tengah' style='margin-left:10px'>$singkatan_room$at_kelas$no_sesi_aktif_show</li>
               $unlog_link
             ";
           } elseif ($id_role == 4) {

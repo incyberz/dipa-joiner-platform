@@ -171,6 +171,20 @@ if (!mysqli_num_rows($q)) {
       </div>
     ";
 
+    if ($d['count_soal']) {
+      $img_detail = $dark ? "<div style='display:inline-block; padding:1px 3px; border-radius:5px; background:white;'>$img_detail</div>" : $img_detail;
+      $count_soal = "<a href='?assign_soal&id_paket=$id_paket'>$d[count_soal] soal $img_detail</a>";
+      $count_submit = "<a href='?monitoring_ujian&id_paket=$id_paket'>$d[count_submit] kali $img_detail</a>";
+      $link_test = "<a target=_blank href='?ujian&id_paket=$id_paket'>$img_test</a>";
+    } else {
+      $count_soal = "
+        <div class='red f12 mb1'>Belum ada soal pada paket ini.</div>
+        <a class='btn btn-primary w-100' href='?assign_soal&id_paket=$id_paket'>Tambah</a>
+      ";
+      $count_submit = '-';
+      $link_test = '';
+    }
+
     # =============================================
     # FINAL TR
     # =============================================
@@ -193,14 +207,14 @@ if (!mysqli_num_rows($q)) {
           $list_kelas
         </td>
         <td>
-          $d[count_soal] soal <a href='?assign_soal&id_paket=$id_paket'>$img_detail</a>
+          $count_soal
         </td>
         <td>
-          $d[count_submit] kali <a href='?monitoring_ujian&id_paket=$id_paket'>$img_monitoring</a>
+          $count_submit
         </td>
         <td width=80px class=tengah>
           $btn_delete
-          <a target=_blank href='?ujian&id_paket=$id_paket'>$img_test</a>
+          $link_test
         </td>
       </tr>
     ";
