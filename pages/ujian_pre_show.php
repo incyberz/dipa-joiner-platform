@@ -98,6 +98,7 @@ if (isset($_POST['btn_submit_jawaban_ujian'])) {
   $nilai = round($jumlah_benar / $tmp_jumlah_soal * 100, 0);
 
   $paket_kelas = $id_paket . "__$kelas";
+  $jawabans = str_replace('\'', '`', $jawabans);
   $s = "INSERT INTO tb_jawabans 
   (
     id_room,

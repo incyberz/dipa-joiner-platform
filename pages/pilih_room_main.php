@@ -7,7 +7,11 @@ $border = '';
 # PROCESSOR PILIH ROOM
 # =====================================================
 if (isset($_POST['btn_pilih'])) {
-  $_SESSION['dipa_id_room'] = $_POST['btn_pilih'];
+  $t = explode('---', $_POST['btn_pilih']);
+  $_SESSION['dipa_id_room'] = $t[0];
+  if ($id_role == 2 and $t[1]) {
+    $_SESSION['target_kelas'] = $t[1];
+  }
   jsurl('?');
 } elseif (isset($_POST['btn_close_room'])) {
   $s = "UPDATE tb_room SET status = NULL WHERE id = $_POST[btn_close_room]";
@@ -168,7 +172,7 @@ if (!mysqli_num_rows($q)) {
           $btn = "<button class='btn btn-info mt2 w-100' name=btn_pilih value=$d[id_room]>Manage Sesi Aktif</button>";
           $btn .= "<button class='btn btn-primary mt2 w-100' name=btn_close_room value=$d[id_room] onclick='return confirm(`Close $Room ?`)'>Close $Room</button>";
         } else {
-          $btn = "<button class='btn btn-secondary mt2 w-100' name=btn_pilih value=$d[id_room]>Enter Room</button>";
+          $btn = "<button class='btn btn-secondary mt2 w-100' name=btn_pilih value=$d[id_room]>Enter $Room</button>";
         }
       }
       // $status = 'Aktif';
@@ -334,7 +338,7 @@ for ($w = 1; $w <= 6; $w++) { // dari senin s.d sabtu
       if ($id_room == $v['id_room']) {
         $btn = "<span class='btn btn-secondary mt2 w-100' onclick='alert(`Anda sedang berada di Room ini.`)'>Selected</span>";
       } else {
-        $btn = "<button class='btn btn-$btn_type mt2 w-100' name=btn_pilih value=$v[id_room]>$Ganti $Room</button>";
+        $btn = "<button class='btn btn-$btn_type mt2 w-100' name=btn_pilih value='$v[id_room]---$v[kelas]'>$Ganti $Room</button>";
       }
 
       $ckelas = substr(str_replace("-$ta_aktif", '', $v['kelas']), 3);

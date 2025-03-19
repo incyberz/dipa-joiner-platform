@@ -1,4 +1,11 @@
 <?php
+if (!$user['image']) {
+  die(div_alert('danger', 'Kamu belum punya foto profil. Segera Upload untuk melihat Nilai Akhir. | <a href=?upload_profil>Upload Profil</a>'));
+} elseif (strpos($user['war_image'], 'rejected')) {
+  die(div_alert('danger', 'War Profil kamu rejected. Re-upload dulu ya biar dapat mengakses Nilai Akhir. | <a href=?upload_profil_perang>Upload War Profil</a>'));
+}
+
+
 $single_show = '';
 $blok_kelas = '';
 $nilai_akhir = 0;

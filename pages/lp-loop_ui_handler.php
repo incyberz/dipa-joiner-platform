@@ -4,14 +4,16 @@ foreach ($arr_fitur_sesi as $fitur => $arr_fitur) {
   if (($fitur == 'bertanya' || $fitur == 'tanam_soal') and !$sesi['tags']) {
     $str_fiturs = "<div class='abu miring f12 mb1 bordered br5 p1'>belum bisa $fitur</div>";
   } elseif ($fitur == 'challenge' || $fitur == 'latihan' || $fitur == 'ujian') {
+
+    if ($fitur == 'ujian') $fitur = 'paket';
     $title = '';
     $tambah = '';
     if ($id_role == 2) {
-      $href = $fitur == 'ujian' ? '?add_paket_soal' : "?tambah_activity&p=$fitur";
+      $href = $fitur == 'paket' ? '?add_paket_soal' : "?tambah_activity&p=$fitur";
       $tambah = "<a href='$href&id_sesi=$sesi[id]'>$img_add</a>";
     }
 
-    $belum_ada = $fitur == 'ujian' ? 'quiz harian' : $fitur;
+    $belum_ada = $fitur == 'paket' ? 'quiz harian' : $fitur;
     $sub_fitur = "<div class='abu miring f12'>belum ada $belum_ada</div>";
 
     if (isset($arr_data_act[$fitur][$id_sesi])) { // jika ada datanya
@@ -21,15 +23,16 @@ foreach ($arr_fitur_sesi as $fitur => $arr_fitur) {
       foreach ($arr_data_act[$fitur][$id_sesi] as $k2 => $v2) {
         $j++;
         $btn_info = $v2['ket'] ? 'btn-info' : 'btn-secondary';
-        $sub_fitur .= "<a href='?activity&jenis=$fitur&id_assign=$v2[id]' class='btn $btn_info btn-sm mb1 w-100'>$j. $v2[nama_act]</a> ";
+        if ($fitur == 'paket') {
+          $btn_info = $v2['nilai_max'] ? 'btn-success' : 'btn-primary';
+          $nilai_show = $v2['nilai_max'] ? " - $v2[nilai_max] $img_check " : $img_warning;
+          $sub_fitur .= "<a href='?ujian&id_paket=$v2[id]' class='btn $btn_info btn-sm mb1 w-100'>$j. $v2[nama_act] $nilai_show</a> ";
+        } else {
+          $sub_fitur .= "<a href='?activity&jenis=$fitur&id_assign=$v2[id]' class='btn $btn_info btn-sm mb1 w-100'>$j. $v2[nama_act]</a> ";
+        }
       }
     } else {
-      // if ($fitur == 'ujian') {
-      //   echo '<pre>';
-      //   var_dump($arr_fitur);
-      //   echo '<b style=color:red>Developer SEDANG DEBUGING: exit(true)</b></pre>';
-      //   // exit;
-      // }
+      // do nothing
     }
     $str_fiturs = "<div class='bordered br5 p1 mb1'>$title $sub_fitur $tambah</div>";
   } elseif (
@@ -120,7 +123,7 @@ $ui_acts = "
         $fiturs[challenge]
       </div>
       <div class='col-md-12 mt2'>
-        $fiturs[ujian]
+        $fiturs[paket]
       </div>
     </div>
   </div>

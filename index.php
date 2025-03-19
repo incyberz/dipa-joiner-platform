@@ -22,6 +22,7 @@ session_start();
 # ============================================================
 $is_custom = false;
 $dark = true;
+$table_dark = $dark ? 'table-dark' : '';
 $meta_title = "DIPA Joiner Gamified LMS - Fun Learning Management System bagi Mitra, Praktisi, dan Akademisi";
 $meta_description = "Fun e-Learning Management System (LMS) berbasis Game Mechanics (Gamification) bagi Mitra (Dunia Industri), Praktisi, dan Akademisi. Dengan Rank System, Leaderboard, Play Quiz, dan Tanam Soal, menjadikan Pembelajaran seindah permainan.";
 $meta_keywords = "learning management system, fun lms, gamification, game mechanic, rank, leaderboard, quiz, bank soal, pembelajaran jarak jauh";

@@ -1,4 +1,5 @@
 <?php
+login_only();
 $arr_bahan_ajar = ['bahan_ajar', 'file_ppt', 'video_ajar', 'file_lain'];
 include 'lp-processors.php';
 include $dark ? 'lp-styles-dark.php' : 'lp-styles.php';
@@ -21,9 +22,9 @@ $img_up_disabled = img_icon('up_disabled');
 include 'lp-arr_fitur_sesi.php';
 
 # ============================================================
-# ARR LATIHAN DAN CHALLENGE
+# ARR LATIHAN, CHALLENGE, QUIZ
 # ============================================================
-include 'lp-arr_latihan.php';
+include 'lp-arr_data_act.php';
 
 $count_sesi = [];
 $count_sesi[0] = 0; // sesi tenang

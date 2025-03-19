@@ -363,7 +363,7 @@ if (!$d_assign['ket']) {
   # LATIHAN/CHALLENGE INFO
   # ============================================================
   $list_info = "
-    <table class='table kecil mt2 table-striped'>
+    <table class='table $table_dark kecil mt2 table-striped'>
       <tr>
         <td class='tebal abu'>Link Panduan</td>
         <td class='darkblue'>$link_panduan_show</td>
@@ -444,7 +444,7 @@ echo "
   
   <p class='mb4 f14 blue tengah'>Bacalah detail $jenis dengan seksama!</p>
 
-  <div class='f20 tebal darkblue tengah proper mb2' style='border-bottom:solid 1px #ddd;border-top:solid 1px #ddd; padding:15px 0; background: linear-gradient(#eff,#ffe)'>$d_assign[nama]</div>
+  <div class='f20 tebal darkblue tengah proper mb2 border-bottom border-top p3'>$d_assign[nama]</div>
 
   <div class='darkred mt4 mb1 tengah '>Prosedur Pengerjaan:</div>
   <div class='tengah bold darkblue'>$ket_show</div>

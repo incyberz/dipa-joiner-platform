@@ -76,7 +76,7 @@ if (mysqli_num_rows($q2) == 0) {
             <span class='darkblue consolas bold'>$nama_sublevel</span> 
             $edit_sublevel_toggle
           </div>
-          <div class='f14 abu'>$objective_show</div>
+          <div class='f14 '>$objective_show</div>
           $blok_edit_sublevel
         </td>
         <td>
@@ -95,7 +95,7 @@ $max_poin_show = number_format($max_poin, 0);
 $form_bukti = "
   <div class=wadah>
     <h2 class='consolas f12 tebal abu mb2'>Sublevels of Challenge</h2>
-    <table class='table table-striped'>
+    <table class='table table-striped table-dark'>
       <thead>
         <th>No</th>
         <th>Sublevel dan Objective</th>

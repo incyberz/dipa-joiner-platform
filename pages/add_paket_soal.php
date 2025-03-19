@@ -350,7 +350,9 @@ b.prodi,
 
 FROM tb_room_kelas a 
 JOIN tb_kelas b ON a.kelas=b.kelas
-WHERE id_room=$id_room ";
+WHERE id_room=$id_room 
+AND b.ta = $ta_aktif
+";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 $opt = "<option value=all>Untuk Semua Kelas pada $Room ini</option>";
 $info_prodi = '';
