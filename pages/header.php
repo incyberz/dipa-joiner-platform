@@ -74,6 +74,7 @@ $header_logo = $is_custom ? "$path_custom/custom-header-logo.png" : 'assets/img/
             $li_manage_room = "
               <li class='gradasi-merah'><a href='?manage_room'>Manage $Room</a></li>
               <li class='gradasi-merah'><a href='?manage_kelas'>Manage Kelas</a></li>
+              <li class='gradasi-merah'><a href='?sks_mengajar'>SKS Mengajar</a></li>
             ";
           }
 

@@ -211,7 +211,7 @@ echo "
     </table>
     <hr>
     <h2>Dikerjakan Oleh</h2>
-    <table class='table table-striped'>
+    <table class='table table-dark table-striped'>
       <tr class='gradasi-toska '>
         <td>No</td>
         <td>Nama Peserta</td>
