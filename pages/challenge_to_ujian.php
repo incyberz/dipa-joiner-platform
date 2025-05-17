@@ -170,6 +170,7 @@ while ($d = mysqli_fetch_assoc($q)) {
   $poin_chal = $d['poin_chal'] ? number_format($d['poin_chal'], 0) : '-';
   $cid_peserta = $d['id_peserta'];
   $nilai_sebelumnya = $d['nilai_sebelumnya'] ?? '-';
+  $d['nama_peserta'] = ucwords(strtolower($d['nama_peserta']));
 
   $tr .= "
     <tr>
@@ -205,7 +206,7 @@ echo "
         </td>
         <td>
           <div class='f12 mb1'>Batas Nilai Tertinggi</div>
-          <input type=number min=70 max=105 class='form-control batas batas__$get_kelas' id='batas__$get_kelas" . "__akhir' value=100 />
+          <input type=number min=70 max=105 class='form-control batas batas__$get_kelas' id='batas__$get_kelas" . "__akhir' value=95 />
         </td>
       </tr>
     </table>

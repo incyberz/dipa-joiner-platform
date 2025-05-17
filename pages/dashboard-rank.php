@@ -145,7 +145,7 @@ $blok_progres = "
     </a>
   </div>
 
-  <div class='blok_progres'>
+  <div class='blok_progres hideit ZZZ'>
     <?= $blok_progres ?>
   </div>
 </div>

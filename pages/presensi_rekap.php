@@ -1,4 +1,26 @@
 <style>
+  .absen {
+    display: inline-block;
+    height: 25px;
+    width: 25px;
+    text-align: center;
+    color: white;
+    border-radius: 50%;
+  }
+
+  .absen-sakit {
+    background: gray;
+  }
+
+  .absen-izin {
+    background: yellow;
+    color: black;
+  }
+
+  .absen-alfa {
+    background: red;
+  }
+
   @media (max-width: 775px) {
     .desktop_only_775 {
       display: none;
@@ -17,12 +39,21 @@ $icon_mhs = img_icon('mhs');
 $icon_gray = '<span class="br50 pointer" style="display:inline-block;width:20px;height:20px;background:#ccc;">&nbsp;</span>';
 
 $get_kelas = $_GET['kelas'] ?? '';
+$get_id_sesi = $_GET['id_sesi'] ?? '';
 $nav_mode = "Table Mode | Show Profile | Mobile Mode";
 $nav_mode = ''; //zzz on develop
 set_h2('Rekap Presensi', "<a href='?presensi'>$img_prev</a> $nav_mode");
 
 $param_awal = 'presensi_rekap';
 include 'navigasi_room_kelas.php';
+
+$show_absen = [
+  -1 => "<span class='absen absen-sakit'>S</span>",
+  -2 => "<span class='absen absen-izin'>I</span>",
+  -9 => "<span class='absen absen-alfa'>A</span>",
+];
+
+$nav_id_sesi = '';
 
 
 # ====================================================
@@ -87,7 +118,7 @@ ORDER BY c.shift, c.kelas, b.nama
 // echo "<pre>$s</pre>";
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
-$tr = '';
+$table_tr = '';
 if (!mysqli_num_rows($q)) {
   if ($get_kelas)
     echo div_alert('danger', "Belum ada <a href='?peserta_kelas'>$Peserta pada kelas [$get_kelas] ini</a>.");
@@ -100,7 +131,15 @@ if (!mysqli_num_rows($q)) {
   foreach ($rid_sesi as $no => $id_sesi) {
     $j++;
     $desktop_only_775 = $j < $count_sesi_aktif  ? 'desktop_only_775' : '';
-    $th_sesi .= "<th class=$desktop_only_775>P$j</th>";
+    if ($get_id_sesi) $nav_id_sesi .= "
+      <a class='nav-id_sesi d-block hover' href=?presensi_rekap&kelas=$get_kelas&id_sesi=$id_sesi>P$j</a>
+    ";
+    if ($get_id_sesi and $id_sesi != $get_id_sesi) continue;
+    $th_sesi .= "
+      <th class=$desktop_only_775>
+        <a href='?presensi_rekap&kelas=$get_kelas&id_sesi=$id_sesi'>P$j
+      </th>
+    ";
   }
 
   $thead = "
@@ -111,7 +150,7 @@ if (!mysqli_num_rows($q)) {
     </thead>
   ";
 
-  $tr = '';
+  $table_tr = '';
   $i = 0;
   $last_kelas = '';
   while ($d = mysqli_fetch_assoc($q)) {
@@ -120,10 +159,17 @@ if (!mysqli_num_rows($q)) {
     $d['war_image'] = $d['war_image'] ? $d['war_image'] : $d['image'];
 
     $s2 = "SELECT id as id_sesi,
+    a.awal_presensi,
+    a.akhir_presensi,
     (
       SELECT is_ontime FROM tb_presensi 
       WHERE id_peserta=$d[id_peserta] 
-      AND id_sesi=a.id) is_ontime   
+      AND id_sesi=a.id) is_ontime,
+    (
+      SELECT tanggal FROM tb_presensi 
+      WHERE id_peserta=$d[id_peserta] 
+      AND id_sesi=a.id) tanggal_presensi,
+    (SELECT absen FROM tb_absen WHERE id_sesi=a.id AND id_peserta=$d[id_peserta]) kode_absen   
     FROM tb_sesi a 
     WHERE a.id_room=$id_room 
     AND jenis=1
@@ -132,28 +178,48 @@ if (!mysqli_num_rows($q)) {
     $td_presensi = '';
     $j = 0;
     while ($d2 = mysqli_fetch_assoc($q2)) {
+
+      // skip jika filtered by Pertemuan ke-
+      if ($get_id_sesi and $d2['id_sesi'] != $get_id_sesi) continue;
+
       $icon_hadir = '';
-      if ($d2['is_ontime'] === '1') {
-        $icon_hadir = $img_ontime;
-      } elseif ($d2['is_ontime'] === '0') {
-        $icon_hadir = $img_late;
+      if ($d2['kode_absen']) {
+        $icon_hadir = $show_absen[$d2['kode_absen']];
       } else {
-        if ($arr_is_sesi_aktif[$d2['id_sesi']]) {
-          $icon_hadir = $img_reject;
+        if ($d2['is_ontime'] === '1') {
+          $icon_hadir = $img_ontime;
+        } elseif ($d2['is_ontime'] === '0') {
+          $icon_hadir = $img_late;
         } else {
-          $icon_hadir = '-';
+          if ($arr_is_sesi_aktif[$d2['id_sesi']]) {
+            $icon_hadir = $img_reject;
+          } else {
+            $icon_hadir = '-';
+          }
         }
       }
       $j++;
       $desktop_only_775 = $j < $count_sesi_aktif  ? 'desktop_only_775' : '';
-      $td_presensi .= "<td class='$desktop_only_775'>$icon_hadir</td>";
+      # ============================================================
+      # ICON HADIR
+      # ============================================================
+      $td_presensi .= "
+        <td class='$desktop_only_775' id=$d[id_peserta]--$d2[id_sesi]>
+          $icon_hadir
+          <div class='card p-2 pt-2'>
+            <div>Tanggal Presensi: $d2[tanggal_presensi]</div>
+            <div>Batasan Presensi: $d2[awal_presensi] - $d2[akhir_presensi]</div>
+            <div>Set: Hadir | Sakit | Izin | Alfa</div>
+          </div>
+        </td>
+      ";
     }
 
     # ==============================================================
     # FINAL OUTPUT :: SHOW IMAGE OR COMPACT
     # ==============================================================
     if ($last_kelas != $d['kelas']) {
-      $tr .= "</table>$table_tag$thead";
+      $table_tr .= "</table>$table_tag$thead";
       $i = 0;
     }
 
@@ -186,7 +252,7 @@ if (!mysqli_num_rows($q)) {
     ";
 
     $i++;
-    $tr .= "
+    $table_tr .= "
       <tr>
         <td>$i</td>
         <td>
@@ -207,7 +273,8 @@ if (!mysqli_num_rows($q)) {
 
 
   echo "
-      $tr
+    <div class='d-flex gap-2 justify-content-center'>$nav_id_sesi</div>
+    $table_tr
     </table>
   ";
 }

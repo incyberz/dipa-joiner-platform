@@ -1,9 +1,15 @@
 <?php
 login_only();
-
 include 'nilai_akhir-functions.php';
 $get_save = $_GET['save'] ?? '';
 $get_show_img = $_GET['show_img'] ?? '';
+$get_csv = $_GET['csv'] ?? null;
+$get_csv = $id_role == 1 ? null : $get_csv;
+$get_params = '';
+foreach ($_GET as $key => $value) {
+  if ($key == 'nilai_akhir') continue;
+  $get_params .= "&$key=$value";
+}
 
 
 
@@ -147,12 +153,14 @@ $from_tb_jawabans = "FROM tb_jawabans p
   AND p.id_room=$id_room 
   AND r.nama ";
 
+
 $s = "SELECT  
 a.id as id_peserta,
 a.nama as nama_peserta,
 a.status as status_peserta,
 a.nim,
 a.username,
+a.war_image,
 b.kelas,
 b.*,
 c.*,
@@ -346,18 +354,20 @@ if ($id_role == 2 and !$total_data) {
 
 
 
-# =======================================================
-# ROOM KELAS UNTUK CSV
-# =======================================================
-if ($id_role == 2) {
-  $arr_kelas = [];
-  $s2 = $select_room_kelas;
-  $q2 = mysqli_query($cn, $s2) or die(mysqli_error($cn));
-  while ($d2 = mysqli_fetch_assoc($q2)) {
-    $arr_kelas[$d2['kelas']] = $d2['id'];
-  }
-  foreach ($arr_kelas as $k => $jp) $data_csv[$k] = '';
+
+if ($get_csv) {
+  # =======================================================
+  # CSV FILE HANDLER STARTED
+  # =======================================================
+  $date = date('ymd');
+  $src_csv = "csv/nilai-akhir-" . strtolower(str_replace(' ', '_', $nama_room)) . "-$date.csv";
+  $file = fopen($src_csv, "w+");
+  fputcsv($file, ['NILAI AKHIR ' . strtoupper($nama_room)]);
+  fputcsv($file, ['Tanggal: ' . date('d-M-Y')]);
+  fputcsv($file, ['Jam: ' . date('H:i')]);
+  fputcsv($file, [' ']);
 }
+
 
 # =======================================================
 # LOOPING MAIN SELECT
@@ -367,6 +377,7 @@ $no = 0;
 $i = 0;
 $last_kelas = '';
 while ($d = mysqli_fetch_assoc($q)) {
+
   if (!$d['total_peserta_kelas']) {
     die("Peserta kelas tidak boleh 0. Kelas: $d[kelas]");
   }
@@ -375,8 +386,8 @@ while ($d = mysqli_fetch_assoc($q)) {
 
   $i++;
   $no++;
-
-  $nama_peserta = strtoupper($d['nama_peserta']);
+  $d['nomor'] = $i;
+  $d['nama_peserta'] = strtoupper($d['nama_peserta']);
 
   // handler blok tiap kelas
   $kelas_ini = $d['kelas'];
@@ -384,20 +395,8 @@ while ($d = mysqli_fetch_assoc($q)) {
   if ($last_kelas != $kelas_ini) {
     $tr .= $thead;
     $no = 1;
-
-    // HEADER CSV
-    if ($id_role == 2) {
-      $reguler = $d['shift'] == 'P' ? 'Reguler' : 'NR';
-      $data_csv[$kelas_ini] .= "\n\nDAFTAR HADIR MAHASISWA DAN NILAI UTS TAHUN AKADEMIK 2023-2024 GANJIL\n\n";
-      $data_csv[$kelas_ini] .= "Prodi,$d[jenjang] - $d[nama_prodi] - $reguler\n";
-      $data_csv[$kelas_ini] .= "Mata Ajar,Matematika Informatika\n";
-      $data_csv[$kelas_ini] .= "Semester / Kelas,$d[semester] / $d[sub_kelas]\n";
-      $data_csv[$kelas_ini] .= "$Trainer,Iin S.T. M.Kom\n\n";
-      $data_csv[$kelas_ini] .= "NO,NAMA,NIM,TIMESTAMP KEHADIRAN,NILAI TUGAS,NILAI UTS,KETERANGAN\n";
-    }
   }
 
-  $nilai_harian = 'zzz';
 
 
 
@@ -505,11 +504,41 @@ while ($d = mysqli_fetch_assoc($q)) {
       </td>
     ";
   }
+
+  # ============================================================
+  # FIKSASI NILAI AKHIR
+  # ============================================================
   if ($nilai_akhir > 100) $nilai_akhir = 100;
   $nilai_akhir = round($nilai_akhir * $total_bobot / $bobot_penyesuaian, 2);
   $nilai_akhir = $nilai_akhir > 100 ? 100 : $nilai_akhir;
 
+  if ($get_csv) {
+    # ============================================================
+    # NILAI AKHIR FOR CSV
+    # ============================================================
+    $d[' '] = ' ';
+    foreach ($rkonversi as $key_konversi => $value_konversi) {
+      $d['KONVERSI ' . $key_konversi] = $value_konversi;
+    }
+    $d['  '] = '  ';
+    $d['nilai_akhir'] = $nilai_akhir;
 
+    # ============================================================
+    # CSV HEADER HANDLER
+    # ============================================================
+    if ($i == 1) {
+      $rheader_csv = [];
+      foreach ($d as $nama_kolom => $array_data) {
+        array_push($rheader_csv, strtoupper(str_replace('_', ' ', $nama_kolom)));
+      }
+      fputcsv($file, $rheader_csv);
+    }
+
+    # ============================================================
+    # CSV KONTEN HANDLER
+    # ============================================================
+    fputcsv($file, $d);
+  }
 
 
 
@@ -558,7 +587,7 @@ while ($d = mysqli_fetch_assoc($q)) {
       <tr class='f14'>
         <td>$no</td>
         <td>
-          $nama_peserta 
+          $d[nama_peserta] 
           <a href='?login_as&username=$d[username]'>$img_login_as</a>
           <div class='kecil miring abu'>$d[kelas]</div>
           $status_show 
@@ -572,26 +601,26 @@ while ($d = mysqli_fetch_assoc($q)) {
 
   //for repeat header
   $last_kelas = $kelas_ini;
-
-  $tanggal_submit_uts = $d['tanggal_submit_uts'] ?? '-'; // ZZZ tanggal submit only for nilai_uts
-  $nim = $d['nim'] ?? '-';
-  if ($id_role == 2)  $data_csv[$kelas_ini] .= "$no,$nama_peserta,$nim,$tanggal_submit_uts,$nilai_harian,$d[nilai_uts],-\n";
 }
 
-$link_download_csv_uts = '';
-$link_download_csv_uas = '';
-$event_ujian = 'uts';
-if ($id_role != 1) {
-  foreach ($arr_kelas as $k => $jp) {
-    if (strpos("salt$k", 'INSTRUKTUR')) continue;
-    $path_csv = "csv/nilai-$event_ujian/$k.csv";
-    $fcsv = fopen($path_csv, "w+") or die("$path_csv cannot accesible.");
-    fwrite($fcsv, $data_csv[$k]);
-    fclose($fcsv);
-    $link_download_csv_uts .= "<a href='$path_csv' target=_blank class='btn btn-success btn-sm w-100 mb2'>$k</a> ";
-    $link_download_csv_uas .= "<button class='btn btn-secondary btn-sm w-100 mb2'>$k</button> ";
-  }
+
+if ($get_csv) {
+  # ============================================================
+  # CSV CLOSING HANDLER
+  # ============================================================
+  fputcsv($file, [
+    'DATA FROM: Gamified Learning DIPA Joiner, PRINTED AT: ' .
+      date('F d, Y, H:i:s')
+  ]);
+  fclose($file);
+  $link_download_export_csv = " 
+    <a href='$src_csv' target=_blank class='btn btn-primary my-3'>Download Nilai Akhir</a>
+    <div class=mt-2> <a href='?nilai_akhir' >Back to Rekap Nilai Akhir</a> </div>
+  ";
+} else {
+  $link_download_export_csv = "<a href='?nilai_akhir&csv=1' class='btn btn-success ' onclick='alert(`Export Data?`)'>Export Data</a>";
 }
+
 
 // return to normal view
 if ($get_save) {
@@ -601,26 +630,19 @@ if ($get_save) {
 
 
 if ($id_role == 2) {
-  $blok_kelas = "
-    <table class='table'>
-      $tr
-    </table>
-    <div class=mb4>
-      <a href='?nilai_akhir&save=1' class='btn btn-primary ' onclick='alert(`Setelah Anda menyimpan data Nilai Akhir sebaiknya Anda mengumumkan kepada para $Peserta.`)'>Simpan Data Nilai Akhir untuk $total_data Peserta</a>
-    </div>
-    <div class=wadah style='max-width:450px'>
-      <div class=row>
-        <div class=col-md-6>
-          <div class=mb1>Download Nilai UTS:</div>
-          $link_download_csv_uts
-        </div>
-        <div class=col-md-6>
-          <div class=mb1>Download Nilai UAS:</div>
-          $link_download_csv_uas
-        </div>
+  if ($get_csv) {
+    $blok_kelas = $link_download_export_csv;
+  } else {
+    $blok_kelas = "
+      <table class='table'>
+        $tr
+      </table>
+      <div class=mb4>
+        <a href='?nilai_akhir&save=1' class='btn btn-primary ' onclick='alert(`Setelah Anda menyimpan data Nilai Akhir sebaiknya Anda mengumumkan kepada para $Peserta.`)'>Simpan Data Nilai Akhir untuk $total_data Peserta</a>
+        $link_download_export_csv
       </div>
-    </div>
-  ";
+    ";
+  }
 } else {
   include 'nilai_akhir-show_single.php';
 }

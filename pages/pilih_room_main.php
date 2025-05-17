@@ -141,18 +141,31 @@ if (!mysqli_num_rows($q)) {
             if (isset($my_jadwal_kelas[$d2['jadwal_kelas']])) {
               $id_sebelumnya = $my_jadwal_kelas[$d2['jadwal_kelas']]['id'];
               $kelas_sebelumnya = $my_jadwal_kelas[$d2['jadwal_kelas']]['kelas'];
-              echo $id_role == 1 ? '' : div_alert('warning', "Terdapat dua jadwal kelas yang sama [ $d2[jadwal_kelas] ] - [ $kelas_sebelumnya dan $d2[kelas] ], abaikan jika join kelas.<hr><pre>$s2</pre>");
+              echo $id_role == 1 ? '' : div_alert('warning', "
+                Terdapat dua jadwal kelas yang sama:
+                <ul>
+                  <li><b>$kelas_sebelumnya</b>: $d2[jadwal_kelas]</li>
+                  <li><b>$d2[kelas]</b>: $d2[jadwal_kelas]</li>
+                </ul>
+
+              ");
             } else {
               $my_jadwal_kelas[$d2['jadwal_kelas']] = $d2;
 
 
 
               $w = date('w', strtotime($d2['jadwal_kelas']));
-              if (isset($my_jadwal_harian[$w])) {
+              // if (isset($my_jadwal_harian[$w])) {
+              //   // echolog('Array push: array_push($my_jadwal_harian[$w], $d2);');
+              //   array_push($my_jadwal_harian[$w], $d2);
+              // } else {
+              //   $my_jadwal_harian[$w][0] = $d2;
+              // }
+              if (isset($my_jadwal_harian[$w][$d2['jadwal_kelas']])) {
                 // echolog('Array push: array_push($my_jadwal_harian[$w], $d2);');
-                array_push($my_jadwal_harian[$w], $d2);
+                alert("Duplikat Jadwal Kelas ZZZ");
               } else {
-                $my_jadwal_harian[$w][0] = $d2;
+                $my_jadwal_harian[$w][$d2['jadwal_kelas']] = $d2;
               }
             }
           } // end while $d2
@@ -270,10 +283,17 @@ $my_rooms_sd = (!$my_rooms_sd || $username != 'abi') ? '' : "
 # UI2
 # ============================================================
 ksort($my_jadwal_harian);
+
 $arr_hari = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-$div_my_active_rooms = '';
+$my_active_rooms = '';
 for ($w = 1; $w <= 6; $w++) { // dari senin s.d sabtu 
   $my_jadwal = $my_jadwal_harian[$w] ?? [];
+
+
+  echo '<pre>';
+  print_r($my_jadwal);
+  echo '</pre>';
+
   // if ($dm and $my_jadwal) echolog("My Jadwal at week $w OK.");
 
   // echo '<pre>';
@@ -282,18 +302,22 @@ for ($w = 1; $w <= 6; $w++) { // dari senin s.d sabtu
   // echo '<b style=color:red>DEBUGING: echopreExit</b></pre>';
   // exit;
   // $count_sesi = 0;
-  $div_my_jadwals = '';
+  $my_item_jadwal = '';
   if ($my_jadwal) {
     // $count_sesi = count($my_jadwal);
+
+    ksort($my_jadwal);
+
     $timer = '';
     foreach ($my_jadwal as $k => $v) {
+
       if ($id_role == 1 and ($v['kelas'] != $kelas)) {
         // if ($dm) echolog('BREAK BY continue: $v[\'kelas\'] != $kelas' . " || $v[kelas] != $kelas");
         // continue; // mhs only
         // if ($dm) echo "continue aborted.";
       }
 
-      $jadwal_kelas = date('d-M, H:i', strtotime($v['jadwal_kelas']));
+      $jadwal_kelas = date('H:i', strtotime($v['jadwal_kelas']));
       $selisih =   strtotime($v['jadwal_kelas']) - strtotime('now');
 
       // default durasi 90 menit zzz
@@ -344,38 +368,68 @@ for ($w = 1; $w <= 6; $w++) { // dari senin s.d sabtu
       $ckelas = substr(str_replace("-$ta_aktif", '', $v['kelas']), 3);
 
       // if ($dm) echo "Final echo $ div_my_jadwals";
-      $div_my_jadwals .= "
-        <div class='col-md-4 col-lg-3'>
-          <div class='wadah $wadah_active gradasi-$gradasi tengah' style='border: $border;'>
-            <div class=' f12 bold'>$v[nama_room]</div>
-            <div class='f12 darkblue bold'>P$v[no] $v[nama_sesi]</div>
-            <div class='f20 blue'>$ckelas</div>
-            <div class='f12 abu'>$jadwal_kelas</div>
-            <div class='f12 brown'>$eta</div>
-            <div class='f12 brown'>$info</div>
-            $btn
-          </div>
-        </div>
+      // $my_item_jadwal .= "
+      //   <div class='col-md-4 col-lg-3'>
+      //     <div class='wadah $wadah_active gradasi-$gradasi tengah' style='border: $border;'>
+      //       <div class=' f12 bold'>$v[nama_room]</div>
+      //       <div class='f12 darkblue bold'>P$v[no] $v[nama_sesi]</div>
+      //       <div class='f20 blue'>$ckelas</div>
+      //       <div class='f12 abu'>$jadwal_kelas</div>
+      //       <div class='f12 brown'>$eta</div>
+      //       <div class='f12 brown'>$info</div>
+      //       $btn
+      //     </div>
+      //   </div>
+      // ";
+      $my_item_jadwal .= "
+        <tr class='wadah $wadah_active gradasi-$gradasi' style='border: $border;'>
+          <td class=''>$jadwal_kelas</td>
+          <td class=''>
+            $v[nama_room]
+            <div class='f12'>P$v[no] $v[nama_sesi]</div>
+          </td>
+          <td class=''>$ckelas</td>
+          <td class=''>
+            $eta
+            <div class='f10'>$info</div>
+          </td>
+          <td class=''>$btn</td>
+        </tr>
       ";
       $tanggal = date('d M Y', strtotime($v['jadwal_kelas']));
     }
 
     $border_today = date('w') == $w ? 'border: 5px solid blue;' : '';
 
-    $div_my_active_rooms .= !$div_my_jadwals ? '' : "
+    // $my_active_rooms .= !$my_item_jadwal ? '' : "
+    //   <div class='wadah gradasi-toska' style='$border_today'>
+    //     <div class='tengah gradasi-kuning p2 mb2 border-top blue bold'>
+    //       $arr_hari[$w], $tanggal
+    //     </div>
+    //     <div class='row mb4'>
+    //       $my_item_jadwal
+    //     </div>
+    //   </div>
+    // ";
+
+    $my_active_rooms .= !$my_item_jadwal ? '' : "
       <div class='wadah gradasi-toska' style='$border_today'>
-        <div class='tengah gradasi-kuning p2 mb2 border-top blue bold'>
-          $arr_hari[$w], $tanggal
-        </div>
-        <div class='row mb4'>
-          $div_my_jadwals
+        <div class='d-flex gap-2'>
+          <div>
+            $arr_hari[$w], $tanggal
+          </div>
+          <div class='flex-fill'>
+            <table class='table kiri'>
+              $my_item_jadwal
+            </table>
+          </div>
         </div>
       </div>
     ";
   }
 }
 
-$div_my_active_rooms = $div_my_active_rooms ? $div_my_active_rooms : div_alert('warning tengah', $id_role == 2 ? "Anda belum punya $Room Aktif di TA $ta_show" : "Kamu belum dimasukan ke $Room manapun pada TA. $ta_show");
+$my_active_rooms = $my_active_rooms ? $my_active_rooms : div_alert('warning tengah', $id_role == 2 ? "Anda belum punya $Room Aktif di TA $ta_show" : "Kamu belum dimasukan ke $Room manapun pada TA. $ta_show");
 // $other_room = !$other_room ? '' : "    
 //   <h3 class='mt4 mb4 tengah'>$Room $Trainer lain</h3>
 //   <div class=row>
@@ -398,7 +452,7 @@ echo "
   <form method=post>
     <hr>
     <h3 class='darkblue f20 upper tengah mb4'>$Room Aktif $ta_show</h3>
-    $div_my_active_rooms
+    $my_active_rooms
     $div_my_inactive_rooms
     $my_rooms_sd
     <hr>

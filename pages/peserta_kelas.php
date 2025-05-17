@@ -40,7 +40,9 @@ if ($get_mode != 'fast' and $id_role == 1) $get_mode = 'fast';
 # ================================================================
 # MAIN SELECT ROOM KELAS
 # ================================================================
-$s = "SELECT a.kelas, a.id as id_room_kelas 
+$s = "SELECT a.kelas, 
+a.id as id_room_kelas, 
+b.caption as label_kelas
 FROM tb_room_kelas a 
 JOIN tb_kelas b ON a.kelas=b.kelas 
 WHERE a.id_room=$id_room 
@@ -351,7 +353,7 @@ while ($d = mysqli_fetch_assoc($q)) { // loop $Room kelas
   if ($get_mode == 'fast') {
     $blok_kelas .= "
       <div class='wadah gradasi-hijau tengah' zzzdata-aos='fade-up' data-aos-delay='150'>
-        $d[kelas]
+        $d[label_kelas]
         <div class='wadah bg-white flexy mt1 flex-center'>
           $list_peserta
         </div>

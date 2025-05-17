@@ -109,6 +109,7 @@ $header_logo = $is_custom ? "$path_custom/custom-header-logo.png" : 'assets/img/
                   <li class='hideit'><a href='?bertanya'>Fitur Bertanya</a></li>
                   <li class='hideit'><a href='?questions'>List Bertanya</a></li>
                   <li class=''><a href='?ujian'>Quiz | Ujian</a></li>
+                  <li class=''><a href='?project_plan'>Project Plan</a></li>
                   <li class=''><a href='?nilai_akhir'>Nilai Akhir</a></li>
                   <li><a href='?pilih_room'>Ganti $Room</a></li>
                   $li_manage_room

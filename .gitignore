@@ -11,6 +11,7 @@ includes/
 *.png
 *.gif
 
+*.ini
 *.xls*
 *.doc*
 *.csv
