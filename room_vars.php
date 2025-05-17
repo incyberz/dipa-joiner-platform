@@ -60,7 +60,7 @@ if ($room['jenjang'] == 'SD' || $room['jenjang'] == 'SP' || $room['jenjang'] == 
 $status_room = $room['status'];
 $nama_instruktur = $room['nama_instruktur'];
 if ($status_room != 100) {
-  if ($parameter != 'aktivasi_room') {
+  if ($param != 'aktivasi_room') {
     if ($id_role == 2) {
       echo div_alert('danger', "Status $Room tidak 100% ... Anda harus reactivate!");
       jsurl('?aktivasi_room', 2000);
@@ -148,7 +148,7 @@ $profil_instruktur = "<img src='$path_profil_instruktur' class='foto_profil' alt
 # ========================================================
 if (!$id_room_kelas) {
 
-  if ($parameter != 'assign_room_kelas') {
+  if ($param != 'assign_room_kelas') {
 
     $assign_room_kelas = "<a href='?pilih_room'>Pilih $Room lainnya</a>";
     if ($id_role == 2) {

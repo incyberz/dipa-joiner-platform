@@ -39,7 +39,7 @@ foreach ($topics as $topic => $value) {
   if ($topic) $opts .= "<option value='$topic' $selected>$value</option>";
 }
 
-if ($parameter == 'laporkan_error') {
+if ($param == 'laporkan_error') {
   $hideit = '';
 } else {
   $hideit = 'hideit';
@@ -69,7 +69,7 @@ $laporkan_error = "
   </div>
 ";
 
-if ($parameter == 'laporkan_error') echo $laporkan_error;
+if ($param == 'laporkan_error') echo $laporkan_error;
 ?>
 <script>
   $(function() {

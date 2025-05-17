@@ -1,5 +1,5 @@
 <?php
-mulai($parameter);
+mulai($param);
 $get_ta = $_GET['ta'] ?? '';
 
 // include 'manage_ta-processors.php';

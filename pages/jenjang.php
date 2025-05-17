@@ -1,5 +1,5 @@
 <?php
-mulai($parameter);
+mulai($param);
 $jenjang = $_GET['jenjang'] ?? '';
 
 include 'jenjang-processors.php';

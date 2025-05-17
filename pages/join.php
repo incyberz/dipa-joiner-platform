@@ -3,6 +3,26 @@ $img_home = img_icon('home');
 set_h2($Join, "<a href='?'>$img_home</a> <a href='?login'>$img_login_as</a> ");
 $as = $_GET['as'] ?? '';
 $as = strtolower($as);
+$emoji = [
+  'nama' => '👤',
+  'whatsapp' => '📞',
+  'username' => '🆔',
+
+  'nim' => '🆔',
+  'nidn' => '🆔',
+  'kelas' => '🆔',
+
+  'bidang_profesi' => '💼',
+  'nama_instansi' => '🏢',
+  'instansi' => '🏢',
+  'alamat_instansi' => '📍',
+
+  'bidang_usaha' => '💼',
+  'usaha' => '🏢',
+  'nama_usaha' => '🏢',
+  'alamat_usaha' => '📍',
+];
+
 
 
 
@@ -21,87 +41,29 @@ $as = strtolower($as);
 # ===========================================================
 # PROCESSORS
 # ===========================================================
-$pesan_join = '';
-$nama = '';
-$username = '';
-$select_kelas = '';
-if (isset($_POST['btn_join'])) {
+$pesan_login_error = '';
+include 'join-process.php';
 
-  function clean($a)
-  {
-    return str_replace('"', '', str_replace('\'', '', $a));
-  }
+# ===========================================================
+# GLOBAL VAR
+# ===========================================================
+$nama = $_POST['nama'] ?? '';
+$username = $_POST['username'] ?? '';
+$select_kelas = $_POST['select_kelas'] ?? '';
+$whatsapp = $_POST['whatsapp'] ?? '';
 
-  $nama = clean($_POST['nama']);
-  $username = clean($_POST['username']);
-  $select_kelas = clean($_POST['select_kelas']);
+$nim = $_POST['nim'] ?? ''; // mhs
 
-  $s = "SELECT 1 FROM tb_peserta WHERE username='$username'";
-  $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-  if (mysqli_num_rows($q)) {
-    $pesan_join = "<div class='alert alert-danger' data-aos='fade-left'>Nickname <b><u>$username</u></b> sudah diambil. Silahkan tambahkan nickname Anda dengan angka, nama tengah, atau nama belakang (tanpa spasi atau karakter khusus).</div>";
-  } else { // input username sudah unik
+$nidn = $_POST['nidn'] ?? ''; // dosen
+$bidang_ilmu = $_POST['bidang_ilmu'] ?? '';
 
-    // default status $Peserta baru = aktif
-    $status = 1;
-    $id_role = 1; // default as $Peserta
-    if ($as != 'peserta') {
-      $status = 0; // perlu verifikasi untuk $Trainer, pro, mitra baru
-      if ($as == 'instruktur') {
-        $id_role = 2;
-      } elseif ($as == 'praktisi') {
-        $id_role = 3;
-      } elseif ($as == 'mitra') {
-        $id_role = 4;
-      } else {
-        die('Undefined role at processors.');
-      }
-    }
+$bidang_profesi = $_POST['bidang_profesi'] ?? ''; // praktisi
+$nama_instansi = $_POST['nama_instansi'] ?? '';
+$alamat_instansi = $_POST['alamat_instansi'] ?? '';
 
-    // add $Peserta
-    $s = "INSERT INTO tb_peserta 
-      (username,nama,status,id_role) VALUES 
-      ('$username','$nama','$status',$id_role) 
-      ON DUPLICATE KEY UPDATE date_created=CURRENT_TIMESTAMP 
-      ";
-    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-    echo div_alert('success', "Insert $as baru sukses...");
-
-    // get id_peserta
-    $s = "SELECT id FROM tb_peserta where username='$username'";
-    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-    $d = mysqli_fetch_assoc($q);
-    $id_peserta = $d['id'];
-    echo div_alert('info', 'Getting new id_peserta sukses...');
-
-    // assign kelas $Peserta
-    $s = "INSERT INTO tb_kelas_peserta 
-      (id_peserta,kelas) VALUES 
-      ('$id_peserta','$select_kelas')";
-    $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-    echo div_alert('success', "Assign $Peserta baru ke kelas <u>$select_kelas</u> sukses...");
-
-
-
-
-
-    echo div_alert('success', "Semua proses join selesai.<hr><span class='tebal darkred'>Mohon tunggu! redirecting...</span>");
-
-    $pesan = div_alert('success', "Join sebagai $as dengan nickname: <b>$username</b> berhasil.<hr><span class='darkblue'>Silahkan Anda login dengan username yang barusan Anda buat.
-      <ul>
-        <li><b class=abu>Username:</b> $username</li>
-        <li><b class=abu>Password:</b> $username</li>
-      </ul>
-      <a class='btn btn-primary btn-sm btn-block' href='?login&username=$username'>Menuju Login Page</a> 
-      ");
-
-    $pesan = urlencode($pesan);
-
-    echo "<script>setTimeout(()=>location.replace('?pesan_show&pesan=$pesan'),1000)</script>";
-    exit;
-  }
-}
-
+$nama_usaha = $_POST['nama_usaha'] ?? ''; // industri
+$bidang_usaha = $_POST['bidang_usaha'] ?? '';
+$alamat_usaha = $_POST['alamat_usaha'] ?? '';
 
 
 
@@ -118,7 +80,7 @@ if (isset($_POST['btn_join'])) {
 
 
 # ===========================================================
-# NORMAL FLOW :: SELECT AS
+# TAMPILAN AWAL | AS UNDEFINED
 # ===========================================================
 if (!$as) {
   $arr_as = ['peserta', 'instruktur', 'praktisi', 'mitra'];
@@ -194,110 +156,267 @@ if (!$as) {
 
 
   # ===========================================================
-  # SELECTED AS
+  # AS DEFINED
   # ===========================================================
+  $As = ucwords($as);
+
+  $option_kelas = '';
   if ($as == 'peserta') {
     $s = "SELECT kelas FROM tb_kelas WHERE ta=$ta_aktif AND status=1  ";
     $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-    $option_kelas = '';
+    $option_kelas = "<option value=''>--Pilih--</option>";
     while ($d = mysqli_fetch_assoc($q)) {
       $selected = $d['kelas'] == $select_kelas ? 'selected' : '';
       $option_kelas .= "<option $selected>$d[kelas]</option>";
     }
-  } elseif ($as == 'instruktur') {
-    $option_kelas = '<option value="INSTRUKTUR">KELAS INSTRUKTUR</option>';
-  } elseif ($as == 'praktisi') {
-    $option_kelas = '<option value="PRAKTISI">KELAS PRAKTISI</option>';
-  } elseif ($as == 'mitra') {
-    $option_kelas = '<option value=MITRA>MITRA INDUSTRI</option>';
-  } else {
-    die('Undefined role.');
   }
+
+  $rtambahan = [
+    'peserta' => [
+      [
+        'label' => "$emoji[nim] Nomor Induk Siswa/Mahasiswa",
+        'id' => 'nim',
+        'required' => 'required',
+        'minlength' => 8,
+        'maxlength' => 10,
+        'value' => $nim,
+        'info' => '8 s.d 10 karakter',
+      ],
+      [
+        'label' => "$emoji[nim] Kelas Aktif <span class='f12 abu'>pada TA $ta_aktif</span>",
+        'type' => 'select',
+        'id' => 'select_kelas',
+        'options' => $option_kelas,
+        'required' => 'required',
+        'info' => 'Jika Kelas Aktif belum ada silahkan hubungi Game Master!',
+      ],
+    ],
+
+    'instruktur' => [
+      [
+        'label' => "$emoji[bidang_ilmu] Bidang Keilmuan",
+        'id' => 'bidang_ilmu',
+        'required' => 'required',
+        'minlength' => 5,
+        'maxlength' => 30,
+        'value' => $bidang_ilmu,
+        'placeholder' => 'Contoh: Informatika',
+      ],
+    ],
+
+    'praktisi' => [
+      [
+        'label' => "$emoji[bidang_profesi] Bidang Profesi",
+        'id' => 'bidang_profesi',
+        'required' => 'required',
+        'minlength' => 5,
+        'maxlength' => 30,
+        'value' => $bidang_profesi,
+        'placeholder' => 'Contoh: Dokter, Marketing',
+      ],
+      [
+        'label' => "$emoji[nama_instansi] Instansi",
+        'id' => 'nama_instansi',
+        'required' => 'required',
+        'minlength' => 5,
+        'maxlength' => 30,
+        'value' => $nama_instansi,
+        'placeholder' => 'Contoh: Klinik Mutiara',
+      ],
+      [
+        'label' => "$emoji[alamat_instansi] Alamat Instansi",
+        'id' => 'alamat_instansi',
+        'required' => 'required',
+        'minlength' => 5,
+        'maxlength' => 30,
+        'value' => $alamat_instansi,
+        'placeholder' => 'Alamat Instansi Anda...',
+      ],
+    ],
+
+    'mitra' => [
+      [
+        'label' => "$emoji[bidang_usaha] Bidang Usaha",
+        'id' => 'bidang_usaha',
+        'required' => 'required',
+        'minlength' => 5,
+        'maxlength' => 30,
+        'value' => $bidang_usaha,
+        'placeholder' => 'Contoh: Makanan, Pakaian',
+      ],
+      [
+        'label' => "$emoji[nama_usaha] Nama Usaha",
+        'id' => 'nama_usaha',
+        'required' => 'required',
+        'minlength' => 5,
+        'maxlength' => 30,
+        'value' => $nama_usaha,
+        'placeholder' => 'Contoh: Agen Teh Tarik Hanaang',
+      ],
+      [
+        'label' => "$emoji[alamat_usaha] Alamat Usaha",
+        'id' => 'alamat_usaha',
+        'required' => 'required',
+        'minlength' => 5,
+        'maxlength' => 30,
+        'value' => $alamat_usaha,
+        'placeholder' => 'Alamat Usaha Anda...',
+      ],
+    ],
+  ];
+
+
+  if (!isset($rtambahan[$as])) stop('Undefined role.');
+
+  $inputs = '';
+  foreach ($rtambahan[$as] as $key => $field) {
+    $field_id = $field['id'] ?? kosong('id');
+    $type = $field['type'] ?? 'text';
+    $field_info = $field['info'] ?? '';
+    $field_name = $field['name'] ?? $field_id;
+    $required = $field['required'] ?? '';
+    $minlength = $field['minlength'] ?? '';
+    $maxlength = $field['maxlength'] ?? '';
+    $placeholder = $field['placeholder'] ?? '';
+    $value = $field['value'] ?? '';
+
+    $input_info = "<div class='input-info' id='$field_id--info'>$field_info</div>";
+
+    if ($type == 'select') {
+      $input = "
+        <select 
+          name='$field_name' 
+          id='$field_id' 
+          class='form-control my-1' 
+          required
+        >
+          $field[options]
+        </select>
+      ";
+    } else {
+
+      $input = "
+        <input 
+          $required 
+          type='$type' 
+          class='form-control my-1' 
+          id='$field_id' 
+          name='$field_name' 
+          value='$value' 
+          minlength='$minlength' 
+          maxlength='$maxlength' 
+          placeholder='$placeholder' 
+        />
+      ";
+    }
+    $inputs .= "
+      <div class='form-group my-3'>
+        <label for='$field_id'>$field[label]</label>
+        $input
+        $input_info
+      </div>
+    ";
+  }
+
+
+  $input_tambahan = $inputs;
 
   $hideit_btn_join = ($nama != '' and $username != '' and $select_kelas != '0') ? '' : 'hideit';
 
   echo "
   <div class='section-title' data-aos='fade-up'>
-    <p><a href='?join'>Back</a> | Silahkan Anda $Join sebagai $Peserta</p>
+    <p><a href='?join'>Back</a> | Silahkan Anda $Join sebagai $As</p>
     <div class='mt3 mb4'>
       <img src='assets/img/icon/$as.png' alt='img-as-$as' class='foto-ilustrasi'>
     </div>
-    $pesan_join
+    $pesan_login_error
   </div>
   
   ";
 
-  $input_username = '';
-  if (!$path_custom) {
-    $input_username = "
-          <label for='username'>Username</label>
-          <input type='text' required maxlength=20 minlength=3 class='form-control input_isian mt1' id='username' name='username'  value='$username'>
-          <div class='f12 miring mt1'>Usahakan agar username adalah nama depan atau nama panggilan!</div>
-    ";
-  } elseif ($path_custom == 'custom') {
-    $input_username = "
-      <label for='username'>Username (NIM)</label>
-      <input type='text' required maxlength=9 minlength=9 class='form-control input_isian mt1'  id='username' name='username'  value='$username'>
-      <div class='f12 miring mt1'>NIM 9 digit angka</div>
-    ";
-  } else {
-    die("File config [ $path_custom ] institusi tidak ditemukan");
-  }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  # ============================================================
+  # FINAL ECHO
+  # ============================================================
   echo "
     <div class='wadah gradasi-hijau' data-aos='fade-up' data-aos-delay='150' style='max-width:500px; margin:auto'>
       <form method=post>
         <div class='form-group'>
-          <label for='nama'>Nama Lengkap</label>
-          <input class='form-control input_isian mt1' type='text' id='nama' name='nama' required maxlength=50 minlength=3 value='$nama'>
+          <label for='nama'>$emoji[nama] Nama Lengkap</label>
+          <input type=text class='form-control elemen_wa mt1' type='text' id='nama' name='nama' required maxlength=50 minlength=3 value='$nama'>
+          <div class='f12 miring mt1 nama--info'>hanya A-Z</div>
         </div>
         <div class='form-group'>
-          $input_username
+          <label for='whatsapp'>$emoji[whatsapp] Whatsapp Aktif</label>
+          <input type=text class='form-control elemen_wa mt1' type='text' id='whatsapp' name='whatsapp' required minlength=11 maxlength=14 value='$whatsapp'>
+          <div class='f12 miring mt1 whatsapp--info'>Semua aktifitas dan informasi penting akan dikirimkan via whatsapp. Masukanlah Nomor Whatsapp Anda untuk mempermudah verifikasi dan validitas akun!</div>
         </div>
         <div class='form-group'>
-          <label for='select_kelas'>Kelas Aktif <span class='f12 abu'>pada TA $ta_aktif</span></label>
-          <select name='select_kelas' id='select_kelas' class='form-control'>
-            <option value='0'>--Pilih--</option>
-            $option_kelas
-          </select>
-          <div class='f12 miring mt1 mb2'>Jika Kelas Aktif belum ada silahkan hubungi intruktur!</div>
+          <label for='username'>$emoji[username] Username</label>
+          <input type='text' required maxlength=20 minlength=3 class='form-control elemen_wa mt1' id='username' name='username'  value='$username'>
+          <div class='f12 miring mt1 username--info'>Saran username adalah nama panggilan Anda</div>
+          <div class='f12 red mt1' id=username--available><span class='abu'>username available: <i>unchecked...</i></span></div>
         </div>
 
-        <div class='form-group $hideit_btn_join' id='blok_btn_join'>
-          <button class='btn btn-primary btn-block' name=btn_join>Join</button>
+        $input_tambahan
+
+        <div class='form-group mt-3' id='blok_btn_join'>
+          <button class='btn btn-primary btn-block' name=btn_join>Join as $As</button>
         </div>
       </form>
     </div>  
+
+    <div class='tengah kecil mt3' data-aos='fade-up' data-aos-delay='300'>Punya akun? <a href='?login'>Enter War</a></div>
   ";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ?>
-
-
-
-  <!-- <div class="tengah kecil mt3" data-aos="fade-up" data-aos-delay="300">Punya akun? Silahkan <a href="?login">Login</a></div> -->
-
   <script>
     $(function() {
-      $('#select_kelas').change(function() {
-
-        let val = $(this).val();
-        if (val == '0') {
-          $('#blok_new_kelas').hide();
-          $('#kelas_new').val('null');
-          $('#blok_btn_join').fadeOut();
-        } else {
-          $('#blok_btn_join').fadeIn();
-          $('#kelas_new').val('');
-          if (val == 'new') {
-            $('#blok_new_kelas').show();
-            console.log(val, $('#blok_new_kelas').val());
-          } else {
-            $('#blok_new_kelas').hide(); //pilih kelas yg sdh ada
-            $('.input_isian').keyup();
-            $('#kelas_new').val('null');
-          }
-        }
-      })
-
       $('#username').keyup(function() {
         $(this).val(
           $(this).val()
@@ -332,16 +451,16 @@ if (!$as) {
         );
       });
 
-      $('.input_isian').keyup(function() {
-        let link_wa = 'https://api.whatsapp.com/send?phone=6287729007318&text=*Verification Link Request*%0a%0a';
-        let nama = $('#nama').val();
-        let username = $('#username').val();
-        let kelas = $('#select_kelas').val() == 'new' ? $('#kelas_new').val() : $('#select_kelas').val();
+      // $('.elemen_wa').keyup(function() {
+      //   let link_wa = 'https://api.whatsapp.com/send?phone=6287729007318&text=*Verification Link Request*%0a%0a';
+      //   let nama = $('#nama').val();
+      //   let username = $('#username').val();
+      //   let kelas = $('#select_kelas').val() == 'new' ? $('#kelas_new').val() : $('#select_kelas').val();
 
-        let href = `${link_wa}&nama=${nama}&username=${username}&kelas=${kelas}`;
+      //   let href = `${link_wa}&nama=${nama}&username=${username}&kelas=${kelas}`;
 
-        $('#link_btn_join').prop('href', href);
-      })
+      //   $('#link_btn_join').prop('href', href);
+      // })
     })
   </script>
 

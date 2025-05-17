@@ -138,16 +138,14 @@ if (isset($_SESSION['dipa_username'])) {
 
 
 # ========================================================
-# MANAGE URI
+# MANAGE PARAM
 # ========================================================
-$a = $_SERVER['REQUEST_URI'];
-if (!strpos($a, "?")) $a .= "?";
-if (!strpos($a, "&")) $a .= "&";
-
-$b = explode("?", $a);
-$c = explode("&", $b[1]);
-$parameter = $c[0];
-if ($parameter == 'logout') {
+$param = '';
+foreach ($_GET as $key => $value) {
+  $param = $key;
+  break;
+}
+if ($param == 'logout') {
   include 'pages/logout.php';
   exit;
 }
@@ -168,6 +166,7 @@ $arr_includes = [
   'redirect',
   'echolog',
   'alert',
+  'clean_post',
 ];
 foreach ($arr_includes as $v) {
   $file = "includes/$v.php";
@@ -208,9 +207,9 @@ if ($username) {
     include 'wars_data.php';
   } else { // belum pilih room
     if ($password) { // jika password OK
-      if ($parameter != 'buat_room' and $parameter != 'verifikasi_wa') {
+      if ($param != 'buat_room' and $param != 'verifikasi_wa') {
         // wajib pilih room dahulu        
-        $parameter = 'pilih_room';
+        $param = 'pilih_room';
       }
     }
   }
@@ -265,7 +264,7 @@ if ($username) {
   <?php
 
   if (!$is_login || $id_room) include 'pages/header.php';
-  if (!$is_login and $parameter == '') {
+  if (!$is_login and $param == '') {
     include $is_custom ? "$path_custom/custom-hero.php" : 'pages/hero.php';
   }
   ?>

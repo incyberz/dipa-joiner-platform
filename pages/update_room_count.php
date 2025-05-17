@@ -215,7 +215,7 @@ if ($room['status'] == 100) {
 
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 
-if ($parameter == 'update_room_count') {
+if ($param == 'update_room_count') {
   jsurl('?', 3000);
 } else {
   jsurl();

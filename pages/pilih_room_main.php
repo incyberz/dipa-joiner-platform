@@ -290,9 +290,6 @@ for ($w = 1; $w <= 6; $w++) { // dari senin s.d sabtu
   $my_jadwal = $my_jadwal_harian[$w] ?? [];
 
 
-  echo '<pre>';
-  print_r($my_jadwal);
-  echo '</pre>';
 
   // if ($dm and $my_jadwal) echolog("My Jadwal at week $w OK.");
 
