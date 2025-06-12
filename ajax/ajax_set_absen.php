@@ -9,26 +9,21 @@ if (!$id_peserta) die(erid('id_peserta(NULL)'));
 $id_sesi = $_GET['id_sesi'] ?? die(erid("id_sesi"));
 if (!$id_sesi) die(erid('id_sesi(NULL)'));
 $kode_absen = $_GET['kode_absen'] ?? die(erid("kode_absen"));
-$poin = $_GET['poin'] ?? die(erid("poin"));
-
-$poin = $poin ? $poin : 'NULL';
 
 # ================================================
 # CRUD HANDLER
 # ================================================
-$WHERE_params = "WHERE id_sesi=$id_sesi AND id_peserta=$id_peserta";
-$s = "SELECT 1 FROM tb_presensi_offline $WHERE_params";
-$q = mysqli_query($cn, $s) or die(mysqli_error($cn));
-if (mysqli_num_rows($q)) {
-  $s = "UPDATE tb_presensi_offline SET 
-  kode_absen=$kode_absen, 
-  poin=$poin,
-  tanggal=CURRENT_TIMESTAMP  
-  $WHERE_params";
+$id = "$id_sesi-$id_peserta";
+if ($kode_absen > 0) {
+  $s = "DELETE FROM tb_absen WHERE id='$id'";
 } else {
-  $s = "INSERT INTO tb_presensi_offline 
-  (id_peserta,id_sesi,kode_absen,poin) VALUES 
-  ($id_peserta,$id_sesi,$kode_absen,$poin)";
+  $s = "INSERT INTO tb_absen 
+  (id,id_peserta,id_sesi,absen) VALUES 
+  ('$id',$id_peserta,$id_sesi,$kode_absen)
+  ON DUPLICATE KEY UPDATE 
+  absen=$kode_absen, 
+  tanggal=NOW()
+  ";
 }
 $q = mysqli_query($cn, $s) or die(mysqli_error($cn));
 echo 'OK';

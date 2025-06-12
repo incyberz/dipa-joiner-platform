@@ -1,22 +1,4 @@
-<style>
-  *:disabled {
-    background: linear-gradient(#ddd, #999);
-  }
-
-  *:required {
-    background: linear-gradient(#fee, #fbb);
-  }
-
-  .label-required {
-    color: blue !important;
-  }
-
-  input:required:valid,
-  textarea:required:valid,
-  select:required:valid {
-    background: linear-gradient(#efe, #cfc) !important;
-  }
-</style>
+<link rel="stylesheet" href="../assets/css/form.css">
 <?php
 if (isset($_POST['judul_sistem'])) {
 
@@ -715,15 +697,31 @@ if ($id_role == 2) echo "<div class='my-3'><a class='btn btn-success w-100' href
     function getCookie(name) {
       const value = `; ${document.cookie}`;
       const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(';').shift();
+      if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
     }
-    $("input,textarea,select").each((value, index, array) => {
-      // console.log(index.id);
-      let id = index.id;
-      if (id) {
-        $('#' + index.id).val(getCookie(index.id));
+
+    $("input, textarea, select").each(function() {
+      const id = this.id;
+      const type = this.type;
+      const tag = this.tagName.toLowerCase();
+
+      if (!id) return;
+
+      const cookieValue = getCookie(id);
+      if (cookieValue === undefined) return;
+
+      if (type === 'checkbox') {
+        $(this).prop('checked', cookieValue);
+      } else if (type === 'radio') {
+        // Radio buttons biasanya punya name yang sama, bukan id
+        if (this.value === cookieValue) {
+          $(this).prop('checked', true);
+        }
+      } else {
+        $(this).val(cookieValue);
       }
-    })
+    });
+
 
 
   })

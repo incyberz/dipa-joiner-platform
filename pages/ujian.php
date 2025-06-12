@@ -11,7 +11,7 @@ include 'ujian-styles.php';
 
 $meme = '';
 $debug = '';
-if (!$is_login) die('<script>location.replace("?")</script>');
+if (!$username) die('<script>location.replace("?")</script>');
 $id_paket = $_GET['id_paket'] ?? '';
 
 

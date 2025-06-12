@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="./assets/css/form.css">
+<script src="./assets/js/form.js"></script>
 <?php
 $img_home = img_icon('home');
 set_h2($Join, "<a href='?'>$img_home</a> <a href='?login'>$img_login_as</a> ");
@@ -11,6 +13,7 @@ $emoji = [
   'nim' => '🆔',
   'nidn' => '🆔',
   'kelas' => '🆔',
+  'bidang_ilmu' => '💼',
 
   'bidang_profesi' => '💼',
   'nama_instansi' => '🏢',
@@ -171,6 +174,37 @@ if (!$as) {
     }
   }
 
+  $rwajib = [
+    [
+      'label' => "$emoji[nama] Nama Lengkap",
+      'id' => 'nama',
+      'required' => 'required',
+      'minlength' => 3,
+      'maxlength' => 30,
+      'value' => $nama,
+      'info' => 'hanya A-Z, 3 s.d 30 karakter',
+    ],
+    [
+      'label' => "$emoji[whatsapp] Whatsapp Aktif",
+      'id' => 'whatsapp',
+      'required' => 'required',
+      'minlength' => 11,
+      'maxlength' => 14,
+      'value' => $whatsapp,
+      'info' => 'Semua aktifitas dan informasi penting akan dikirimkan via whatsapp. Masukanlah Nomor Whatsapp Anda untuk mempermudah verifikasi dan validitas akun! 11 s.d 14 karakter.',
+    ],
+    [
+      'label' => "$emoji[username] Username",
+      'id' => 'username',
+      'required' => 'required',
+      'minlength' => 3,
+      'maxlength' => 20,
+      'value' => $username,
+      'info' => 'Saran username adalah nama panggilan Anda, 3 s.d 20 karakter',
+    ],
+  ];
+
+
   $rtambahan = [
     'peserta' => [
       [
@@ -268,8 +302,11 @@ if (!$as) {
 
   if (!isset($rtambahan[$as])) stop('Undefined role.');
 
+  $rinputs = array_merge($rwajib, $rtambahan[$as]);
+
+
   $inputs = '';
-  foreach ($rtambahan[$as] as $key => $field) {
+  foreach ($rinputs as $key => $field) {
     $field_id = $field['id'] ?? kosong('id');
     $type = $field['type'] ?? 'text';
     $field_info = $field['info'] ?? '';
@@ -281,6 +318,7 @@ if (!$as) {
     $value = $field['value'] ?? '';
 
     $input_info = "<div class='input-info' id='$field_id--info'>$field_info</div>";
+    if ($field_id == 'username') $input_info .= "<div class='f12 red mt1' id=username--available><span class='abu'>username available: <i>unchecked...</i></span></div>";
 
     if ($type == 'select') {
       $input = "
@@ -318,62 +356,22 @@ if (!$as) {
     ";
   }
 
-
-  $input_tambahan = $inputs;
-
-  $hideit_btn_join = ($nama != '' and $username != '' and $select_kelas != '0') ? '' : 'hideit';
-
-  echo "
-  <div class='section-title' data-aos='fade-up'>
-    <p><a href='?join'>Back</a> | Silahkan Anda $Join sebagai $As</p>
-    <div class='mt3 mb4'>
-      <img src='assets/img/icon/$as.png' alt='img-as-$as' class='foto-ilustrasi'>
-    </div>
-    $pesan_login_error
-  </div>
-  
-  ";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   # ============================================================
   # FINAL ECHO
   # ============================================================
   echo "
+    <div class='section-title' data-aos='fade-up'>
+      <p><a href='?join'>Back</a> | Silahkan Anda $Join sebagai $As</p>
+      <div class='mt3 mb4'>
+        <img src='assets/img/icon/$as.png' alt='img-as-$as' class='foto-ilustrasi'>
+      </div>
+      $pesan_login_error
+    </div>
+    
     <div class='wadah gradasi-hijau' data-aos='fade-up' data-aos-delay='150' style='max-width:500px; margin:auto'>
-      <form method=post>
-        <div class='form-group'>
-          <label for='nama'>$emoji[nama] Nama Lengkap</label>
-          <input type=text class='form-control elemen_wa mt1' type='text' id='nama' name='nama' required maxlength=50 minlength=3 value='$nama'>
-          <div class='f12 miring mt1 nama--info'>hanya A-Z</div>
-        </div>
-        <div class='form-group'>
-          <label for='whatsapp'>$emoji[whatsapp] Whatsapp Aktif</label>
-          <input type=text class='form-control elemen_wa mt1' type='text' id='whatsapp' name='whatsapp' required minlength=11 maxlength=14 value='$whatsapp'>
-          <div class='f12 miring mt1 whatsapp--info'>Semua aktifitas dan informasi penting akan dikirimkan via whatsapp. Masukanlah Nomor Whatsapp Anda untuk mempermudah verifikasi dan validitas akun!</div>
-        </div>
-        <div class='form-group'>
-          <label for='username'>$emoji[username] Username</label>
-          <input type='text' required maxlength=20 minlength=3 class='form-control elemen_wa mt1' id='username' name='username'  value='$username'>
-          <div class='f12 miring mt1 username--info'>Saran username adalah nama panggilan Anda</div>
-          <div class='f12 red mt1' id=username--available><span class='abu'>username available: <i>unchecked...</i></span></div>
-        </div>
+      <form method=post id=form-join>
 
-        $input_tambahan
+        $inputs
 
         <div class='form-group mt-3' id='blok_btn_join'>
           <button class='btn btn-primary btn-block' name=btn_join>Join as $As</button>
@@ -417,50 +415,32 @@ if (!$as) {
 ?>
   <script>
     $(function() {
-      $('#username').keyup(function() {
-        $(this).val(
-          $(this).val()
-          .trim()
-          .toLowerCase()
-          .replace(/ /g, '')
-          .replace(/[!@#$%^&*()+\-=\[\]{}.,;:'`"\\|<>\/?~]/gim, '')
-        );
 
+      $('#form-join').on('submit', function(e) {
+        let nama = $('#nama').val().trim();
+        let whatsapp = $('#whatsapp').val().trim();
+        let username = $('#username').val().trim();
+        let pesan = null;
+        let at = null;
+        if (nama.length < 3 || nama.length > 30) {
+          pesan = 'Nama antara 3 s.d 30 karakter';
+          at = 'nama';
+        } else if (whatsapp.length < 11 || whatsapp.length > 14) {
+          pesan = 'Whatsapp antara 11 s.d 14 angka';
+          at = 'whatsapp';
+        } else if (username.length < 3 || username.length > 20) {
+          pesan = 'Username antara 3 s.d 20 karakter';
+          at = 'username';
+        }
+        if (pesan) {
+          alert(pesan);
+          e.preventDefault();
+          $('#' + at).focus();
+          return false;
+        }
+        // submit form lanjut...
       });
 
-      $('#nama').keyup(function() {
-        $(this).val(
-          $(this).val()
-          .replace(/['"]/g, '`')
-          .replace(/[!@#$%^&*()+\-_=\[\]{}.,;:\\|<>\/?~0-9]/gim, '')
-          .replace(/  /g, ' ')
-          .replace(
-            /\w\S*/g,
-            function(txt) {
-              return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-            }
-          )
-        );
-
-      });
-
-      $('#nama').focusout(function() {
-        $(this).val(
-          $(this).val()
-          .trim()
-        );
-      });
-
-      // $('.elemen_wa').keyup(function() {
-      //   let link_wa = 'https://api.whatsapp.com/send?phone=6287729007318&text=*Verification Link Request*%0a%0a';
-      //   let nama = $('#nama').val();
-      //   let username = $('#username').val();
-      //   let kelas = $('#select_kelas').val() == 'new' ? $('#kelas_new').val() : $('#select_kelas').val();
-
-      //   let href = `${link_wa}&nama=${nama}&username=${username}&kelas=${kelas}`;
-
-      //   $('#link_btn_join').prop('href', href);
-      // })
     })
   </script>
 

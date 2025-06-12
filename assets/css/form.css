@@ -1,0 +1,20 @@
+form *:disabled {
+  background: linear-gradient(#ddd, #999);
+}
+
+form *:required {
+  background: linear-gradient(#fee, #fbb);
+}
+
+form .label-required {
+  color: blue !important;
+}
+form .input-info {
+  display:none
+}
+
+form input:required:valid,
+textarea:required:valid,
+select:required:valid {
+  background: linear-gradient(#efe, #cfc) !important;
+}

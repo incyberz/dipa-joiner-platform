@@ -37,7 +37,7 @@ if (!mysqli_num_rows($q)) {
 $d = mysqli_fetch_assoc($q);
 $last_update_point = $d['last_update_point'] ?? '';
 $selisih = $id_role == 2 ? 600 : (strtotime('now') - strtotime($last_update_point));
-if ($selisih >= 600 and $id_role != 3 and $is_login) {
+if ($selisih >= 600 and $id_role != 3 and $username) {
 
   // reupdate grades
   echo div_alert('info', 'Reupdate Grades ... please wait!');
@@ -244,7 +244,7 @@ if (mysqli_num_rows($q)) {
   }
   $selamat = $my_rank ? div_alert('success', "Selamat! Kamu berada di Ranking $my_rank dari 10 terbaik.")
     : div_alert('warning', 'Wah sepertinya kamu harus belajar lebih giat agar berada di 10 terbaik.');
-  $selamat = ($is_login && $id_role == 1) ? $selamat : '';
+  $selamat = ($username && $id_role == 1) ? $selamat : '';
   $tb = "$selamat<div class='mb2  '>$toggle_profil</div><table class='table table-striped table-hover'>$tr</table>";
 }
 

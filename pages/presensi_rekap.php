@@ -203,14 +203,23 @@ if (!mysqli_num_rows($q)) {
       # ============================================================
       # ICON HADIR
       # ============================================================
+      $id_cell = "$d[id_peserta]--$d2[id_sesi]";
       $td_presensi .= "
-        <td class='$desktop_only_775' id=$d[id_peserta]--$d2[id_sesi]>
-          $icon_hadir
-          <div class='card p-2 pt-2'>
-            <div>Tanggal Presensi: $d2[tanggal_presensi]</div>
-            <div>Batasan Presensi: $d2[awal_presensi] - $d2[akhir_presensi]</div>
-            <div>Set: Hadir | Sakit | Izin | Alfa</div>
-          </div>
+        <td class='$desktop_only_775' id=$id_cell>
+          <span class='presensi_toggle' id=presensi_toggle--$id_cell>$icon_hadir</span>
+          <div class='hideit blok_set_presensi' id=blok_set_presensi--$id_cell>
+            <div class='card p-2 pt-2 f12'>
+              <div>Tanggal Presensi: $d2[tanggal_presensi]</div>
+              <div>Batasan Presensi: $d2[awal_presensi] - $d2[akhir_presensi]</div>
+              <div class='mt2 f16 flexy consolas' style=gap:2px>
+                <button class='btn btn-warning btn-sm set_cell' id=set_cell--$id_cell--kode-1>S</button>
+                <button class='btn btn-warning btn-sm set_cell' id=set_cell--$id_cell--kode-2>I</button>
+                <button class='btn btn-danger btn-sm set_cell' id=set_cell--$id_cell--kode-9>A</button>
+                <button class='btn btn-success btn-sm set_cell' id=set_cell--$id_cell--kode1>H</button>
+              </div>
+
+            </div>
+            </div>
         </td>
       ";
     }
@@ -311,6 +320,43 @@ if (!mysqli_num_rows($q)) {
           }
         }
       })
-    })
+    });
+
+    // saat icon presensi tiap cell di klik
+    $('.presensi_toggle').click(function() {
+      let tid = $(this).prop('id');
+      let rid = tid.split('--');
+      let aksi = rid[0];
+      let id_peserta = rid[1];
+      let id_sesi = rid[2];
+      console.log(id_peserta, id_sesi);
+      $('.blok_set_presensi').hide();
+      $(`#blok_set_presensi--${id_peserta}--${id_sesi}`).show();
+    });
+
+    // saat icon S-I-A-H tiap cell di klik
+    $('.set_cell').click(function() {
+      let tid = $(this).prop('id');
+      let rid = tid.split('--');
+      let aksi = rid[0];
+      let id_peserta = rid[1];
+      let id_sesi = rid[2];
+      let kode = rid[3];
+      let kode_absen = kode.replace('kode', '');
+      let poin = 0;
+
+      let link_ajax = `ajax/ajax_set_absen.php?id_peserta=${id_peserta}&id_sesi=${id_sesi}&poin=${poin}&kode_absen=${kode_absen}`;
+      console.log(link_ajax);
+      $.ajax({
+        url: link_ajax,
+        success: function(a) {
+          if (a.trim() == 'OK') {
+            location.reload();
+          } else {
+            alert(a);
+          }
+        }
+      })
+    });
   })
 </script>

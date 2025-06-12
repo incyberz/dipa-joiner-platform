@@ -125,16 +125,11 @@ $dipa_cookie = 'dipa_username';
 # ========================================================
 # INCLUDE LOGIN PETUGAS
 # ========================================================
-$id_peserta = '';
+$username = $_SESSION['dipa_username'] ?? null;
+$id_peserta = $_SESSION['dipa_id_peserta'] ?? null;
 $nama_peserta = '';
-$is_login = 0;
-if (isset($_SESSION['dipa_username'])) {
-  $username = $_SESSION['dipa_username'];
-  include 'user_vars.php';
-  $is_login = 1;
-} else {
-  $username = '';
-}
+if ($username) include 'user_vars.php';
+
 
 
 # ========================================================
@@ -263,8 +258,8 @@ if ($username) {
   <div class="hideit" id="ta_aktif"><?= $ta_aktif ?></div>
   <?php
 
-  if (!$is_login || $id_room) include 'pages/header.php';
-  if (!$is_login and $param == '') {
+  if (!$username || $id_room) include 'pages/header.php';
+  if (!$username and $param == '') {
     include $is_custom ? "$path_custom/custom-hero.php" : 'pages/hero.php';
   }
   ?>

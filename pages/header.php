@@ -51,7 +51,7 @@ $header_logo = $is_custom ? "$path_custom/custom-header-logo.png" : 'assets/img/
           ";
         }
 
-        if ($is_login) {
+        if ($username) {
 
           # ============================================================
           # MENU INSTRUKTUR
@@ -145,7 +145,7 @@ $header_logo = $is_custom ? "$path_custom/custom-header-logo.png" : 'assets/img/
             <li><a href='?logout' onclick='return confirm(`Logout?`)'>Logout</a></li>
             ";
           }
-        } elseif (!$is_login) {
+        } elseif (!$username) {
           echo "<li><a class='getstarted scrollto' href='?login'>Login</a></li>";
         }
         ?>

@@ -1,9 +1,9 @@
 <?php
-if ($param == 'login' and $is_login) die('<script>location.replace("?")</script>');
+if ($param == 'login' and $username) die('<script>location.replace("?")</script>');
 
 
 if ($param != 'ubah_password') {
-  if ($is_login and $password == '') {
+  if ($username and $password == '') {
     if (!isset($_SESSION['dipa_master_username'])) {
       echo '<script>location.replace("?ubah_password")</script>';
       exit;
@@ -12,7 +12,7 @@ if ($param != 'ubah_password') {
 }
 
 
-if (!$status and $param != 'verifikasi_wa' and $is_login and $param != 'ubah_password') {
+if (!$status and $param != 'verifikasi_wa' and $username and $param != 'ubah_password') {
   $custom_sebagai = $custom[$sebagai] ?? $sebagai;
   $custom_kelas = $custom[$kelas] ?? $kelas;
   echo "
@@ -71,7 +71,7 @@ if (!file_exists($konten)) {
   include file_exists($konten_admin) ? $konten_admin : 'na.php';
 } else {
   if (!$punya_profil) {
-    if ($param == 'login' || $param == 'upload_profil' || !$is_login) {
+    if ($param == 'login' || $param == 'upload_profil' || !$username) {
       // hide ask upload profil
     } else {
       if ($password and $id_room) {

@@ -4,6 +4,7 @@ tmp/
 docs/
 uploads/
 includes/
+db/
 
 
 *.jpg

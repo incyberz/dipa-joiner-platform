@@ -36,7 +36,7 @@
 
 $link3 = "<a href='?perang_soal'>Perang Home</a>";
 $link5 = "<a href='?tanam_soal'>Tanam Soal</a>";
-$links_nav = $is_login ? "<div>$link3 | $link5</div>" : '';
+$links_nav = $username ? "<div>$link3 | $link5</div>" : '';
 echo "
   <div class='section-title' data-aos-zzz='fade-up'>
     <h2>War Statistics</h2>

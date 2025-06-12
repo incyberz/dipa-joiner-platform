@@ -6,7 +6,7 @@ $form = '';
 $dari = $_GET['dari'] ?? '';
 $no_wa = '';
 $untuk = $_GET['untuk'] ?? '';
-if (!$is_login and $untuk == '') die('<script>location.replace("?")</script>');
+if (!$username and $untuk == '') die('<script>location.replace("?")</script>');
 $pesan = 'Untuk mengakses semua fitur kamu harus update dengan nomor whatsapp yang aktif.';
 
 
@@ -14,10 +14,6 @@ $caption = 'Verifikasi';
 
 
 if ($id_peserta == '') { // belum login
-  $debug .= "
-  <span class=debug><span id=is_login>is_login:$is_login</span></span>
-  ";
-
   if (isset($_POST['username'])) {
     $username = $_POST['username'];
     $kelas = $_POST['kelas'];

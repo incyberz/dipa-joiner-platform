@@ -5,6 +5,10 @@ if (isset($_POST['btn_join'])) {
 
   $_POST = clean_post($_POST);
 
+  echo '<pre>';
+  print_r($_POST);
+  echo '</pre>';
+
   $nama = $_POST['nama'];
   $username = $_POST['username'];
   $select_kelas = $as == 'peserta' ? $_POST['select_kelas'] : strtoupper($as);

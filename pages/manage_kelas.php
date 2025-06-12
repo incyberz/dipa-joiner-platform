@@ -87,7 +87,8 @@ while ($d = mysqli_fetch_assoc($q)) {
 
   if ($d['status']) {
     if ($d['ta'] == $ta_aktif) {
-      $btn = "<button class='btn btn-primary btn-sm' name=btn_assign_room_kelas value='$d[kelas]' onclick='return confirm(`Confirm Assign?\n\nMasukan semua peserta pada kelas ke $Room ini?`)'>Assign</button>";
+      $btn = "<button class='btn btn-primary btn-sm' name=btn_assign_room_kelas value='$d[kelas]' onclick='return confirm(`Confirm Assign?\n\nMasukan semua peserta pada kelas ke $Room ini?`)'>Assign</button>"; // aborted
+      $btn = "<a href='?assign_kelas&untuk_kelas=$d[kelas]' class='btn btn-primary btn-sm'>Assign</a>";
     } else {
       $btn = "<span class='btn btn-secondary btn-sm' onclick='alert(`Tidak dapat Drop karena TA sudah tidak aktif.`)'>Drop</span>";
     }
